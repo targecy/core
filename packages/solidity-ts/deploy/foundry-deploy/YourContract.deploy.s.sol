@@ -3,14 +3,14 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 
-import { YourContract } from "contracts/yourContract.sol";
+import { Targecy } from "contracts/yourContract.sol";
 
-contract YourContractDeploy is Script {
+contract TargecyDeploy is Script {
   function setUp() public {}
 
   function run() public {
     vm.startBroadcast();
-    new YourContract();
+    new Targecy();
     vm.stopBroadcast();
   }
 }

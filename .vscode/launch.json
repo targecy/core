@@ -7,7 +7,7 @@
       "request": "launch",
       "command": "yarn start:next",
       "sourceMapPathOverrides": {
-        "webpack:///./*": "${workspaceRoot}/packages/nextjs-app-ts/*"
+        "webpack:///./*": "${workspaceRoot}/packages/webapp-ts/*"
       }
     },
     {
@@ -16,7 +16,7 @@
       "request": "launch",
       "url": "http://localhost:3000",
       "sourceMapPathOverrides": {
-        "webpack:///./*": "${workspaceRoot}/packages/nextjs-app-ts/*"
+        "webpack:///./*": "${workspaceRoot}/packages/webapp-ts/*"
       }
     },
     {
@@ -31,7 +31,7 @@
         "action": "debugWithChrome"
       },
       "sourceMapPathOverrides": {
-        "webpack:///./*": "${workspaceRoot}/packages/nextjs-app-ts/*"
+        "webpack:///./*": "${workspaceRoot}/packages/webapp-ts/*"
       }
     }
   ]

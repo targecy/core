@@ -3,17 +3,17 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 
-import { YourContractDeploy } from "./YourContract.deploy.s.sol";
+import { TargecyDeploy } from "./Targecy.deploy.s.sol";
 import { YourNFTDeploy } from "./YourNFT.deploy.s.sol";
 
 // import { YourNFT } from "contracts/yourNFT.sol";
-// import { YourContract } from "contracts/yourContract.sol";
+// import { Targecy } from "contracts/yourContract.sol";
 
 contract DeployContracts is Script {
   function setUp() public {}
 
   function run() public {
-    YourContractDeploy yourContractDeploy = new YourContractDeploy();
+    TargecyDeploy yourContractDeploy = new TargecyDeploy();
     yourContractDeploy.setUp();
     yourContractDeploy.run();
 

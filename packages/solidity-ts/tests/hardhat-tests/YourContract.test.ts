@@ -2,17 +2,17 @@ import '~helpers/hardhat-imports';
 import '~tests/utils/chai-imports';
 
 import { expect } from 'chai';
-import { YourContract__factory, YourContract } from 'generated/contract-types';
+import { Targecy__factory, Targecy } from 'generated/contract-types';
 import hre from 'hardhat';
 
 import { getHardhatSigners } from '~helpers/functions/accounts';
 
-describe('YourContract', function () {
-  let yourContract: YourContract;
+describe('Targecy', function () {
+  let yourContract: Targecy;
 
   before(async () => {
     const { deployer } = await getHardhatSigners(hre);
-    const factory = new YourContract__factory(deployer);
+    const factory = new Targecy__factory(deployer);
     yourContract = await factory.deploy();
   });
 

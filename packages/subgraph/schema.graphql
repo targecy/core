@@ -1,0 +1,35 @@
+type Ad @entity {
+  id: String! # uint256
+  metadataURI: String! # string TODO
+  budget: BigInt! # uint256
+  targetGroupIds: [BigInt!]! # uint256[]
+
+  impressions: BigInt! # uint256
+}
+
+type TargetGroup @entity {
+  id: String! # uint256
+  metadataURI: String! # string
+  zkRequestIds: [BigInt!]! # uint256[]
+}
+
+type ZKPRequest @entity {
+  id: String! # uint256
+  metadataURI: String! # string
+  validator: Bytes! # address
+  query_schema: BigInt! # uint256
+  query_slotIndex: BigInt! # uint256
+  query_operator: BigInt! # uint256
+  query_value: [BigInt!]! # uint256[]
+  query_circuitId: String! # string
+}
+
+type User @entity {
+  id: String! # address
+  impressions: BigInt! # uint256
+}
+
+type Publisher @entity {
+  id: String! # address
+  impressions: BigInt! # uint256
+}

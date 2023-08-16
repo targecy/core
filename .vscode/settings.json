@@ -18,7 +18,8 @@
     "**/obj": true,
     "yarn-error.log": true,
     "**/yarn-error.log": true,
-    "**/.yalc": true
+    "**/.yalc": true,
+    "**/node_modules": true
   },
   "search.exclude": {
     "**/.git": true,
@@ -52,8 +53,7 @@
   "eslint.workingDirectories": [
     { "directory": "packages/*", "changeProcessCWD": true },
     { "directory": "packages/solidity-ts", "changeProcessCWD": true },
-    { "directory": "packages/vite-app-ts", "changeProcessCWD": true },
-    { "directory": "packages/nextjs-app-ts", "changeProcessCWD": true },
+    { "directory": "packages/webapp-ts", "changeProcessCWD": true },
     { "directory": "packages/common", "changeProcessCWD": true },
     { "directory": "packages/subgraph", "changeProcessCWD": true },
     { "directory": "packages/services", "changeProcessCWD": true },
@@ -66,5 +66,6 @@
     "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
   },
   "solidity.defaultCompiler": "localNodeModule",
-  "mochaExplorer.configFile": "./packages/solidity-ts/.mocharc.json"
+  "mochaExplorer.configFile": "./packages/solidity-ts/.mocharc.json",
+  "cSpell.words": ["codegen", "targecy"]
 }

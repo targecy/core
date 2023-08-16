@@ -194,7 +194,7 @@ task('mint', 'Mints NFTs to the specified address')
 
     /*
   //If you want to send some ETH to a contract on deploy (make your constructor payable!)
-  const yourContract = await deploy("YourContract", [], {
+  const yourContract = await deploy("Targecy", [], {
   value: ethers.utils.parseEther("0.05")
   });
   */
@@ -202,7 +202,7 @@ task('mint', 'Mints NFTs to the specified address')
     /*
   //If you want to link a library into your contract:
   // reference: https://github.com/austintgriffith/scaffold-eth/blob/using-libraries-example/packages/solidity-ts/scripts/deploy.js#L19
-  const yourContract = await deploy("YourContract", [], {}, {
+  const yourContract = await deploy("Targecy", [], {}, {
    LibraryName: **LibraryAddress**
   });
   */
