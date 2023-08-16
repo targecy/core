@@ -7,8 +7,6 @@ import { join } from 'path';
 
 require('dotenv').config({ path: join(__dirname, '.env') });
 
-console.log(process.env.NEXT_PUBLIC_SUBGRAPH_URL);
-
 const config: CodegenConfig = {
   overwrite: true,
   generates: {

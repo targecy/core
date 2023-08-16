@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { BaseQueryFn } from '@reduxjs/toolkit/dist/query';
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
@@ -24,7 +24,7 @@ export const graphqlBaseQuery =
     }
   ): BaseQueryFn =>
   async ({ document, variables }) => {
-    if (!baseUrl) throw new Error('Missing NEXT_PUBLIC_HASURA_ATHENS_2_INDEXED_URL environment variable.');
+    if (!baseUrl) throw new Error('Missing NEXT_PUBLIC_SUBGRAPH_URL environment variable.');
 
     const graphQLClient = new GraphQLClient(baseUrl, {});
 
@@ -34,7 +34,7 @@ export const graphqlBaseQuery =
   };
 
 export const testEndpoint = (build: Build): any =>
-  build.mutation<any, any>({
+  build.query<any, any>({
     queryFn: () => {
       return Promise.resolve({ data: 'test' });
     },
@@ -49,4 +49,4 @@ export const api = createApi({
   }),
 });
 
-export const { useTestMutation } = api;
+export const { useTestQuery } = api;

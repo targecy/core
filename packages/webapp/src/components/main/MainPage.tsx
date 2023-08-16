@@ -12,7 +12,6 @@ import { useLoadAppContracts, useConnectAppContracts, useAppContracts } from '~c
 import { useCreateAntNotificationHolder } from '~common/components/hooks/useAntNotification';
 import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
 import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
-import { networkDefinitions } from '~common/constants';
 import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
 import {
   AVAILABLE_NETWORKS_DEFINITIONS,
@@ -131,7 +130,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
     pages: [],
   };
   const { tabMenu, pages } = createTabsAndPages(pageList);
-  const RouteNotFound = <h3 className="p-10 mt-10 text-xl">Route Not Found </h3>;
+  const RouteNotFound = <h3 className="mt-10 p-10 text-xl">Route Not Found </h3>;
 
   // -----------------------------
   // 📃 Render the react components
