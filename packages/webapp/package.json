@@ -23,7 +23,7 @@
     "graphql-codegen": "gql-gen --config codegen.ts"
   },
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "^5.2.5",
     "@babel/runtime": "^7.19.0",
     "@emotion/cache": "^11.10.3",
     "@emotion/react": "^11.10.4",

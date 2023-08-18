@@ -151,7 +151,8 @@ const Header = () => {
           </div>
 
           <div className="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
-            <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
+            <div className="sm:ltr:mr-auto sm:rtl:ml-auto"></div>
+            {/* <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
               <form
                 className={`${
                   search && '!block'
@@ -208,7 +209,8 @@ const Header = () => {
                   <path d="M18.5 18.5L22 22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
               </button>
-            </div>
+            </div> */}
+
             <div>
               {themeConfig.theme === 'light' ? (
                 <button
@@ -447,7 +449,7 @@ const Header = () => {
 
         {/* horizontal menu */}
         <ul className="horizontal-menu hidden border-t border-[#ebedf2] bg-white py-1.5 px-6 font-semibold text-black rtl:space-x-reverse dark:border-[#191e3a] dark:bg-black dark:text-white-dark lg:space-x-1.5 xl:space-x-8">
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -502,7 +504,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -621,7 +623,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -711,7 +713,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -808,7 +810,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -916,7 +918,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -1014,7 +1016,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
@@ -1267,7 +1269,7 @@ const Header = () => {
               </li>
             </ul>
           </li>
-          <li className="menu nav-item relative">
+          <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">
                 <svg
