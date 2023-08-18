@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const FontIcons = () => {
   const dispatch = useDispatch();

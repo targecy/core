@@ -7,7 +7,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Calendar = () => {
   const dispatch = useDispatch();
@@ -475,7 +475,7 @@ const Calendar = () => {
                       <div className="!mt-8 flex items-center justify-end">
                         <button
                           type="button"
-                          className="btn btn-outline-danger"
+                          className="btn-outline-danger btn"
                           onClick={() => setIsAddEventModal(false)}>
                           Cancel
                         </button>

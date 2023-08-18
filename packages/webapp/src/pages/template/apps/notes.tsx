@@ -4,9 +4,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import Dropdown from '../../../../../../components/Dropdown';
-import { IRootState } from '../../../../../../store';
-import { setPageTitle } from '../../../../../../store/themeConfigSlice';
+import Dropdown from '../../../../../components/Dropdown';
+import { IRootState } from '../../../../../store';
+import { setPageTitle } from '../../../../../store/themeConfigSlice';
 
 const Notes = () => {
   const dispatch = useDispatch();

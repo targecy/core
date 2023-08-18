@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import AnimateHeight from 'react-animate-height';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Accordians = () => {
   const dispatch = useDispatch();

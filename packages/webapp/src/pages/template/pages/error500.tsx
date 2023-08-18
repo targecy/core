@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import BlankLayout from '~/components/Layouts/BlankLayout';
 import { IRootState } from '~/store';
@@ -24,7 +24,7 @@ const Error500 = () => {
             className="mx-auto -mt-10 w-full max-w-xs object-cover md:-mt-14 md:max-w-xl"
           />
           <p className="mt-5 text-base dark:text-white">Internal server error!</p>
-          <Link href="/" className="btn btn-gradient mx-auto !mt-7 w-max border-0 uppercase shadow-none">
+          <Link href="/" className="btn-gradient btn mx-auto !mt-7 w-max border-0 uppercase shadow-none">
             Home
           </Link>
         </div>

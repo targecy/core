@@ -1,3 +1,12 @@
+import { useBlockNumber } from 'wagmi';
+import { useWallet } from '~~/hooks';
+
 export const Home = () => {
-  return <span>Hello</span>;
+  const wallet = useWallet();
+
+  return (
+    <p>
+      Hello: {wallet.address}
+    </p>
+  );
 };

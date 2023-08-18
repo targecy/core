@@ -4,8 +4,8 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Clipboard = () => {
   const dispatch = useDispatch();

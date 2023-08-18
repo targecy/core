@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const SweetAlert = () => {
   const dispatch = useDispatch();

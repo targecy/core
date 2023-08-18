@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import BlankLayout from '~/components/Layouts/BlankLayout';
 
@@ -145,7 +145,7 @@ const ComingSoonCover = () => {
                   />
                   <button
                     type="button"
-                    className="btn btn-gradient end-1.5 top-1/2 inline-flex border-0 px-4 py-1.5 text-base shadow-none sm:absolute sm:-translate-y-1/2"
+                    className="btn-gradient end-1.5 btn top-1/2 inline-flex border-0 px-4 py-1.5 text-base shadow-none sm:absolute sm:-translate-y-1/2"
                     onClick={() => router.push('/')}>
                     Subscribe
                   </button>

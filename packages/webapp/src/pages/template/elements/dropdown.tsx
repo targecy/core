@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Dropdown from '../../../../components/Dropdown';
-import CodeHighlight from '../../../../components/Highlight';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import Dropdown from '../../../components/Dropdown';
+import CodeHighlight from '../../../components/Highlight';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const DropdownPage = () => {
   const dispatch = useDispatch();
@@ -195,7 +195,7 @@ const DropdownPage = () => {
             {codeArr.includes('code1') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -411,7 +411,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
               {codeArr.includes('code2') && (
                 <CodeHighlight>
                   <pre className="language-typescript">
-                    {`import Dropdown from '../../../../components/Dropdown';
+                    {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -623,7 +623,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code3') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -834,7 +834,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code4') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -1047,7 +1047,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code5') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -1263,7 +1263,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code6') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -1500,7 +1500,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code7') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -1701,7 +1701,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code8') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -1959,7 +1959,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
             {codeArr.includes('code9') && (
               <CodeHighlight>
                 <pre className="language-typescript">
-                  {`import Dropdown from '../../../../components/Dropdown';
+                  {`import Dropdown from '../../../components/Dropdown';
 
 const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 

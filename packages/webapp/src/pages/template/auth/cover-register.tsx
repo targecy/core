@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setPageTitle, toggleLocale, toggleRTL } from '../../../../store/themeConfigSlice';
+import { setPageTitle, toggleLocale, toggleRTL } from '../../../store/themeConfigSlice';
 
 import Dropdown from '~/components/Dropdown';
 import BlankLayout from '~/components/Layouts/BlankLayout';
@@ -75,7 +75,7 @@ const RegisterCover = () => {
               <Link href="/" className="block w-8 lg:hidden">
                 <img src="/images/logo.svg" alt="Logo" className="mx-auto w-10" />
               </Link>
-              <div className="dropdown ms-auto w-max">
+              <div className="ms-auto dropdown w-max">
                 {flag && (
                   <Dropdown
                     offset={[0, 8]}
@@ -232,7 +232,7 @@ const RegisterCover = () => {
                 </div>
                 <button
                   type="submit"
-                  className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
+                  className="btn-gradient btn !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
                   Sign Up
                 </button>
               </form>

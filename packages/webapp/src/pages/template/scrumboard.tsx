@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ReactSortable } from 'react-sortablejs';
 import Swal from 'sweetalert2';
 
-import Dropdown from '../../../../components/Dropdown';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import Dropdown from '../../../components/Dropdown';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Scrumboard = () => {
   const dispatch = useDispatch();
@@ -369,7 +369,7 @@ const Scrumboard = () => {
                               {task.tags?.length ? (
                                 task.tags.map((tag: any, i: any) => {
                                   return (
-                                    <div key={i} className="btn btn-outline-primary flex px-2 py-1">
+                                    <div key={i} className="btn-outline-primary btn flex px-2 py-1">
                                       <svg
                                         width="20"
                                         height="20"
@@ -642,7 +642,7 @@ const Scrumboard = () => {
                       <div className="mt-8 flex items-center justify-end">
                         <button
                           type="button"
-                          className="btn btn-outline-danger"
+                          className="btn-outline-danger btn"
                           onClick={() => setIsAddProjectModal(false)}>
                           Cancel
                         </button>
@@ -731,7 +731,7 @@ const Scrumboard = () => {
                       </div>
                     </div>
                     <div className="mt-8 flex items-center justify-end">
-                      <button onClick={() => setIsAddTaskModal(false)} type="button" className="btn btn-outline-danger">
+                      <button onClick={() => setIsAddTaskModal(false)} type="button" className="btn-outline-danger btn">
                         Cancel
                       </button>
                       <button type="submit" className="btn btn-primary ltr:ml-4 rtl:mr-4">
@@ -833,7 +833,7 @@ const Scrumboard = () => {
                           setIsDeleteModal(false);
                         }}
                         type="button"
-                        className="btn btn-outline-danger">
+                        className="btn-outline-danger btn">
                         Cancel
                       </button>
                       <button onClick={deleteTask} type="button" className="btn btn-primary ltr:ml-4 rtl:mr-4">

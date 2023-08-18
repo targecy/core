@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import CountUp from 'react-countup';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Counter = () => {
   const dispatch = useDispatch();

@@ -1,9 +1,8 @@
-import { clsx } from '@mantine/core';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const HeaderWalletManager = () => {
   return (
-    <span>wallet</span>
+    <ConnectButton></ConnectButton>
     // <ConnectButton.Custom>
     //   {({ account, chain, openAccountModal, openConnectModal, mounted }) => (
     //     <div
@@ -14,9 +13,10 @@ export const HeaderWalletManager = () => {
     //       {(() => {
     //         if (!mounted || !account || !chain) {
     //           return (
-    //             <button className="min-w-[163px]" onClick={openConnectModal}>
-    //               connect wallet
-    //             </button>
+    //             <ConnectButton></ConnectButton>
+    //             // <button className="min-w-[163px]" onClick={openConnectModal}>
+    //             //   connect wallet
+    //             // </button>
     //           );
     //         }
 

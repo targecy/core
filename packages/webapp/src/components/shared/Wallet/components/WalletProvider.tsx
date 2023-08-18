@@ -1,41 +1,49 @@
 import '@rainbow-me/rainbowkit/styles.css';
-
-import { connectorsForWallets, RainbowKitProvider, wallet } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { ReactNode } from 'react';
-import { useSelector } from 'react-redux';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { polygonMumbai, localhost } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 
-import { appName, defaultChains } from '../Wallet.constants';
+import { appName } from '../Wallet.constants';
+
 import { CustomAvatar } from './CustomAvatar';
+import { isNodeDevelopment } from '~~/constants/app.constants';
 
-// const { chains, provider } = configureChains(defaultChains, [
-//   jsonRpcProvider({ rpc: (rpcChain) => ({ http: rpcChain.rpcUrls.default }) }),
-//   publicProvider(),
-// ]);
+const localhostChain = localhost;
+localhostChain.chainId = 31337;
+localhostChain.id = 31337;
 
-// const connectors = connectorsForWallets([
-//   {
-//     groupName: ' ',
-//     wallets: [wallet.metaMask({ chains }), wallet.coinbase({ appName, chains })],
-//   },
-// ]);
+const { chains, publicClient } = configureChains(
+  [isNodeDevelopment ? localhostChain : polygonMumbai],
+  [
+    jsonRpcProvider({
+      rpc: (chain) => ({
+        http: isNodeDevelopment ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon_mumbai',
+      }),
+    }),
+  ]
+);
+const { connectors } = getDefaultWallets({
+  appName: 'Targecy',
+  projectId: 'f9753e832046896b8250567dc3231c56',
+  chains,
+});
 
-// const wagmiClient = createClient({
-//   autoConnect: true,
-//   connectors,
-//   provider,
-// });
+const wagmiConfig = createConfig({
+  autoConnect: false, // TODO Set True and fix hydration issue
+  connectors,
+  publicClient,
+});
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
   return (
-    <>{children}</>
-    // <WagmiConfig client={wagmiClient}>
-    //   <RainbowKitProvider chains={chains} appInfo={{ appName }} avatar={CustomAvatar}>
-    //     {children}
-    //   </RainbowKitProvider>
-    // </WagmiConfig>
+    <WagmiConfig config={wagmiConfig}>
+      <RainbowKitProvider chains={chains} appInfo={{ appName }}>
+        {children}
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 };
 

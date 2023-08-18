@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const items = [
   {

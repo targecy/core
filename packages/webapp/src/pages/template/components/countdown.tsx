@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Countdown = () => {
   const dispatch = useDispatch();

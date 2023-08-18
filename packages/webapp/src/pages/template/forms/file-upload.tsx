@@ -3,9 +3,9 @@ import { useEffect, useState } from 'react';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
+import CodeHighlight from '../../../components/Highlight';
 // import "file-upload-with-preview/dist/file-upload-with-preview.min.css";
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const FileUploadPreview = () => {
   const dispatch = useDispatch();

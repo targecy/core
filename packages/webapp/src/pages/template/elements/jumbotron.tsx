@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Jumbotron = () => {
   const dispatch = useDispatch();
@@ -85,7 +85,7 @@ const Jumbotron = () => {
               It uses utility classes for typography and spacing to space content out within the larger container.
             </p>
             <p className="lead">
-              <button type="button" className="btn btn-dark">
+              <button type="button" className="btn-dark btn">
                 Learn more
               </button>
             </p>

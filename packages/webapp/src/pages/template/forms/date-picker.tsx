@@ -2,15 +2,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Flatpickr from 'react-flatpickr';
 
-import CodeHighlight from '../../../../components/Highlight';
+import CodeHighlight from '../../../components/Highlight';
 
 import 'flatpickr/dist/flatpickr.css';
 import Nouislider from '@x1mrdonut1x/nouislider-react';
 import 'nouislider/distribute/nouislider.css';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const DateRangePicker = () => {
   const dispatch = useDispatch();

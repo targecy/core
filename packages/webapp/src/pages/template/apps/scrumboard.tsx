@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ReactSortable } from 'react-sortablejs';
 import Swal from 'sweetalert2';
 
-import Dropdown from '../../../../../../components/Dropdown';
-import { IRootState } from '../../../../../../store';
-import { setPageTitle } from '../../../../../../store/themeConfigSlice';
+import Dropdown from '../../../../../components/Dropdown';
+import { IRootState } from '../../../../../store';
+import { setPageTitle } from '../../../../../store/themeConfigSlice';
 
 const Scrumboard = () => {
   const dispatch = useDispatch();

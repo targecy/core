@@ -1,7 +1,3 @@
-import { join } from 'path';
-
-require('dotenv').config({ path: join(__dirname, '.env') });
-
 module.exports = {
   client: {
     includes: ['src/**/*.graphql.*'],
@@ -10,7 +6,7 @@ module.exports = {
     tagName: 'gql',
     service: {
       name: 'webapp',
-      url: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
+      url: "http://localhost:8000/subgraphs/name/targecy",
     },
   },
 };

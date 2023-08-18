@@ -4,9 +4,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import Dropdown from '../../../../components/Dropdown';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import Dropdown from '../../../components/Dropdown';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Notes = () => {
   const dispatch = useDispatch();
@@ -1088,7 +1088,7 @@ const Notes = () => {
                           <div className="mt-8 flex items-center justify-end">
                             <button
                               type="button"
-                              className="btn btn-outline-danger gap-2"
+                              className="btn-outline-danger btn gap-2"
                               onClick={() => setAddContactModal(false)}>
                               Cancel
                             </button>
@@ -1198,7 +1198,7 @@ const Notes = () => {
                         <div className="mt-8 flex items-center justify-center">
                           <button
                             type="button"
-                            className="btn btn-outline-danger"
+                            className="btn-outline-danger btn"
                             onClick={() => setIsDeleteNoteModal(false)}>
                             Cancel
                           </button>
@@ -1261,7 +1261,7 @@ const Notes = () => {
                         {params.tag && (
                           <button
                             type="button"
-                            className={`badge badge-outline-primary rounded-3xl capitalize ltr:mr-3 rtl:ml-3 ${
+                            className={`badge-outline-primary badge rounded-3xl capitalize ltr:mr-3 rtl:ml-3 ${
                               (params.tag === 'personal' && 'shadow-primary',
                               params.tag === 'work' && 'shadow-warning',
                               params.tag === 'social' && 'shadow-info',
@@ -1293,7 +1293,7 @@ const Notes = () => {
                         <div className="mt-8 ltr:text-right rtl:text-left">
                           <button
                             type="button"
-                            className="btn btn-outline-danger"
+                            className="btn-outline-danger btn"
                             onClick={() => setIsViewNoteModal(false)}>
                             Close
                           </button>

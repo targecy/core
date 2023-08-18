@@ -2,9 +2,9 @@ import Tippy from '@tippyjs/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import CodeHighlight from '../../../../components/Highlight';
+import CodeHighlight from '../../../components/Highlight';
 import 'tippy.js/dist/tippy.css';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import { useDispatch } from 'react-redux';
 const Avatar = () => {

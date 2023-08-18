@@ -4,12 +4,12 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import Swal from 'sweetalert2';
 
 import 'react-quill/dist/quill.snow.css';
-import Dropdown from '../../../../../../components/Dropdown';
+import Dropdown from '../../../../../components/Dropdown';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IRootState } from '../../../../../../store';
-import { setPageTitle } from '../../../../../../store/themeConfigSlice';
+import { IRootState } from '../../../../../store';
+import { setPageTitle } from '../../../../../store/themeConfigSlice';
 
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });

@@ -3,9 +3,9 @@ import { DataTable, DataTableSortStatus } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Dropdown from '../../../../components/Dropdown';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import Dropdown from '../../../components/Dropdown';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const rowData = [
   {

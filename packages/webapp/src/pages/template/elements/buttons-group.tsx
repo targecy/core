@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Dropdown from '../../../../components/Dropdown';
-import CodeHighlight from '../../../../components/Highlight';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import Dropdown from '../../../components/Dropdown';
+import CodeHighlight from '../../../components/Highlight';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Buttongroups = () => {
   const dispatch = useDispatch();
@@ -79,13 +79,13 @@ const Buttongroups = () => {
           </div>
           <div className="mb-5 text-center">
             <div className="relative inline-flex align-middle">
-              <button type="button" className="btn btn-dark ltr:rounded-r-none rtl:rounded-l-none">
+              <button type="button" className="btn-dark btn ltr:rounded-r-none rtl:rounded-l-none">
                 Left
               </button>
-              <button type="button" className="btn btn-dark rounded-none">
+              <button type="button" className="btn-dark btn rounded-none">
                 Middle
               </button>
-              <button type="button" className="btn btn-dark ltr:rounded-l-none rtl:rounded-r-none">
+              <button type="button" className="btn-dark btn ltr:rounded-l-none rtl:rounded-r-none">
                 Right
               </button>
             </div>
@@ -153,16 +153,16 @@ const Buttongroups = () => {
             <div className="flex w-full flex-wrap items-center justify-center gap-2 sm:justify-between">
               <div>
                 <div className="relative inline-flex align-middle">
-                  <button type="button" className="btn btn-dark ltr:rounded-r-none rtl:rounded-l-none">
+                  <button type="button" className="btn-dark btn ltr:rounded-r-none rtl:rounded-l-none">
                     1
                   </button>
-                  <button type="button" className="btn btn-dark rounded-none">
+                  <button type="button" className="btn-dark btn rounded-none">
                     2
                   </button>
-                  <button type="button" className="btn btn-dark rounded-none">
+                  <button type="button" className="btn-dark btn rounded-none">
                     3
                   </button>
-                  <button type="button" className="btn btn-dark ltr:rounded-l-none rtl:rounded-r-none">
+                  <button type="button" className="btn-dark btn ltr:rounded-l-none rtl:rounded-r-none">
                     4
                   </button>
                 </div>
@@ -256,7 +256,7 @@ const Buttongroups = () => {
           </div>
           <div className="mb-5 text-center">
             <div className="relative inline-flex flex-col items-start justify-center align-middle">
-              <button type="button" className="btn btn-dark w-full rounded-b-none">
+              <button type="button" className="btn-dark btn w-full rounded-b-none">
                 Button
               </button>
               <div className="relative">
@@ -296,10 +296,10 @@ const Buttongroups = () => {
                   </Dropdown>
                 </div>
               </div>
-              <button type="button" className="btn btn-dark w-full rounded-none">
+              <button type="button" className="btn-dark btn w-full rounded-none">
                 Button
               </button>
-              <button type="button" className="btn btn-dark w-full rounded-none">
+              <button type="button" className="btn-dark btn w-full rounded-none">
                 Button
               </button>
               <div className="relative">
@@ -343,7 +343,7 @@ const Buttongroups = () => {
           </div>
           {codeArr.includes('code3') && (
             <CodeHighlight>
-              <pre className="language-typescript">{`import Dropdown from '../../../../components/Dropdown';
+              <pre className="language-typescript">{`import Dropdown from '../../../components/Dropdown';
 
 <div className="relative inline-flex align-middle flex-col items-start justify-center">
     <button type="button" className="btn btn-dark rounded-b-none w-full">

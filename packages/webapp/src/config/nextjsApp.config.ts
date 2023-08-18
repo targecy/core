@@ -120,7 +120,7 @@ export const INFURA_ID: string = process.env.NEXT_PUBLIC_KEY_INFURA;
 // Connecting to mainnet
 // -------------------
 const mainnetProvider = new StaticJsonRpcProvider(
-  process.env.NEXT_PUBLIC_RPC_MAINNET ?? scaffoldConfig.runtime.buidlGuidl.rpcMainnet
+  process.env.NEXT_PUBLIC_RPC_MAINNET ?? "scaffoldConfig.runtime.buidlGuidl.rpcMainnet"
 );
 
 // incase there are issues

@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import CodeHighlight from '../../../../components/Highlight';
+import CodeHighlight from '../../../components/Highlight';
 import 'react-quill/dist/quill.snow.css';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';

@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import AnimateHeight from 'react-animate-height';
 import { useDispatch } from 'react-redux';
 
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const KnowledgeBase = () => {
   const dispatch = useDispatch();

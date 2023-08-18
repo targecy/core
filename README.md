@@ -202,16 +202,3 @@ Register as a builder [here](https://speedrunethereum.com) and start on some of 
 ## 💬 Support Chat
 
 Join the telegram [support chat 💬](https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA) to ask questions and find others building with 🏗 scaffold-eth!
-
-## 🛠 Buidl
-
-Check out
-
-- [Typescript challenges](https://github.com/scaffold-eth/scaffold-eth-typescript-challenges)
-- [Typescript examples](https://github.com/scaffold-eth/scaffold-eth-typescript-examples)
-- [Vanilla JS active branches](https://github.com/scaffold-eth/scaffold-eth/branches/active)
-- Join/fund the 🏰 [BuidlGuidl](https://BuidlGuidl.com)!
-
-### 🙏🏽 Support us!
-
-Please check out our [Gitcoin grant](https://gitcoin.co/grants/2851/scaffold-eth) too!

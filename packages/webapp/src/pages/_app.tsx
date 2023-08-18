@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -16,7 +15,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import '../styles/tailwind.css';
 import { NextPage } from 'next';
 import { compose } from '@reduxjs/toolkit';
-import { wrapper } from '~~/lib/app.store';
+
 import { withProviders } from '~~/lib/withProviders';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {

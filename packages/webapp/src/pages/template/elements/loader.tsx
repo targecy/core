@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 const Loader = () => {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -97,7 +97,7 @@ const Loader = () => {
                 Loading
               </button>
 
-              <button type="button" className="btn btn-danger btn-lg">
+              <button type="button" className="btn-danger btn btn-lg">
                 <span className="inline-block h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-white border-l-transparent align-middle ltr:mr-4 rtl:ml-4"></span>
                 Loading
               </button>
@@ -199,7 +199,7 @@ const Loader = () => {
               </div>
               <div className="flex w-full flex-wrap items-center justify-center text-center sm:w-1/2">
                 <p className="mb-2 w-full">Outline Button</p>
-                <button type="button" className="btn btn-outline-primary btn-lg">
+                <button type="button" className="btn-outline-primary btn btn-lg">
                   Loading
                   <svg
                     viewBox="0 0 24 24"

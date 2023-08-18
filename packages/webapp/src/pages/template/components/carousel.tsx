@@ -6,11 +6,11 @@ import 'swiper/css/pagination';
 import { Navigation, Pagination, Autoplay } from 'swiper';
 import { useEffect, useState } from 'react';
 
-import CodeHighlight from '../../../../components/Highlight';
+import CodeHighlight from '../../../components/Highlight';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import { IRootState } from '~/store';
 

@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 import 'easymde/dist/easymde.min.css';
 const SimpleMdeReact = dynamic(() => import('react-simplemde-editor'), { ssr: false });
 

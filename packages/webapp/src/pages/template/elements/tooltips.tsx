@@ -2,9 +2,9 @@ import Tippy from '@tippyjs/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-import CodeHighlight from '../../../../components/Highlight';
+import CodeHighlight from '../../../components/Highlight';
 import 'tippy.js/dist/tippy.css';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import { useDispatch } from 'react-redux';
 
@@ -195,7 +195,7 @@ import 'tippy.js/dist/tippy.css';
                   </button>
                 </Tippy>
                 <Tippy content="Popover on right" placement="right">
-                  <button type="button" className="btn btn-danger">
+                  <button type="button" className="btn-danger btn">
                     Tooltip on right
                   </button>
                 </Tippy>
@@ -276,7 +276,7 @@ import 'tippy.js/dist/tippy.css';
             <div className="mb-5">
               <div className="flex w-full justify-center gap-4">
                 <Tippy content={<strong>Bolded content</strong>}>
-                  <button type="button" data-dismissable="true" className="btn btn-dark">
+                  <button type="button" data-dismissable="true" className="btn-dark btn">
                     Tooltip on HTML
                   </button>
                 </Tippy>
@@ -354,7 +354,7 @@ import 'tippy.js/dist/tippy.css';
                   </button>
                 </Tippy>
                 <Tippy content="Disabled Animation">
-                  <button type="button" data-animation="false" className="btn btn-dark">
+                  <button type="button" data-animation="false" className="btn-dark btn">
                     Disabled Animation
                   </button>
                 </Tippy>
@@ -450,7 +450,7 @@ import 'tippy.js/dist/tippy.css';
                   </button>
                 </Tippy>
                 <Tippy content="danger" theme="danger">
-                  <button type="button" className="btn btn-danger">
+                  <button type="button" className="btn-danger btn">
                     Danger
                   </button>
                 </Tippy>
@@ -465,7 +465,7 @@ import 'tippy.js/dist/tippy.css';
                   </button>
                 </Tippy>
                 <Tippy content="dark" theme="dark">
-                  <button type="button" className="btn btn-dark">
+                  <button type="button" className="btn-dark btn">
                     Dark
                   </button>
                 </Tippy>

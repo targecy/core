@@ -22,6 +22,7 @@ import {
   BURNER_FALLBACK_ENABLED,
 } from '~~/config/nextjsApp.config';
 import { TAppProps } from '~~/models/TAppProps';
+import { Targecy } from '~common/generated/contract-types';
 
 /** ********************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -91,7 +92,7 @@ export const MainPage: NextPage<IMainPageProps> = (props) => {
   // -----------------------------
 
   // init contracts
-  const yourContract = useAppContracts('Targecy', ethersAppContext.chainId);
+  const yourContract: Targecy = useAppContracts('Targecy', ethersAppContext.chainId);
 
   // keep track of a variable from the contract in the local React state:
   const [purpose, update] = useContractReader(yourContract, yourContract?.ads);

@@ -8,9 +8,9 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Navigation, Pagination } from 'swiper';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Modals = () => {
   const swiperRef = useRef<any>();
@@ -196,7 +196,7 @@ const Modals = () => {
                               amet ullamcorper mi.
                             </p>
                             <div className="mt-8 flex items-center justify-end">
-                              <button type="button" className="btn btn-outline-danger" onClick={() => setModal1(false)}>
+                              <button type="button" className="btn-outline-danger btn" onClick={() => setModal1(false)}>
                                 Discard
                               </button>
                               <button
@@ -387,7 +387,7 @@ const [modal1, setModal1] = useState(false);
                               amet ullamcorper mi.
                             </p>
                             <div className="mt-8 flex items-center justify-end">
-                              <button type="button" className="btn btn-outline-danger" onClick={() => setModal2(false)}>
+                              <button type="button" className="btn-outline-danger btn" onClick={() => setModal2(false)}>
                                 Discard
                               </button>
                               <button
@@ -575,7 +575,7 @@ const [modal2, setModal2] = useState(false);
                               amet ullamcorper mi.
                             </p>
                             <div className="mt-8 flex items-center justify-end">
-                              <button type="button" onClick={() => setModal3(false)} className="btn btn-outline-danger">
+                              <button type="button" onClick={() => setModal3(false)} className="btn-outline-danger btn">
                                 Discard
                               </button>
                               <button
@@ -756,7 +756,7 @@ const [modal3, setModal3] = useState(false);
                             ullamcorper mi.
                           </p>
                           <div className="mt-8 flex items-center justify-end">
-                            <button onClick={() => setModal4(false)} type="button" className="btn btn-outline-danger">
+                            <button onClick={() => setModal4(false)} type="button" className="btn-outline-danger btn">
                               Discard
                             </button>
                             <button
@@ -937,7 +937,7 @@ const [modal4, setModal4] = useState(false);
                                   <button
                                     onClick={() => setModal5(false)}
                                     type="button"
-                                    className="btn btn-outline-danger">
+                                    className="btn-outline-danger btn">
                                     Discard
                                   </button>
                                   <button
@@ -958,7 +958,7 @@ const [modal4, setModal4] = useState(false);
 
                 {/* Large */}
                 <div>
-                  <button type="button" onClick={() => setModal6(true)} className="btn btn-danger">
+                  <button type="button" onClick={() => setModal6(true)} className="btn-danger btn">
                     Large
                   </button>
                   <Transition appear show={modal6} as={Fragment}>
@@ -1016,7 +1016,7 @@ const [modal4, setModal4] = useState(false);
                                   <button
                                     onClick={() => setModal6(false)}
                                     type="button"
-                                    className="btn btn-outline-danger">
+                                    className="btn-outline-danger btn">
                                     Discard
                                   </button>
                                   <button
@@ -1095,7 +1095,7 @@ const [modal4, setModal4] = useState(false);
                                   <button
                                     onClick={() => setModal7(false)}
                                     type="button"
-                                    className="btn btn-outline-danger">
+                                    className="btn-outline-danger btn">
                                     Discard
                                   </button>
                                   <button
@@ -1564,7 +1564,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal9(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -1633,7 +1633,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal10(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -1702,7 +1702,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal11(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -1771,7 +1771,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal12(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -1790,7 +1790,7 @@ const [modal8, setModal8] = useState(false);
                 </div>
                 {/* FadeIn Left */}
                 <div>
-                  <button onClick={() => setModal13(true)} type="button" className="btn btn-danger">
+                  <button onClick={() => setModal13(true)} type="button" className="btn-danger btn">
                     FadeIn Left
                   </button>
                   <Transition appear show={modal13} as={Fragment}>
@@ -1843,7 +1843,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal13(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -1915,7 +1915,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal14(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -1934,7 +1934,7 @@ const [modal8, setModal8] = useState(false);
                 </div>
                 {/* FadeIn Right */}
                 <div>
-                  <button onClick={() => setModal15(true)} type="button" className="btn btn-dark">
+                  <button onClick={() => setModal15(true)} type="button" className="btn-dark btn">
                     FadeIn Right
                   </button>
                   <Transition appear show={modal15} as={Fragment}>
@@ -1987,7 +1987,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal15(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -2056,7 +2056,7 @@ const [modal8, setModal8] = useState(false);
                                 <button
                                   onClick={() => setModal16(false)}
                                   type="button"
-                                  className="btn btn-outline-danger">
+                                  className="btn-outline-danger btn">
                                   Discard
                                 </button>
                                 <button
@@ -2590,7 +2590,7 @@ const [modal16, setModal16] = useState(false);
                                   <button
                                     type="button"
                                     onClick={() => setModal17(false)}
-                                    className="btn btn-outline-danger">
+                                    className="btn-outline-danger btn">
                                     Discard
                                   </button>
                                   <button
@@ -2762,7 +2762,7 @@ const [modal16, setModal16] = useState(false);
                                   <button
                                     onClick={() => setModal18(false)}
                                     type="button"
-                                    className="btn btn-outline-danger">
+                                    className="btn-outline-danger btn">
                                     Discard
                                   </button>
                                   <button
@@ -2843,7 +2843,7 @@ const [modal16, setModal16] = useState(false);
                                   </p>
                                 </div>
                                 <div className="flex justify-center gap-4 p-5">
-                                  <button type="button" className="btn dark:btn-dark bg-white text-black">
+                                  <button type="button" className="dark:btn-dark btn bg-white text-black">
                                     View
                                   </button>
                                 </div>
@@ -2971,7 +2971,7 @@ const [modal16, setModal16] = useState(false);
                               </div>
                               <div className="my-4 text-center text-xs text-white-dark dark:text-white-dark/70">OR</div>
                               <div className="mb-5 flex items-center justify-center gap-3">
-                                <button type="button" className="btn btn-outline-primary flex gap-1">
+                                <button type="button" className="btn-outline-primary btn flex gap-1">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24px"
@@ -2988,7 +2988,7 @@ const [modal16, setModal16] = useState(false);
 
                                   <span>Facebook</span>
                                 </button>
-                                <button type="button" className="btn btn-outline-danger flex gap-1">
+                                <button type="button" className="btn-outline-danger btn flex gap-1">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24px"
@@ -3024,7 +3024,7 @@ const [modal16, setModal16] = useState(false);
                 </div>
                 {/* Register */}
                 <div>
-                  <button type="button" onClick={() => setModal21(true)} className="btn btn-danger">
+                  <button type="button" onClick={() => setModal21(true)} className="btn-danger btn">
                     Register
                   </button>
                   <Transition appear show={modal21} as={Fragment}>
@@ -3172,7 +3172,7 @@ const [modal16, setModal16] = useState(false);
                               </div>
                               <div className="my-4 text-center text-xs text-white-dark dark:text-white-dark/70">OR</div>
                               <div className="mb-5 flex items-center justify-center gap-3">
-                                <button type="button" className="btn btn-outline-primary flex gap-1">
+                                <button type="button" className="btn-outline-primary btn flex gap-1">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24px"
@@ -3188,7 +3188,7 @@ const [modal16, setModal16] = useState(false);
                                   </svg>
                                   <span>Facebook</span>
                                 </button>
-                                <button type="button" className="btn btn-outline-danger flex gap-1">
+                                <button type="button" className="btn-outline-danger btn flex gap-1">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24px"

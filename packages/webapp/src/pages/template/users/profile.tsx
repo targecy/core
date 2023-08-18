@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Dropdown from '../../../../../../components/Dropdown';
-import { IRootState } from '../../../../../../store';
-import { setPageTitle } from '../../../../../../store/themeConfigSlice';
+import Dropdown from '../../../../../components/Dropdown';
+import { IRootState } from '../../../../../store';
+import { setPageTitle } from '../../../../../store/themeConfigSlice';
 
 const Profile = () => {
   const dispatch = useDispatch();

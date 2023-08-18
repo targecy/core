@@ -9,9 +9,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import Dropdown from '../../../../components/Dropdown';
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import Dropdown from '../../../components/Dropdown';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
 
@@ -2165,7 +2165,7 @@ const Mailbox = () => {
                 <div className="mt-4 grid w-full grid-cols-2 gap-3 sm:w-auto sm:grid-cols-4">
                   <button
                     type="button"
-                    className={`btn btn-outline-primary flex ${
+                    className={`btn-outline-primary btn flex ${
                       selectedTab === 'personal' ? 'bg-primary text-white' : ''
                     }`}
                     onClick={() => {
@@ -2187,7 +2187,7 @@ const Mailbox = () => {
 
                   <button
                     type="button"
-                    className={`btn btn-outline-warning flex ${selectedTab === 'work' ? 'bg-warning text-white' : ''}`}
+                    className={`btn-outline-warning btn flex ${selectedTab === 'work' ? 'bg-warning text-white' : ''}`}
                     onClick={() => {
                       setSelectedTab('work');
                       tabChanged('work');
@@ -2212,7 +2212,7 @@ const Mailbox = () => {
 
                   <button
                     type="button"
-                    className={`btn btn-outline-success flex ${
+                    className={`btn-outline-success btn flex ${
                       selectedTab === 'social' ? 'bg-success text-white' : ''
                     }`}
                     onClick={() => {
@@ -2247,7 +2247,7 @@ const Mailbox = () => {
 
                   <button
                     type="button"
-                    className={`btn btn-outline-danger flex ${selectedTab === 'private' ? 'bg-danger text-white' : ''}`}
+                    className={`btn-outline-danger btn flex ${selectedTab === 'private' ? 'bg-danger text-white' : ''}`}
                     onClick={() => {
                       setSelectedTab('private');
                       tabChanged('private');
@@ -3067,7 +3067,7 @@ const Mailbox = () => {
                   />
                 </div>
                 <div className="mt-8 flex items-center ltr:ml-auto rtl:mr-auto">
-                  <button type="button" className="btn btn-outline-danger ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
+                  <button type="button" className="btn-outline-danger btn ltr:mr-3 rtl:ml-3" onClick={closeMsgPopUp}>
                     Close
                   </button>
                   <button

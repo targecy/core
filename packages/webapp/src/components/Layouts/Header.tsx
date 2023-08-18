@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { IRootState } from '../../store';
-import { toggleLocale, toggleTheme, toggleSidebar, toggleRTL } from '../../store/themeConfigSlice';
-import Dropdown from '../Dropdown';
+import { toggleTheme, toggleSidebar, toggleRTL } from '../../store/themeConfigSlice';
+import { HeaderWalletManager } from '../shared/Wallet';
 
 const Header = () => {
   const router = useRouter();
@@ -133,7 +133,7 @@ const Header = () => {
         <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
           <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
             <Link href="/" className="main-logo flex shrink-0 items-center">
-              <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="images/logo.svg" alt="logo" />
+              <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/images/logo.svg" alt="logo" />
               <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
                 TARGECY
               </span>
@@ -292,7 +292,9 @@ const Header = () => {
             </div>
 
             <div className="dropdown flex shrink-0">
-              <Dropdown
+              <HeaderWalletManager></HeaderWalletManager>
+
+              {/* <Dropdown
                 offset={[0, 8]}
                 placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
                 btnClassName="relative group block"
@@ -438,7 +440,7 @@ const Header = () => {
                     </Link>
                   </li>
                 </ul>
-              </Dropdown>
+              </Dropdown> */}
             </div>
           </div>
         </div>

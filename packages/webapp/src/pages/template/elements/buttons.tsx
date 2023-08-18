@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '../../../../components/Highlight';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import CodeHighlight from '../../../components/Highlight';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 const Buttons = () => {
   const dispatch = useDispatch();
@@ -81,7 +81,7 @@ const Buttons = () => {
                 </button>
               </div>
               <div className="flex w-1/2 items-center justify-center">
-                <button type="button" className="btn btn-outline-primary">
+                <button type="button" className="btn-outline-primary btn">
                   Primary
                 </button>
               </div>
@@ -149,7 +149,7 @@ const Buttons = () => {
                 </button>
               </div>
               <div className="flex w-1/2 items-center justify-center">
-                <button type="button" className="btn btn-outline-primary rounded-full">
+                <button type="button" className="btn-outline-primary btn rounded-full">
                   Primary
                 </button>
               </div>
@@ -222,13 +222,13 @@ const Buttons = () => {
               <button type="button" className="btn btn-warning">
                 Warning
               </button>
-              <button type="button" className="btn btn-danger">
+              <button type="button" className="btn-danger btn">
                 Danger
               </button>
               <button type="button" className="btn btn-secondary">
                 Secondary
               </button>
-              <button type="button" className="btn btn-dark">
+              <button type="button" className="btn-dark btn">
                 Dark
               </button>
             </div>
@@ -298,25 +298,25 @@ const Buttons = () => {
           </div>
           <div className="mb-5">
             <div className="flex flex-wrap items-center justify-center gap-2">
-              <button type="button" className="btn btn-outline-primary">
+              <button type="button" className="btn-outline-primary btn">
                 Primary
               </button>
-              <button type="button" className="btn btn-outline-info">
+              <button type="button" className="btn-outline-info btn">
                 Info
               </button>
-              <button type="button" className="btn btn-outline-success">
+              <button type="button" className="btn-outline-success btn">
                 Success
               </button>
-              <button type="button" className="btn btn-outline-warning">
+              <button type="button" className="btn-outline-warning btn">
                 Warning
               </button>
-              <button type="button" className="btn btn-outline-danger">
+              <button type="button" className="btn-outline-danger btn">
                 Danger
               </button>
-              <button type="button" className="btn btn-outline-secondary">
+              <button type="button" className="btn-outline-secondary btn">
                 Secondary
               </button>
-              <button type="button" className="btn btn-outline-dark">
+              <button type="button" className="btn-outline-dark btn">
                 Dark
               </button>
             </div>
@@ -498,7 +498,7 @@ const Buttons = () => {
                   />
                 </svg>
               </button>
-              <button type="button" className="btn btn-danger">
+              <button type="button" className="btn-danger btn">
                 <svg
                   width="24"
                   height="24"
@@ -521,7 +521,7 @@ const Buttons = () => {
                     strokeLinejoin="round"></path>
                 </svg>
               </button>
-              <button type="button" className="btn btn-dark h-10 w-10 rounded-full p-0">
+              <button type="button" className="btn-dark btn h-10 w-10 rounded-full p-0">
                 <svg
                   width="20"
                   height="20"

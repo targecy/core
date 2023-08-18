@@ -4,12 +4,12 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import Swal from 'sweetalert2';
 
 import 'react-quill/dist/quill.snow.css';
-import Dropdown from '../../../../components/Dropdown';
+import Dropdown from '../../../components/Dropdown';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IRootState } from '../../../../store';
-import { setPageTitle } from '../../../../store/themeConfigSlice';
+import { IRootState } from '../../../store';
+import { setPageTitle } from '../../../store/themeConfigSlice';
 
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(import('react-quill'), { ssr: false });
@@ -1572,7 +1572,7 @@ const Todolist = () => {
                         <div className="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
                           <button
                             type="button"
-                            className="btn btn-outline-danger"
+                            className="btn-outline-danger btn"
                             onClick={() => setAddTaskModal(false)}>
                             Cancel
                           </button>
@@ -1672,7 +1672,7 @@ const Todolist = () => {
                       <div className="mt-8 flex items-center justify-end">
                         <button
                           type="button"
-                          className="btn btn-outline-danger"
+                          className="btn-outline-danger btn"
                           onClick={() => setViewTaskModal(false)}>
                           Close
                         </button>

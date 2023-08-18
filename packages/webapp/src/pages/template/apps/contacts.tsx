@@ -3,7 +3,7 @@ import { useState, Fragment, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 
-import { setPageTitle } from '../../../../../../store/themeConfigSlice';
+import { setPageTitle } from '../../../../../store/themeConfigSlice';
 
 const Contacts = () => {
   const dispatch = useDispatch();
@@ -311,7 +311,7 @@ const Contacts = () => {
             <div>
               <button
                 type="button"
-                className={`btn btn-outline-primary p-2 ${value === 'list' && 'bg-primary text-white'}`}
+                className={`btn-outline-primary btn p-2 ${value === 'list' && 'bg-primary text-white'}`}
                 onClick={() => setValue('list')}>
                 <svg
                   width="24"
@@ -351,7 +351,7 @@ const Contacts = () => {
             <div>
               <button
                 type="button"
-                className={`btn btn-outline-primary p-2 ${value === 'grid' && 'bg-primary text-white'}`}
+                className={`btn-outline-primary btn p-2 ${value === 'grid' && 'bg-primary text-white'}`}
                 onClick={() => setValue('grid')}>
                 <svg
                   width="24"
@@ -467,13 +467,13 @@ const Contacts = () => {
                         <div className="flex items-center justify-center gap-4">
                           <button
                             type="button"
-                            className="btn btn-sm btn-outline-primary"
+                            className="btn-outline-primary btn btn-sm"
                             onClick={() => editUser(contact)}>
                             Edit
                           </button>
                           <button
                             type="button"
-                            className="btn btn-sm btn-outline-danger"
+                            className="btn-outline-danger btn btn-sm"
                             onClick={() => deleteUser(contact)}>
                             Delete
                           </button>
@@ -524,7 +524,7 @@ const Contacts = () => {
                       <div className="mt-4">
                         <ul className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
                           <li>
-                            <button type="button" className="btn btn-outline-primary h-7 w-7 rounded-full p-0">
+                            <button type="button" className="btn-outline-primary btn h-7 w-7 rounded-full p-0">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -541,7 +541,7 @@ const Contacts = () => {
                             </button>
                           </li>
                           <li>
-                            <button type="button" className="btn btn-outline-primary h-7 w-7 rounded-full p-0">
+                            <button type="button" className="btn-outline-primary btn h-7 w-7 rounded-full p-0">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24px"
@@ -560,7 +560,7 @@ const Contacts = () => {
                             </button>
                           </li>
                           <li>
-                            <button type="button" className="btn btn-outline-primary h-7 w-7 rounded-full p-0">
+                            <button type="button" className="btn-outline-primary btn h-7 w-7 rounded-full p-0">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24px"
@@ -579,7 +579,7 @@ const Contacts = () => {
                             </button>
                           </li>
                           <li>
-                            <button type="button" className="btn btn-outline-primary h-7 w-7 rounded-full p-0">
+                            <button type="button" className="btn-outline-primary btn h-7 w-7 rounded-full p-0">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24px"
@@ -614,10 +614,10 @@ const Contacts = () => {
                     </div>
                   </div>
                   <div className="absolute bottom-0 mt-6 flex w-full gap-4 p-6 ltr:left-0 rtl:right-0">
-                    <button type="button" className="btn btn-outline-primary w-1/2" onClick={() => editUser(contact)}>
+                    <button type="button" className="btn-outline-primary btn w-1/2" onClick={() => editUser(contact)}>
                       Edit
                     </button>
-                    <button type="button" className="btn btn-outline-danger w-1/2" onClick={() => deleteUser(contact)}>
+                    <button type="button" className="btn-outline-danger btn w-1/2" onClick={() => deleteUser(contact)}>
                       Delete
                     </button>
                   </div>
@@ -731,7 +731,7 @@ const Contacts = () => {
                       <div className="mt-8 flex items-center justify-end">
                         <button
                           type="button"
-                          className="btn btn-outline-danger"
+                          className="btn-outline-danger btn"
                           onClick={() => setAddContactModal(false)}>
                           Cancel
                         </button>

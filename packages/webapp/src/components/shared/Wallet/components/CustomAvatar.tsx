@@ -8,7 +8,7 @@ import { walletImages } from "../Wallet.constants";
 export const CustomAvatar: AvatarComponent = () => {
   const { connectorId } = useWallet();
 
-  const walletImageUrl = "/images/wallets/" + walletImages[connectorId];
+  const walletImageUrl = "/images/wallets/user-profile.jpeg";
 
   return (
     <div className="w-[80%] h-[80%] relative">
