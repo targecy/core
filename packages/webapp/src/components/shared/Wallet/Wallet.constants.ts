@@ -1,7 +1,17 @@
 import type { Chain } from '@rainbow-me/rainbowkit';
 
 export const defaultChains: Chain[] = [
-  { name: 'Localhost', network: 'localhost', id: 31337, rpcUrls: { default: 'http://localhost:8545' } },
+  {
+    name: 'Localhost',
+    network: 'localhost',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18,
+    },
+    id: 1337,
+    rpcUrls: { default: { http: ['http://localhost:8545'] }, public: { http: [] } },
+  },
 ];
 
 export const appName = 'ZetaHub';

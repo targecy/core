@@ -220,7 +220,7 @@ const Profile = () => {
                   </button>
                 </li>
                 <li>
-                  <button className="btn btn-danger flex h-10 w-10 items-center justify-center rounded-full p-0">
+                  <button className="btn-danger btn flex h-10 w-10 items-center justify-center rounded-full p-0">
                     <svg
                       width="24"
                       height="24"
@@ -244,7 +244,7 @@ const Profile = () => {
                   </button>
                 </li>
                 <li>
-                  <button className="btn btn-dark flex h-10 w-10 items-center justify-center rounded-full p-0">
+                  <button className="btn-dark btn flex h-10 w-10 items-center justify-center rounded-full p-0">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24px"

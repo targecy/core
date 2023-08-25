@@ -1,11 +1,17 @@
+import {
+  EditOutlined,
+  HomeOutlined,
+  PlaySquareOutlined,
+  SecurityScanOutlined,
+  UsergroupAddOutlined,
+} from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import AnimateHeight from 'react-animate-height';
 import { useTranslation } from 'react-i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { EditOutlined, HomeOutlined, PlaySquareOutlined, SecurityScanOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+
 import { IRootState } from '../../store';
 import { toggleSidebar } from '../../store/themeConfigSlice';
 
@@ -129,7 +135,7 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link href="/targetGroups" className="group">
                       <div className="flex items-center">
-                      <UsergroupAddOutlined rev={undefined} />
+                        <UsergroupAddOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Target Groups')}
                         </span>
@@ -139,7 +145,7 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link href="/zkprequests" className="group">
                       <div className="flex items-center">
-                      <SecurityScanOutlined rev={undefined} />
+                        <SecurityScanOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('ZKP Requests')}
                         </span>
@@ -149,7 +155,7 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link href="/demo" className="group">
                       <div className="flex items-center">
-                      <PlaySquareOutlined rev={undefined} />
+                        <PlaySquareOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Demo')}
                         </span>

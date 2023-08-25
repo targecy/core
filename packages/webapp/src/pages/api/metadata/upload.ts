@@ -1,7 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { z } from 'zod';
 import { NFTStorage } from 'nft.storage';
+import { z } from 'zod';
+
+import { env } from '~~/env.mjs';
 
 export type UploadMetadataResponse = {
   uri: string;
@@ -13,7 +15,7 @@ const inputSchema = z.object({
 type Input = z.infer<typeof inputSchema>;
 
 // See https://nft.storage/docs/client/js/
-const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN || '';
+const NFT_STORAGE_TOKEN = env.NFT_STORAGE_TOKEN || '';
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataResponse | Error>) => {

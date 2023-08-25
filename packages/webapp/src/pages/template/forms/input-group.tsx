@@ -1718,10 +1718,10 @@ const InputGroup = () => {
                 <div className="mb-5">
                   <label htmlFor="addonsLeftoutline">Left</label>
                   <div className="flex">
-                    <button type="button" className="btn btn-outline-info ltr:rounded-r-none rtl:rounded-l-none">
+                    <button type="button" className="btn-outline-info btn ltr:rounded-r-none rtl:rounded-l-none">
                       Button
                     </button>
-                    <button type="button" className="btn btn-outline-info rounded-none ltr:border-l-0 rtl:border-r-0">
+                    <button type="button" className="btn-outline-info btn rounded-none ltr:border-l-0 rtl:border-r-0">
                       Button
                     </button>
                     <input
@@ -1743,10 +1743,10 @@ const InputGroup = () => {
                     />
                     <button
                       type="button"
-                      className="btn btn-outline-secondary rounded-none ltr:border-r-0 rtl:border-l-0">
+                      className="btn-outline-secondary btn rounded-none ltr:border-r-0 rtl:border-l-0">
                       Button
                     </button>
-                    <button type="button" className="btn btn-outline-secondary ltr:rounded-l-none rtl:rounded-r-none">
+                    <button type="button" className="btn-outline-secondary btn ltr:rounded-l-none rtl:rounded-r-none">
                       Button
                     </button>
                   </div>

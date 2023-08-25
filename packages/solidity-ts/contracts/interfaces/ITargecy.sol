@@ -35,4 +35,12 @@ interface ITargecy {
   ) external;
 
   function deleteTargetGroup(uint256 targetGroupId) external;
+
+  function getTargetGroupZKRequests(uint256 targetGroupId) external view returns (uint256[] memory);
+
+  function getAdTargetGroups(uint256 targetGroupId) external view returns (uint256[] memory);
+
+  function whitelistPublisher(address publisher) external;
+
+  function removePublisherFromWhitelist(address publisher) external;
 }

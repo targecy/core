@@ -1,11 +1,15 @@
-import { Table } from 'antd';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
-import { title } from 'process';
+import { useInterval } from 'react-use';
+
 import { GetAllZkpRequestsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 
 const ZKPRequests = () => {
   const data = useGetAllZkpRequestsQuery();
+
+  useInterval(() => {
+    data.refetch();
+  }, 3000);
 
   const zkprequests = data?.data?.zkprequests;
 
@@ -13,6 +17,10 @@ const ZKPRequests = () => {
     { title: 'Id', accessor: 'id' },
     { title: 'Metadata URI', accessor: 'metadataURI' },
     { title: 'Validator', accessor: 'validator' },
+    { title: 'Schema', accessor: 'query_schema' },
+    { title: 'Spot Index', accessor: 'query_spotIndex' },
+    { title: 'Operator', accessor: 'query_operator' },
+    { title: 'Value', accessor: 'query_value' },
   ];
 
   return (

@@ -6,6 +6,7 @@ import { invariant } from 'ts-invariant';
 
 import { networkDefinitions } from '~common/constants';
 import { scaffoldConfig } from '~common/scaffold.config';
+import { env } from '~~/env.mjs';
 
 // import { loadScaffoldConfig } from '~common/scaffold.config';
 
@@ -36,7 +37,7 @@ export const DEBUG = false;
  * ****************************** */
 export const SUBGRAPH_URI = 'http://localhost:8000/subgraphs/name/targecy';
 
-export const BLOCKNATIVE_DAPPID = process.env.NEXT_PUBLIC_KEY_BLOCKNATIVE_DAPPID;
+export const BLOCKNATIVE_DAPPID = env.NEXT_PUBLIC_KEY_BLOCKNATIVE_DAPPID;
 
 /** ******************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -51,8 +52,8 @@ export const BLOCKNATIVE_DAPPID = process.env.NEXT_PUBLIC_KEY_BLOCKNATIVE_DAPPID
 
 // const scaffoldConfig = await loadScaffoldConfig();
 
-invariant.log('NODE_ENV', process.env.NODE_ENV);
-const isDev = process.env.NODE_ENV === 'development';
+invariant.log('NODE_ENV', env.NODE_ENV);
+const isDev = env.NODE_ENV === 'development';
 invariant.log('env:dev', isDev);
 /** ******************************
  * TARGET NETWORK CONFIG: 📡 What chain are your contracts deployed to?
@@ -67,7 +68,7 @@ const AVAILABLE_NETWORKS = scaffoldConfig.runtime.availableNetworks;
 invariant.log('Available Networks', AVAILABLE_NETWORKS);
 AVAILABLE_NETWORKS.forEach((t) => {
   invariant(
-    networkDefinitions[t] != null,
+    networkDefinitions[t] !== null,
     `Invalid available networks: ${t}.  Check scaffold.config.json and network definition in /packages/common/src/constants/networks.ts`
   );
 });
@@ -85,23 +86,22 @@ if (DEBUG) console.log(`📡 Can connect to `, AVAILABLE_NETWORKS_DEFINITIONS);
 /**
  * localhost faucet enabled
  */
-export const FAUCET_ENABLED: boolean = process.env.NEXT_PUBLIC_FAUCET_ALLOWED === 'true' && isDev;
+export const FAUCET_ENABLED: boolean = env.NEXT_PUBLIC_FAUCET_ALLOWED === true && isDev;
 /**
  * Use burner wallet as fallback
  */
-export const BURNER_FALLBACK_ENABLED: boolean = process.env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED === 'true' && isDev;
+export const BURNER_FALLBACK_ENABLED: boolean = env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED === true && isDev;
 /**
  * Connect to burner on first load if there are no cached providers
  */
-export const CONNECT_TO_BURNER_AUTOMATICALLY =
-  process.env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY === 'true' && isDev;
+export const CONNECT_TO_BURNER_AUTOMATICALLY = env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY === true && isDev;
 
 if (DEBUG)
   invariant.log(
-    `process.env.DEV: ${isDev}`,
-    `process.env.NEXT_PUBLIC_FAUCET_ALLOWED: ${process.env.NEXT_PUBLIC_FAUCET_ALLOWED}`,
-    `process.env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: ${process.env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED}`,
-    `process.env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: ${process.env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY}`
+    `env.DEV: ${isDev}`,
+    `env.NEXT_PUBLIC_FAUCET_ALLOWED: ${env.NEXT_PUBLIC_FAUCET_ALLOWED}`,
+    `env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: ${env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED}`,
+    `env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: ${env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY}`
   );
 
 if (DEBUG)
@@ -115,12 +115,12 @@ if (DEBUG)
  * PROVIDERS CONFIG
  ****************************** */
 
-export const INFURA_ID: string = process.env.NEXT_PUBLIC_KEY_INFURA;
+export const INFURA_ID: string = env.NEXT_PUBLIC_KEY_INFURA;
 // -------------------
 // Connecting to mainnet
 // -------------------
 const mainnetProvider = new StaticJsonRpcProvider(
-  process.env.NEXT_PUBLIC_RPC_MAINNET ?? "scaffoldConfig.runtime.buidlGuidl.rpcMainnet"
+  env.NEXT_PUBLIC_RPC_MAINNET ?? 'scaffoldConfig.runtime.buidlGuidl.rpcMainnet'
 );
 
 // incase there are issues
@@ -136,7 +136,7 @@ export const MAINNET_PROVIDER = mainnetProvider;
 if (DEBUG) console.log('🏠 Connecting to local provider:', networkDefinitions.localhost.rpcUrl);
 
 export const LOCAL_PROVIDER: TEthersProvider | undefined =
-  AVAILABLE_NETWORKS_DEFINITIONS[networkDefinitions.localhost.chainId] != null && isDev
+  AVAILABLE_NETWORKS_DEFINITIONS[networkDefinitions.localhost.chainId] !== null && isDev
     ? new StaticJsonRpcProvider(networkDefinitions.localhost.rpcUrl)
     : undefined;
 

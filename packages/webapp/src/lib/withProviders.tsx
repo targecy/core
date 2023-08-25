@@ -1,6 +1,7 @@
 import { NextPage } from 'next';
 
 import { WalletProvider } from '~/components/shared/Wallet';
+import { env } from '~~/env.mjs';
 
 export const withProviders =
   () =>
@@ -13,7 +14,7 @@ export const withProviders =
       </WalletProvider>
     );
 
-    if (process.env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
+    if (env.NEXT_PUBLIC_VERCEL_ENV !== 'production') {
       const displayName = PageComponent.displayName || PageComponent.name || 'Component';
 
       WithProviders.displayName = `withProviders(${displayName})`;

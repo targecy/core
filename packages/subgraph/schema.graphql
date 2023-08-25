@@ -2,7 +2,7 @@ type Ad @entity {
   id: String! # uint256
   metadataURI: String! # string TODO
   budget: BigInt! # uint256
-  targetGroupIds: [BigInt!]! # uint256[]
+  targetGroups: [TargetGroup!]! # uint256[]
 
   impressions: BigInt! # uint256
 }
@@ -10,7 +10,7 @@ type Ad @entity {
 type TargetGroup @entity {
   id: String! # uint256
   metadataURI: String! # string
-  zkRequestIds: [BigInt!]! # uint256[]
+  zkRequests: [ZKPRequest!]! # uint256[]
 }
 
 type ZKPRequest @entity {

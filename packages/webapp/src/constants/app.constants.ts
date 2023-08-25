@@ -1,9 +1,9 @@
-export const nodeEnv = process.env.NODE_ENV;
-export const isNodeDevelopment = nodeEnv === 'development';
-export const isNodeProduction = nodeEnv === 'production';
-export const isNodeTest = nodeEnv === 'test';
+import { env } from '~~/env.mjs';
 
-export const vercelEnv = process.env.VERCEL_ENV;
+export const vercelEnv = env.NEXT_PUBLIC_VERCEL_ENV;
 export const isVercelPreview = vercelEnv === 'preview';
 export const isVercelProduction = vercelEnv === 'production';
 export const isVercelDevelopment = vercelEnv === 'development';
+
+export const providerUrl = 'https://rpc.ankr.com/polygon_mumbai';
+export const contractAddress = env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS || '';

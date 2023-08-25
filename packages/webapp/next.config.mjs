@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 const __dirname = resolve();
+import "./src/env.mjs";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -24,6 +25,12 @@ const nextConfig = {
       'react-dom': resolve(__dirname, './node_modules/react-dom'),
       // -------------------------------------------
     };
+
+    config.experiments = {
+      topLevelAwait: true,
+      layers: true,
+    };
+
     return config;
   },
 };

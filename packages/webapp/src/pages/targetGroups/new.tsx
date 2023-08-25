@@ -1,28 +1,19 @@
+import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import Select from 'react-select';
 import Swal from 'sweetalert2';
+import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import Select from 'react-select';
-import { useGetAllTargetGroupsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
-import { Divider, Typography } from 'antd';
-import { Targecy, Targecy__factory } from '~common/generated/contract-types';
-import { useAppContracts } from '~common/components/context';
-import { useState } from 'react';
-import { UploadMetadataResponse } from '../api/metadata/upload';
-import {
-  useBalance,
-  useConnect,
-  useContractEvent,
-  useContractRead,
-  useContractWrite,
-  usePublicClient,
-  useWalletClient,
-} from 'wagmi';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useWallet } from '~~/hooks';
+
+import { Targecy__factory } from '~common/generated/contract-types';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { ethers } from 'ethers';
+import { targecyContractAddress } from '~~/constants/contracts.constants';
+import { useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
+import { useWallet } from '~~/hooks';
 
 async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string, contractAbi: any) {
   // Initialize a provider
@@ -45,10 +36,12 @@ const New = () => {
   const { data: zkpRequests } = useGetAllZkpRequestsQuery();
   const [creatingTargetGroup, setCreatingTargetGroup] = useState(false);
   const { writeAsync: createTargetGroup } = useContractWrite({
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'createTargetGroup',
   });
+
+  const router = useRouter();
 
   const { isConnected } = useWallet();
 
@@ -98,6 +91,8 @@ const New = () => {
         title: 'Ad created successfully! Tx: ' + createAdResponse.hash,
         padding: '10px 20px',
       });
+
+      router.push('/targetGroups');
     } catch (e) {
       const toast = Swal.mixin({
         toast: true,
@@ -110,10 +105,9 @@ const New = () => {
         title: 'Error creating ad',
         padding: '10px 20px',
       });
-      console.log(e);
-    }
 
-    setCreatingTargetGroup(false);
+      setCreatingTargetGroup(false);
+    }
   };
 
   const schema = z.object({
@@ -150,7 +144,7 @@ const New = () => {
             initialValues={{
               title: '',
               description: '',
-              zkpRequests: [],
+              zkpRequests: [] as number[],
             }}
             validationSchema={toFormikValidationSchema(schema)}
             onSubmit={() => {}}>
@@ -203,6 +197,10 @@ const New = () => {
                       }}
                       placeholder="Select an option"
                       id="zkpRequests"
+                      name="zkpRequests"
+                      onChange={(value) => {
+                        values.zkpRequests = value.map((v) => Number(v.value)) ?? [];
+                      }}
                       options={zkpRequestsOptions}
                       isMulti
                       isSearchable={true}

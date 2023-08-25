@@ -70,5 +70,5 @@
   },
   "solidity.defaultCompiler": "localNodeModule",
   "mochaExplorer.configFile": "./packages/solidity-ts/.mocharc.json",
-  "cSpell.words": ["codegen", "targecy", "zkprequests"]
+  "cSpell.words": ["codegen", "targecy", "zkprequest", "zkprequests"]
 }

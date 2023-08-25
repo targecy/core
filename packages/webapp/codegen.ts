@@ -26,6 +26,7 @@ const config: CodegenConfig = {
           'typescript-rtk-query': {
             importBaseApiFrom: '~/services/baseApi',
             exportHooks: true,
+            overrideExisting: true,
           },
         },
       ],

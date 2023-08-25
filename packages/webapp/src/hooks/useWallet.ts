@@ -1,7 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useEffect, useState } from 'react';
 import { useMountedState } from 'react-use';
-import { useAccount, useConnect, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from 'wagmi';
+import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from 'wagmi';
 
 import { ConnectorId, defaultChains } from '~/components/shared/Wallet/Wallet.constants';
 

@@ -1,0 +1,59 @@
+import { createEnv } from '@t3-oss/env-nextjs';
+import { z } from 'zod';
+
+export const env = createEnv({
+  server: {
+    CIRCUITS_PATH: z.string().min(1),
+    NFT_STORAGE_TOKEN: z.string().min(1),
+    RPC_URL: z.string().url(),
+    PRIVATE_KEY: z.string().min(1),
+    NODE_ENV: z.string().min(1),
+    VERCEL_ENV: z.string().min(1),
+  },
+  client: {
+    // Template: TODO REVIEW
+    NEXT_PUBLIC_RPC_MAINNET: z.string().url(),
+    NEXT_PUBLIC_RPC_MAINNET_INFURA: z.string().url(),
+    NEXT_PUBLIC_KEY_INFURA: z.string().min(1),
+    NEXT_PUBLIC_KEY_ETHERSCAN: z.string().min(1),
+    NEXT_PUBLIC_KEY_BLOCKNATIVE_DAPPID: z.string().min(1),
+    NEXT_PUBLIC_FAUCET_ALLOWED: z.boolean(),
+    NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: z.boolean(),
+    NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: z.boolean(),
+    NEXT_PUBLIC_VERCEL_ENV: z.string().min(1),
+
+    // Custom
+    NEXT_PUBLIC_SUBGRAPH_URL: z.string().url(),
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: z.string().min(1),
+  },
+  // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
+  // runtimeEnv: {
+  //   DATABASE_URL: process.env.DATABASE_URL,
+  //   OPEN_AI_API_KEY: process.env.OPEN_AI_API_KEY,
+  //   NEXT_PUBLIC_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
+  // },
+  // For Next.js >= 13.4.4, you only need to destructure client variables:
+  runtimeEnv: {
+    NEXT_PUBLIC_RPC_MAINNET: process.env.NEXT_PUBLIC_RPC_MAINNET,
+    NEXT_PUBLIC_RPC_MAINNET_INFURA: process.env.NEXT_PUBLIC_RPC_MAINNET_INFURA,
+    NEXT_PUBLIC_KEY_INFURA: process.env.NEXT_PUBLIC_KEY_INFURA,
+    NEXT_PUBLIC_KEY_ETHERSCAN: process.env.NEXT_PUBLIC_KEY_ETHERSCAN,
+    NEXT_PUBLIC_KEY_BLOCKNATIVE_DAPPID: process.env.NEXT_PUBLIC_KEY_BLOCKNATIVE_DAPPID,
+    NEXT_PUBLIC_FAUCET_ALLOWED: Boolean(process.env.NEXT_PUBLIC_FAUCET_ALLOWED),
+    NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: Boolean(process.env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED),
+    NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: Boolean(process.env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY),
+    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
+
+    // Custom
+    NEXT_PUBLIC_SUBGRAPH_URL: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: process.env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS,
+  
+    CIRCUITS_PATH: process.env.CIRCUITS_PATH,
+    NFT_STORAGE_TOKEN: process.env.NFT_STORAGE_TOKEN,
+    RPC_URL: process.env.RPC_URL,
+    PRIVATE_KEY: process.env.PRIVATE_KEY,
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL_ENV: process.env.VERCEL_ENV,
+
+  },
+});

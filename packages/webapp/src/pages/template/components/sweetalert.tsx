@@ -585,7 +585,7 @@ const showAlert = async (type: number) => {
             </div>
             <div className="mb-5">
               <div className="flex items-center justify-center">
-                <button type="button" className="btn btn-danger" onClick={() => showAlert(4)}>
+                <button type="button" className="btn-danger btn" onClick={() => showAlert(4)}>
                   Title & text
                 </button>
               </div>
@@ -1037,7 +1037,7 @@ const showAlert = async (type: number) => {
             </div>
             <div className="mb-5">
               <div className="flex items-center justify-center">
-                <button type="button" className="btn btn-danger" onClick={() => showAlert(9)}>
+                <button type="button" className="btn-danger btn" onClick={() => showAlert(9)}>
                   Custom Description & buttons
                 </button>
               </div>
@@ -1375,7 +1375,7 @@ const showAlert = async (type: number) => {
             </div>
             <div className="mb-5">
               <div className="flex items-center justify-center">
-                <button type="button" className="btn btn-dark" onClick={() => showAlert(13)}>
+                <button type="button" className="btn-dark btn" onClick={() => showAlert(13)}>
                   With Footer
                 </button>
               </div>

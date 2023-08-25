@@ -1,27 +1,34 @@
-import { Button, Card, Table, Typography, theme } from 'antd';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
-import { title } from 'process';
+import { useInterval } from 'react-use';
 import { useContractRead } from 'wagmi';
+
 import { Targecy__factory } from '~common/generated/contract-types';
+import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllAdsQuery, useGetAllAdsQuery } from '~~/generated/graphql.types';
 
 const Ads = () => {
   const data = useGetAllAdsQuery();
   const { data: adsQuantity } = useContractRead({
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: '_adId',
   });
 
-  console.log(adsQuantity);
+  useInterval(() => {
+    data.refetch();
+  }, 3000);
 
   const ads = data?.data?.ads;
 
   const columns: DataTableColumn<GetAllAdsQuery['ads'][number]>[] = [
     { title: 'Id', accessor: 'id' },
     { title: 'Impressions', accessor: 'impressions' },
-    { title: 'Target Groups', accessor: 'targetGroupsIds' },
+    {
+      title: 'Target Groups',
+      accessor: 'targetGroupsIds',
+      render: (value) => value.targetGroups.map((tg) => tg.id).join(', '),
+    },
     { title: 'Metadata URI', accessor: 'metadataURI' },
     { title: 'Budget', accessor: 'budget' },
   ];

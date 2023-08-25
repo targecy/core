@@ -1,17 +1,21 @@
-import { Table } from 'antd';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
-import { title } from 'process';
+import { useInterval } from 'react-use';
+
 import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 
 const TargetGroups = () => {
   const data = useGetAllTargetGroupsQuery();
 
+  useInterval(() => {
+    data.refetch();
+  }, 3000);
+
   const targetGroups = data?.data?.targetGroups;
 
   const columns: DataTableColumn<GetAllTargetGroupsQuery['targetGroups'][number]>[] = [
     { title: 'Id', accessor: 'id' },
-    { title: 'ZKP Requests', accessor: 'zkRequestsIds' },
+    { title: 'ZKP Requests', accessor: 'zkRequests', render: (value) => value.zkRequests.map((r) => r.id).join(', ') },
     { title: 'Metadata URI', accessor: 'metadataURI' },
   ];
 

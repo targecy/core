@@ -1,13 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { BaseQueryFn } from '@reduxjs/toolkit/dist/query';
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
 import { HYDRATE } from 'next-redux-wrapper';
 
+import { env } from '~~/env.mjs';
+
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
-export const GRAPHQL_API_URL = process.env.NEXT_PUBLIC_SUBGRAPH_URL;
+export const GRAPHQL_API_URL = env.NEXT_PUBLIC_SUBGRAPH_URL;
 
 export type Build = EndpointBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types

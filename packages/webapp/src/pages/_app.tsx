@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { appWithI18Next } from 'ni18n';

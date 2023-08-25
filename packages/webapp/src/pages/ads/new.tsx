@@ -1,20 +1,19 @@
+import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import Select from 'react-select';
 import Swal from 'sweetalert2';
+import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import Select from 'react-select';
-import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
-import { Divider, Typography } from 'antd';
-import { Targecy, Targecy__factory } from '~common/generated/contract-types';
-import { useAppContracts } from '~common/components/context';
-import { useState } from 'react';
-import { UploadMetadataResponse } from '../api/metadata/upload';
-import { useBalance, useConnect, useContractEvent, useContractRead, useContractWrite, usePublicClient, useWalletClient } from 'wagmi';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useWallet } from '~~/hooks';
+
+import { Targecy__factory } from '~common/generated/contract-types';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { ethers } from 'ethers';
+import { targecyContractAddress } from '~~/constants/contracts.constants';
+import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
+import { useWallet } from '~~/hooks';
 
 async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string, contractAbi: any) {
   // Initialize a provider
@@ -30,18 +29,19 @@ async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string
   const events = await contract.queryFilter(filter);
 
   // Return the parsed events
-  return events.map(event => event.args);
+  return events.map((event) => event.args);
 }
 
 const New = () => {
   const { data: targetGroups } = useGetAllTargetGroupsQuery();
   const [creatingAd, setCreatingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'createAd',
   });
 
+  const router = useRouter();
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
@@ -75,18 +75,21 @@ const New = () => {
     }
 
     const metadataURI = (await metadataUploadResponse.json()).uri;
-    
+
     try {
-      const createAdResponse = await createAdAsync({args: [
-        {
-          metadataURI,
-          budget: data.budget,
-          maxImpressionPrice: data.maxImpressionPrice,
-          minBlock: data.minBlock,
-          maxBlock: data.maxBlock,
-          targetGroupIds: data.targetGroupIds,
-        },
-      ], value: BigInt(data.budget)});
+      const createAdResponse = await createAdAsync({
+        args: [
+          {
+            metadataURI,
+            budget: data.budget,
+            maxImpressionPrice: data.maxImpressionPrice,
+            minBlock: data.minBlock,
+            maxBlock: data.maxBlock,
+            targetGroupIds: data.targetGroupIds,
+          },
+        ],
+        value: BigInt(data.budget),
+      });
       const toast = Swal.mixin({
         toast: true,
         position: 'top',
@@ -98,6 +101,8 @@ const New = () => {
         title: 'Ad created successfully! Tx: ' + createAdResponse.hash,
         padding: '10px 20px',
       });
+
+      router.push('/ads');
     } catch (e) {
       const toast = Swal.mixin({
         toast: true,
@@ -110,10 +115,9 @@ const New = () => {
         title: 'Error creating ad',
         padding: '10px 20px',
       });
-      console.log(e);
-    }
 
-    setCreatingAd(false);
+      setCreatingAd(false);
+    }
   };
 
   const schema = z.object({
@@ -160,7 +164,7 @@ const New = () => {
               maxImpressionPrice: '',
               minBlock: '',
               maxBlock: '',
-              targetGroupIds: [],
+              targetGroupIds: [] as number[],
             }}
             validationSchema={toFormikValidationSchema(schema)}
             onSubmit={() => {}}>
@@ -319,6 +323,10 @@ const New = () => {
                       placeholder="Select an option"
                       id="targetGroupIds"
                       options={targetGroupOptions}
+                      name="targetGroupIds"
+                      onChange={(value) => {
+                        values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
+                      }}
                       isMulti
                       isSearchable={true}
                     />

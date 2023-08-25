@@ -1,26 +1,20 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { ReactNode } from 'react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygonMumbai, localhost } from 'wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 
 import { appName } from '../Wallet.constants';
 
-import { CustomAvatar } from './CustomAvatar';
-import { isNodeDevelopment } from '~~/constants/app.constants';
-
-const localhostChain = localhost;
-localhostChain.chainId = 31337;
-localhostChain.id = 31337;
+import { isVercelDevelopment } from '~~/constants/app.constants';
 
 const { chains, publicClient } = configureChains(
-  [isNodeDevelopment ? localhostChain : polygonMumbai],
+  [isVercelDevelopment ? localhost : polygonMumbai],
   [
     jsonRpcProvider({
       rpc: (chain) => ({
-        http: isNodeDevelopment ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon_mumbai',
+        http: isVercelDevelopment ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon_mumbai',
       }),
     }),
   ]

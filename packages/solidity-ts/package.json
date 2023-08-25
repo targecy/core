@@ -7,9 +7,11 @@
     "chain:foundry": "anvil",
     "fork:hardhat": "cross-env hardhat node --fork https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad",
     "test:hardhat": "yarn hardhat test --network hardhat",
+    "test:watch:hardhat": "yarn hardhat watch test --network hardhat",
     "compile:foundry": "yarn exec forge build",
     "compile:foundry:post": "yarn ts-node scripts/foundryPostCompile.ts",
     "compile:hardhat": "cross-env BUILDING=true hardhat compile",
+    "compile:watch:hardhat": "cross-env BUILDING=true hardhat watch compile",
     "contracts:build": "yarn workspace @scaffold-eth/common contracts:build",
     "watch:hardhat": "cross-env BUILDING=true yarn hardhat watch compile",
     "deploy:hardhat": "hardhat deploy --show-stack-traces --export-all ../common/src/generated/hardhat_contracts.json",
@@ -66,6 +68,7 @@
     "typechain": "^8.1.0"
   },
   "devDependencies": {
+    "@0xpolygonid/js-sdk": "^1.0.3",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
@@ -94,6 +97,7 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "ethereumjs-util": "^7.1.5",
     "ethereumjs-wallet": "^1.0.2",
+    "fs": "^0.0.1-security",
     "glob": "^8.0.3",
     "mocha": "^10.0.0",
     "mocha-github-actions-reporter": "^0.2.4",

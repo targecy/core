@@ -148,13 +148,13 @@ const Badges = () => {
           </div>
           <div className="mb-5">
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <span className="badge badge-outline-primary">Primary</span>
-              <span className="badge badge-outline-secondary">Secondary</span>
-              <span className="badge badge-outline-success">Success</span>
-              <span className="badge badge-outline-danger">Danger</span>
-              <span className="badge badge-outline-warning">Warning</span>
-              <span className="badge badge-outline-info">Info</span>
-              <span className="badge badge-outline-dark">Dark</span>
+              <span className="badge-outline-primary badge">Primary</span>
+              <span className="badge-outline-secondary badge">Secondary</span>
+              <span className="badge-outline-success badge">Success</span>
+              <span className="badge-outline-danger badge">Danger</span>
+              <span className="badge-outline-warning badge">Warning</span>
+              <span className="badge-outline-info badge">Info</span>
+              <span className="badge-outline-dark badge">Dark</span>
             </div>
           </div>
           {codeArr.includes('code2') && (
@@ -224,7 +224,7 @@ const Badges = () => {
                 <span className="badge rounded-full bg-primary">Primary</span>
               </div>
               <div className="flex w-1/2 items-center justify-center">
-                <span className="badge badge-outline-primary rounded-full">Primary</span>
+                <span className="badge-outline-primary badge rounded-full">Primary</span>
               </div>
             </div>
           </div>
@@ -289,7 +289,7 @@ const Badges = () => {
                 <span className="badge rounded-none bg-primary">Primary</span>
               </div>
               <div className="flex w-1/2 items-center justify-center">
-                <span className="badge badge-outline-primary rounded-none">Primary</span>
+                <span className="badge-outline-primary badge rounded-none">Primary</span>
               </div>
             </div>
           </div>
@@ -485,7 +485,7 @@ const Badges = () => {
                   8
                 </span>
               </button>
-              <button type="button" className="btn btn-dark my-4">
+              <button type="button" className="btn-dark btn my-4">
                 Notifications
                 <span className="badge my-0 bg-white-light text-black ltr:ml-4 rtl:mr-4">4</span>
               </button>

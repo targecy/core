@@ -1038,7 +1038,7 @@ const Widgets = () => {
                   <div className="flex-1">Updated Server Logs</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">Just Now</div>
 
-                  <span className="badge badge-outline-primary absolute bg-primary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-primary badge absolute bg-primary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Pending
                   </span>
                 </div>
@@ -1047,7 +1047,7 @@ const Widgets = () => {
                   <div className="flex-1">Send Mail to HR and Admin</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">2 min ago</div>
 
-                  <span className="badge badge-outline-success absolute bg-success-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-success badge absolute bg-success-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Completed
                   </span>
                 </div>
@@ -1056,7 +1056,7 @@ const Widgets = () => {
                   <div className="flex-1">Backup Files EOD</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">14:00</div>
 
-                  <span className="badge badge-outline-danger absolute bg-danger-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-danger badge absolute bg-danger-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Pending
                   </span>
                 </div>
@@ -1065,7 +1065,7 @@ const Widgets = () => {
                   <div className="flex-1">Collect documents from Sara</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">16:00</div>
 
-                  <span className="badge badge-outline-dark absolute bg-dark-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-dark badge absolute bg-dark-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Completed
                   </span>
                 </div>
@@ -1074,7 +1074,7 @@ const Widgets = () => {
                   <div className="flex-1">Conference call with Marketing Manager.</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">17:00</div>
 
-                  <span className="badge badge-outline-warning absolute bg-warning-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-warning badge absolute bg-warning-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     In progress
                   </span>
                 </div>
@@ -1083,7 +1083,7 @@ const Widgets = () => {
                   <div className="flex-1">Rebooted Server</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">17:00</div>
 
-                  <span className="badge badge-outline-info absolute bg-info-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-info badge absolute bg-info-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Completed
                   </span>
                 </div>
@@ -1092,7 +1092,7 @@ const Widgets = () => {
                   <div className="flex-1">Send contract details to Freelancer</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">18:00</div>
 
-                  <span className="badge badge-outline-secondary absolute bg-secondary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-secondary badge absolute bg-secondary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Pending
                   </span>
                 </div>
@@ -1101,7 +1101,7 @@ const Widgets = () => {
                   <div className="flex-1">Updated Server Logs</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">Just Now</div>
 
-                  <span className="badge badge-outline-primary absolute bg-primary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-primary badge absolute bg-primary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Pending
                   </span>
                 </div>
@@ -1110,7 +1110,7 @@ const Widgets = () => {
                   <div className="flex-1">Send Mail to HR and Admin</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">2 min ago</div>
 
-                  <span className="badge badge-outline-success absolute bg-success-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-success badge absolute bg-success-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Completed
                   </span>
                 </div>
@@ -1119,7 +1119,7 @@ const Widgets = () => {
                   <div className="flex-1">Backup Files EOD</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">14:00</div>
 
-                  <span className="badge badge-outline-danger absolute bg-danger-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-danger badge absolute bg-danger-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Pending
                   </span>
                 </div>
@@ -1128,7 +1128,7 @@ const Widgets = () => {
                   <div className="flex-1">Collect documents from Sara</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">16:00</div>
 
-                  <span className="badge badge-outline-dark absolute bg-dark-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-dark badge absolute bg-dark-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Completed
                   </span>
                 </div>
@@ -1137,7 +1137,7 @@ const Widgets = () => {
                   <div className="flex-1">Conference call with Marketing Manager.</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">17:00</div>
 
-                  <span className="badge badge-outline-warning absolute bg-warning-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-warning badge absolute bg-warning-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     In progress
                   </span>
                 </div>
@@ -1146,7 +1146,7 @@ const Widgets = () => {
                   <div className="flex-1">Rebooted Server</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">17:00</div>
 
-                  <span className="badge badge-outline-info absolute bg-info-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-info badge absolute bg-info-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Completed
                   </span>
                 </div>
@@ -1155,7 +1155,7 @@ const Widgets = () => {
                   <div className="flex-1">Send contract details to Freelancer</div>
                   <div className="text-xs text-white-dark ltr:ml-auto rtl:mr-auto dark:text-gray-500">18:00</div>
 
-                  <span className="badge badge-outline-secondary absolute bg-secondary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
+                  <span className="badge-outline-secondary badge absolute bg-secondary-light text-xs opacity-0 group-hover:opacity-100 ltr:right-0 rtl:left-0 dark:bg-black">
                     Pending
                   </span>
                 </div>

@@ -169,7 +169,7 @@ const Clipboard = () => {
                           showMessage('Cut successfully.');
                         }
                       }}>
-                      <button type="button" className="btn btn-dark" value={message1} onClick={() => setMessage1('')}>
+                      <button type="button" className="btn-dark btn" value={message1} onClick={() => setMessage1('')}>
                         <svg
                           width="24"
                           height="24"
@@ -325,7 +325,7 @@ const [message1, setMessage1] = useState<any>('http://www.admin-dashboard.com');
                           showMessage('Cut successfully.');
                         }
                       }}>
-                      <button type="button" className="btn btn-dark " onClick={() => setMessage2('')}>
+                      <button type="button" className="btn-dark btn " onClick={() => setMessage2('')}>
                         <svg
                           width="24"
                           height="24"
@@ -602,7 +602,7 @@ const message3 = '22991';
                           showMessage();
                         }
                       }}>
-                      <button type="button" className="btn btn-dark ">
+                      <button type="button" className="btn-dark btn ">
                         <svg
                           className="ltr:mr-2 rtl:ml-2"
                           width="20"

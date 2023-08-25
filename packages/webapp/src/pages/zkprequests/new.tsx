@@ -1,30 +1,18 @@
+import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import Select from 'react-select';
 import Swal from 'sweetalert2';
+import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import Select from 'react-select';
-import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
-import { Divider, Typography } from 'antd';
-import { Targecy, Targecy__factory } from '~common/generated/contract-types';
-import { useAppContracts } from '~common/components/context';
-import { useState } from 'react';
-import { UploadMetadataResponse } from '../api/metadata/upload';
-import {
-  useBalance,
-  useConnect,
-  useContractEvent,
-  useContractRead,
-  useContractWrite,
-  usePublicClient,
-  useWalletClient,
-} from 'wagmi';
+
+import { Targecy__factory } from '~common/generated/contract-types';
+import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useWallet } from '~~/hooks';
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { ethers } from 'ethers';
-
-
 
 // Helper Functions
 // ========================================================
@@ -80,10 +68,12 @@ async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string
 const New = () => {
   const [creatingZKPRequest, setCreatingZKPRequest] = useState(false);
   const { writeAsync: setZKPRequestAsync } = useContractWrite({
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'setZKPRequest',
   });
+
+  const router = useRouter();
 
   const { isConnected } = useWallet();
 
@@ -119,19 +109,19 @@ const New = () => {
     const metadataURI = (await metadataUploadResponse.json()).uri;
 
     try {
-
       const schemaHash = data.schema; // extracted from PID Platform
-      const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));   
+      const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));
 
       const createZKPRequest = await setZKPRequestAsync({
         args: [
           {
-            validator: '0xb1e86C4c687B85520eF4fd2a0d14e81970a15aFB',
+            validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
             query: {
-              schema: ethers.BigNumber.from(schemaEnd),
+              schema: data.schema,
               slotIndex: data.slotIndex,
               operator: data.operator,
               value: [data.value],
+
               circuitId: 'credentialAtomicQuerySig',
             },
             metadataURI: metadataURI,
@@ -149,6 +139,8 @@ const New = () => {
         title: 'ZKPRequest created successfully! Tx: ' + createZKPRequest.hash,
         padding: '10px 20px',
       });
+
+      router.push('/zkprequests');
     } catch (e) {
       const toast = Swal.mixin({
         toast: true,
@@ -161,17 +153,18 @@ const New = () => {
         title: 'Error creating ad',
         padding: '10px 20px',
       });
-      console.log(e);
-    }
 
-    setCreatingZKPRequest(false);
+      setCreatingZKPRequest(false);
+    }
   };
 
   const schema = z.object({
     title: z.string().min(1).max(50).describe('Please fill the title'),
     description: z.string().min(1).max(50).describe('Please fill the description'),
     schema: z.string().describe('Please fill the schema'),
+    // schemaUrl: z.string().url().describe('Please fill the schema url'),
     slotIndex: z.number().describe('Please fill the slotIndex'),
+    // field: z.string().describe('Please fill the field'),
     operator: z.number().describe('Please fill the operator'),
     value: z.string().describe('Please fill the value'),
   });
@@ -201,6 +194,8 @@ const New = () => {
     },
   ];
 
+  const [subjectFieldOptions, setSubjectFieldOptions] = useState<{ label: string; value: string }[]>([]);
+
   return (
     <div>
       <ul className="flex space-x-2 rtl:space-x-reverse">
@@ -221,7 +216,9 @@ const New = () => {
               title: '',
               description: '',
               schema: '',
+              // schemaUrl: '',
               slotIndex: 0,
+              // field: '',
               operator: 0,
               value: '',
             }}
@@ -272,6 +269,13 @@ const New = () => {
                   <div className={submitCount ? (errors.schema ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="schema">Schema </label>
                     <Field name="schema" type="text" id="schema" placeholder="Enter Schema" className="form-input" />
+                    <p>
+                      {' '}
+                      Refer to{' '}
+                      <Link className="underline" href="https://schema-builder.polygonid.me/">
+                        Schema Builder
+                      </Link>
+                    </p>
 
                     {submitCount ? (
                       errors.schema ? (
@@ -283,6 +287,47 @@ const New = () => {
                       ''
                     )}
                   </div>
+
+                  {/* <div className={submitCount ? (errors.schemaUrl ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="schemaUrl">Schema Url </label>
+                    <Field
+                      name="schemaUrl"
+                      type="string"
+                      id="schemaUrl"
+                      placeholder="Enter Schema Url"
+                      onChangeCapture={async (e: any) => {
+                        const schemaUrl = e.target.value;
+                        try {
+                          const res = await fetch(schemaUrl);
+                          const json = await res.json();
+                          const credentialSubject = json['properties']['credentialSubject'];
+                          const subjectFieldOptions = Object.keys(credentialSubject['properties'])
+                            .filter((property) => property !== 'id')
+                            .map((key) => {
+                              return {
+                                label: key,
+                                value: key,
+                              };
+                            });
+                          setSubjectFieldOptions(subjectFieldOptions);
+                        } catch (e) {
+                          console.log(e);
+                          setSubjectFieldOptions([]);
+                        }
+                      }}
+                      className="form-input"
+                    />
+
+                    {submitCount ? (
+                      errors.schemaUrl ? (
+                        <div className="mt-1 text-danger">{errors.schemaUrl}</div>
+                      ) : (
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
+                  </div> */}
 
                   <div className={submitCount ? (errors.slotIndex ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="slotIndex">Slot Index</label>
@@ -307,12 +352,43 @@ const New = () => {
                   </div>
                 </div>
 
+                {/* <div className={submitCount ? (errors.field ? 'has-error' : 'has-success') : ''}>
+                  <label htmlFor="operator">Field</label>
+                  <Select
+                    classNames={{
+                      control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      singleValue: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                    }}
+                    placeholder="Select an option"
+                    noOptionsMessage={() => 'Insert a valid schema url'}
+                    id="field"
+                    name="field"
+                    options={subjectFieldOptions}
+                    onChange={(value) => {
+                      values.field = value?.value ?? '';
+                    }}
+                  />
+                  {submitCount ? (
+                    errors.field ? (
+                      <div className="mt-1 text-danger">{errors.field}</div>
+                    ) : (
+                      <div className="mt-1 text-success"></div>
+                    )
+                  ) : (
+                    ''
+                  )}
+                </div> */}
+
                 <div className={submitCount ? (errors.operator ? 'has-error' : 'has-success') : ''}>
                   <label htmlFor="operator">Operator</label>
                   <Select
                     classNames={{
-                      control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
-                      // option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
+                      control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      singleValue: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                     }}
                     placeholder="Select an option"
                     id="operator"

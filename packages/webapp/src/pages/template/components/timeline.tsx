@@ -525,7 +525,7 @@ const Timeline = () => {
                       where your photos were taken and discover.
                     </p>
                     <p>
-                      <button type="button" className="btn btn-danger">
+                      <button type="button" className="btn-danger btn">
                         Read more
                       </button>
                     </p>

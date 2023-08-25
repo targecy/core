@@ -19,6 +19,6 @@ abstract contract TargecyStorage {
   mapping(address => bool) public whitelistedPublishers;
   mapping(address => uint256) public customImpressionPrices;
   mapping(uint256 => DataTypes.Ad) public ads;
-  mapping(uint256 => DataTypes.TargetGroup) public targetGroupIds;
+  mapping(uint256 => DataTypes.TargetGroup) public targetGroups;
   mapping(uint256 => DataTypes.ZKPRequest) public requestQueries;
 }

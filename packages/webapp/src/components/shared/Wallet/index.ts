@@ -1,2 +1,2 @@
-export * from "./components/HeaderWalletManager";
-export * from "./components/WalletProvider";
+export * from './components/HeaderWalletManager';
+export * from './components/WalletProvider';

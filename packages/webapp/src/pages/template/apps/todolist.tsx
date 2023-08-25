@@ -1572,7 +1572,7 @@ const Todolist = () => {
                         <div className="mt-8 flex items-center justify-end ltr:text-right rtl:text-left">
                           <button
                             type="button"
-                            className="btn btn-outline-danger"
+                            className="btn-outline-danger btn"
                             onClick={() => setAddTaskModal(false)}>
                             Cancel
                           </button>
@@ -1672,7 +1672,7 @@ const Todolist = () => {
                       <div className="mt-8 flex items-center justify-end">
                         <button
                           type="button"
-                          className="btn btn-outline-danger"
+                          className="btn-outline-danger btn"
                           onClick={() => setViewTaskModal(false)}>
                           Close
                         </button>

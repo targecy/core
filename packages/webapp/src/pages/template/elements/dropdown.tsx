@@ -1445,12 +1445,12 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
                   <div className="relative inline-flex align-middle">
                     <button
                       type="button"
-                      className="btn btn-outline-secondary ltr:rounded-r-none ltr:border-r-0 rtl:rounded-l-none rtl:border-l-0">
+                      className="btn-outline-secondary btn ltr:rounded-r-none ltr:border-r-0 rtl:rounded-l-none rtl:border-l-0">
                       1
                     </button>
                     <button
                       type="button"
-                      className="btn btn-outline-secondary rounded-none ltr:border-r-0 rtl:border-l-0">
+                      className="btn-outline-secondary btn rounded-none ltr:border-r-0 rtl:border-l-0">
                       2
                     </button>
                     <div className="dropdown">
@@ -1671,7 +1671,7 @@ const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) ===
                 </div>
                 <div className="flex items-center justify-center">
                   <div className="inline-flex">
-                    <button className="btn btn-outline-primary ltr:rounded-r-none rtl:rounded-l-none">Action</button>
+                    <button className="btn-outline-primary btn ltr:rounded-r-none rtl:rounded-l-none">Action</button>
                     <div className="dropdown">
                       <Dropdown
                         placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}

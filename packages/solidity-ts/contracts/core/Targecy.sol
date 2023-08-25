@@ -115,7 +115,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
   }
 
   function createTargetGroup(string calldata metadataURI, uint256[] calldata zkRequestIds) external override onlyOwner {
-    targetGroupIds[_targetGroupId] = DataTypes.TargetGroup(metadataURI, zkRequestIds, 0);
+    targetGroups[_targetGroupId] = DataTypes.TargetGroup(metadataURI, zkRequestIds, 0);
 
     emit Events.TargetGroupCreated(_targetGroupId, metadataURI, zkRequestIds);
     _targetGroupId++;
@@ -126,7 +126,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     string calldata metadataURI,
     uint256[] calldata zkRequestIds
   ) external override onlyOwner {
-    DataTypes.TargetGroup storage targetGroupStorage = targetGroupIds[targetGroupId];
+    DataTypes.TargetGroup storage targetGroupStorage = targetGroups[targetGroupId];
 
     if (zkRequestIds.length == 0) {
       revert Errors.InvalidZKProofsLength();
@@ -139,7 +139,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
   }
 
   function deleteTargetGroup(uint256 targetGroupId) external override onlyOwner {
-    delete targetGroupIds[targetGroupId];
+    delete targetGroups[targetGroupId];
 
     emit Events.TargetGroupDeleted(targetGroupId);
   }
@@ -181,11 +181,15 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     return true;
   }
 
-  function distributeRewards(DataTypes.Ad memory ad, DataTypes.PublisherRewards calldata publisher) internal {
+  function distributeRewards(DataTypes.Ad storage ad, DataTypes.PublisherRewards calldata publisher) internal {
     uint256 impressionPrice = _getImpressionPrice(_msgSender());
 
     if (impressionPrice > ad.maxImpressionPrice) {
       revert Errors.ImpressionPriceTooHigh();
+    }
+
+    if (impressionPrice > ad.remainingBudget) {
+      revert Errors.InsufficientFunds();
     }
 
     ad.remainingBudget = ad.remainingBudget - impressionPrice;
@@ -196,11 +200,14 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     payable(protocolVault).transfer(protocolFee);
 
     // Publisher Fee
-    if (publisher.percentage > (Constants.PERCENTAGES_PRECISION - Constants.PROTOCOL_FEE_PERCENTAGE)) {
-      revert Errors.PublisherPercentageTooBig();
+    uint256 publisherFee;
+    if (publisher.percentage > 0) {
+      if (publisher.percentage > (Constants.PERCENTAGES_PRECISION - Constants.PROTOCOL_FEE_PERCENTAGE)) {
+        revert Errors.PublisherPercentageTooBig();
+      }
+      publisherFee = calculatePercentage(impressionPrice, publisher.percentage);
+      payable(publisher.publisherVault).transfer(publisherFee);
     }
-    uint256 publisherFee = calculatePercentage(impressionPrice, publisher.percentage);
-    payable(publisher.publisherVault).transfer(publisherFee);
 
     // User Rewards
     uint256 userRewards = impressionPrice - protocolFee - publisherFee;
@@ -212,7 +219,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     DataTypes.PublisherRewards calldata publisher,
     DataTypes.ZKProofs calldata zkProofs
   ) external override whenNotPaused {
-    DataTypes.Ad memory ad = ads[adId];
+    DataTypes.Ad storage ad = ads[adId];
 
     if (ad.remainingBudget == 0) {
       revert Errors.AdConsumed();
@@ -225,7 +232,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     // Verify ZKProofs - At least one TargetGroup must be valid
     bool targetGroupValidated;
     for (uint256 i = 0; i < ad.targetGroupIds.length; i++) {
-      DataTypes.TargetGroup memory targetGroup = targetGroupIds[ad.targetGroupIds[i]];
+      DataTypes.TargetGroup memory targetGroup = targetGroups[ad.targetGroupIds[i]];
 
       if (targetGroup.zkRequestIds.length == 0) {
         // TargetGroup does not exists.
@@ -248,7 +255,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     // Accept user's signature (for gasless txs)
     // TODO: Validate publisher's signature to avoid calls from code.
 
-    if (whitelistedPublishers[publisher.publisherVault] == false) {
+    if (publisher.percentage > 0 && publisher.publisherVault != address(0) && whitelistedPublishers[publisher.publisherVault] == false) {
       // The call should come from an whitelisted publisher
       revert Errors.PublisherNotWhitelisted();
     }
@@ -261,6 +268,18 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     emit Events.AdConsumed(adId, _msgSender(), publisher.publisherVault);
   }
 
+  function whitelistPublisher(address publisher) external override onlyOwner {
+    whitelistedPublishers[publisher] = true;
+
+    emit Events.PublisherWhitelisted(publisher);
+  }
+
+  function removePublisherFromWhitelist(address publisher) external override onlyOwner {
+    whitelistedPublishers[publisher] = false;
+
+    emit Events.PublisherRemovedFromWhitelist(publisher);
+  }
+
   function _getImpressionPrice(address addr) internal view returns (uint256) {
     if (customImpressionPrices[addr] != 0) {
       return customImpressionPrices[addr];
@@ -270,9 +289,17 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
   }
 
   function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {
-    if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
+    // if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
     if (percentage > Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTooBig();
 
     return (total * percentage) / Constants.PERCENTAGES_PRECISION;
+  }
+
+  function getTargetGroupZKRequests(uint256 targetGroupId) external view override returns (uint256[] memory) {
+    return targetGroups[targetGroupId].zkRequestIds;
+  }
+
+  function getAdTargetGroups(uint256 adId) external view override returns (uint256[] memory) {
+    return ads[adId].targetGroupIds;
   }
 }

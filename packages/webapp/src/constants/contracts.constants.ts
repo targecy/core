@@ -1,8 +1,7 @@
-import { ethers } from "ethers";
-import { z } from "zod";
+import { ethers } from 'ethers';
 
+import { env } from '~~/env.mjs';
 
-export const targecyContractAddress =  process.env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS ?? ethers.constants.AddressZero;
-if (targecyContractAddress === ethers.constants.AddressZero) {
-  throw new Error('Missing NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS');
-}
+export const targecyContractAddress = env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS as `0x${string}`;
+export const addressZero = ethers.constants.AddressZero;
+export const BigNumberZero = ethers.constants.Zero;

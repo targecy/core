@@ -17,7 +17,7 @@ export const networkDefinitions: Record<TNetworkNamesList, TNetworkDefinition> =
   localhost: {
     name: 'localhost',
     color: '#666666',
-    chainId: 31337,
+    chainId: 1337,
     blockExplorer: '',
     rpcUrl: 'http://' + hostname + ':8545',
   },

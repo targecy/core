@@ -113,7 +113,6 @@ const Validation = () => {
           <div className="panel" id="basic">
             <div className="mb-5 flex items-center justify-between">
               <h5 className="text-lg font-semibold dark:text-white-light">Basic</h5>
-              
             </div>
 
             <div className="mb-5">

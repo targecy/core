@@ -51,14 +51,15 @@ const networks = {
     },
   }),
   localhost: {
-    url: 'http://localhost:8545',
+    url: 'http://127.0.0.1:8545',
+    chainId: 1337,
     /*
       if there is no mnemonic, it will just use account 0 of the hardhat node to deploy
       (you can put in a mnemonic here to set the deployer locally)
     */
-    // accounts: {
-    //   mnemonic: getMnemonic(),
-    // },
+    accounts: {
+      mnemonic: getMnemonic(),
+    },
   },
 };
 
@@ -107,10 +108,17 @@ export const config: HardhatUserConfig = {
     },
   },
   watcher: {
-    'auto-compile': {
+    compile: {
       tasks: ['compile'],
-      files: ['./contracts'],
+      files: ['./contracts/**/*'],
       verbose: false,
+    },
+    test: {
+      tasks: [{ command: 'test', params: { testFiles: ['{path}'] } }],
+      files: ['./tests/**/*'],
+      verbose: true,
+      clearOnStart: true,
+      start: 'echo Running my test task now..',
     },
   },
   gasReporter: {

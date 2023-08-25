@@ -7,15 +7,9 @@ import {
   TargetGroupDeleted as TargetGroupDeletedEvent,
   TargetGroupEdited as TargetGroupEditedEvent,
   ZKPRequestCreated as ZKPRequestCreatedEvent,
-} from "../generated/Targecy/Targecy";
-import {
-  Ad,
-  Publisher,
-  TargetGroup,
-  User,
-  ZKPRequest,
-} from "../generated/schema";
-import { BigInt, store } from "@graphprotocol/graph-ts";
+} from '../generated/Targecy/Targecy';
+import { Ad, Publisher, TargetGroup, User, ZKPRequest } from '../generated/schema';
+import { BigInt, store } from '@graphprotocol/graph-ts';
 
 export function handleAdConsumed(event: AdConsumedEvent): void {
   let adEntity = Ad.load(event.params.adId.toString());
@@ -41,9 +35,7 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
     publisherEntity = new Publisher(event.params.publisher.toString());
     publisherEntity.impressions = BigInt.fromI32(1);
   } else {
-    publisherEntity.impressions = publisherEntity.impressions.plus(
-      BigInt.fromI32(1)
-    );
+    publisherEntity.impressions = publisherEntity.impressions.plus(BigInt.fromI32(1));
   }
   publisherEntity.save();
 }
@@ -53,14 +45,15 @@ export function handleAdCreated(event: AdCreatedEvent): void {
 
   entity.metadataURI = event.params.metadataURI;
   entity.budget = event.params.budget;
-  entity.targetGroupIds = event.params.targetGroupIds;
+
+  entity.targetGroups = event.params.targetGroupIds.map<string>((id) => id.toString());
   entity.impressions = BigInt.fromI32(0);
 
   entity.save();
 }
 
 export function handleAdDeleted(event: AdDeletedEvent): void {
-  store.remove("Ad", event.params.adId.toString());
+  store.remove('Ad', event.params.adId.toString());
 }
 
 export function handleAdEdited(event: AdEditedEvent): void {
@@ -73,7 +66,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
 
   entity.metadataURI = event.params.metadataURI;
   entity.budget = event.params.budget;
-  entity.targetGroupIds = event.params.targetGroupIds;
+  entity.targetGroups = event.params.targetGroupIds.map<string>((id) => id.toString());
 
   entity.save();
 }
@@ -82,13 +75,13 @@ export function handleTargetGroupCreated(event: TargetGroupCreatedEvent): void {
   let entity = new TargetGroup(event.params.targetGroupId.toString());
 
   entity.metadataURI = event.params.metadataURI;
-  entity.zkRequestIds = event.params.zkRequestIds;
+  entity.zkRequests = event.params.zkRequestIds.map<string>((id) => id.toString());
 
   entity.save();
 }
 
 export function handleTargetGroupDeleted(event: TargetGroupDeletedEvent): void {
-  store.remove("TargetGroup", event.params.targetGroupId.toString());
+  store.remove('TargetGroup', event.params.targetGroupId.toString());
 }
 
 export function handleTargetGroupEdited(event: TargetGroupEditedEvent): void {
@@ -100,7 +93,7 @@ export function handleTargetGroupEdited(event: TargetGroupEditedEvent): void {
   }
 
   entity.metadataURI = event.params.metadataURI;
-  entity.zkRequestIds = event.params.zkRequestIds;
+  entity.zkRequests = event.params.zkRequestIds.map<string>((id) => id.toString());
 
   entity.save();
 }

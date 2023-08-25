@@ -7,7 +7,6 @@ import Portals from '../../components/Portals';
 
 import Footer from './Footer';
 import Header from './Header';
-import Setting from './Setting';
 import Sidebar from './Sidebar';
 
 import { IRootState } from '~/store';
@@ -101,7 +100,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
           {showTopButton && (
             <button
               type="button"
-              className="btn btn-outline-primary animate-pulse rounded-full bg-[#fafafa] p-2 dark:bg-[#060818] dark:hover:bg-primary"
+              className="btn-outline-primary btn animate-pulse rounded-full bg-[#fafafa] p-2 dark:bg-[#060818] dark:hover:bg-primary"
               onClick={goToTop}>
               <svg
                 width="24"

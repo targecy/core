@@ -4,13 +4,21 @@ export const GetAllAds = gql`
   fragment AdFragment on Ad {
     id
     impressions
-    targetGroupIds
+    targetGroups {
+      ...TargetGroupFragment
+    }
     metadataURI
     budget
   }
-  
+
   query GetAllAds {
     ads {
+      ...AdFragment
+    }
+  }
+
+  query GetAdToShow {
+    ads(where: { targetGroups_not: [] }, orderBy: id, orderDirection: desc) {
       ...AdFragment
     }
   }

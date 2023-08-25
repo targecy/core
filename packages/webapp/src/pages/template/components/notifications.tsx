@@ -331,7 +331,7 @@ const showMessage = () => {
               </div>
               <h6 className="mb-3 text-center text-base font-semibold dark:text-white-light">Bottom Position</h6>
               <div className="flex items-center justify-center gap-2">
-                <button type="button" className="btn btn-dark" onClick={showMessage4}>
+                <button type="button" className="btn-dark btn" onClick={showMessage4}>
                   Bottom Left
                 </button>
                 <button type="button" className="btn btn-primary" onClick={showMessage5}>
@@ -649,7 +649,7 @@ const clickCallable = () => {
             </div>
             <div className="mb-5">
               <div className="flex items-center justify-center">
-                <button type="button" className="btn btn-dark" onClick={showMessage8}>
+                <button type="button" className="btn-dark btn" onClick={showMessage8}>
                   Duration
                 </button>
               </div>
@@ -746,7 +746,7 @@ const showMessage8 = () => {
                   <div id="success-toast"></div>
                 </div>
                 <div>
-                  <button type="button" className="btn btn-danger" onClick={() => coloredToast('danger')}>
+                  <button type="button" className="btn-danger btn" onClick={() => coloredToast('danger')}>
                     Danger
                   </button>
                   <div id="danger-toast"></div>

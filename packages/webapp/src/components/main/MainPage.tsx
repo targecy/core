@@ -12,6 +12,7 @@ import { useLoadAppContracts, useConnectAppContracts, useAppContracts } from '~c
 import { useCreateAntNotificationHolder } from '~common/components/hooks/useAntNotification';
 import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
 import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
+import { Targecy } from '~common/generated/contract-types';
 import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
 import {
   AVAILABLE_NETWORKS_DEFINITIONS,
@@ -22,7 +23,6 @@ import {
   BURNER_FALLBACK_ENABLED,
 } from '~~/config/nextjsApp.config';
 import { TAppProps } from '~~/models/TAppProps';
-import { Targecy } from '~common/generated/contract-types';
 
 /** ********************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️

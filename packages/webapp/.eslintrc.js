@@ -28,12 +28,24 @@ module.exports = {
   },
   rules: {
     // TODO Review
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-unsafe-assignment": "off",
-    "@typescript-eslint/no-unsafe-call": "off",
-    "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/no-unsafe-return": "off",
-    "@typescript-eslint/no-unsafe-member-access": "off"
-    "@typescript-eslint/no-unsafe-argument": "off",
-  }
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/no-unsafe-assignment': 'off',
+    '@typescript-eslint/no-unsafe-call': 'off',
+    '@typescript-eslint/no-use-before-define': 'off',
+    '@typescript-eslint/no-unsafe-return': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
+    '@typescript-eslint/no-unsafe-argument': 'off',
+    'no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
+    ],
+  },
+  ignorePatterns: ['**/*.mjs', '.eslintrc.js', '**/*.jsx', '**/*.d.ts'],
 };
