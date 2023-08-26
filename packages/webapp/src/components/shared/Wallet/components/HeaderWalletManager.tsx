@@ -2,7 +2,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export const HeaderWalletManager = () => {
   return (
-    <ConnectButton></ConnectButton>
+    <ConnectButton showBalance={false}></ConnectButton>
     // <ConnectButton.Custom>
     //   {({ account, chain, openAccountModal, openConnectModal, mounted }) => (
     //     <div

@@ -3,6 +3,7 @@ import {
   HomeOutlined,
   PlaySquareOutlined,
   SecurityScanOutlined,
+  ShareAltOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
@@ -148,6 +149,16 @@ const Sidebar = () => {
                         <SecurityScanOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('ZKP Requests')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link href="/publishers" className="group">
+                      <div className="flex items-center">
+                        <ShareAltOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Publishers')}
                         </span>
                       </div>
                     </Link>

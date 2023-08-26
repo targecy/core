@@ -55,6 +55,30 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     _zkRequestId++;
   }
 
+  function editZKPRequest(uint256 id, DataTypes.ZKPRequest calldata _zkpRequest) external override onlyOwner {
+    requestQueries[id].query.value = _zkpRequest.query.value;
+    requestQueries[id].query.operator = _zkpRequest.query.operator;
+    requestQueries[id].query.circuitId = _zkpRequest.query.circuitId;
+    requestQueries[id].query.slotIndex = _zkpRequest.query.slotIndex;
+    requestQueries[id].query.schema = _zkpRequest.query.schema;
+
+    requestQueries[id].query.circuitId = _zkpRequest.query.circuitId;
+
+    if (address(_zkpRequest.validator) == address(0)) {
+      requestQueries[id].validator = ICircuitValidator(zkProofsValidator);
+    } else {
+      requestQueries[id].validator = ICircuitValidator(_zkpRequest.validator);
+    }
+
+    emit Events.ZKPRequestEdited(id, address(requestQueries[id].validator), _zkpRequest.query, _zkpRequest.metadataURI);
+  }
+
+  function deleteZKPRequest(uint256 id) external override onlyOwner {
+    delete requestQueries[id];
+
+    emit Events.ZKPRequestDeleted(id);
+  }
+
   function createAd(DataTypes.NewAd calldata ad) external payable override {
     if (msg.value < ad.budget) {
       revert Errors.InsufficientFunds();

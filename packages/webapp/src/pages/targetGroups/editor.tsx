@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -15,30 +14,19 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 
-async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string, contractAbi: any) {
-  // Initialize a provider
-  const provider = new ethers.providers.JsonRpcProvider(providerUrl);
-
-  // Create a contract instance
-  const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-
-  // Define the filter to get AdCreated events
-  const filter = contract.filters.AdCreated();
-
-  // Query past events based on the filter
-  const events = await contract.queryFilter(filter);
-
-  // Return the parsed events
-  return events.map((event) => event.args);
-}
-
-const New = () => {
+const TargetGroupForm = (id?: string) => {
   const { data: zkpRequests } = useGetAllZkpRequestsQuery();
-  const [creatingTargetGroup, setCreatingTargetGroup] = useState(false);
+
+  const [processingTargetGroup, setProcessingTargetGroup] = useState(false);
   const { writeAsync: createTargetGroup } = useContractWrite({
     address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'createTargetGroup',
+  });
+  const { writeAsync: editTargetGroup } = useContractWrite({
+    address: targecyContractAddress,
+    abi: Targecy__factory.abi,
+    functionName: 'editTargetGroup',
   });
 
   const router = useRouter();
@@ -46,7 +34,7 @@ const New = () => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    setCreatingTargetGroup(true);
+    setProcessingTargetGroup(true);
 
     const targetGroupMetadata = {
       title: data.title,
@@ -59,54 +47,62 @@ const New = () => {
     });
 
     if (!metadataUploadResponse.ok) {
-      const toast = Swal.mixin({
+      await Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'error',
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setCreatingTargetGroup(false);
+      setProcessingTargetGroup(false);
       return;
     }
 
     const metadataURI = (await metadataUploadResponse.json()).uri;
 
     try {
-      const createAdResponse = await createTargetGroup({
-        args: [metadataURI, data.zkpRequests],
-      });
-      const toast = Swal.mixin({
+      let hash;
+      if (id) {
+        hash = (
+          await createTargetGroup({
+            args: [metadataURI, data.zkpRequests],
+          })
+        ).hash;
+      } else {
+        hash = (
+          await editTargetGroup({
+            args: [id, metadataURI, data.zkpRequests],
+          })
+        ).hash;
+      }
+      await Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'success',
-        title: 'Ad created successfully! Tx: ' + createAdResponse.hash,
+        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 
-      router.push('/targetGroups');
+      await router.push('/targetGroups');
     } catch (e) {
-      const toast = Swal.mixin({
+      await Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'error',
-        title: 'Error creating ad',
+        title: `Error ${id ? 'editing' : 'creating'} ad`,
         padding: '10px 20px',
       });
 
-      setCreatingTargetGroup(false);
+      setProcessingTargetGroup(false);
     }
   };
 
@@ -121,7 +117,7 @@ const New = () => {
   const zkpRequestsOptions = zkpRequests?.zkprequests.map((req) => {
     return {
       value: req.id,
-      label: 'ZKPRequest: ' + req.id,
+      label: `ZKPRequest: ${req.id}`,
     };
   });
 
@@ -134,7 +130,7 @@ const New = () => {
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-          <span>New</span>
+          {id ? <span>Edit</span> : <span>New</span>}
         </li>
       </ul>
 
@@ -220,17 +216,18 @@ const New = () => {
                 {isConnected ? (
                   <button
                     type="submit"
-                    disabled={creatingTargetGroup}
+                    disabled={processingTargetGroup}
                     className="btn btn-primary !mt-6"
                     onClick={() => {
                       if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
                         const parsed = schema.safeParse(values);
                         if (parsed.success) {
+                          // eslint-disable-next-line @typescript-eslint/no-floating-promises
                           submitForm(parsed.data);
                         }
                       }
                     }}>
-                    {creatingTargetGroup ? 'Creating Ad...' : 'Create'}
+                    {processingTargetGroup ? 'Creating Ad...' : 'Create'}
                   </button>
                 ) : (
                   <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -244,4 +241,4 @@ const New = () => {
   );
 };
 
-export default New;
+export default TargetGroupForm;

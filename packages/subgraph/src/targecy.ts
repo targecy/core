@@ -111,3 +111,9 @@ export function handleZKPRequestCreated(event: ZKPRequestCreatedEvent): void {
 
   entity.save();
 }
+
+export function handlerPublisherWhitelisted(event: PublisherWhi): void {
+  let entity = new Publisher(event.params.publisher.toString());
+
+  entity.save();
+}

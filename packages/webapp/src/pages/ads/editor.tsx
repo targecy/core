@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
@@ -15,37 +16,27 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 
-async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string, contractAbi: any) {
-  // Initialize a provider
-  const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+const AdForm = (id?: string) => {
+  console.log(id);
 
-  // Create a contract instance
-  const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-
-  // Define the filter to get AdCreated events
-  const filter = contract.filters.AdCreated();
-
-  // Query past events based on the filter
-  const events = await contract.queryFilter(filter);
-
-  // Return the parsed events
-  return events.map((event) => event.args);
-}
-
-const New = () => {
   const { data: targetGroups } = useGetAllTargetGroupsQuery();
-  const [creatingAd, setCreatingAd] = useState(false);
+  const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'createAd',
+  });
+  const { writeAsync: editAdAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi: Targecy__factory.abi,
+    functionName: 'editAd',
   });
 
   const router = useRouter();
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    setCreatingAd(true);
+    setProcesingAd(true);
 
     const adMetadata = {
       title: data.title,
@@ -64,59 +55,80 @@ const New = () => {
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'error',
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setCreatingAd(false);
+      setProcesingAd(false);
       return;
     }
 
     const metadataURI = (await metadataUploadResponse.json()).uri;
 
     try {
-      const createAdResponse = await createAdAsync({
-        args: [
-          {
-            metadataURI,
-            budget: data.budget,
-            maxImpressionPrice: data.maxImpressionPrice,
-            minBlock: data.minBlock,
-            maxBlock: data.maxBlock,
-            targetGroupIds: data.targetGroupIds,
-          },
-        ],
-        value: BigInt(data.budget),
-      });
-      const toast = Swal.mixin({
+      let hash;
+      if (id) {
+        // Edit Ad
+        hash = (
+          await editAdAsync({
+            args: [
+              id,
+              {
+                metadataURI,
+                budget: data.budget,
+                maxImpressionPrice: data.maxImpressionPrice,
+                minBlock: data.minBlock,
+                maxBlock: data.maxBlock,
+                targetGroupIds: data.targetGroupIds,
+              },
+            ],
+            value: BigInt(data.budget),
+          })
+        ).hash;
+      } else {
+        // Create Ad
+        hash = (
+          await createAdAsync({
+            args: [
+              {
+                metadataURI,
+                budget: data.budget,
+                maxImpressionPrice: data.maxImpressionPrice,
+                minBlock: data.minBlock,
+                maxBlock: data.maxBlock,
+                targetGroupIds: data.targetGroupIds,
+              },
+            ],
+            value: BigInt(data.budget),
+          })
+        ).hash;
+      }
+      Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'success',
-        title: 'Ad created successfully! Tx: ' + createAdResponse.hash,
+        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 
-      router.push('/ads');
+      await router.push('/ads');
     } catch (e) {
-      const toast = Swal.mixin({
+      Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'error',
-        title: 'Error creating ad',
+        title: `Error ${id ? 'editing' : 'creating'} ad`,
         padding: '10px 20px',
       });
 
-      setCreatingAd(false);
+      setProcesingAd(false);
     }
   };
 
@@ -136,7 +148,7 @@ const New = () => {
   const targetGroupOptions = targetGroups?.targetGroups.map((tg) => {
     return {
       value: tg.id,
-      label: 'TG: ' + tg.id,
+      label: `TG: ${tg.id}`,
     };
   });
 
@@ -149,7 +161,7 @@ const New = () => {
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-          <span>New</span>
+          {id ? <span>Edit</span> : <span>New</span>}
         </li>
       </ul>
 
@@ -345,7 +357,7 @@ const New = () => {
                 {isConnected ? (
                   <button
                     type="submit"
-                    disabled={creatingAd}
+                    disabled={procesingAd}
                     className="btn btn-primary !mt-6"
                     onClick={() => {
                       if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -355,7 +367,7 @@ const New = () => {
                         }
                       }
                     }}>
-                    {creatingAd ? 'Creating Ad...' : 'Create'}
+                    {id ? (procesingAd ? 'Editing Ad...' : 'Edit') : procesingAd ? 'Creating Ad...' : 'Create'}
                   </button>
                 ) : (
                   <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -369,4 +381,4 @@ const New = () => {
   );
 };
 
-export default New;
+export default AdForm;

@@ -12,6 +12,10 @@ interface ITargecy {
 
   function setZKPRequest(DataTypes.ZKPRequest memory _zkpRequest) external;
 
+  function editZKPRequest(uint256 zkRequestId, DataTypes.ZKPRequest memory _zkpRequest) external;
+
+  function deleteZKPRequest(uint256 zkRequestId) external;
+
   function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external;
 
   function createAd(DataTypes.NewAd calldata ad) external payable;

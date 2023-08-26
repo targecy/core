@@ -1,7 +1,13 @@
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
-import { useInterval } from 'react-use';
+import { useState } from 'react';
+import { useAsync, useInterval } from 'react-use';
+import Swal from 'sweetalert2';
+import { useContractWrite } from 'wagmi';
 
+import { Targecy__factory } from '~common/generated/contract-types';
+import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 
 const TargetGroups = () => {
@@ -13,10 +19,90 @@ const TargetGroups = () => {
 
   const targetGroups = data?.data?.targetGroups;
 
+  const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string; image?: string }>>(
+    {}
+  );
+  useAsync(async () => {
+    if (targetGroups) {
+      const metadata: Record<string, { title?: string; description?: string }> = {};
+      for (const tg of targetGroups) {
+        const newMetadata = await fetch(`https://ipfs.io/ipfs/${tg.metadataURI}`);
+        const json = await newMetadata.json();
+        metadata[tg.id] = {
+          title: json.title,
+          description: json.description,
+        };
+      }
+
+      setMetadata(metadata);
+    }
+  }, [targetGroups]);
+
+  const { writeAsync: deleteTargetGroupAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi: Targecy__factory.abi,
+    functionName: 'deleteTargetGroup',
+  });
+
+  const deleteTargetGroup = async (id: number) => {
+    await deleteTargetGroupAsync({ args: [id] });
+    return undefined;
+  };
+
   const columns: DataTableColumn<GetAllTargetGroupsQuery['targetGroups'][number]>[] = [
     { title: 'Id', accessor: 'id' },
+    { title: 'Title', accessor: 'id', render: (tg) => metadata[tg.id]?.title },
+    { title: 'Description', accessor: 'id', render: (tg) => metadata[tg.id]?.description },
     { title: 'ZKP Requests', accessor: 'zkRequests', render: (value) => value.zkRequests.map((r) => r.id).join(', ') },
-    { title: 'Metadata URI', accessor: 'metadataURI' },
+    {
+      width: 75,
+      accessor: 'actions',
+      title: '',
+      textAlignment: 'right',
+      render: (item) => (
+        <div className="flex justify-between">
+          <Link href={`/targetGroups/edit/${item.id}`}>
+            <EditOutlined
+              rev={undefined}
+              onClick={() => {}}
+              className="align-middle text-warning hover:text-secondary"></EditOutlined>
+          </Link>
+          <Link href="#">
+            <DeleteOutlined
+              rev={undefined}
+              onClick={() => {
+                deleteTargetGroup(Number(item.id))
+                  .then(async () => {
+                    await Swal.mixin({
+                      toast: true,
+                      position: 'top',
+                      showConfirmButton: false,
+                      timer: 3000,
+                    }).fire({
+                      icon: 'success',
+                      title: 'Ad deleted successfully',
+                      padding: '10px 20px',
+                    });
+                  })
+                  .catch(async (error) => {
+                    await Swal.mixin({
+                      toast: true,
+                      position: 'top',
+                      showConfirmButton: false,
+                      timer: 3000,
+                    }).fire({
+                      icon: 'error',
+                      title: 'Could not delete ad.',
+                      padding: '10px 20px',
+                    });
+                    console.log(error);
+                  });
+              }}
+              className="align-middle text-danger hover:text-secondary"></DeleteOutlined>
+          </Link>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -24,7 +110,7 @@ const TargetGroups = () => {
       <div className="panel">
         <div className="mb-5 flex items-center justify-between p-2">
           <h5 className="text-lg font-semibold dark:text-white-light">Target Groups</h5>
-          <Link className="btn btn-primary" href="/targetGroups/new">
+          <Link className="btn btn-primary" href="/targetGroups/editor">
             Create
           </Link>
         </div>

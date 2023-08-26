@@ -19,6 +19,10 @@ library Events {
 
   event ZKPRequestCreated(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
 
+  event ZKPRequestEdited(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
+
+  event ZKPRequestDeleted(uint256 indexed zkRequestId);
+
   event AdConsumed(uint256 indexed adId, address indexed user, address indexed publisher);
 
   event PublisherWhitelisted(address indexed publisher);

@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -22,6 +21,7 @@ import { useWallet } from '~~/hooks';
  * @returns array of bytes
  */
 const hexToBytes = (hex: string) => {
+  // eslint-disable-next-line no-var
   for (var bytes = [], c = 0; c < hex.length; c += 2) {
     /**
      * @dev parseInt 16 = parsed as a hexadecimal number
@@ -48,29 +48,17 @@ const fromLittleEndian = (bytes: number[]) => {
   return result;
 };
 
-async function fetchAdCreatedEvents(providerUrl: string, contractAddress: string, contractAbi: any) {
-  // Initialize a provider
-  const provider = new ethers.providers.JsonRpcProvider(providerUrl);
-
-  // Create a contract instance
-  const contract = new ethers.Contract(contractAddress, contractAbi, provider);
-
-  // Define the filter to get AdCreated events
-  const filter = contract.filters.AdCreated();
-
-  // Query past events based on the filter
-  const events = await contract.queryFilter(filter);
-
-  // Return the parsed events
-  return events.map((event) => event.args);
-}
-
-const New = () => {
-  const [creatingZKPRequest, setCreatingZKPRequest] = useState(false);
+const ZKPRequestForm = (id?: string) => {
+  const [processingZKPRequest, setProcessingZKPRequest] = useState(false);
   const { writeAsync: setZKPRequestAsync } = useContractWrite({
     address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'setZKPRequest',
+  });
+  const { writeAsync: editZKPRequestAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi: Targecy__factory.abi,
+    functionName: 'editZKPRequest',
   });
 
   const router = useRouter();
@@ -78,7 +66,7 @@ const New = () => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    setCreatingZKPRequest(true);
+    setProcessingZKPRequest(true);
 
     const zkpRequestMetadata = {
       title: data.title,
@@ -91,18 +79,17 @@ const New = () => {
     });
 
     if (!metadataUploadResponse.ok) {
-      const toast = Swal.mixin({
+      await Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'error',
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setCreatingZKPRequest(false);
+      setProcessingZKPRequest(false);
       return;
     }
 
@@ -112,49 +99,72 @@ const New = () => {
       const schemaHash = data.schema; // extracted from PID Platform
       const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));
 
-      const createZKPRequest = await setZKPRequestAsync({
-        args: [
-          {
-            validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
-            query: {
-              schema: data.schema,
-              slotIndex: data.slotIndex,
-              operator: data.operator,
-              value: [data.value],
+      let hash;
+      if (id) {
+        hash = (
+          await editZKPRequestAsync({
+            args: [
+              id,
+              {
+                validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
+                query: {
+                  schema: data.schema,
+                  slotIndex: data.slotIndex,
+                  operator: data.operator,
+                  value: [data.value],
 
-              circuitId: 'credentialAtomicQuerySig',
-            },
-            metadataURI: metadataURI,
-          },
-        ],
-      });
-      const toast = Swal.mixin({
+                  circuitId: 'credentialAtomicQuerySig',
+                },
+                metadataURI: metadataURI,
+              },
+            ],
+          })
+        ).hash;
+      } else {
+        hash = (
+          await setZKPRequestAsync({
+            args: [
+              {
+                validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
+                query: {
+                  schema: data.schema,
+                  slotIndex: data.slotIndex,
+                  operator: data.operator,
+                  value: [data.value],
+
+                  circuitId: 'credentialAtomicQuerySig',
+                },
+                metadataURI: metadataURI,
+              },
+            ],
+          })
+        ).hash;
+      }
+      await Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'success',
-        title: 'ZKPRequest created successfully! Tx: ' + createZKPRequest.hash,
+        title: `ZKPRequest ${id ? 'edited' : 'created'} successfully! Tx: ${hash} `,
         padding: '10px 20px',
       });
 
-      router.push('/zkprequests');
+      await router.push('/zkprequests');
     } catch (e) {
-      const toast = Swal.mixin({
+      await Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
         timer: 3000,
-      });
-      toast.fire({
+      }).fire({
         icon: 'error',
-        title: 'Error creating ad',
+        title: `Error ${id ? 'editing' : 'creating'} ad`,
         padding: '10px 20px',
       });
 
-      setCreatingZKPRequest(false);
+      setProcessingZKPRequest(false);
     }
   };
 
@@ -205,7 +215,7 @@ const New = () => {
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-          <span>New</span>
+          {id ? <span>Edit</span> : <span>New</span>}
         </li>
       </ul>
 
@@ -428,17 +438,18 @@ const New = () => {
                 {isConnected ? (
                   <button
                     type="submit"
-                    disabled={creatingZKPRequest}
+                    disabled={processingZKPRequest}
                     className="btn btn-primary !mt-6"
                     onClick={() => {
                       if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
                         const parsed = schema.safeParse(values);
                         if (parsed.success) {
+                          // eslint-disable-next-line @typescript-eslint/no-floating-promises
                           submitForm(parsed.data);
                         }
                       }
                     }}>
-                    {creatingZKPRequest ? 'Creating Ad...' : 'Create'}
+                    {processingZKPRequest ? 'Creating Ad...' : 'Create'}
                   </button>
                 ) : (
                   <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -452,4 +463,4 @@ const New = () => {
   );
 };
 
-export default New;
+export default ZKPRequestForm;
