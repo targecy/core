@@ -9,8 +9,8 @@ import '@primitivefi/hardhat-dodoc';
 import 'hardhat-tracer';
 import 'hardhat-contract-sizer';
 
-import '@openzeppelin/hardhat-upgrades';
 import '@nomiclabs/hardhat-solhint';
-
 import 'hardhat-deploy';
-import 'hardhat-deploy-ethers';
+
+import '@nomiclabs/hardhat-ethers';
+import '@openzeppelin/hardhat-upgrades';

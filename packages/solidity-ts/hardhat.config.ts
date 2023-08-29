@@ -82,6 +82,7 @@ export const config: HardhatUserConfig = {
       {
         version: '0.8.10',
         settings: {
+          evmVersion: 'byzantium',
           optimizer: {
             enabled: true,
             runs: 250,
@@ -138,7 +139,7 @@ export const config: HardhatUserConfig = {
     cache: './generated/hardhat/cache',
     artifacts: hardhatArtifactsDir,
     deployments: hardhatDeploymentsDir,
-    deploy: './deploy/hardhat-deploy',
+    deploy: './scripts/deploy',
     tests: './tests/hardhat-tests',
   },
   typechain: {

@@ -2,41 +2,61 @@
 
 pragma solidity 0.8.10;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
+import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 import { ITargecy } from "../interfaces/ITargecy.sol";
 import { TargecyStorage } from "./storage/TargecyStorage.sol";
-import { Events } from "../libraries/Events.sol";
+import { TargecyEvents } from "../libraries/TargecyEvents.sol";
 import { DataTypes } from "../libraries/DataTypes.sol";
 import { Constants } from "../libraries/Constants.sol";
 import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
-contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
-  constructor(
+contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
+  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
+  function initialize(
     address _zkProofsValidator,
     address _protocolVault,
     uint256 _defaultImpressionPrice
-  ) {
+  ) external initializer {
+    __AccessControl_init();
+    __Pausable_init();
+
     zkProofsValidator = _zkProofsValidator;
     protocolVault = _protocolVault;
     defaultImpressionPrice = _defaultImpressionPrice;
+
+    // Default values
+    zkProofsValidator = address(0);
+    protocolVault = address(0);
+
+    _zkRequestId = 1;
+    _adId = 1;
+    _targetGroupId = 1;
+    totalImpressions = 0;
+
+    defaultImpressionPrice = 1;
+
+    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
-  function setZKProofsValidator(address _zkProofsValidator) external override onlyOwner {
+  function setZKProofsValidator(address _zkProofsValidator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     zkProofsValidator = _zkProofsValidator;
   }
 
-  function setProtocolVault(address _protocolVault) external override onlyOwner {
+  function setProtocolVault(address _protocolVault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     protocolVault = _protocolVault;
   }
 
-  function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external override onlyOwner {
+  function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     defaultImpressionPrice = _defaultImpressionPrice;
   }
 
-  function setZKPRequest(DataTypes.ZKPRequest calldata _zkpRequest) external override onlyOwner {
+  function setZKPRequest(DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     requestQueries[_zkRequestId].query.value = _zkpRequest.query.value;
     requestQueries[_zkRequestId].query.operator = _zkpRequest.query.operator;
     requestQueries[_zkRequestId].query.circuitId = _zkpRequest.query.circuitId;
@@ -51,11 +71,11 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
       requestQueries[_zkRequestId].validator = ICircuitValidator(_zkpRequest.validator);
     }
 
-    emit Events.ZKPRequestCreated(_zkRequestId, address(requestQueries[_zkRequestId].validator), _zkpRequest.query, _zkpRequest.metadataURI);
+    emit ZKPRequestCreated(_zkRequestId, address(requestQueries[_zkRequestId].validator), _zkpRequest.query, _zkpRequest.metadataURI);
     _zkRequestId++;
   }
 
-  function editZKPRequest(uint256 id, DataTypes.ZKPRequest calldata _zkpRequest) external override onlyOwner {
+  function editZKPRequest(uint256 id, DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     requestQueries[id].query.value = _zkpRequest.query.value;
     requestQueries[id].query.operator = _zkpRequest.query.operator;
     requestQueries[id].query.circuitId = _zkpRequest.query.circuitId;
@@ -70,13 +90,13 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
       requestQueries[id].validator = ICircuitValidator(_zkpRequest.validator);
     }
 
-    emit Events.ZKPRequestEdited(id, address(requestQueries[id].validator), _zkpRequest.query, _zkpRequest.metadataURI);
+    emit ZKPRequestEdited(id, address(requestQueries[id].validator), _zkpRequest.query, _zkpRequest.metadataURI);
   }
 
-  function deleteZKPRequest(uint256 id) external override onlyOwner {
+  function deleteZKPRequest(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete requestQueries[id];
 
-    emit Events.ZKPRequestDeleted(id);
+    emit ZKPRequestDeleted(id);
   }
 
   function createAd(DataTypes.NewAd calldata ad) external payable override {
@@ -86,7 +106,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
 
     ads[_adId] = DataTypes.Ad(_msgSender(), ad.targetGroupIds, ad.metadataURI, ad.budget, ad.budget, ad.maxImpressionPrice, ad.minBlock, ad.maxBlock, 0);
 
-    emit Events.AdCreated(_adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
+    emit AdCreated(_adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
     _adId++;
   }
 
@@ -121,7 +141,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     adStorage.metadataURI = ad.metadataURI;
     adStorage.targetGroupIds = ad.targetGroupIds;
 
-    emit Events.AdEdited(adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
+    emit AdEdited(adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
   }
 
   function deleteAd(uint256 adId) external override whenNotPaused {
@@ -135,13 +155,13 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
 
     delete ads[adId];
 
-    emit Events.AdDeleted(adId);
+    emit AdDeleted(adId);
   }
 
-  function createTargetGroup(string calldata metadataURI, uint256[] calldata zkRequestIds) external override onlyOwner {
+  function createTargetGroup(string calldata metadataURI, uint256[] calldata zkRequestIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     targetGroups[_targetGroupId] = DataTypes.TargetGroup(metadataURI, zkRequestIds, 0);
 
-    emit Events.TargetGroupCreated(_targetGroupId, metadataURI, zkRequestIds);
+    emit TargetGroupCreated(_targetGroupId, metadataURI, zkRequestIds);
     _targetGroupId++;
   }
 
@@ -149,7 +169,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     uint256 targetGroupId,
     string calldata metadataURI,
     uint256[] calldata zkRequestIds
-  ) external override onlyOwner {
+  ) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     DataTypes.TargetGroup storage targetGroupStorage = targetGroups[targetGroupId];
 
     if (zkRequestIds.length == 0) {
@@ -159,13 +179,13 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     targetGroupStorage.metadataURI = metadataURI;
     targetGroupStorage.zkRequestIds = zkRequestIds;
 
-    emit Events.TargetGroupEdited(targetGroupId, metadataURI, zkRequestIds);
+    emit TargetGroupEdited(targetGroupId, metadataURI, zkRequestIds);
   }
 
-  function deleteTargetGroup(uint256 targetGroupId) external override onlyOwner {
+  function deleteTargetGroup(uint256 targetGroupId) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete targetGroups[targetGroupId];
 
-    emit Events.TargetGroupDeleted(targetGroupId);
+    emit TargetGroupDeleted(targetGroupId);
   }
 
   function verifyZKProof(
@@ -178,11 +198,7 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     require(requestQueries[requestId].validator != ICircuitValidator(address(0)), "validator is not set for this request id");
     require(requestQueries[requestId].query.schema != 0, "query is not set for this request id");
 
-    if (!requestQueries[requestId].validator.verify(inputs, a, b, c, requestQueries[requestId].query)) {
-      return false;
-    }
-
-    return true;
+    return requestQueries[requestId].validator.verify(inputs, a, b, c, requestQueries[requestId].query);
   }
 
   function _bulkVerifyZKProofs(
@@ -238,6 +254,16 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     payable(_msgSender()).transfer(userRewards);
   }
 
+  /// @notice Sets the pause state to true in case of emergency, triggered by an authorized account.
+  function pause() external onlyRole(PAUSER_ROLE) {
+    _pause();
+  }
+
+  /// @notice Sets the pause state to false when threat is gone, triggered by an authorized account.
+  function unpause() external onlyRole(PAUSER_ROLE) {
+    _unpause();
+  }
+
   function consumeAd(
     uint64 adId,
     DataTypes.PublisherRewards calldata publisher,
@@ -289,19 +315,19 @@ contract Targecy is TargecyStorage, ITargecy, Ownable, Pausable {
     // Proofs verified, distribute rewards
     distributeRewards(ad, publisher);
 
-    emit Events.AdConsumed(adId, _msgSender(), publisher.publisherVault);
+    emit AdConsumed(adId, _msgSender(), publisher.publisherVault);
   }
 
-  function whitelistPublisher(address publisher) external override onlyOwner {
+  function whitelistPublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     whitelistedPublishers[publisher] = true;
 
-    emit Events.PublisherWhitelisted(publisher);
+    emit PublisherWhitelisted(publisher);
   }
 
-  function removePublisherFromWhitelist(address publisher) external override onlyOwner {
+  function removePublisherFromWhitelist(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     whitelistedPublishers[publisher] = false;
 
-    emit Events.PublisherRemovedFromWhitelist(publisher);
+    emit PublisherRemovedFromWhitelist(publisher);
   }
 
   function _getImpressionPrice(address addr) internal view returns (uint256) {

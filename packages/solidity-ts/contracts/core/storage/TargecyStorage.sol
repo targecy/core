@@ -6,15 +6,15 @@ import { DataTypes } from "../../libraries/DataTypes.sol";
 import { ICircuitValidator } from "../../interfaces/ICircuitValidator.sol";
 
 abstract contract TargecyStorage {
-  address public zkProofsValidator = address(0);
-  address public protocolVault = address(0);
+  address public zkProofsValidator;
+  address public protocolVault;
 
-  uint256 public _zkRequestId = 1;
-  uint256 public _adId = 1;
-  uint256 public _targetGroupId = 1;
-  uint256 public totalImpressions = 0;
+  uint256 public _zkRequestId;
+  uint256 public _adId;
+  uint256 public _targetGroupId;
+  uint256 public totalImpressions;
 
-  uint256 public defaultImpressionPrice = 1;
+  uint256 public defaultImpressionPrice;
 
   mapping(address => bool) public whitelistedPublishers;
   mapping(address => uint256) public customImpressionPrices;

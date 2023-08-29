@@ -1,9 +1,13 @@
 type Ad @entity {
   id: String! # uint256
   metadataURI: String! # string TODO
-  budget: BigInt! # uint256
+  totalBudget: BigInt! # uint256
+  remainingBudget: BigInt! # uint256
   targetGroups: [TargetGroup!]! # uint256[]
-
+  minBlock: BigInt! # uint256
+  maxBlock: BigInt! # uint256
+  maxImpressionPrice: BigInt! # uint256
+  advertiser: User! # address
   impressions: BigInt! # uint256
 }
 

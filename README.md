@@ -164,7 +164,7 @@ Everything you need to build on Ethereum! 🚀 Quickly experiment with Solidity 
 
 - 🔏 Edit your smart contract `Targecy.sol` in `packages/solidity-ts/contracts`
 - 📝 Edit your frontend `MainPage.tsx` in `packages/vite-app-ts/src`
-- 💼 Edit your deployment scripts in `packages/solidity-ts/deploy/hardhat-deploy`
+- 💼 Edit your deployment scripts in `packages/solidity-ts/scripts/deploy`
 - 📱 Open http://localhost:3000 to see the app
 - 👷🏽‍♂️ run `yarn hardhat` to get a list of all the tasks. Run `yarn hardhat taskname` to run the task.
 

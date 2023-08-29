@@ -11,7 +11,8 @@ export const GetAllAds = gql`
       ...TargetGroupFragment
     }
     metadataURI
-    budget
+    remainingBudget
+    totalBudget
   }
 
   query GetAllAds {

@@ -70,7 +70,8 @@ const Ads = () => {
       accessor: 'targetGroupsIds',
       render: (value) => value.targetGroups.map((tg) => tg.id).join(', '),
     },
-    { title: 'Budget', accessor: 'budget' },
+    { title: 'Remaining Budget', accessor: 'remainingBudget' },
+    { title: 'Total Budget', accessor: 'totalBudget' },
     {
       accessor: 'actions',
       title: '',

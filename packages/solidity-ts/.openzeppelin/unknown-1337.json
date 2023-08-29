@@ -1,0 +1,748 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [],
+  "impls": {
+    "a7ead9c2d5ba4b9b9ee422818d92b96fcde7abe1eb79c365250dc13ea9ff38fd": {
+      "address": "0x7f8AB48EF29946031EE98b77ceFc64F6D0359233",
+      "txHash": "0xabd240d2b613968db54615b127d8913385335e84a4479a4e38ab63912bc90b54",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ERC1967UpgradeUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol:169"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "UUPSUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol:111"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "201",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "202",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "zkProofsValidator",
+            "offset": 0,
+            "slot": "251",
+            "type": "t_address",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:9"
+          },
+          {
+            "label": "protocolVault",
+            "offset": 0,
+            "slot": "252",
+            "type": "t_address",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:10"
+          },
+          {
+            "label": "_zkRequestId",
+            "offset": 0,
+            "slot": "253",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:12"
+          },
+          {
+            "label": "_adId",
+            "offset": 0,
+            "slot": "254",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:13"
+          },
+          {
+            "label": "_targetGroupId",
+            "offset": 0,
+            "slot": "255",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:14"
+          },
+          {
+            "label": "totalImpressions",
+            "offset": 0,
+            "slot": "256",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:15"
+          },
+          {
+            "label": "defaultImpressionPrice",
+            "offset": 0,
+            "slot": "257",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:17"
+          },
+          {
+            "label": "whitelistedPublishers",
+            "offset": 0,
+            "slot": "258",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:19"
+          },
+          {
+            "label": "customImpressionPrices",
+            "offset": 0,
+            "slot": "259",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:20"
+          },
+          {
+            "label": "ads",
+            "offset": 0,
+            "slot": "260",
+            "type": "t_mapping(t_uint256,t_struct(Ad)3041_storage)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:21"
+          },
+          {
+            "label": "targetGroups",
+            "offset": 0,
+            "slot": "261",
+            "type": "t_mapping(t_uint256,t_struct(TargetGroup)3021_storage)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:22"
+          },
+          {
+            "label": "requestQueries",
+            "offset": 0,
+            "slot": "262",
+            "type": "t_mapping(t_uint256,t_struct(ZKPRequest)3013_storage)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:23"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICircuitValidator)2857": {
+            "label": "contract ICircuitValidator",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Ad)3041_storage)": {
+            "label": "mapping(uint256 => struct DataTypes.Ad)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(TargetGroup)3021_storage)": {
+            "label": "mapping(uint256 => struct DataTypes.TargetGroup)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(ZKPRequest)3013_storage)": {
+            "label": "mapping(uint256 => struct DataTypes.ZKPRequest)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Ad)3041_storage": {
+            "label": "struct DataTypes.Ad",
+            "members": [
+              {
+                "label": "advertiser",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "targetGroupIds",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "totalBudget",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "remainingBudget",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "maxImpressionPrice",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "minBlock",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "maxBlock",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "impressions",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "8"
+              }
+            ],
+            "numberOfBytes": "288"
+          },
+          "t_struct(CircuitQuery)2812_storage": {
+            "label": "struct ICircuitValidator.CircuitQuery",
+            "members": [
+              {
+                "label": "schema",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "slotIndex",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "operator",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "value",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "circuitId",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(TargetGroup)3021_storage": {
+            "label": "struct DataTypes.TargetGroup",
+            "members": [
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "zkRequestIds",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "impressions",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(ZKPRequest)3013_storage": {
+            "label": "struct DataTypes.ZKPRequest",
+            "members": [
+              {
+                "label": "validator",
+                "type": "t_contract(ICircuitValidator)2857",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "query",
+                "type": "t_struct(CircuitQuery)2812_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "a80205ee48b7c990af7fc139a9a8aadc2040b7fbe81e3a68348486d8d61cb52b": {
+      "address": "0x2c49907D7756F5b6955aB57A76489C20fCAF2aE7",
+      "txHash": "0xcc34916fe5bda2777ed9b1d9e3b49716f3043483f1f0ff5a39f18c5bdfd18fcc",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_paused",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_bool",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "PausableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:116"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "zkProofsValidator",
+            "offset": 0,
+            "slot": "151",
+            "type": "t_address",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:9"
+          },
+          {
+            "label": "protocolVault",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_address",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:10"
+          },
+          {
+            "label": "_zkRequestId",
+            "offset": 0,
+            "slot": "153",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:12"
+          },
+          {
+            "label": "_adId",
+            "offset": 0,
+            "slot": "154",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:13"
+          },
+          {
+            "label": "_targetGroupId",
+            "offset": 0,
+            "slot": "155",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:14"
+          },
+          {
+            "label": "totalImpressions",
+            "offset": 0,
+            "slot": "156",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:15"
+          },
+          {
+            "label": "defaultImpressionPrice",
+            "offset": 0,
+            "slot": "157",
+            "type": "t_uint256",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:17"
+          },
+          {
+            "label": "whitelistedPublishers",
+            "offset": 0,
+            "slot": "158",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:19"
+          },
+          {
+            "label": "customImpressionPrices",
+            "offset": 0,
+            "slot": "159",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:20"
+          },
+          {
+            "label": "ads",
+            "offset": 0,
+            "slot": "160",
+            "type": "t_mapping(t_uint256,t_struct(Ad)2414_storage)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:21"
+          },
+          {
+            "label": "targetGroups",
+            "offset": 0,
+            "slot": "161",
+            "type": "t_mapping(t_uint256,t_struct(TargetGroup)2394_storage)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:22"
+          },
+          {
+            "label": "requestQueries",
+            "offset": 0,
+            "slot": "162",
+            "type": "t_mapping(t_uint256,t_struct(ZKPRequest)2386_storage)",
+            "contract": "TargecyStorage",
+            "src": "contracts/core/storage/TargecyStorage.sol:23"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]",
+            "numberOfBytes": "32"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(ICircuitValidator)2230": {
+            "label": "contract ICircuitValidator",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(Ad)2414_storage)": {
+            "label": "mapping(uint256 => struct DataTypes.Ad)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(TargetGroup)2394_storage)": {
+            "label": "mapping(uint256 => struct DataTypes.TargetGroup)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(ZKPRequest)2386_storage)": {
+            "label": "mapping(uint256 => struct DataTypes.ZKPRequest)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(Ad)2414_storage": {
+            "label": "struct DataTypes.Ad",
+            "members": [
+              {
+                "label": "advertiser",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "targetGroupIds",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "totalBudget",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "remainingBudget",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "maxImpressionPrice",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "minBlock",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "maxBlock",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "impressions",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "8"
+              }
+            ],
+            "numberOfBytes": "288"
+          },
+          "t_struct(CircuitQuery)2185_storage": {
+            "label": "struct ICircuitValidator.CircuitQuery",
+            "members": [
+              {
+                "label": "schema",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "slotIndex",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "operator",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "value",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "circuitId",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "4"
+              }
+            ],
+            "numberOfBytes": "160"
+          },
+          "t_struct(TargetGroup)2394_storage": {
+            "label": "struct DataTypes.TargetGroup",
+            "members": [
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "zkRequestIds",
+                "type": "t_array(t_uint256)dyn_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "impressions",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(ZKPRequest)2386_storage": {
+            "label": "struct DataTypes.ZKPRequest",
+            "members": [
+              {
+                "label": "validator",
+                "type": "t_contract(ICircuitValidator)2230",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "query",
+                "type": "t_struct(CircuitQuery)2185_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "metadataURI",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "6"
+              }
+            ],
+            "numberOfBytes": "224"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

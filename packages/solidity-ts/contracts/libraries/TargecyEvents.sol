@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
-library Events {
+interface TargecyEvents {
   event AdCreated(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);
 
   event AdEdited(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);

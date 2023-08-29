@@ -3,6 +3,8 @@ import {
   AdCreated as AdCreatedEvent,
   AdDeleted as AdDeletedEvent,
   AdEdited as AdEditedEvent,
+  PublisherRemovedFromWhitelist,
+  PublisherWhitelisted,
   TargetGroupCreated as TargetGroupCreatedEvent,
   TargetGroupDeleted as TargetGroupDeletedEvent,
   TargetGroupEdited as TargetGroupEditedEvent,
@@ -19,6 +21,7 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
     return;
   }
   adEntity.impressions = adEntity.impressions.plus(BigInt.fromI32(1));
+  // Todo add budget changes
   adEntity.save();
 
   let userEntity = User.load(event.params.user.toString());
@@ -44,7 +47,8 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   let entity = new Ad(event.params.adId.toString());
 
   entity.metadataURI = event.params.metadataURI;
-  entity.budget = event.params.budget;
+  entity.totalBudget = event.params.budget;
+  entity.remainingBudget = event.params.budget;
 
   entity.targetGroups = event.params.targetGroupIds.map<string>((id) => id.toString());
   entity.impressions = BigInt.fromI32(0);
@@ -65,7 +69,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
   }
 
   entity.metadataURI = event.params.metadataURI;
-  entity.budget = event.params.budget;
+  entity.totalBudget = event.params.budget;
   entity.targetGroups = event.params.targetGroupIds.map<string>((id) => id.toString());
 
   entity.save();
@@ -112,8 +116,12 @@ export function handleZKPRequestCreated(event: ZKPRequestCreatedEvent): void {
   entity.save();
 }
 
-export function handlerPublisherWhitelisted(event: PublisherWhi): void {
+export function handlePublisherWhitelisted(event: PublisherWhitelisted): void {
   let entity = new Publisher(event.params.publisher.toString());
-
+  entity.impressions = BigInt.fromI32(0);
   entity.save();
+}
+
+export function handlePublisherRemovedFromWhitelist(event: PublisherRemovedFromWhitelist): void {
+  store.remove('Publisher', event.params.publisher.toString());
 }

@@ -1,4 +1,5 @@
 import { type W3CCredential } from '@0xpolygonid/js-sdk';
+import { waitForTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
 import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
@@ -42,17 +43,25 @@ const Demo = () => {
   const [initialized, setInitialized] = useState(false);
 
   // Save and upload from storage
-  useEffect(() => {
-    if (!initialized) {
+  useAsync(async () => {
+    if (!initialized && zkServices && userIdentity) {
       setInitialized(true);
       const credentialsReceived = JSON.parse(localStorage.getItem('credentials') || '[]');
-      setCredentials(credentialsReceived.map(cloneCredential));
+      const cloned = credentialsReceived.map(cloneCredential);
+
+      console.log(cloned);
+      await zkServices.dataStorage.credential.saveAllCredentials(cloned);
+      console.log('Saved credentials');
+      setCredentials(await zkServices.credWallet.list());
     } else {
       if (credentials.length > 0) {
-        localStorage.setItem('credentials', JSON.stringify(credentials));
+        localStorage.setItem(
+          'credentials',
+          JSON.stringify(credentials.filter((c) => !c.type.includes('AuthBJJCredential')))
+        );
       }
     }
-  }, [credentials]);
+  }, [credentials, initialized, zkServices, userIdentity]);
   // useListCredentials(credentials, setCredentials, zkServices);
 
   const [requestCredentialTrigger, setRequestCredentialTrigger] = useState(false);
@@ -65,16 +74,27 @@ const Demo = () => {
     }
   }, [requestCredentialTrigger, zkServices, userIdentity?.did.id]);
 
+  const clearCredentials = () => {
+    setCredentials([]);
+    localStorage.removeItem('credentials');
+  };
+
+  const [requestRewardsTrigger, setRequestRewardsTrigger] = useState<{ trigger: boolean; ad?: Ad }>({
+    trigger: false,
+    ad: undefined,
+  });
+  useEffect(() => {
+    if (requestRewardsTrigger.trigger && requestRewardsTrigger.ad) {
+      generateProofAndConsumeAd(requestRewardsTrigger.ad).finally(() => {
+        setRequestRewardsTrigger({ trigger: false, ad: undefined });
+      });
+    }
+  }, [requestRewardsTrigger]);
+
   const { writeAsync: consumeAdAsync } = useContractWrite({
     address: targecyContractAddress,
     abi: Targecy__factory.abi,
     functionName: 'consumeAd',
-  });
-
-  const { writeAsync: verifyZKProofAsync } = useContractWrite({
-    address: targecyContractAddress,
-    abi: Targecy__factory.abi,
-    functionName: 'verifyZKProof',
   });
 
   const generateProofAndConsumeAd = async (ad: Ad) => {
@@ -107,38 +127,51 @@ const Demo = () => {
       return;
     }
 
-    for (const proof of proofs) {
-      const verifyProofResponse = await verifyZKProofAsync({
+    try {
+      const consumeAdResponse = await consumeAdAsync({
         args: [
-          proof.id,
-          proof.proof.pub_signals,
-          proof.proof.proof.pi_a,
-          proof.proof.proof.pi_b,
-          proof.proof.proof.pi_c,
+          BigInt(ad.id),
+          {
+            percentage: BigNumberZero,
+            publisherVault: addressZero, // Just for testing
+          },
+          {
+            // requestIds: proofs.map((proof) => proof.id),
+            inputs: proofs.map((proof) => proof.proof.pub_signals),
+            a: proofs.map((proof) => proof.proof.proof.pi_a),
+            b: proofs.map((proof) => proof.proof.proof.pi_b),
+            c: proofs.map((proof) => proof.proof.proof.pi_c),
+          },
         ],
       });
 
-      console.log(verifyProofResponse);
+      const tx = await waitForTransaction({ hash: consumeAdResponse.hash });
+
+      console.log(tx.logs);
+
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'success',
+        title: `Rewards requested successfully. Hash: ${consumeAdResponse.hash}`,
+        padding: '10px 20px',
+      });
+    } catch (e) {
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'error',
+        title: `Error requesting rewards`,
+        padding: '10px 20px',
+      });
+      console.error(e);
     }
-
-    const consumeAdResponse = await consumeAdAsync({
-      args: [
-        BigInt(ad.id),
-        {
-          percentage: BigNumberZero,
-          publisherVault: addressZero, // Just for testing
-        },
-        {
-          // requestIds: proofs.map((proof) => proof.id),
-          inputs: proofs.map((proof) => proof.proof.pub_signals),
-          a: proofs.map((proof) => proof.proof.proof.pi_a),
-          b: proofs.map((proof) => proof.proof.proof.pi_b),
-          c: proofs.map((proof) => proof.proof.proof.pi_c),
-        },
-      ],
-    });
-
-    console.log(consumeAdResponse);
   };
 
   return (
@@ -156,14 +189,22 @@ const Demo = () => {
             {credentials?.filter(
               (credential: W3CCredential) =>
                 credential.credentialSubject.id?.toString() === 'did:iden3:' + (userIdentity?.did.id || '')
-            ).length == 0 &&
-              (!requestCredentialTrigger ? (
-                <p className="link text-secondary" onClick={() => setRequestCredentialTrigger(true)}>
+            ).length == 0 ? (
+              !requestCredentialTrigger ? (
+                <p
+                  className="text-light link hover:text-secondary"
+                  aria-disabled={!!zkServices}
+                  onClick={() => setRequestCredentialTrigger(true)}>
                   Request demo credential
                 </p>
               ) : (
                 <p className="opacity-50">Requesting...</p>
-              ))}
+              )
+            ) : (
+              <p className=" text-light link hover:text-secondary " onClick={() => clearCredentials()}>
+                Clear
+              </p>
+            )}
           </div>
           {credentials
             ?.filter(
@@ -210,11 +251,12 @@ const Demo = () => {
                 <div className="card-actions m-1 justify-end">
                   {isConnected ? (
                     <button
-                      className="w-all btn btn-secondary"
+                      className="btn btn-secondary w-full"
+                      disabled={requestRewardsTrigger.trigger}
                       onClick={() => {
-                        generateProofAndConsumeAd(ad);
+                        setRequestRewardsTrigger({ trigger: true, ad });
                       }}>
-                      Generate Proof & Request Rewards
+                      {requestRewardsTrigger.trigger ? 'Requesting...' : 'Request Rewards'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>

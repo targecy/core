@@ -68,12 +68,12 @@ export async function generateZKProof(
     },
   };
 
-  console.log(proofReqSig, match.credential);
+  await services.credWallet.save(match.credential);
 
   const proof = await services.proofService.generateProof(proofReqSig, userDID, {
     credential: match.credential,
-    challenge: BigInt(1),
-    skipRevocation: false,
+    challenge: BigInt(10000000),
+    skipRevocation: true,
   });
 
   proof.proof.pi_a = proof.proof.pi_a.slice(0, 2);
