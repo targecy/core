@@ -19,7 +19,7 @@
     "yarn-error.log": true,
     "**/yarn-error.log": true,
     "**/.yalc": true,
-    "**/node_modules": false
+    "**/node_modules": true
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
@@ -70,5 +70,5 @@
   },
   "solidity.defaultCompiler": "localNodeModule",
   "mochaExplorer.configFile": "./packages/solidity-ts/.mocharc.json",
-  "cSpell.words": ["codegen", "targecy", "zkprequest", "zkprequests"]
+  "cSpell.words": ["codegen", "targecy", "Wagmi", "zkprequest", "zkprequests"]
 }

@@ -1,0 +1,55 @@
+import { useState } from 'react';
+import { useAsync } from 'react-use';
+import { TargecyContextType } from '../components/misc/Context';
+import { Ad, AdFragmentFragmentDoc, useGetAllAdsQuery } from '../generated/graphql.types';
+import { getValidCredentialByProofRequest, useCredentials } from '..';
+
+export type AdMetadata = {
+  title: string;
+  description: string;
+  image: string;
+};
+
+export type AdWithMetadata = {
+  ad: Ad;
+  metadata: AdMetadata;
+};
+
+export const useAds = (context: TargecyContextType) => {
+  const { data, isLoading } = useGetAllAdsQuery();
+  const credentials = useCredentials(context);
+
+  const validAds =
+    data?.ads.filter((ad) =>
+      ad?.targetGroups.some((tg) => tg.zkRequests.every((zk) => getValidCredentialByProofRequest(credentials, zk)))
+    ) || [];
+
+  const [completeAds, setCompleteAds] = useState<
+    { ad: Ad; metadata: { title?: string; description?: string; image?: string } }[]
+  >([]);
+
+  useAsync(async () => {
+    if (validAds) {
+      const finalAds = [];
+      for (const ad of validAds) {
+        const newMetadata = await fetch(`https://ipfs.io/ipfs/${ad.metadataURI}`);
+        const json = await newMetadata.json();
+        finalAds.push({
+          ad,
+          metadata: {
+            title: json.title,
+            description: json.description,
+            image: json.image,
+          },
+        });
+      }
+
+      setCompleteAds(finalAds);
+    }
+  }, [data]);
+
+  return {
+    ads: completeAds,
+    isLoading,
+  };
+};

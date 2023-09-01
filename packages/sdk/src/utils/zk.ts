@@ -1,4 +1,5 @@
 import path from 'path';
+import Swal from 'sweetalert2';
 
 import {
   BjjProvider,
@@ -15,7 +16,6 @@ import {
   KMS,
   KmsKeyType,
   type Profile,
-  type W3CCredential,
   type IStateStorage,
   ProofService,
   type ICircuitStorage,
@@ -27,10 +27,8 @@ import {
   byteEncoder,
   EthStateStorage,
   type CredentialRequest,
-  CircuitId,
   type IIdentityWallet,
   type ZeroKnowledgeProofRequest,
-  core,
   CredentialStatusType,
   CircuitStorage,
   type CircuitData,
@@ -39,12 +37,102 @@ import { Hex } from '@iden3/js-crypto';
 import { SchemaHash } from '@iden3/js-iden3-core';
 import { keccak256 } from '@lumeweb/js-sha3-browser';
 
-import { ZkpRequest } from '~~/generated/graphql.types';
-
 export type StoragesSide = 'server' | 'client';
 
 const userSeed = 'userseedseedseedseedseedseedseed';
 const issuerSeed = 'issuseedseedseedseedseedseedseed';
+
+import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
+import { type Dispatch, type SetStateAction } from 'react';
+
+import { Ad, ZkpRequest } from '../generated/graphql.types';
+import { ZkServicesType } from './context';
+import { TargecyContextType } from '../components/misc/Context';
+import { addressZero, BigNumberZero } from '../constants/chain';
+
+export async function requestKYCCredential(
+  services?: ZkServicesType,
+  userDID?: string,
+  setCredentials?: Dispatch<SetStateAction<W3CCredential[]>>
+) {
+  if (!services || !userDID) throw new Error('Missing services or userDID');
+
+  const credentialRequest = createCredentialRequest(userDID);
+  const issuedCredentialResponse = await fetch('/api/issuer/requestCredential', {
+    method: 'POST',
+    body: JSON.stringify(credentialRequest),
+  });
+  const issuedCredential: W3CCredential = cloneCredential(await issuedCredentialResponse.json());
+
+  // Save it to storage
+  await services.dataStorage.credential.saveCredential(issuedCredential);
+  setCredentials && setCredentials(await services.credWallet.list());
+
+  return issuedCredential;
+}
+
+export function cloneCredential(credential: W3CCredential) {
+  const cloned = new W3CCredential();
+
+  const keys = Object.keys(credential) as (keyof W3CCredential)[];
+  for (const key of keys) {
+    if (credential[key]) {
+      cloned[key] = credential[key] as any;
+    }
+  }
+  return cloned;
+}
+
+const operatorKeyByNumber: Record<number, string> = {
+  1: '$eq',
+  2: '$lt',
+  3: '$gt',
+  4: '$in',
+  5: '$nin',
+};
+
+export async function generateZKProof(
+  match: ProofCredentialMatch,
+  zkpRequest: ZkpRequest,
+  services: ZkServicesType,
+  userDID: core.DID
+) {
+  const proofReqSig = {
+    id: Number(zkpRequest.id),
+    circuitId: CircuitId.AtomicQuerySigV2OnChain,
+    optional: false,
+    query: {
+      allowedIssuers: ['*'],
+      type: match.credential.type,
+      context: match.credential['@context'],
+      credentialSubject: {
+        [match.credentialSubjectField]: {
+          [operatorKeyByNumber[match.operator]]: match.credentialSubjectValue,
+        },
+      },
+    },
+  };
+
+  await services.credWallet.save(match.credential);
+
+  const proof = await services.proofService.generateProof(proofReqSig, userDID, {
+    credential: match.credential,
+    challenge: BigInt(10000000),
+    skipRevocation: true,
+  });
+
+  proof.proof.pi_a = proof.proof.pi_a.slice(0, 2);
+  proof.proof.pi_b = [
+    [proof.proof.pi_b[0]?.[1]?.toString() || '', proof.proof.pi_b[0]?.[0]?.toString() || ''],
+    [proof.proof.pi_b[1]?.[1]?.toString() || '', proof.proof?.pi_b[1]?.[0]?.toString() || ''],
+  ];
+  proof.proof.pi_c = proof.proof.pi_c.slice(0, 2);
+
+  // Check Proof
+  const proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
+
+  return proof;
+}
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
@@ -93,6 +181,8 @@ export async function createIssuerIdentity(wallet: IdentityWallet) {
     },
   });
 }
+
+export type UserIdentityType = Awaited<ReturnType<typeof createUserIdentity>>;
 
 export async function createUserIdentity(identityWallet: IdentityWallet) {
   const seedPhraseUser: Uint8Array = byteEncoder.encode(userSeed);
@@ -272,3 +362,91 @@ export function getValidCredentialByProofRequest(
 
   return undefined;
 }
+
+export const generateProofAndConsumeAd = async (
+  context: TargecyContextType,
+  credentials: W3CCredential[],
+  ad: Ad,
+  consumeAdFn: Function,
+  waitTxFn: Function
+) => {
+  if (!context.userIdentity || !context.zkServices) throw new Error('User or zkServices not initialized');
+
+  let proofs = [];
+  for (const targetGroup of ad.targetGroups) {
+    for (const proofRequest of targetGroup.zkRequests) {
+      const proofCredentialMatch = getValidCredentialByProofRequest(credentials, proofRequest);
+      if (!proofCredentialMatch) continue;
+
+      const proof = await generateZKProof(
+        proofCredentialMatch,
+        proofRequest,
+        context.zkServices,
+        context.userIdentity?.did
+      );
+      proofs.push({ proof, id: proofRequest.id });
+    }
+    if (proofs.length === targetGroup.zkRequests.length) break;
+    else proofs = []; // Will try next target group
+  }
+
+  if (proofs.length === 0 && ad.targetGroups.length > 0) {
+    await Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+    }).fire({
+      icon: 'error',
+      title: 'No valid credentials for this ad',
+      padding: '10px 20px',
+    });
+    return;
+  }
+
+  try {
+    const consumeAdResponse = await consumeAdFn({
+      args: [
+        BigInt(ad.id),
+        {
+          percentage: BigNumberZero,
+          publisherVault: addressZero, // Just for testing
+        },
+        {
+          // requestIds: proofs.map((proof) => proof.id),
+          inputs: proofs.map((proof) => proof.proof.pub_signals),
+          a: proofs.map((proof) => proof.proof.proof.pi_a),
+          b: proofs.map((proof) => proof.proof.proof.pi_b),
+          c: proofs.map((proof) => proof.proof.proof.pi_c),
+        },
+      ],
+    });
+
+    const tx = await waitTxFn({ hash: consumeAdResponse.hash });
+
+    console.log(tx.logs);
+
+    await Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+    }).fire({
+      icon: 'success',
+      title: `Rewards requested successfully. Hash: ${consumeAdResponse.hash}`,
+      padding: '10px 20px',
+    });
+  } catch (e) {
+    await Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+    }).fire({
+      icon: 'error',
+      title: `Error requesting rewards`,
+      padding: '10px 20px',
+    });
+    console.error(e);
+  }
+};

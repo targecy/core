@@ -57,6 +57,7 @@
     "@reduxjs/toolkit": "1.9.3",
     "@scaffold-eth/common": "0.0.0",
     "@t3-oss/env-nextjs": "^0.6.1",
+    "@targecy/sdk": "workspace:^",
     "@tippyjs/react": "^4.2.6",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",

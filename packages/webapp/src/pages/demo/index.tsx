@@ -1,270 +1,44 @@
-import { type W3CCredential } from '@0xpolygonid/js-sdk';
-import { waitForTransaction } from '@wagmi/core';
-import { useEffect, useState } from 'react';
-import { useAsync } from 'react-use';
-import Swal from 'sweetalert2';
-import { useContractWrite } from 'wagmi';
-
-import { useInitUserIdentity, useInitZKServices } from '~/hooks/zk';
-import { cloneCredential, generateZKProof, requestKYCCredential } from '~/utils/zk';
-import { Targecy__factory } from '~common/generated/contract-types';
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { BigNumberZero, addressZero, targecyContractAddress } from '~~/constants/contracts.constants';
-import { Ad, useGetAdToShowQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { getSchemaHashFromCredential, getValidCredentialByProofRequest } from '~~/utils/zk.utils';
+import { TargecyCredentials, TargecyAd, UserIdentity } from '@targecy/sdk';
 
 const Demo = () => {
-  const ads = useGetAdToShowQuery().data?.ads;
-  const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }[]>([]);
-  const { isConnected, address } = useWallet();
-
-  useAsync(async () => {
-    if (ads) {
-      const metadata = [];
-      for (const ad of ads) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${ad.metadataURI}`);
-        const json = await newMetadata.json();
-        metadata.push({
-          title: json.title,
-          description: json.description,
-          image: json.image,
-        });
-      }
-
-      setMetadata(metadata);
-    }
-  }, [ads]);
-
-  const zkServices = useInitZKServices();
-  const userIdentity = useInitUserIdentity(zkServices);
-
-  const [credentials, setCredentials] = useState<W3CCredential[]>([]);
-  const [initialized, setInitialized] = useState(false);
-
-  // Save and upload from storage
-  useAsync(async () => {
-    if (!initialized && zkServices && userIdentity) {
-      setInitialized(true);
-      const credentialsReceived = JSON.parse(localStorage.getItem('credentials') || '[]');
-      const cloned = credentialsReceived.map(cloneCredential);
-
-      console.log(cloned);
-      await zkServices.dataStorage.credential.saveAllCredentials(cloned);
-      console.log('Saved credentials');
-      setCredentials(await zkServices.credWallet.list());
-    } else {
-      if (credentials.length > 0) {
-        localStorage.setItem(
-          'credentials',
-          JSON.stringify(credentials.filter((c) => !c.type.includes('AuthBJJCredential')))
-        );
-      }
-    }
-  }, [credentials, initialized, zkServices, userIdentity]);
-  // useListCredentials(credentials, setCredentials, zkServices);
-
-  const [requestCredentialTrigger, setRequestCredentialTrigger] = useState(false);
-
-  useEffect(() => {
-    if (requestCredentialTrigger) {
-      requestKYCCredential(zkServices, userIdentity?.did.id, setCredentials).then(() => {
-        setRequestCredentialTrigger(false);
-      });
-    }
-  }, [requestCredentialTrigger, zkServices, userIdentity?.did.id]);
-
-  const clearCredentials = () => {
-    setCredentials([]);
-    localStorage.removeItem('credentials');
-  };
-
-  const [requestRewardsTrigger, setRequestRewardsTrigger] = useState<{ trigger: boolean; ad?: Ad }>({
-    trigger: false,
-    ad: undefined,
-  });
-  useEffect(() => {
-    if (requestRewardsTrigger.trigger && requestRewardsTrigger.ad) {
-      generateProofAndConsumeAd(requestRewardsTrigger.ad).finally(() => {
-        setRequestRewardsTrigger({ trigger: false, ad: undefined });
-      });
-    }
-  }, [requestRewardsTrigger]);
-
-  const { writeAsync: consumeAdAsync } = useContractWrite({
-    address: targecyContractAddress,
-    abi: Targecy__factory.abi,
-    functionName: 'consumeAd',
-  });
-
-  const generateProofAndConsumeAd = async (ad: Ad) => {
-    if (!userIdentity || !zkServices) throw new Error('User or zkServices not initialized');
-
-    let proofs = [];
-    for (const targetGroup of ad.targetGroups) {
-      for (const proofRequest of targetGroup.zkRequests) {
-        const proofCredentialMatch = getValidCredentialByProofRequest(credentials, proofRequest);
-        if (!proofCredentialMatch) continue;
-
-        const proof = await generateZKProof(proofCredentialMatch, proofRequest, zkServices, userIdentity?.did);
-        proofs.push({ proof, id: proofRequest.id });
-      }
-      if (proofs.length === targetGroup.zkRequests.length) break;
-      else proofs = []; // Will try next target group
-    }
-
-    if (proofs.length === 0 && ad.targetGroups.length > 0) {
-      await Swal.mixin({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-      }).fire({
-        icon: 'error',
-        title: 'No valid credentials for this ad',
-        padding: '10px 20px',
-      });
-      return;
-    }
-
-    try {
-      const consumeAdResponse = await consumeAdAsync({
-        args: [
-          BigInt(ad.id),
-          {
-            percentage: BigNumberZero,
-            publisherVault: addressZero, // Just for testing
-          },
-          {
-            // requestIds: proofs.map((proof) => proof.id),
-            inputs: proofs.map((proof) => proof.proof.pub_signals),
-            a: proofs.map((proof) => proof.proof.proof.pi_a),
-            b: proofs.map((proof) => proof.proof.proof.pi_b),
-            c: proofs.map((proof) => proof.proof.proof.pi_c),
-          },
-        ],
-      });
-
-      const tx = await waitForTransaction({ hash: consumeAdResponse.hash });
-
-      console.log(tx.logs);
-
-      await Swal.mixin({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-      }).fire({
-        icon: 'success',
-        title: `Rewards requested successfully. Hash: ${consumeAdResponse.hash}`,
-        padding: '10px 20px',
-      });
-    } catch (e) {
-      await Swal.mixin({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-      }).fire({
-        icon: 'error',
-        title: `Error requesting rewards`,
-        padding: '10px 20px',
-      });
-      console.error(e);
-    }
-  };
-
   return (
     <>
       <div className="flex">
-        {/* Credentials  */}
-        <div className="panel min-w-[600px]">
-          <h1 className="font-weight-400 text-lg font-semibold">User's Wallet</h1>
-          {userIdentity && <h2>DID: {userIdentity.did.id}</h2>}
-
-          <br></br>
-          <div className="mb-2 flex justify-between	align-middle">
-            <h5 className="text-md align-middle font-semibold dark:text-white-light">Credentials</h5>
-
-            {credentials?.filter(
-              (credential: W3CCredential) =>
-                credential.credentialSubject.id?.toString() === 'did:iden3:' + (userIdentity?.did.id || '')
-            ).length == 0 ? (
-              !requestCredentialTrigger ? (
-                <p
-                  className="text-light link hover:text-secondary"
-                  aria-disabled={!!zkServices}
-                  onClick={() => setRequestCredentialTrigger(true)}>
-                  Request demo credential
-                </p>
-              ) : (
-                <p className="opacity-50">Requesting...</p>
-              )
-            ) : (
-              <p className=" text-light link hover:text-secondary " onClick={() => clearCredentials()}>
-                Clear
-              </p>
-            )}
+        {/* create 3 columns with panels  */}
+        <div className="m-3 flex w-1/3 flex-col">
+          <div className="mockup-code">
+            <pre data-prefix="1. ">
+              <code>{'<UserIdentity />   # Gets DID'}</code>
+            </pre>
           </div>
-          {credentials
-            ?.filter(
-              (credential: W3CCredential) =>
-                credential.credentialSubject.id?.toString() === 'did:iden3:' + (userIdentity?.did.id || '')
-            )
-            .map((credential: W3CCredential) => (
-              <div className="flex flex-row rounded-md border border-primary p-2" key={credential.id}>
-                <div>
-                  <h1 className="font-semibold">Credential</h1>
-                  <h1>{credential.type.filter((type: string) => type !== 'VerifiableCredential')}</h1>
-                  <h1 color="text.secondary">
-                    Expiration: {credential.expirationDate && new Date(credential.expirationDate).toUTCString()}
-                  </h1>
-                  <h1>Schema: {getSchemaHashFromCredential(credential).toString()}</h1>
-                  <h1>
-                    {Object.entries(credential.credentialSubject)
-                      .filter((entry: any[2]) => entry[0] !== 'id' && entry[0] !== 'type')
-                      .map((entry: any[2]) => (
-                        <span key={entry[0]}>
-                          <span>
-                            <b>{entry[0]}</b>: {entry[1].toString()}
-                          </span>
-                          <br />
-                        </span>
-                      ))}
-                  </h1>
-                </div>
-              </div>
-            ))}
         </div>
 
-        {/* Ad */}
-        <div className="m-3 flex w-1/3 flex-col p-2">
-          {ads?.map((ad, index) => (
-            <div className="card w-96 bg-white shadow-xl dark:bg-black" key={ad.id}>
-              <figure>
-                <img src={metadata[index]?.image} alt="Shoes" />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{metadata[index]?.title}</h2>
-                <p>{metadata[index]?.description}</p>
+        <div className="m-3 flex w-1/3 flex-col">
+          <div className="mockup-code">
+            <pre data-prefix="1. ">
+              <code>{'<Credentials />   # Gets from storage'}</code>
+            </pre>
+          </div>
+        </div>
 
-                <div className="card-actions m-1 justify-end">
-                  {isConnected ? (
-                    <button
-                      className="btn btn-secondary w-full"
-                      disabled={requestRewardsTrigger.trigger}
-                      onClick={() => {
-                        setRequestRewardsTrigger({ trigger: true, ad });
-                      }}>
-                      {requestRewardsTrigger.trigger ? 'Requesting...' : 'Request Rewards'}
-                    </button>
-                  ) : (
-                    <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="m-3 flex w-1/3 flex-col">
+          <div className="mockup-code">
+            <pre data-prefix="1. ">
+              <code>{'<TargecyAd />    # Gets one Ad'}</code>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex">
+        <div className="panel min-w-[600px]">
+          <h1 className="font-weight-400 text-lg font-semibold">User Wallet</h1>
+          <UserIdentity />
+          <TargecyCredentials />
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <TargecyAd />
         </div>
       </div>
     </>

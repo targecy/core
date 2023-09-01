@@ -18,15 +18,9 @@
     "rootDirs": [".", "../common/src"],
     "baseUrl": ".",
     "jsx": "preserve",
-    "jsxImportSource": "@emotion/react",
-    "paths": {
-      "~~/*": ["./src/*"],
-      "~/*": ["./src/*"],
-      "~common/*": ["../common/src/*"],
-      "@targecy/sdk": ["../sdk/src"]
-    }
+    "jsxImportSource": "@emotion/react"
   },
-  "include": ["src", "../common/src", "codegen.ts", "apollo.config.js", "../sdk/src/hooks/index.ts", "../sdk/src/utils/zk.ts"],
+  "include": ["src", "../common/src", "codegen.ts", "apollo.config.js"],
   "exclude": [
     "**/node_modules",
     ".husky",

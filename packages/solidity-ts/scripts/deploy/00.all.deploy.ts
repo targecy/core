@@ -35,7 +35,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     proxy: {
       // viaAdminContract: 'ProxyAdmin',
       proxyContract: 'TransparentUpgradeableProxy',
-      // methodName: 'initialize', 
+      // methodName: 'initialize',
       execute: {
         init: {
           methodName: 'initialize',

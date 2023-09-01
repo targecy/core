@@ -5,6 +5,7 @@ export const GetAllAds = gql`
     id
     advertiser {
       id
+      impressions
     }
     impressions
     minBlock

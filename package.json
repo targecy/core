@@ -57,11 +57,6 @@
   },
   "workspaces": {
     "packages": [
-      "packages/common",
-      "packages/solidity-ts",
-      "packages/next-app-ts",
-      "packages/subgraph",
-      "packages/services/*",
       "packages/*"
     ]
   },
