@@ -31,35 +31,14 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
-    'plugin:react-hooks/recommended',
-    'plugin:react/recommended',
     'plugin:prettier/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
-  plugins: ['prettier', 'react', 'react-hooks', 'unused-imports'],
+  plugins: ['prettier', 'unused-imports'],
   rules: {
     eqeqeq: ['error', 'smart'],
-    'react/jsx-wrap-multilines': 'warn',
-    'react/jsx-uses-react': 'off',
-    'react/react-in-jsx-scope': 'off',
-    'react/jsx-filename-extension': 'off',
-    'react/jsx-indent': 'off',
-    'react/require-default-props': 'off',
-    'react/jsx-one-expression-per-line': 'off',
-    'react/jsx-closing-tag-location': 'off',
-    'react/jsx-indent-props': 'off',
-    'react/jsx-closing-bracket-location': 'off',
-    'react/prop-types': 'off',
-    'react-hooks/rules-of-hooks': 'error',
-    'react/display-name': 'off',
-    'react-hooks/exhaustive-deps': [
-      'warn',
-      {
-        additionalHooks: '(useRecoilCallback)',
-      },
-    ],
     'prettier/prettier': [
       'warn',
       {
@@ -94,7 +73,6 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     'prefer-destructuring': 'off',
     'prefer-template': 'off',
-    'react/destructuring-assignment': 'off',
     'no-param-reassign': 'error',
     'import/order': [
       'warn',
@@ -159,17 +137,5 @@ module.exports = {
       },
     },
   ],
-  settings: {
-    react: {
-      createClass: 'createReactClass', // Regex for Component Factory to use,
-      // default to "createReactClass"
-      pragma: 'React', // Pragma to use, default to "React"
-      fragment: 'Fragment', // Fragment to use (may be a property of <pragma>), default to "Fragment"
-      version: 'detect', // React version. "detect" automatically picks the version you have installed.
-      // You can also use `16."off"`, `16.3`, etc, if you want to override the detected value.
-      // default to latest and warns if missing
-      // It will default to "detect" in the future
-    },
-  },
   reportUnusedDisableDirectives: true,
 };

@@ -70,5 +70,18 @@
   },
   "solidity.defaultCompiler": "localNodeModule",
   "mochaExplorer.configFile": "./packages/solidity-ts/.mocharc.json",
-  "cSpell.words": ["codegen", "targecy", "Wagmi", "zkprequest", "zkprequests"]
+  "cSpell.words": [
+    "codegen",
+    "datasource",
+    "Iden",
+    "ipfs",
+    "Merkle",
+    "rainbowkit",
+    "targecy",
+    "trpc",
+    "viem",
+    "Wagmi",
+    "zkprequest",
+    "zkprequests"
+  ]
 }

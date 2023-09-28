@@ -2,21 +2,30 @@ import { useAsync } from 'react-use';
 import { useContext, useEffect, useState } from 'react';
 import { useCredentials } from '../hooks/useCredentials';
 import { useAds } from '../hooks/useAds';
-import { generateProofAndConsumeAd, getValidCredentialByProofRequest } from '..';
-import { TargecyComponent, TargecyServicesContext } from './misc/Context';
+import { consumeAd, consumeAdThroughRelayer, generateProof } from '..';
+import { TargecyBaseProps, TargecyComponent, TargecyServicesContext } from './misc/Context';
 import { useAd } from '../hooks/useAd';
 import { targecyContractAddress } from '../constants/chain';
 import { Targecy__factory } from '../contract-types';
-import { Config, WagmiConfig, WagmiConfigProps, useAccount, useConfig, useContractWrite } from 'wagmi';
+import { Config, WagmiConfig, WagmiConfigProps, useAccount, useConfig, useContractWrite, useSignMessage } from 'wagmi';
 import { waitForTransaction } from '@wagmi/core';
 import { NoWalletConnected } from './misc/NoWalletConnected';
 import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
+import { relayerTrpcClient } from '../utils/trpc';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 
-const AdComponent = () => {
+export type AdParams = {
+  useRelayer?: boolean;
+};
+
+const AdComponent = (adParams: AdParams) => {
   const context = useContext(TargecyServicesContext);
   const { ad, isLoading } = useAd(context);
   const credentials = useCredentials(context);
   const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+
+  const { signMessage } = useSignMessage({ message: 'public.credentials' });
 
   const [requestRewardsTrigger, setRequestRewardsTrigger] = useState<{ trigger: boolean; ad?: Ad }>({
     trigger: false,
@@ -31,20 +40,28 @@ const AdComponent = () => {
 
   useEffect(() => {
     if (requestRewardsTrigger.trigger && requestRewardsTrigger.ad) {
-      generateProofAndConsumeAd(
-        context,
-        credentials,
-        requestRewardsTrigger.ad,
-        consumeAdAsync,
-        waitForTransaction
-      ).finally(() => {
-        setRequestRewardsTrigger({ trigger: false, ad: undefined });
-      });
+      const proofs = generateProof(context, credentials, requestRewardsTrigger.ad);
+
+      if (adParams.useRelayer) {
+        consumeAdThroughRelayer(proofs, requestRewardsTrigger.ad).finally(() => {
+          setRequestRewardsTrigger({ trigger: false, ad: undefined });
+        });
+      } else {
+        consumeAd(proofs, requestRewardsTrigger.ad, consumeAdAsync, waitForTransaction).finally(() => {
+          setRequestRewardsTrigger({ trigger: false, ad: undefined });
+        });
+      }
     }
   }, [requestRewardsTrigger]);
 
   if (isLoading) return <div>Loading...</div>;
-  if (!ad) return <div>No Ad Found</div>;
+  if (!ad)
+    return (
+      <div>
+        No Ad Found: <label onClick={() => openConnectModal && openConnectModal()}> asd</label>{' '}
+        <label onClick={() => signMessage()}>click</label>
+      </div>
+    );
   return (
     <div>
       <div className="card w-96 bg-white shadow-xl dark:bg-black" key={ad.ad.id}>
@@ -75,10 +92,10 @@ const AdComponent = () => {
   );
 };
 
-export const TargecyAd = () => {
+export const TargecyAd = (adParams: AdParams & TargecyBaseProps) => {
   return (
-    <TargecyComponent>
-      <AdComponent />
+    <TargecyComponent wagmiConfig={adParams.wagmiConfig}>
+      <AdComponent useRelayer={adParams.useRelayer} />
     </TargecyComponent>
   );
 };

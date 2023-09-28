@@ -18,7 +18,11 @@
     "rootDirs": [".", "../common/src"],
     "baseUrl": ".",
     "jsx": "preserve",
-    "jsxImportSource": "@emotion/react"
+    "jsxImportSource": "@emotion/react",
+    "paths": {
+      "@targecy/relayer-api/app.router": ["../relayer/src/trpc/router/index.ts"],
+      "@targecy/backend-api/app.router": ["../backend/src/trpc/router/index.ts"]
+    }
   },
   "include": ["src", "../common/src", "codegen.ts", "apollo.config.js"],
   "exclude": [

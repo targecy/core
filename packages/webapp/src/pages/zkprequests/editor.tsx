@@ -99,6 +99,7 @@ const ZKPRequestForm = (id?: string) => {
       const schemaHash = data.schema; // extracted from PID Platform
       const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));
 
+      console.log(id);
       let hash;
       if (id) {
         hash = (

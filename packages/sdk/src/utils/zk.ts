@@ -49,26 +49,20 @@ import { Ad, ZkpRequest } from '../generated/graphql.types';
 import { ZkServicesType } from './context';
 import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
+import { backendTrpcClient, relayerTrpcClient } from './trpc';
+import { backendApi } from 'src/services';
 
-export async function requestKYCCredential(
-  services?: ZkServicesType,
-  userDID?: string,
-  setCredentials?: Dispatch<SetStateAction<W3CCredential[]>>
-) {
-  if (!services || !userDID) throw new Error('Missing services or userDID');
+export async function requestPublicCredentials(userDID?: string, signature?: string, services?: ZkServicesType) {
+  if (!services) throw new Error('Services not initialized');
+  if (!userDID || !signature) throw new Error('User DID or signature not provided');
 
-  const credentialRequest = createCredentialRequest(userDID);
-  const issuedCredentialResponse = await fetch('/api/issuer/requestCredential', {
-    method: 'POST',
-    body: JSON.stringify(credentialRequest),
+  const credentials: W3CCredential[] = await backendTrpcClient.credentials.getPublicCredentials.query({
+    did: userDID,
+    signature,
   });
-  const issuedCredential: W3CCredential = cloneCredential(await issuedCredentialResponse.json());
 
-  // Save it to storage
-  await services.dataStorage.credential.saveCredential(issuedCredential);
-  setCredentials && setCredentials(await services.credWallet.list());
-
-  return issuedCredential;
+  console.log(credentials);
+  await services.dataStorage.credential.saveAllCredentials(credentials);
 }
 
 export function cloneCredential(credential: W3CCredential) {
@@ -168,20 +162,6 @@ export function initializeStorages() {
   return { credWallet, identityWallet, dataStorage };
 }
 
-export async function createIssuerIdentity(wallet: IdentityWallet) {
-  const seedPhraseIssuer: Uint8Array = byteEncoder.encode(issuerSeed);
-  return await wallet.createIdentity({
-    method: core.DidMethod.Iden3,
-    blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
-    seed: seedPhraseIssuer,
-    revocationOpts: {
-      type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-      id: 'https://rhs-staging.polygonid.me',
-    },
-  });
-}
-
 export type UserIdentityType = Awaited<ReturnType<typeof createUserIdentity>>;
 
 export async function createUserIdentity(identityWallet: IdentityWallet) {
@@ -216,14 +196,6 @@ export function createCredentialRequest(id: string) {
   };
 
   return claimReq;
-}
-
-export async function issueCredential(
-  identityWallet: IdentityWallet,
-  issuerDID: core.DID,
-  claimReq: CredentialRequest
-) {
-  return await identityWallet.issueCredential(issuerDID, claimReq);
 }
 
 export function createKYCAgeCredentialProofRequest(circuitId: CircuitId, type: string): ZeroKnowledgeProofRequest {
@@ -363,13 +335,7 @@ export function getValidCredentialByProofRequest(
   return undefined;
 }
 
-export const generateProofAndConsumeAd = async (
-  context: TargecyContextType,
-  credentials: W3CCredential[],
-  ad: Ad,
-  consumeAdFn: Function,
-  waitTxFn: Function
-) => {
+export const generateProof = async (context: TargecyContextType, credentials: W3CCredential[], ad: Ad) => {
   if (!context.userIdentity || !context.zkServices) throw new Error('User or zkServices not initialized');
 
   let proofs = [];
@@ -401,8 +367,68 @@ export const generateProofAndConsumeAd = async (
       title: 'No valid credentials for this ad',
       padding: '10px 20px',
     });
-    return;
+    return [];
   }
+
+  return proofs;
+};
+
+export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generateProof>, ad: Ad) => {
+  const awaitedProofs = await proofs;
+
+  const data = JSON.stringify([
+    BigInt(ad.id),
+    {
+      percentage: BigNumberZero,
+      publisherVault: addressZero, // Just for testing
+    },
+    {
+      // requestIds: proofs.map((proof) => proof.id),
+      inputs: awaitedProofs.map((proof) => proof.proof.pub_signals),
+      a: awaitedProofs.map((proof) => proof.proof.proof.pi_a),
+      b: awaitedProofs.map((proof) => proof.proof.proof.pi_b),
+      c: awaitedProofs.map((proof) => proof.proof.proof.pi_c),
+    },
+  ]);
+
+  try {
+    const response = await relayerTrpcClient.txs.send.mutate({
+      signature: '',
+      data,
+    });
+
+    await Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+    }).fire({
+      icon: 'success',
+      title: `Rewards requested successfully. Hash: ${response}`,
+      padding: '10px 20px',
+    });
+  } catch (e) {
+    await Swal.mixin({
+      toast: true,
+      position: 'top',
+      showConfirmButton: false,
+      timer: 3000,
+    }).fire({
+      icon: 'error',
+      title: `Error requesting rewards through relayer`,
+      padding: '10px 20px',
+    });
+    console.error(e);
+  }
+};
+
+export const consumeAd = async (
+  proofs: ReturnType<typeof generateProof>,
+  ad: Ad,
+  consumeAdFn: Function,
+  waitTxFn: Function
+) => {
+  const awaitedProofs = await proofs;
 
   try {
     const consumeAdResponse = await consumeAdFn({
@@ -414,10 +440,10 @@ export const generateProofAndConsumeAd = async (
         },
         {
           // requestIds: proofs.map((proof) => proof.id),
-          inputs: proofs.map((proof) => proof.proof.pub_signals),
-          a: proofs.map((proof) => proof.proof.proof.pi_a),
-          b: proofs.map((proof) => proof.proof.proof.pi_b),
-          c: proofs.map((proof) => proof.proof.proof.pi_c),
+          inputs: awaitedProofs.map((proof) => proof.proof.pub_signals),
+          a: awaitedProofs.map((proof) => proof.proof.proof.pi_a),
+          b: awaitedProofs.map((proof) => proof.proof.proof.pi_b),
+          c: awaitedProofs.map((proof) => proof.proof.proof.pi_c),
         },
       ],
     });
