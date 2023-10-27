@@ -11,7 +11,7 @@ echo "dir: $script_dir"
 cd $script_dir
 
 # Extract the address from addresses.json relative to the script location
-address=$(jq -r '.targecyImplementation' "../solidity-ts/scripts/addresses.json")
+address=$(jq -r '.targecyProxy' "../solidity-ts/scripts/addresses.json")
 
 echo "address: $address"
 
@@ -23,7 +23,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Targecy
-    network: ethereum
+    network: localhost
     source:
       address: "$address"
       abi: Targecy
