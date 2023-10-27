@@ -21,15 +21,17 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   const { deploy } = deployments;
   console.log('Deployer: ', deployer);
 
+  console.log('Deploying MockValidator...');
   const mockValidatorDeployResult = await deploy('MockValidator', {
     from: deployer,
     log: true,
   });
 
   const validatorAddress = mockValidatorDeployResult.address;
-  const protocolVault = '0xEB71ed911e4dFc35Da80103a72fE983C8c709F33';
-  const defaultImpressionPrice = 1;
+  console.log("MockValidator's address: ", validatorAddress);
 
+  console.log("Deploying Targecy's proxy...");
+  const defaultImpressionPrice = 10000;
   const deployment = await deploy('Targecy', {
     args: [],
     proxy: {
@@ -39,19 +41,22 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [validatorAddress, protocolVault, defaultImpressionPrice],
+          args: [validatorAddress, '0x8D78D554CBA781B0744BF24DD84f23d7767f11a3', defaultImpressionPrice, '0xC8E4fcfF013b61Bea893d54427F1a72691FFe7a2'],
         },
       },
     },
     from: deployer,
     log: true,
     skipIfAlreadyDeployed: false,
-    autoMine: true,
+    // autoMine: true,
   });
+
+  console.log("Targecy's address: ", deployment.address);
 
   saveStringToFile(
     JSON.stringify({
-      targecy: deployment.address,
+      targecyProxy: deployment.address,
+      targecyImplementation: deployment.implementation,
     }),
     '../addresses.json'
   );

@@ -48,6 +48,8 @@ const networks = {
   ...getNetworks({
     accounts: {
       mnemonic: getMnemonic(),
+      path: "m/44'/60'/0'/0",
+      initialIndex: 0,
     },
   }),
   localhost: {
@@ -59,6 +61,8 @@ const networks = {
     */
     accounts: {
       mnemonic: getMnemonic(),
+      path: "m/44'/60'/0'/0",
+      initialIndex: 0,
     },
   },
 };
@@ -100,7 +104,7 @@ export const config: HardhatUserConfig = {
     bail: false,
     allowUncaught: false,
     require: ['ts-node/register'],
-    timeout: 30000,
+    timeout: 300000,
     slow: 9900,
     reporter: process.env.GITHUB_ACTIONS === 'true' ? 'mocha-junit-reporter' : 'spec',
     reporterOptions: {

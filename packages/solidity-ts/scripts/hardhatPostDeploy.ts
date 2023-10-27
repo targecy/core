@@ -1,3 +1,5 @@
-import { hardhatPublishToSubgraph } from '~helpers/functions/hardhat/publishToSubgraph';
+import { graphDir, hardhatPublishToOtherPackage, sdkDir, webappDir } from '~helpers/functions/hardhat/publishToSubgraph';
 // run script
-hardhatPublishToSubgraph();
+hardhatPublishToOtherPackage(graphDir);
+hardhatPublishToOtherPackage(webappDir);
+hardhatPublishToOtherPackage(sdkDir);

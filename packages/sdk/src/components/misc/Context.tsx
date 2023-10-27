@@ -4,7 +4,9 @@ import { ZkServicesType, initServices } from '../../utils/context';
 import { UserIdentityType, createUserIdentity } from '../..';
 import { Provider } from 'react-redux';
 import { store } from '../../utils/store';
-import { Config, WagmiConfig, mainnet, PublicClient, WebSocketPublicClient } from 'wagmi';
+import { Config, WagmiConfig, createConfig, configureChains, mainnet } from 'wagmi';
+import { publicProvider } from 'wagmi/providers/public';
+import { InjectedConnector } from '@wagmi/core';
 
 export type TargecyContextType = {
   zkServices?: ZkServicesType;
@@ -21,7 +23,7 @@ export interface TargecyComponentProps {
 }
 
 export interface TargecyBaseProps {
-  wagmiConfig: Config<PublicClient, WebSocketPublicClient>;
+  wagmiConfig: Config;
 }
 
 export const TargecyComponent = ({ children, ...props }: TargecyComponentProps & TargecyBaseProps) => {
@@ -42,8 +44,19 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
     }
   }, [initialized]);
 
+  const { chains, publicClient, webSocketPublicClient } = configureChains([mainnet], [publicProvider()]);
+
+  const config = createConfig({
+    autoConnect: true,
+    connectors: [
+      new InjectedConnector({ chains }),
+    ],
+    publicClient,
+    webSocketPublicClient,
+  });
+
   return (
-    <WagmiConfig config={props.wagmiConfig}>
+    <WagmiConfig config={config}>
       <Provider store={store}>
         <TargecyServicesContext.Provider value={context}>{children}</TargecyServicesContext.Provider>
       </Provider>

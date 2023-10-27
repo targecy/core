@@ -6,17 +6,23 @@
     "prepare": "mustache config/config.json src/subgraph.template.yaml > subgraph.yaml",
     "codegen": "graph codegen",
     "build": "graph build",
+    "test": "graph test",
+    "graph-version": "graph -v",
     "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ GITHUB_USERNAME/your-contract",
     "create-local": "graph create --node http://localhost:8020/ targecy",
     "remove-local": "graph remove --node http://localhost:8020/ targecy",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 targecy",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://127.0.0.1:5001 -l 1.0.0 targecy",
     "ship-local": "yarn codegen && yarn build && yarn deploy-local"
   },
+  "engines": {
+    "node": ">=14.0.0 <15.0.0"
+  },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.56.0",
+    "@graphprotocol/graph-cli": "0.59.0",
     "@graphprotocol/graph-ts": "0.31.0"
   },
   "devDependencies": {
+    "matchstick-as": "^0.6.0",
     "mustache": "^4.2.0"
   },
   "installConfig": {

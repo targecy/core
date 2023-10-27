@@ -3,19 +3,21 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "submodule-init": "git submodule init && git submodule update --remote",
-    "arbitrum-init": "cd arbitrum && git submodule init && git submodule update && yarn install",
-    "arbitrum-build-l1": "cd arbitrum && yarn docker:build:geth",
-    "arbitrum-run-l1": "cd arbitrum && yarn docker:geth",
-    "arbitrum-init-l2": "cd arbitrum && yarn demo:initialize",
-    "arbitrum-run-l2": "cd arbitrum && yarn demo:deploy",
-    "run-optimism": "cd optimism/ops && make up",
-    "stop-optimism": "cd optimism/ops && make down",
-    "run-graph-node": "cd graph-node && docker-compose up",
-    "remove-graph-node": "cd graph-node && docker-compose down",
-    "clean-graph-node": "rm -rf graph-node/data/"
-  },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
+    "start-chain": "./chain/generate-compose.sh && docker-compose -f ./chain/docker-compose.yml up -d",
+    "start-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml up -d",
+    "start-graph-node": "docker-compose -f ./graph-node/docker-compose.yml up -d",
+    "start-all": "npm run start-chain && npm run start-explorer && npm run start-graph-node",
+    "stop-chain": "docker-compose -f ./chain/docker-compose.yml down",
+    "stop-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml down",
+    "stop-graph-node": "docker-compose -f ./graph-node/docker-compose.yml down",
+    "stop-all": "npm run stop-chain && npm run stop-explorer && npm run stop-graph-node",
+    "restart-chain": "npm run stop-chain && npm run start-chain",
+    "restart-explorer": "npm run stop-explorer && npm run delete-explorer-data && npm run start-explorer",
+    "restart-graph-node": "npm run stop-graph-node && npm run delete-graph-node-data && npm run start-graph-node",
+    "restart-all": "npm run stop-all && npm run delete-all-data && npm run start-all",
+    "delete-graph-node-data": "rm -rf ./graph-node/data",
+    "delete-explorer-data": "rm -rf ./explorer/services/logs ./explorer/services/blockscout-db-data ./explorer/services/stats-db-data",
+    "delete-all-data": "npm run delete-graph-node-data && npm run delete-explorer-data",
+    "show-accounts": "cat chain/accounts/accounts.json | jq '.private_keys'"
   }
 }

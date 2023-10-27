@@ -4,13 +4,15 @@ import chalk from 'chalk';
 
 import { hardhatDeploymentsDir } from '~helpers/constants/toolkitPaths';
 
-const graphDir = '../subgraph';
+export const graphDir = '../subgraph';
+export const webappDir = '../webapp/src/generated';
+export const sdkDir = '../sdk/src/generated';
 
-const publishContract = (contractName: string, networkName: string): boolean => {
+const publishContract = (dir: string, contractName: string, networkName: string): boolean => {
   try {
     const contract = fs.readFileSync(`${hardhatDeploymentsDir}/${networkName}/${contractName}.json`).toString();
     const contractJson: { address: string; abi: [] } = JSON.parse(contract);
-    const graphConfigPath = `${graphDir}/config/config.json`;
+    const graphConfigPath = `${dir}/config/config.json`;
     let graphConfigStr = '{}';
     try {
       if (fs.existsSync(graphConfigPath)) {
@@ -28,20 +30,20 @@ const publishContract = (contractName: string, networkName: string): boolean => 
       fs.mkdirSync(folderPath);
     }
     fs.writeFileSync(graphConfigPath, JSON.stringify(graphConfig, null, 2));
-    if (!fs.existsSync(`${graphDir}/abis`)) fs.mkdirSync(`${graphDir}/abis`);
-    fs.writeFileSync(`${graphDir}/abis/${networkName}_${contractName}.json`, JSON.stringify(contractJson.abi, null, 2));
+    if (!fs.existsSync(`${dir}/abis`)) fs.mkdirSync(`${dir}/abis`);
+    fs.writeFileSync(`${dir}/abis/${networkName}_${contractName}.json`, JSON.stringify(contractJson.abi, null, 2));
 
     console.log(' 📠 Published ' + chalk.green(contractName) + ' to the frontend');
 
     return true;
   } catch (e) {
-    console.log('Failed to publish ' + chalk.red(contractName) + ' to the subgraph.');
+    console.log('Failed to publish ' + chalk.red(contractName) + ' to ' + dir + '.');
     console.log(e);
     return false;
   }
 };
-export const hardhatPublishToSubgraph = (): void => {
-  console.log(chalk.white('Running Post Deploy: publish contracts to subgraph...'));
+export const hardhatPublishToOtherPackage = (dir: string): void => {
+  console.log(chalk.white('Running Post Deploy: publish contracts to ' + dir + '...'));
 
   const deploymentSubdirs = fs.readdirSync(hardhatDeploymentsDir);
   deploymentSubdirs.forEach(function (directory) {
@@ -49,9 +51,9 @@ export const hardhatPublishToSubgraph = (): void => {
     files.forEach(function (file) {
       if (file.includes('.json')) {
         const contractName = file.replace('.json', '');
-        publishContract(contractName, directory);
+        publishContract(dir, contractName, directory);
       }
     });
   });
-  console.log(chalk.green('✔️ Published contracts to the subgraph package! '));
+  console.log(chalk.green('✔️ Published contracts to the ' + dir + ' package! '));
 };

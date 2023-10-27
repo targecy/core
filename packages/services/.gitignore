@@ -1,0 +1,9 @@
+chain/accounts
+
+explorer/services/logs
+explorer/services/blockscout-db-data
+explorer/services/stats-db-data
+explorer/services/redis-data
+
+graph-node/data
+graph-node/bin

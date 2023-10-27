@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,25 +9,26 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { Targecy__factory } from '~common/generated/contract-types';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 
-const AdForm = (id?: string) => {
+const abi = require('../../generated/abis/localhost_Targecy.json');
+
+const AdForm = (id?: { id: string }) => {
   console.log(id);
 
   const { data: targetGroups } = useGetAllTargetGroupsQuery();
   const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'createAd',
   });
   const { writeAsync: editAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'editAd',
   });
 
@@ -68,12 +68,12 @@ const AdForm = (id?: string) => {
 
     try {
       let hash;
-      if (id) {
+      if (id?.id) {
         // Edit Ad
         hash = (
           await editAdAsync({
             args: [
-              id,
+              id?.id,
               {
                 metadataURI,
                 budget: data.budget,

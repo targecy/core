@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { cloneCredential } from '../utils/zk';
-import { W3CCredential } from '@0xpolygonid/js-sdk';
+import { CredentialStatusType, W3CCredential } from '@0xpolygonid/js-sdk';
 import { TargecyContextType } from '../components/misc/Context';
 
 export const useCredentials = (context: TargecyContextType) => {
@@ -26,6 +26,7 @@ export const useCredentials = (context: TargecyContextType) => {
       }
     }
   }, [credentials, initialized, context.zkServices, context.userIdentity]);
+
 
   return credentials;
 };

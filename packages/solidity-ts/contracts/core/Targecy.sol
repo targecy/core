@@ -18,11 +18,7 @@ import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
   bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-  function initialize(
-    address _zkProofsValidator,
-    address _protocolVault,
-    uint256 _defaultImpressionPrice
-  ) external initializer {
+  function initialize(address _zkProofsValidator, address _protocolVault, uint256 _defaultImpressionPrice, address targecyAdmin) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
@@ -30,18 +26,12 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     protocolVault = _protocolVault;
     defaultImpressionPrice = _defaultImpressionPrice;
 
-    // Default values
-    zkProofsValidator = address(0);
-    protocolVault = address(0);
-
     _zkRequestId = 1;
     _adId = 1;
     _targetGroupId = 1;
     totalImpressions = 0;
 
-    defaultImpressionPrice = 1;
-
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
   }
 
   function setZKProofsValidator(address _zkProofsValidator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -65,14 +55,8 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     requestQueries[_zkRequestId].query.circuitId = _zkpRequest.query.circuitId;
 
-    if (address(_zkpRequest.validator) == address(0)) {
-      requestQueries[_zkRequestId].validator = ICircuitValidator(zkProofsValidator);
-    } else {
-      requestQueries[_zkRequestId].validator = ICircuitValidator(_zkpRequest.validator);
-    }
-
-    emit ZKPRequestCreated(_zkRequestId, address(requestQueries[_zkRequestId].validator), _zkpRequest.query, _zkpRequest.metadataURI);
-    _zkRequestId++;
+    emit ZKPRequestCreated(_zkRequestId, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI);
+    _zkRequestId += 1;
   }
 
   function editZKPRequest(uint256 id, DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -84,13 +68,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     requestQueries[id].query.circuitId = _zkpRequest.query.circuitId;
 
-    if (address(_zkpRequest.validator) == address(0)) {
-      requestQueries[id].validator = ICircuitValidator(zkProofsValidator);
-    } else {
-      requestQueries[id].validator = ICircuitValidator(_zkpRequest.validator);
-    }
-
-    emit ZKPRequestEdited(id, address(requestQueries[id].validator), _zkpRequest.query, _zkpRequest.metadataURI);
+    emit ZKPRequestEdited(id, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI);
   }
 
   function deleteZKPRequest(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -107,7 +85,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     ads[_adId] = DataTypes.Ad(_msgSender(), ad.targetGroupIds, ad.metadataURI, ad.budget, ad.budget, ad.maxImpressionPrice, ad.minBlock, ad.maxBlock, 0);
 
     emit AdCreated(_adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
-    _adId++;
+    _adId += 1;
   }
 
   // TODO Add edit and delete ad, target group and zk request.
@@ -162,14 +140,10 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     targetGroups[_targetGroupId] = DataTypes.TargetGroup(metadataURI, zkRequestIds, 0);
 
     emit TargetGroupCreated(_targetGroupId, metadataURI, zkRequestIds);
-    _targetGroupId++;
+    _targetGroupId += 1;
   }
 
-  function editTargetGroup(
-    uint256 targetGroupId,
-    string calldata metadataURI,
-    uint256[] calldata zkRequestIds
-  ) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+  function editTargetGroup(uint256 targetGroupId, string calldata metadataURI, uint256[] calldata zkRequestIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     DataTypes.TargetGroup storage targetGroupStorage = targetGroups[targetGroupId];
 
     if (zkRequestIds.length == 0) {
@@ -195,10 +169,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256[2][2] memory b,
     uint256[2] memory c
   ) public view returns (bool) {
-    require(requestQueries[requestId].validator != ICircuitValidator(address(0)), "validator is not set for this request id");
-    require(requestQueries[requestId].query.schema != 0, "query is not set for this request id");
-
-    return requestQueries[requestId].validator.verify(inputs, a, b, c, requestQueries[requestId].query);
+    return ICircuitValidator(zkProofsValidator).verify(inputs, a, b, c, requestQueries[requestId].query);
   }
 
   function _bulkVerifyZKProofs(
@@ -264,11 +235,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _unpause();
   }
 
-  function consumeAd(
-    uint64 adId,
-    DataTypes.PublisherRewards calldata publisher,
-    DataTypes.ZKProofs calldata zkProofs
-  ) external override whenNotPaused {
+  function consumeAd(uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) external override whenNotPaused {
     DataTypes.Ad storage ad = ads[adId];
 
     if (ad.remainingBudget == 0) {
@@ -310,7 +277,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.PublisherNotWhitelisted();
     }
 
-    totalImpressions++;
+    totalImpressions += 1;
 
     // Proofs verified, distribute rewards
     distributeRewards(ad, publisher);

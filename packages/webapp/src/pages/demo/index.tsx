@@ -4,6 +4,8 @@ import { useConfig } from 'wagmi';
 const Demo = () => {
   const wagmiConfig = useConfig();
 
+  if (!wagmiConfig || !wagmiConfig.queryClient) return null;
+
   return (
     <>
       <div className="p-2">
@@ -40,11 +42,12 @@ const Demo = () => {
         <div className="panel min-w-[600px]">
           <h1 className="font-weight-400 text-lg font-semibold">User Wallet</h1>
           <UserIdentity />
-          <TargecyCredentials />
+          <TargecyCredentials wagmiConfig={wagmiConfig} />
           {/* <TargecyTransactions /> */}
         </div>
 
         <div className="m-3 flex w-1/3 flex-col p-2">
+          <label className="m2">Available Ads</label>
           <TargecyAd useRelayer={false} wagmiConfig={wagmiConfig} />
         </div>
       </div>

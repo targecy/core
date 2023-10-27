@@ -6,9 +6,10 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { Targecy__factory } from '~common/generated/contract-types';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllZkpRequestsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
+
+const abi = require('../../generated/abis/localhost_Targecy.json');
 
 const ZKPRequests = () => {
   const data = useGetAllZkpRequestsQuery();
@@ -38,7 +39,7 @@ const ZKPRequests = () => {
 
   const { writeAsync: deleteZKPRequestAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'deleteZKPRequest',
   });
 

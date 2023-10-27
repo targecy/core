@@ -8,6 +8,7 @@ const envVariables = z.object({
   WALLET_PRIVATE_KEY: z.string().startsWith('0x'),
   CONTRACT_ADDRESS: z.string().startsWith('0x'),
   IDENTITIES_SEED: z.string().min(10),
+  POLYGONSCAN_API_KEY: z.string().min(10),
 });
 
 declare global {

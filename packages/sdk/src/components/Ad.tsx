@@ -6,8 +6,17 @@ import { consumeAd, consumeAdThroughRelayer, generateProof } from '..';
 import { TargecyBaseProps, TargecyComponent, TargecyServicesContext } from './misc/Context';
 import { useAd } from '../hooks/useAd';
 import { targecyContractAddress } from '../constants/chain';
-import { Targecy__factory } from '../contract-types';
-import { Config, WagmiConfig, WagmiConfigProps, useAccount, useConfig, useContractWrite, useSignMessage } from 'wagmi';
+const abi = require('../generated/abis/localhost_Targecy.json');
+import {
+  Config,
+  WagmiConfig,
+  WagmiConfigProps,
+  useAccount,
+  useConfig,
+  useConnect,
+  useContractWrite,
+  useSignMessage,
+} from 'wagmi';
 import { waitForTransaction } from '@wagmi/core';
 import { NoWalletConnected } from './misc/NoWalletConnected';
 import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
@@ -25,7 +34,7 @@ const AdComponent = (adParams: AdParams) => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
 
-  const { signMessage } = useSignMessage({ message: 'public.credentials' });
+  const { signMessage } = useSignMessage();
 
   const [requestRewardsTrigger, setRequestRewardsTrigger] = useState<{ trigger: boolean; ad?: Ad }>({
     trigger: false,
@@ -34,7 +43,7 @@ const AdComponent = (adParams: AdParams) => {
 
   const { writeAsync: consumeAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'consumeAd',
   });
 
@@ -58,8 +67,12 @@ const AdComponent = (adParams: AdParams) => {
   if (!ad)
     return (
       <div>
-        No Ad Found: <label onClick={() => openConnectModal && openConnectModal()}> asd</label>{' '}
-        <label onClick={() => signMessage()}>click</label>
+        No Ad Found
+        {/* {isConnected ? (
+
+            ) : (
+              <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
+            )} */}
       </div>
     );
   return (
@@ -68,8 +81,8 @@ const AdComponent = (adParams: AdParams) => {
         <figure>
           <img src={ad.metadata.image} />
         </figure>
-        <div className="card-body">
-          <h2 className="card-title">{ad.metadata.title}</h2>
+        <div className="card-body m-2">
+          <h1 className="card-title">{ad.metadata.title}</h1>
           <p>{ad.metadata.description}</p>
 
           <div className="card-actions m-1 justify-end">
@@ -83,7 +96,7 @@ const AdComponent = (adParams: AdParams) => {
                 {requestRewardsTrigger.trigger ? 'Requesting...' : 'Request Rewards'}
               </button>
             ) : (
-              <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
+              <NoWalletConnected caption="Connect Wallet and get Rewards"></NoWalletConnected>
             )}
           </div>
         </div>

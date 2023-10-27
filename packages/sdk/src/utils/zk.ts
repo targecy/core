@@ -50,18 +50,17 @@ import { ZkServicesType } from './context';
 import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
 import { backendTrpcClient, relayerTrpcClient } from './trpc';
-import { backendApi } from 'src/services';
 
-export async function requestPublicCredentials(userDID?: string, signature?: string, services?: ZkServicesType) {
+export async function requestPublicCredentials(userDID?: string, wallet?: string, services?: ZkServicesType) {
   if (!services) throw new Error('Services not initialized');
-  if (!userDID || !signature) throw new Error('User DID or signature not provided');
+  if (!userDID) throw new Error('User DID or signature not provided');
 
   const credentials: W3CCredential[] = await backendTrpcClient.credentials.getPublicCredentials.query({
     did: userDID,
-    signature,
-  });
+    signature: "SIG",
+    wallet: wallet ?? '0xEB71ed911e4dFc35Da80103a72fE983C8c709F33',
+  }, {});
 
-  console.log(credentials);
   await services.dataStorage.credential.saveAllCredentials(credentials);
 }
 
@@ -449,8 +448,6 @@ export const consumeAd = async (
     });
 
     const tx = await waitTxFn({ hash: consumeAdResponse.hash });
-
-    console.log(tx.logs);
 
     await Swal.mixin({
       toast: true,

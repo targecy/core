@@ -13,8 +13,8 @@ dist
 **/generated/**/*
 
 # solidity
-packages/solidity-ts/cache
-packages/solidity-ts/generated
+packages/solidity-ts-ts/cache
+packages/solidity-ts-ts/generated
 packages/common/src/generated
 cache
 artifacts
@@ -25,7 +25,7 @@ tenderly.yaml
 **/.env.*.local
 **/*.secret
 **/aws.json
-!packages/solidity-ts/mnemonics/README.md
+!packages/solidity-ts-ts/mnemonics/README.md
 **/mnemonics/*.secret
 **/mnemonics/*.txt
 

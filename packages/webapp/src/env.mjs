@@ -1,5 +1,6 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
+import * as deployedAddresses from './generated/config/config.json' assert { type: 'json' };
 
 export const env = createEnv({
   server: {
@@ -46,14 +47,15 @@ export const env = createEnv({
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
-    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: process.env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS,
-  
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: deployedAddresses.default['localhost_Targecy_ProxyAddress'],
+
     CIRCUITS_PATH: process.env.CIRCUITS_PATH,
     NFT_STORAGE_TOKEN: process.env.NFT_STORAGE_TOKEN,
     RPC_URL: process.env.RPC_URL,
     PRIVATE_KEY: process.env.PRIVATE_KEY,
     NODE_ENV: process.env.NODE_ENV,
     VERCEL_ENV: process.env.VERCEL_ENV,
-
   },
 });
+
+console.log('Using Targecy Instance: ', env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS);

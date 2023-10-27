@@ -12,6 +12,7 @@ import {
 } from '../generated/Targecy/Targecy';
 import { Ad, Publisher, TargetGroup, User, ZKPRequest } from '../generated/schema';
 import { BigInt, store } from '@graphprotocol/graph-ts';
+import { log } from '@graphprotocol/graph-ts';
 
 export function handleAdConsumed(event: AdConsumedEvent): void {
   let adEntity = Ad.load(event.params.adId.toString());
@@ -103,17 +104,27 @@ export function handleTargetGroupEdited(event: TargetGroupEditedEvent): void {
 }
 
 export function handleZKPRequestCreated(event: ZKPRequestCreatedEvent): void {
+  log.debug('handleZKPRequestCreated for id: {}', [event.params.zkRequestId.toString()]);
+  log.debug('handleZKPRequestCreated metadataURI: {}', [event.params.metadataURI]);
+  log.debug('asd', []);
+
   let entity = new ZKPRequest(event.params.zkRequestId.toString());
 
   entity.metadataURI = event.params.metadataURI;
-  entity.query_circuitId = event.params.query.circuitId;
-  entity.query_operator = event.params.query.operator;
-  entity.query_value = event.params.query.value;
-  entity.query_schema = event.params.query.schema;
-  entity.query_slotIndex = event.params.query.slotIndex;
   entity.validator = event.params.validator;
 
+  entity.query_circuitId = event.params.query.circuitId;
+  entity.query_operator = event.params.query.operator;
+  entity.query_value = new Array<BigInt>();
+  for (let i = 0; i < event.params.query.value.length; i++) {
+    entity.query_value[i] = event.params.query.value[i];
+  }
+  entity.query_schema = event.params.query.schema;
+  entity.query_slotIndex = event.params.query.slotIndex;
+
   entity.save();
+
+  log.info('New entity saved for id: {}', [entity.id.toString()]);
 }
 
 export function handlePublisherWhitelisted(event: PublisherWhitelisted): void {

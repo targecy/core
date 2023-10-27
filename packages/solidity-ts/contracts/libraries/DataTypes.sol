@@ -15,7 +15,6 @@ library DataTypes {
   }
 
   struct ZKPRequest {
-    ICircuitValidator validator;
     ICircuitValidator.CircuitQuery query;
     string metadataURI;
   }

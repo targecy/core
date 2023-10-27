@@ -26,20 +26,14 @@ export async function requestCredential(credentialRequest: CredentialRequest) {
   const issuerIdentity = await createIssuerIdentity(storages.identityWallet);
   // Todo Validate Request
 
-  console.log('requesting');
-  console.log(storages);
-
   if (!credentialRequest.credentialSubject.id) throw new Error('Credential Request must have a credentialSubject.id');
 
   const issued = await issueCredential(storages.identityWallet, issuerIdentity.did, credentialRequest);
 
   const tree = issued.getIden3SparseMerkleTreeProof();
 
-  console.log(tree);
 
   await storages.dataStorage.credential.saveCredential(issued);
-
-  console.log('done');
 
   return issued;
 }

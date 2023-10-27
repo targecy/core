@@ -8,10 +8,11 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { Targecy__factory } from '~common/generated/contract-types';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useWallet } from '~~/hooks';
+
+const abi = require('../../generated/abis/localhost_Targecy.json');
 
 // Helper Functions
 // ========================================================
@@ -48,16 +49,16 @@ const fromLittleEndian = (bytes: number[]) => {
   return result;
 };
 
-const ZKPRequestForm = (id?: string) => {
+const ZKPRequestForm = (id: { id: string }) => {
   const [processingZKPRequest, setProcessingZKPRequest] = useState(false);
   const { writeAsync: setZKPRequestAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'setZKPRequest',
   });
   const { writeAsync: editZKPRequestAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'editZKPRequest',
   });
 
@@ -99,15 +100,13 @@ const ZKPRequestForm = (id?: string) => {
       const schemaHash = data.schema; // extracted from PID Platform
       const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));
 
-      console.log(id);
       let hash;
-      if (id) {
+      if (id?.id) {
         hash = (
           await editZKPRequestAsync({
             args: [
-              id,
+              id?.id,
               {
-                validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
                 query: {
                   schema: data.schema,
                   slotIndex: data.slotIndex,
@@ -122,24 +121,37 @@ const ZKPRequestForm = (id?: string) => {
           })
         ).hash;
       } else {
-        hash = (
-          await setZKPRequestAsync({
-            args: [
-              {
-                validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
-                query: {
-                  schema: data.schema,
-                  slotIndex: data.slotIndex,
-                  operator: data.operator,
-                  value: [data.value],
+        console.log([
+          {
+            validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
+            query: {
+              schema: data.schema,
+              slotIndex: data.slotIndex,
+              operator: data.operator,
+              value: [data.value],
 
-                  circuitId: 'credentialAtomicQuerySig',
-                },
-                metadataURI: metadataURI,
+              circuitId: 'credentialAtomicQuerySig',
+            },
+            metadataURI: metadataURI,
+          },
+        ]);
+        console.log(setZKPRequestAsync)
+        hash = await setZKPRequestAsync({
+          args: [
+            {
+              validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
+              query: {
+                schema: data.schema,
+                slotIndex: data.slotIndex,
+                operator: data.operator,
+                value: [data.value],
+
+                circuitId: 'credentialAtomicQuerySig',
               },
-            ],
-          })
-        ).hash;
+              metadataURI: metadataURI,
+            },
+          ],
+        });
       }
       await Swal.mixin({
         toast: true,
@@ -148,7 +160,7 @@ const ZKPRequestForm = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `ZKPRequest ${id ? 'edited' : 'created'} successfully! Tx: ${hash} `,
+        title: `ZKPRequest ${id ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
         padding: '10px 20px',
       });
 

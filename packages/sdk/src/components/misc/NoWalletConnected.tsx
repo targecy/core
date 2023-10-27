@@ -6,7 +6,7 @@ export const NoWalletConnected = ({ caption }: { caption: string }) => {
   return (
     <div>
       <div onClick={openConnectModal} className="btn btn-primary w-fit">
-        Connect Wallet
+        {caption}
       </div>
     </div>
   );

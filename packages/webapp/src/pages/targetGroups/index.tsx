@@ -6,9 +6,10 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { Targecy__factory } from '~common/generated/contract-types';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
+
+const abi = require('../../generated/abis/localhost_Targecy.json');
 
 const TargetGroups = () => {
   const data = useGetAllTargetGroupsQuery();
@@ -40,7 +41,7 @@ const TargetGroups = () => {
 
   const { writeAsync: deleteTargetGroupAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'deleteTargetGroup',
   });
 

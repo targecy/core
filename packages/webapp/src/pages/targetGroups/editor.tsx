@@ -8,24 +8,25 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { Targecy__factory } from '~common/generated/contract-types';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 
-const TargetGroupForm = (id?: string) => {
+const abi = require('../../generated/abis/localhost_Targecy.json');
+
+const TargetGroupForm = (id?: { id: string }) => {
   const { data: zkpRequests } = useGetAllZkpRequestsQuery();
 
   const [processingTargetGroup, setProcessingTargetGroup] = useState(false);
   const { writeAsync: createTargetGroup } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'createTargetGroup',
   });
   const { writeAsync: editTargetGroup } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'editTargetGroup',
   });
 
@@ -65,7 +66,7 @@ const TargetGroupForm = (id?: string) => {
 
     try {
       let hash;
-      if (id) {
+      if (!id?.id) {
         hash = (
           await createTargetGroup({
             args: [metadataURI, data.zkpRequests],
@@ -74,7 +75,7 @@ const TargetGroupForm = (id?: string) => {
       } else {
         hash = (
           await editTargetGroup({
-            args: [id, metadataURI, data.zkpRequests],
+            args: [id?.id, metadataURI, data.zkpRequests],
           })
         ).hash;
       }
@@ -85,7 +86,7 @@ const TargetGroupForm = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
+        title: `Ad ${id?.id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 

@@ -6,28 +6,30 @@ import '~tests/utils/chai-imports';
 
 import { CircuitId, CredentialRequest, CredentialStatusType, ZeroKnowledgeProofResponse } from '@0xpolygonid/js-sdk';
 import { EventFragment, Interface } from '@ethersproject/abi';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
-import { Targecy__factory, Targecy, MockValidator__factory, MockValidator, Events__factory } from 'generated/contract-types';
-import hre, { ethers } from 'hardhat';
-import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
+import { Targecy, MockValidator, TargecyEvents__factory } from 'generated/contract-types';
+import { ethers } from 'hardhat';
 import { Log, Receipt } from 'hardhat-deploy/types';
 
+const { getContractFactory } = ethers;
+
+import * as evm from '../utils/evm';
+
 import { DataTypes } from '~generated/contract-types/contracts/core/Targecy';
-import { getHardhatSigners } from '~helpers/functions/accounts';
 import { createIssuerIdentity, createUserIdentity, getCircuitStorage, initProofService, initializeStorages } from '~tests/utils/zk.utils';
 
 function decodeEvents(receipt: Receipt): EventFragment[] {
   if (receipt.logs == null) return [];
 
-  const iface = new Interface(Events__factory.abi);
+  const iface = new Interface(TargecyEvents__factory.abi);
 
   return receipt.logs?.map((log: Log) => iface.parseLog(log).eventFragment);
 }
 
-function getTestZKRequest(validatorAddress: string): DataTypes.ZKPRequestStruct {
+function getTestZKRequest(): DataTypes.ZKPRequestStruct {
   return {
-    validator: validatorAddress,
     metadataURI: '',
     query: {
       schema: 1,
@@ -96,34 +98,37 @@ async function getTestProof(zkRequestId: number): Promise<ZeroKnowledgeProofResp
   return proof;
 }
 
+// @todo add 100% coverage, separate in different files and add proper testing for zk proofs. Test that all events needed in subgraph are being thrown.
 describe('Targecy', function () {
+  this.timeout(0);
+
   let targecy: Targecy;
-  let admin: SignerWithAddress;
   let validator: MockValidator;
   let user: SignerWithAddress;
   let publisher: SignerWithAddress;
   let vault: SignerWithAddress;
   let defaultZKPRequest: DataTypes.ZKPRequestStruct;
+  let snapshotId: string;
 
   before(async () => {
-    const { deployer, user1: protocolVault, user2, user3 } = await getHardhatSigners(hre);
+    await evm.reset();
 
-    // Deploy Mock Validator
-    const mockValidatorFactory = new MockValidator__factory(deployer);
-    validator = await mockValidatorFactory.deploy();
-    await validator.deployed();
+    const [deployer, targecyAdmin, vaultSigner, userSigner, publisherSigner] = await ethers.getSigners();
 
-    const factory = new Targecy__factory(deployer);
-    targecy = await factory.deploy(validator.address, protocolVault.address, 10000);
-    await targecy.deployed();
+    const defaultImpressionPrice = 10000;
 
-    user = user2;
-    publisher = user3;
-    admin = deployer;
-    vault = protocolVault;
+    const validatorFactory = await getContractFactory('MockValidator', deployer);
+    validator = (await validatorFactory.deploy()).connect(targecyAdmin) as MockValidator;
+
+    const factory = await getContractFactory('Targecy', deployer);
+    targecy = (await factory.deploy()).connect(targecyAdmin) as Targecy;
+    await targecy.initialize(validator.address, vaultSigner.address, defaultImpressionPrice, targecyAdmin.address);
+
+    user = userSigner;
+    publisher = publisherSigner;
+    vault = vaultSigner;
 
     defaultZKPRequest = {
-      validator: validator.address,
       metadataURI: '',
       query: {
         schema: 1,
@@ -133,6 +138,12 @@ describe('Targecy', function () {
         circuitId: '',
       },
     };
+
+    snapshotId = await evm.snapshot.take();
+  });
+
+  beforeEach(async () => {
+    await evm.snapshot.revert(snapshotId);
   });
 
   describe('ZKRequests', () => {
@@ -147,7 +158,6 @@ describe('Targecy', function () {
 
       const saved = await targecy.requestQueries(1);
 
-      expect(saved.validator).to.equal(validator.address);
       expect(saved.query.circuitId).to.equal(defaultZKPRequest.query.circuitId);
       expect(saved.query.operator).to.equal(defaultZKPRequest.query.operator);
       expect(saved.query.schema).to.equal(defaultZKPRequest.query.schema);
@@ -206,6 +216,9 @@ describe('Targecy', function () {
     });
 
     it('Should be able to create an ad', async () => {
+      await targecy.setZKPRequest(defaultZKPRequest);
+      await targecy.createTargetGroup('metadata', [zkpRequestId]);
+
       expect(await targecy._adId()).to.equal(ethers.BigNumber.from(1));
 
       const tx = await targecy.connect(user).createAd(
@@ -229,7 +242,7 @@ describe('Targecy', function () {
       expect(saved.metadataURI).to.equal('metadata');
       expect(saved.totalBudget).to.equal(10000000);
       expect(saved.remainingBudget).to.equal(10000000);
-      expect(saved.advertiser).to.equal(user.address);
+      expect(saved.advertiser).to.equal(await user.getAddress());
       expect(saved.maxImpressionPrice).to.equal(20000);
       expect(saved.minBlock).to.equal(1);
       expect(saved.maxBlock).to.equal(100);
@@ -238,56 +251,30 @@ describe('Targecy', function () {
   });
 
   describe('Impressions', () => {
-    let zkpRequestId: BigNumber;
-    let tgId: BigNumber;
-    let adId: BigNumber;
+    it('Should be able to consume an ad', async () => {
+      this.timeout(100000);
 
-    before(async () => {
-      // Create Ad
-      const zkTx = await targecy.setZKPRequest(getTestZKRequest(validator.address));
-      const zkReceipt = await zkTx.wait();
-      expect(decodeEvents(zkReceipt)?.filter((e) => e.name === 'ZKPRequestCreated').length).to.equal(1);
-
-      zkpRequestId = (await targecy._zkRequestId()).sub(1);
-
-      const tgTx = await targecy.createTargetGroup('metadata', [zkpRequestId]);
-      const tgReceipt = await tgTx.wait();
-
-      expect(decodeEvents(tgReceipt)?.filter((e) => e.name === 'TargetGroupCreated').length).to.equal(1);
-
-      tgId = (await targecy._targetGroupId()).sub(1);
-      const tx = await targecy.connect(user).createAd(
+      await targecy.setZKPRequest(getTestZKRequest());
+      await targecy.createTargetGroup('metadata', [1]);
+      await targecy.connect(user).createAd(
         {
           metadataURI: 'metadata',
           budget: 1000000000,
           maxImpressionPrice: 20000,
           minBlock: 0,
           maxBlock: ethers.constants.MaxUint256,
-          targetGroupIds: [tgId],
+          targetGroupIds: [1],
         },
         { value: 1000000000 }
       );
 
-      const receipt = await tx.wait();
-      expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdCreated').length).to.equal(1);
-
-      adId = (await targecy._adId()).sub(1);
-
-      const whitelistPublisherTx = await targecy.connect(admin).whitelistPublisher(publisher.address);
-      const whitelistPublisherReceipt = await whitelistPublisherTx.wait();
-      expect(decodeEvents(whitelistPublisherReceipt)?.filter((e) => e.name === 'PublisherWhitelisted').length).to.equal(1);
-    });
-
-    it('Should be able to consume an ad', async () => {
-      this.timeout(100000);
-
       console.log('    > Generating proof, this may take +30s');
-      const proof = await getTestProof(zkpRequestId.toNumber());
+      const proof = await getTestProof(1);
 
       const verify = await targecy
         .connect(user)
         .verifyZKProof(
-          zkpRequestId,
+          1,
           proof.pub_signals,
           proof.proof.pi_a.map((x) => ethers.BigNumber.from(x)) as any,
           proof.proof.pi_b.map((x) => x.map((y) => ethers.BigNumber.from(y))) as any,
@@ -295,15 +282,16 @@ describe('Targecy', function () {
         );
 
       expect(verify).to.be.equal(true);
-
-      expect((await targecy.ads(adId)).remainingBudget).gt(10000);
+      expect((await targecy.ads(1)).remainingBudget).eq(1000000000);
 
       const publisherPastBalance = await publisher.getBalance();
       const vaultPastBalance = await vault.getBalance();
-      const pastRemainingBudget = (await targecy.ads(adId)).remainingBudget;
+      const pastRemainingBudget = (await targecy.ads(1)).remainingBudget;
+
+      await targecy.whitelistPublisher(publisher.address);
 
       const tx = await targecy.connect(user).consumeAd(
-        adId,
+        1,
         {
           publisherVault: publisher.address,
           percentage: 5000, // 5% on 10000 precision
@@ -316,10 +304,11 @@ describe('Targecy', function () {
         }
       );
       const receipt = await tx.wait();
+
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
       expect(publisherPastBalance).to.be.lt(await publisher.getBalance());
       expect(vaultPastBalance).to.be.lt(await vault.getBalance());
-      expect(pastRemainingBudget).to.be.gt((await targecy.ads(adId)).remainingBudget);
+      expect(pastRemainingBudget).to.be.gt((await targecy.ads(1)).remainingBudget);
     });
   });
 });

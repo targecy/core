@@ -19,7 +19,7 @@
     "yarn-error.log": true,
     "**/yarn-error.log": true,
     "**/.yalc": true,
-    "**/node_modules": true
+    "**/node_modules": false
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
@@ -55,21 +55,21 @@
   "eslint.enable": true,
   "eslint.workingDirectories": [
     { "directory": "packages/*", "changeProcessCWD": true },
-    { "directory": "packages/solidity-ts", "changeProcessCWD": true },
+    { "directory": "packages/solidity-ts-ts", "changeProcessCWD": true },
     { "directory": "packages/webapp-ts", "changeProcessCWD": true },
     { "directory": "packages/common", "changeProcessCWD": true },
     { "directory": "packages/subgraph", "changeProcessCWD": true },
     { "directory": "packages/services", "changeProcessCWD": true },
     { "directory": "packages/commands", "changeProcessCWD": true }
   ],
-  "solidity.packageDefaultDependenciesDirectory": "packages/solidity-ts/node_modules",
+  "solidity.packageDefaultDependenciesDirectory": "packages/solidity-ts-ts/node_modules",
   "editor.formatOnSave": true,
   "solidity.formatter": "prettier", // This is the default so it might be missing.
   "[solidity]": {
     "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
   },
   "solidity.defaultCompiler": "localNodeModule",
-  "mochaExplorer.configFile": "./packages/solidity-ts/.mocharc.json",
+  "mochaExplorer.configFile": "./packages/solidity-ts-ts/.mocharc.json",
   "cSpell.words": [
     "codegen",
     "datasource",

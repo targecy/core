@@ -13,6 +13,7 @@ import { GetSmartContractCallsByAddress } from '../credentials/credentials.graph
 
 const getOperationNames = (definitions: DocumentNode['definitions']) =>
   definitions
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
     .filter((d): d is OperationDefinitionNode => d.kind === 'OperationDefinition')
     .map((d) => d?.name?.value)
     .filter(Boolean)

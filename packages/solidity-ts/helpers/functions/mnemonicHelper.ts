@@ -13,10 +13,12 @@ const defaultMnemonicFile = 'mnemonic.secret';
 export const defaultMnemonicPath = './mnemonics/mnemonic.secret';
 export const getMnemonic = (path?: string): string => {
   try {
-    return fs
+    const a = fs
       .readFileSync(path ?? defaultMnemonicPath)
       .toString()
       .trim();
+    console.log('mnemonic: ' + a);
+    return a;
   } catch (e) {
     console.log('☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn generate` and then `yarn account`.');
   }

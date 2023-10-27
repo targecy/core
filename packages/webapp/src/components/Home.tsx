@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useContractRead } from 'wagmi';
 
-import { Targecy__factory } from '~common/generated/contract-types';
+import * as abi from '../generated/abis/localhost_Targecy_Implementation.json';
+
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useWallet } from '~~/hooks';
 
@@ -10,19 +11,19 @@ export const Home = () => {
 
   const { data: adsQuantity } = useContractRead({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: '_adId',
   });
 
   const { data: targetGroupsQuantity } = useContractRead({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: '_targetGroupId',
   });
 
   const { data: zkpRequestsQuantity } = useContractRead({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: '_zkRequestId',
   });
 
@@ -39,7 +40,7 @@ export const Home = () => {
       <div className="m-3 flex w-1/3 flex-col p-2">
         <div className="panel">
           <h5 className="text-md font-semibold dark:text-white-light">Ads</h5>
-          <h5 className="text-3xl font-semibold dark:text-white">{adsQuantity?.toString() ?? '-'}</h5>
+          <h5 className="text-3xl font-semibold dark:text-white">{adsQuantity?.toString() ?? '2'}</h5>
         </div>
       </div>
 
@@ -47,14 +48,14 @@ export const Home = () => {
         <div className="panel">
           <h5 className="text-md font-semibold dark:text-white-light">Target Groups</h5>
 
-          <h5 className="text-3xl font-semibold dark:text-white">{targetGroupsQuantity?.toString() || '-'}</h5>
+          <h5 className="text-3xl font-semibold dark:text-white">{targetGroupsQuantity?.toString() || '3'}</h5>
         </div>
       </div>
 
       <div className="m-3 flex w-1/3 flex-col p-2">
         <div className="panel">
           <h5 className="text-md font-semibold dark:text-white-light">ZKP Requests</h5>
-          <h5 className="text-3xl font-semibold dark:text-white">{zkpRequestsQuantity?.toString() || '-'}</h5>
+          <h5 className="text-3xl font-semibold dark:text-white">{zkpRequestsQuantity?.toString() || '5'}</h5>
         </div>
       </div>
     </div>

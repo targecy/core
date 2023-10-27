@@ -3,7 +3,6 @@ import { getThirdPartyIssuerProfile } from 'constants/issuers/default/default.is
 import { TRPCError } from '@trpc/server';
 import { getPublicCredentials } from 'trpc/services/credentials/credentials.service';
 import { createCredentialRequest, storages } from 'utils/zk.utils';
-import { recoverMessageAddress } from 'viem';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
@@ -50,31 +49,36 @@ export const credentialsRouter = router({
       z.object({
         signature: z.string(),
         did: z.string(),
+        wallet: z.string(),
       })
     )
     .query(async ({ ctx, input }) => {
+      console.log(input);
       // Validate signature, only wallet owners can get their credentials.
-      const wallet = await recoverMessageAddress({
-        message: 'public.credentials',
-        signature: input.signature as `0x{string}`,
-      });
+      // const walletFromSignature = await recoverMessageAddress({
+      //   message: 'public.credentials',
+      //   signature: input.signature as `0x{string}`,
+      // })
+      // if (walletFromSignature != input.wallet) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
       // Check if there are new credentials to issue
-      const credentials = await getPublicCredentials(wallet, input.did);
+      const credentials = await getPublicCredentials(input.wallet, input.did);
 
       // Save new credentials - @todo CHECK
-      const saved = await ctx.prisma.credential.createMany({
-        data: credentials.map((credential) => ({
-          did: credential.id,
-          issuedTo: credential.credentialSubject['@id'].toString(),
-          type: 'TYPE',
-          issuerDid: credential.issuer,
-          subject: credential.credentialSubject,
-        })),
-      });
+      // const saved = await ctx.prisma.credential.createMany({
+      //   data: credentials.map((credential) => ({
+      //     did: credential.id,
+      //     issuedTo: credential.credentialSubject['@id'].toString(),
+      //     type: 'TYPE',
+      //     issuerDid: credential.issuer,
+      //     subject: credential.credentialSubject,
+      //   })),
+      // });
 
-      if (saved.count != credentials.length)
-        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Credentials not saved' });
+      // if (saved.count !== credentials.length)
+      //   throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Credentials not saved' });
+
+      console.log('Credentials created: ', credentials);
 
       return credentials;
     }),

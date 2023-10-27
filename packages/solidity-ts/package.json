@@ -11,7 +11,7 @@
     "compile:watch:hardhat": "cross-env BUILDING=true hardhat watch compile",
     "contracts:build": "yarn workspace @scaffold-eth/common contracts:build",
     "watch:hardhat": "cross-env BUILDING=true yarn hardhat watch compile",
-    "deploy:hardhat": "hardhat deploy --show-stack-traces --export-all ../common/src/generated/hardhat_contracts.json",
+    "deploy:hardhat": "hardhat deploy --verbose --show-stack-traces --export-all ../common/src/generated/hardhat_contracts.json",
     "upgrade:hardhat": "hardhat upgrade --show-stack-traces",
     "deploy:hardhat:post": "yarn ts-node scripts/hardhatPostDeploy.ts",
     "clean": "yarn cross-env BUILDING=true hardhat clean && yarn shx rm -rf ./generated/*",

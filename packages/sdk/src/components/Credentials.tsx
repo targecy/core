@@ -1,34 +1,31 @@
 import { type W3CCredential } from '@0xpolygonid/js-sdk';
 import { useContext, useEffect, useState } from 'react';
 import { requestPublicCredentials, useCredentials } from '..';
-import { TargecyComponent, TargecyServicesContext } from './misc/Context';
+import { TargecyBaseProps, TargecyComponent, TargecyServicesContext } from './misc/Context';
 import { useAccount, useConnect, useContractWrite, useSignMessage } from 'wagmi';
 import { targecyContractAddress } from '../constants/chain';
-import { Targecy__factory } from '../contract-types';
-
+const abi = require('../generated/abis/localhost_Targecy.json');
 const Credentials = () => {
   const context = useContext(TargecyServicesContext);
   const credentials = useCredentials(context);
+
   const { signMessageAsync } = useSignMessage({ message: 'public.credentials' });
   const { writeAsync: consumeAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'consumeAd',
   });
+
+  const { address } = useAccount();
+  console.log(address);
 
   const [requestCredentialTrigger, setRequestCredentialTrigger] = useState(false);
 
   useEffect(() => {
     if (requestCredentialTrigger) {
       try {
-        consumeAdAsync({
-          args: [],
-        }).then((tx) => {
-          signMessageAsync().then((signature) =>
-            requestPublicCredentials(context.userIdentity?.did.id, signature, context.zkServices).then(() => {
-              setRequestCredentialTrigger(false);
-            })
-          );
+        requestPublicCredentials(context.userIdentity?.did.id, address, context.zkServices).then(() => {
+          setRequestCredentialTrigger(false);
         });
       } catch (e) {
         console.error(e);
@@ -49,8 +46,8 @@ const Credentials = () => {
           <h5 className="text-md align-middle font-semibold dark:text-white-light">Credentials</h5>
 
           {credentials?.filter(
-            (credential: W3CCredential) =>
-              credential.credentialSubject.id?.toString() === 'did:iden3:' + (context.userIdentity?.did.id || '')
+            (credential: W3CCredential) => true
+            // credential.credentialSubject.id?.toString() === 'did:iden3:' + (context.userIdentity?.did.id || '')
           ).length === 0 ? (
             !requestCredentialTrigger ? (
               <p
@@ -103,9 +100,9 @@ const Credentials = () => {
 
 export type TargecyCredentialsProps = {};
 
-export const TargecyCredentials = (props: TargecyCredentialsProps) => {
+export const TargecyCredentials = (props: TargecyCredentialsProps & TargecyBaseProps) => {
   return (
-    <TargecyComponent>
+    <TargecyComponent wagmiConfig={props.wagmiConfig}>
       <Credentials />
     </TargecyComponent>
   );

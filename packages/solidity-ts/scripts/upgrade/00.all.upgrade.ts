@@ -21,7 +21,7 @@ export const upgradeAll = async (): Promise<void> => {
   if (!addresses.targecy) throw new Error('Missing Targecy address');
 
   const Targecy = await ethers.getContractFactory('Targecy');
-  const targecy = await upgrades.upgradeProxy(addresses.targecy as string, Targecy);
+  const targecy = await upgrades.upgradeProxy(addresses.targecyProxy as string, Targecy);
   console.log('Targecy upgraded at address ' + targecy.address);
 };
 

@@ -4,17 +4,15 @@ import superjson from 'superjson';
 
 import { prisma } from '../db';
 
-type CreateContextOptions = Record<string, never>;
-
 /**
  * Creates a context without req/res, useful for testing
  */
-export const createBaseContext = async () => ({
+export const createBaseContext = () => ({
   prisma,
 });
 
-export const createContext = async ({ req, res }: trpcExpress.CreateExpressContextOptions) => {
-  const baseContext = await createBaseContext();
+export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => {
+  const baseContext = createBaseContext();
 
   return {
     ...baseContext,
@@ -27,9 +25,6 @@ export type Context = inferAsyncReturnType<typeof createContext>;
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
-  errorFormatter({ shape }) {
-    return shape;
-  },
 });
 
 export const middleware = t.middleware;

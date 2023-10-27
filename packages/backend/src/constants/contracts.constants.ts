@@ -16,4 +16,16 @@ export const KNOWN_PROTOCOLS: KNOWN_PROTOCOL[] = [
       '0xB753548F6E010e7e680BA186F9Ca1BdAB2E90cf2',
     ],
   },
+  {
+    name: 'Aave',
+    addresses: ['0x794a61358D6845594F94dc1DB02A252b5b4814aD'],
+  },
 ];
+
+export const KNOWN_ERC1155 = ['0x8f0553207e486d2c6f0636bf8f67d4d76eb84656'] as const;
+
+export type ERC1155Holding = {
+  contract: string;
+  tokenId: string;
+  amount: string;
+};

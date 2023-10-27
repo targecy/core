@@ -1,6 +1,7 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import type { AppRouter as relayerAppRouter } from '@targecy/relayer-api/app.router';
 import type { AppRouter as backendAppRouter } from '@targecy/backend-api/app.router';
+import superjson from 'superjson';
 
 export const relayerTrpcClient = createTRPCProxyClient<relayerAppRouter>({
   links: [
@@ -14,8 +15,8 @@ export const relayerTrpcClient = createTRPCProxyClient<relayerAppRouter>({
       },
     }),
   ],
+  transformer: superjson,
 });
-
 
 export const backendTrpcClient = createTRPCProxyClient<backendAppRouter>({
   links: [
@@ -29,4 +30,5 @@ export const backendTrpcClient = createTRPCProxyClient<backendAppRouter>({
       },
     }),
   ],
+  transformer: superjson,
 });

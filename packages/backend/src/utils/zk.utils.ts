@@ -21,9 +21,11 @@ import {
   EthStateStorage,
   CredentialStatusType,
   CredentialRequest,
+  core,
+  byteEncoder,
 } from '@0xpolygonid/js-sdk';
 
-export function initializeStorages() {
+export async function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
   ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_mumbai';
   ethConnectionConfig.chainId = 80001;
@@ -33,7 +35,7 @@ export function initializeStorages() {
     credential: new CredentialStorage(new InMemoryDataSource<W3CCredential>()),
     identity: new IdentityStorage(new InMemoryDataSource<Identity>(), new InMemoryDataSource<Profile>()),
     mt: new InMemoryMerkleTreeStorage(40),
-    states: new EthStateStorage(ethConnectionConfig),
+    states: new EthStateStorage(defaultEthConnectionConfig),
   };
 
   const memoryKeyStore = new InMemoryPrivateKeyStore();
@@ -54,10 +56,38 @@ export function initializeStorages() {
 
   const identityWallet = new IdentityWallet(kms, dataStorage, credWallet);
 
-  return { credWallet, identityWallet, dataStorage };
+  const seedPhraseIssuer: Uint8Array = byteEncoder.encode(process.env.IDENTITIES_SEED);
+
+  const issuer = await identityWallet.createIdentity({
+    method: core.DidMethod.Iden3,
+    blockchain: core.Blockchain.Polygon,
+    networkId: core.NetworkId.Mumbai,
+    seed: seedPhraseIssuer,
+    revocationOpts: {
+      type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
+      id: 'https://rhs-staging.polygonid.me',
+    },
+  });
+
+  if (!issuer) throw new Error('Could not create issuer');
+
+  // const ethSigner = new ethers.Wallet(env.WALLET_PRIVATE_KEY, dataStorage.states.provider);
+  // const txId = await proofService.transitState(iss, res.oldTreeState, true, dataStorage.states, ethSigner);
+
+  const defaultProfile = await identityWallet.createProfile(issuer.did, 0, 'DEFAULT');
+
+  return { credWallet, identityWallet, dataStorage, issuer, defaultProfile };
 }
 
-export const storages = initializeStorages();
+const initStorages = async () => await initializeStorages();
+
+export let storages: Awaited<ReturnType<typeof initializeStorages>>;
+
+initStorages()
+  .then((res) => {
+    storages = res;
+  })
+  .catch((e) => console.log(e));
 
 export function createCredentialRequest(id: string) {
   const claimReq: CredentialRequest = {

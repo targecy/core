@@ -6,15 +6,16 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractRead, useContractWrite } from 'wagmi';
 
-import { Targecy__factory } from '~common/generated/contract-types';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllAdsQuery, useGetAllAdsQuery } from '~~/generated/graphql.types';
+
+const abi = require('../../generated/abis/localhost_Targecy.json');
 
 const Ads = () => {
   const data = useGetAllAdsQuery();
   const { data: adsQuantity } = useContractRead({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: '_adId',
   });
 
@@ -44,9 +45,22 @@ const Ads = () => {
     }
   }, [ads]);
 
+  metadata[1] = {
+    title: 'Looking for the best yield?',
+    description: 'Protocol X is the best for you!',
+    image: 'https://zengo.com/wp-content/uploads/Lending-Protocol-2-1200x900.png',
+  };
+
+  metadata[2] = {
+    title: 'Did you see the new monkeys NFT?',
+    description: 'People are taking, come and mint yours!',
+    image:
+      'https://allthings.how/content/images/wordpress/2021/12/allthings.how-what-does-it-mean-to-mint-an-nft-mint-nft.png',
+  };
+
   const { writeAsync: deleteAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi: Targecy__factory.abi,
+    abi,
     functionName: 'deleteAd',
   });
 
@@ -137,7 +151,38 @@ const Ads = () => {
             rowBorderColor="border-fuchsia-400"
             noRecordsText="No results match your search query"
             className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-            records={ads}
+            records={[
+              {
+                id: '1',
+                advertiser: {
+                  id: '0x',
+                  // impressions: 1,
+                },
+                maxBlock: 99999,
+                maxImpressionPrice: 9999,
+                impressions: 1,
+                metadataURI: '',
+                minBlock: 1,
+                remainingBudget: 885,
+                targetGroups: [{ id: '1', metadataURI: '', zkRequests: [] }],
+                totalBudget: 1000,
+              },
+              {
+                id: '2',
+                advertiser: {
+                  id: '0x',
+                  // impressions: 1,
+                },
+                maxBlock: 99999,
+                maxImpressionPrice: 9999,
+                impressions: 1,
+                metadataURI: '',
+                minBlock: 1,
+                remainingBudget: 3999,
+                targetGroups: [{ id: '1', metadataURI: '', zkRequests: [] }],
+                totalBudget: 4000,
+              },
+            ]}
             minHeight={200}
             columns={columns}></DataTable>
         </div>
