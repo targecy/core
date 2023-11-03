@@ -8,7 +8,7 @@ import { router, publicProcedure } from '..';
 // @todo move logic to service layer and db connections to repository layer
 
 export const schemasRouter = router({
-  getAllSchemas: publicProcedure.query(async () => {
+  getAllSchemas: publicProcedure.query(() => {
     return SCHEMAS;
   }),
 
@@ -18,7 +18,7 @@ export const schemasRouter = router({
         type: z.string(),
       })
     )
-    .query(async ({ input }) => {
+    .query(({ input }) => {
       if (!(input.type in SCHEMA_TYPES)) throw new TRPCError({ code: 'NOT_FOUND', message: 'Schema not found' });
 
       return SCHEMAS[input.type as keyof typeof SCHEMA_TYPES];

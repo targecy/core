@@ -18,22 +18,30 @@ model Issuer {
 }
 
 model ApiKey {
-  key           String   @id @db.VarChar(255)
-  expirationDate DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  issuerDid  String
-  issuer        Issuer   @relation(fields: [issuerDid], references: [did])
+  key             String   @id @db.VarChar(255)
+  expirationDate  DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  issuerDid       String
+  issuer          Issuer   @relation(fields: [issuerDid], references: [did])
 }
 
 model Credential {
-  did       String   @id 
-  type      String   @db.VarChar(255)
-  subject   Json 
+  did         String   @id 
 
-  issuedTo  String   @db.VarChar(255)
-  issuedAt  DateTime @default(now())
-  
-  issuerDid  String
-  issuer    Issuer   @relation(fields: [issuerDid], references: [did])
+  type        String   @db.VarChar(255)
+  identifier  String   @db.VarChar(255)
+  credential  Json
+
+  issuer      Issuer   @relation(fields: [issuerDid], references: [did])
+  issuerDid   String
+  issuedTo    String   @db.VarChar(255)
+  issuedAt    DateTime @default(now())
+
+  @@index([type], name: "credential_type")
+  @@index([identifier], name: "credential_identifier")
+  @@index([issuerDid], name: "credential_issuer")
+  @@index([issuedTo], name: "credential_issued_to")
+  @@index([issuedAt], name: "credential_issued_at")
+  @@index([credential(ops: JsonbPathOps)], type: Gin, name: "credential_content")
 }

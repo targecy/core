@@ -5,7 +5,7 @@
 export type SCHEMA = {
   title: string;
   description: string;
-  type: string;
+  type: SCHEMA_TYPE;
   bigint: string;
   hash: string;
   schemaUrl: string;
@@ -15,10 +15,12 @@ export type SCHEMA = {
 
 export enum SCHEMA_TYPES {
   ProtocolUsedTargecySchema = 'ProtocolUsedTargecySchema',
-  ERC1155TargecySchema = 'ERC1155TargecySchema',
+  TokenHolderTargecySchema = 'TokenHolderTargecySchema',
 }
 
 export type SCHEMA_TYPE = keyof typeof SCHEMA_TYPES;
+
+export const isSchemaType = (type: string): type is SCHEMA_TYPE => type in SCHEMA_TYPES;
 
 export const SCHEMAS: Record<SCHEMA_TYPE, SCHEMA> = {
   ProtocolUsedTargecySchema: {
@@ -36,19 +38,19 @@ export const SCHEMAS: Record<SCHEMA_TYPE, SCHEMA> = {
     },
   },
 
-  ERC1155TargecySchema: {
-    title: 'ERC1155 Holding Credential',
-    description: 'The user holds ERC1155',
-    type: 'ERC1155TargecySchema',
-    bigint: '206772055814781708517484018426506659211',
-    hash: '8b45202538bd3b5f28f6c7fd71d98e9b',
-    schemaUrl: 'ipfs://QmQZ9zjX97iKr5ZRBwUfgUnJHdFdVVn66x6tQYEB6eB62R',
-    jsonLdContextUrl: 'ipfs://QmQ3GjSRjf3b3bGAWcWA7TeyLVAyqRswELj4ibssM2b881',
+  TokenHolderTargecySchema: {
+    title: 'Token Holder Credential',
+    description: 'The user holds tokens.',
+    type: 'TokenHolderTargecySchema',
+    bigint: '208348334151287571258325463885365100839',
+    hash: '27c10f03a0c97d2bd6f290adf76dbe9c',
+    schemaUrl: 'ipfs://QmQizQKfz7CjkTg9zhwGvEREwH6aKSfLjcK8gJEEQCpcs2',
+    jsonLdContextUrl: 'ipfs://QmWZ3D7FLqYqPJKm9fxLyAhciTdAnKVx8nok6T7VvA3LZR',
     credentialSubject: {
       id: '',
-      contractAddress: '',
-      tokenId: '',
+      token: '',
       amount: '',
+      tokenId: '',
     },
   },
 };

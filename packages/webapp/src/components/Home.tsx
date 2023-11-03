@@ -35,27 +35,83 @@ export const Home = () => {
   if (!mounted) return <></>;
 
   return (
-    <div className="flex">
-      {/* create 3 columns with panels  */}
-      <div className="m-3 flex w-1/3 flex-col p-2">
-        <div className="panel">
-          <h5 className="text-md font-semibold dark:text-white-light">Ads</h5>
-          <h5 className="text-3xl font-semibold dark:text-white">{adsQuantity?.toString() ?? '2'}</h5>
+    <div>
+      <label className="mt-5 ml-5">Network</label>
+
+      <div className="flex">
+        {/* create 3 columns with panels  */}
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">Ads</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">{adsQuantity?.toString() ?? '2'}</h5>
+          </div>
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">Target Groups</h5>
+
+            <h5 className="text-3xl font-semibold dark:text-white">{targetGroupsQuantity?.toString() || '3'}</h5>
+          </div>
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">ZKP Requests</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">{zkpRequestsQuantity?.toString() || '5'}</h5>
+          </div>
         </div>
       </div>
 
-      <div className="m-3 flex w-1/3 flex-col p-2">
-        <div className="panel">
-          <h5 className="text-md font-semibold dark:text-white-light">Target Groups</h5>
+      <label className="mt-5 ml-5">Profile</label>
 
-          <h5 className="text-3xl font-semibold dark:text-white">{targetGroupsQuantity?.toString() || '3'}</h5>
+      <div className="flex">
+        {/* create 3 columns with panels  */}
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">Public-data credentials</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">0</h5>
+          </div>
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">Private-data credentials</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">0</h5>
+          </div>
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">Total Rewards</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">0</h5>
+          </div>
         </div>
       </div>
 
-      <div className="m-3 flex w-1/3 flex-col p-2">
-        <div className="panel">
-          <h5 className="text-md font-semibold dark:text-white-light">ZKP Requests</h5>
-          <h5 className="text-3xl font-semibold dark:text-white">{zkpRequestsQuantity?.toString() || '5'}</h5>
+      <label className="mt-5 ml-5">Advertiser profile</label>
+
+      <div className="flex">
+        {/* create 3 columns with panels  */}
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">Campaigns</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">0</h5>
+          </div>
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">TVL (Total value locked)</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">0</h5>
+          </div>
+        </div>
+
+        <div className="m-3 flex w-1/3 flex-col p-2">
+          <div className="panel">
+            <h5 className="text-md font-semibold dark:text-white-light">ROI</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">0</h5>
+          </div>
         </div>
       </div>
     </div>

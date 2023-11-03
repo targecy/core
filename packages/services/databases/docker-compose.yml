@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  backend_db:
+    image: postgres:14
+    volumes:
+      - ./backend/data:/var/lib/postgresql/data
+    restart: always
+    container_name: 'backend_db'
+    command: postgres -c 'max_connections=1000'
+    environment:
+        POSTGRES_DB: 'backend'
+        POSTGRES_USER: 'backend'
+        POSTGRES_PASSWORD: 'backend'
+    ports:
+      - 5435:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U backend -d backend"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  relayer_db:
+    image: postgres:14
+    volumes:
+      - ./relayer/data:/var/lib/postgresql/data
+    restart: always
+    container_name: 'relayer_db'
+    command: postgres -c 'max_connections=1000'
+    environment:
+        POSTGRES_DB: 'relayer'
+        POSTGRES_USER: 'relayer'
+        POSTGRES_PASSWORD: 'relayer'
+    ports:
+      - 5436:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U relayer -d relayer"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

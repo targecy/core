@@ -6,7 +6,7 @@ export const targetsRouter = router({
   getAllTargets: publicProcedure.query(async ({ ctx }) => {
     // Group by type and return count
     return await ctx.prisma.credential.groupBy({
-      by: ['type'],
+      by: ['type', 'identifier'],
       _count: {
         _all: true,
       },

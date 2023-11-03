@@ -1,4 +1,5 @@
 import {
+  BookOutlined,
   EditOutlined,
   HomeOutlined,
   PlaySquareOutlined,
@@ -123,16 +124,32 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
+                  <br></br>
+                  <label>User</label>
+                  <li className="nav-item">
+                    <Link href="/credentials" className="group">
+                      <div className="flex items-center">
+                        <BookOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Credentials')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <br></br>
+                  <label>Advertiser</label>
                   <li className="nav-item">
                     <Link href="/ads" className="group">
                       <div className="flex items-center">
                         <EditOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Ads')}
+                          {t('Campaigns')}
                         </span>
                       </div>
                     </Link>
                   </li>
+                  <br></br>
+                  <label>Admin</label>
                   <li className="nav-item">
                     <Link href="/targetGroups" className="group">
                       <div className="flex items-center">
@@ -163,6 +180,8 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
+                  <br></br>
+                  <label>Publisher</label>
                   <li className="nav-item">
                     <Link href="/demo" className="group">
                       <div className="flex items-center">

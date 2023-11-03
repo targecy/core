@@ -1,7 +1,9 @@
 import { getThirdPartyIssuerProfile } from 'constants/issuers/default/default.issuer';
 
+import { DID } from '@iden3/js-iden3-core';
 import { TRPCError } from '@trpc/server';
-import { getPublicCredentials } from 'trpc/services/credentials/credentials.service';
+import * as credentialsService from 'trpc/services/credentials/credentials.service';
+import { getCredentialIdentifier } from 'utils/credentials/credentials.utils';
 import { createCredentialRequest, storages } from 'utils/zk.utils';
 import { z } from 'zod';
 
@@ -53,7 +55,8 @@ export const credentialsRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      console.log(input);
+      console.debug('getPublicCredentials');
+
       // Validate signature, only wallet owners can get their credentials.
       // const walletFromSignature = await recoverMessageAddress({
       //   message: 'public.credentials',
@@ -61,25 +64,58 @@ export const credentialsRouter = router({
       // })
       // if (walletFromSignature != input.wallet) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
+      // Check last time credentials were issued for this wallet
+      const lastTimeIssuedForWallet = (
+        await ctx.prisma.credential.aggregate({
+          where: {
+            issuedTo: input.did,
+          },
+          _max: {
+            issuedAt: true,
+          },
+        })
+      )._max?.issuedAt;
+
+      console.debug('lastTimeIssuedForWallet', lastTimeIssuedForWallet);
+
       // Check if there are new credentials to issue
-      const credentials = await getPublicCredentials(input.wallet, input.did);
+      const credentials = await credentialsService.getPublicCredentials(
+        input.wallet,
+        DID.parse(`did:${input.did}`),
+        lastTimeIssuedForWallet ?? undefined
+      );
 
-      // Save new credentials - @todo CHECK
-      // const saved = await ctx.prisma.credential.createMany({
-      //   data: credentials.map((credential) => ({
-      //     did: credential.id,
-      //     issuedTo: credential.credentialSubject['@id'].toString(),
-      //     type: 'TYPE',
-      //     issuerDid: credential.issuer,
-      //     subject: credential.credentialSubject,
-      //   })),
-      // });
+      console.debug('credentials', credentials);
 
-      // if (saved.count !== credentials.length)
-      //   throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Credentials not saved' });
+      // Save new credentials
+      const saved = await ctx.prisma.credential.createMany({
+        data: credentials.map((credential) => ({
+          did: credential.id,
+          issuedTo: credential.credentialSubject['@id'].toString(),
+          type: credential.type.toLocaleString(),
+          issuerDid: credential.issuer,
+          credential: JSON.parse(JSON.stringify(credential)),
+          identifier: getCredentialIdentifier(credential),
+        })),
+      });
+
+      console.debug('saved', saved);
+
+      if (saved.count !== credentials.length)
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Credentials not saved' });
 
       console.log('Credentials created: ', credentials);
 
-      return credentials;
+      const allCredentials = await ctx.prisma.credential.findMany({
+        where: {
+          issuedTo: input.did,
+        },
+        select: {
+          credential: true,
+        },
+      });
+
+      console.debug('allCredentials', allCredentials);
+      return allCredentials;
     }),
 });

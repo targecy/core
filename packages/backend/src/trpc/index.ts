@@ -30,13 +30,13 @@ const t = initTRPC.context<Context>().create({
 export const middleware = t.middleware;
 export const router = t.router;
 
-const logger = t.middleware(async ({ path, type, next }) => {
+const logger = t.middleware(async ({ path, type, rawInput, next }) => {
   const result = await next();
 
   if (result.ok) {
     console.info(`Ok: ${JSON.stringify({ path, type })}`);
   } else {
-    console.error(`Error: ${JSON.stringify({ path, type })}`);
+    console.error(`Error`, { path, rawInput, type, error: result.error });
   }
 
   return result;

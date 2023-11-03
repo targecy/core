@@ -7,3 +7,6 @@ explorer/services/redis-data
 
 graph-node/data
 graph-node/bin
+
+databases/backend
+databases/relayer

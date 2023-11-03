@@ -1,7 +1,8 @@
-import { ERC1155Holding, KNOWN_PROTOCOL } from 'constants/contracts.constants';
+import { TokenHolding as TokenHolding, KNOWN_PROTOCOL, SCANNERS } from 'constants/contracts.constants';
 import { SCHEMAS } from 'constants/schemas/schemas.constant';
 
 import { CredentialRequest, CredentialStatusType } from '@0xpolygonid/js-sdk';
+import { DID } from '@iden3/js-iden3-core';
 
 type BaseCredentialType = Omit<CredentialRequest, 'credentialSchema' | 'credentialSubject' | 'type'>;
 
@@ -13,14 +14,14 @@ export const baseCredentialRequest: BaseCredentialType = {
   },
 };
 
-export function createUsedProtocolCredentialRequest(id: string, knownProtocol: KNOWN_PROTOCOL): CredentialRequest {
+export function createUsedProtocolCredentialRequest(did: DID, knownProtocol: KNOWN_PROTOCOL): CredentialRequest {
   const schema = SCHEMAS['ProtocolUsedTargecySchema'];
 
-  const req = {
+  const req: CredentialRequest = {
     ...baseCredentialRequest,
     ...{
       credentialSubject: {
-        id: 'did:iden3:' + id,
+        id: 'did:iden3:' + did.id,
         protocol: knownProtocol.name,
       },
       credentialSchema: schema.schemaUrl,
@@ -31,22 +32,30 @@ export function createUsedProtocolCredentialRequest(id: string, knownProtocol: K
   return req;
 }
 
-export function createERC1155HoldingCredentialRequest(id: string, erc1155Holding: ERC1155Holding): CredentialRequest {
-  console.log('erc1155Holding', erc1155Holding);
+export function createTokenHoldingCredentialRequest(did: DID, holding: TokenHolding): CredentialRequest {
+  const schema = SCHEMAS['TokenHolderTargecySchema'];
 
-  const schema = SCHEMAS['ERC1155TargecySchema'];
+  if (!holding.token) throw new Error('Token not found');
 
-  const req = {
+  const req: CredentialRequest = {
     ...baseCredentialRequest,
     ...{
       credentialSubject: {
-        id: 'did:iden3:' + id,
-        contractAddress: erc1155Holding.contract,
-        tokenId: erc1155Holding.tokenId,
-        amount: erc1155Holding.amount,
+        id: 'did:iden3:' + did.id,
+        token: holding.token,
+        amount: holding.amount || 1,
+        tokenId: holding.tokenId || '',
       },
       credentialSchema: schema.schemaUrl,
       type: schema.type,
+      evidence: {
+        id: SCANNERS[holding.chain] + '/tx/' + holding.tx,
+        type: 'EthereumTransaction',
+      },
+      refreshService: {
+        id: 'TO_BE_DEVELOPED SEE https://www.w3.org/TR/vc-data-model/#refreshing',
+        type: 'TargecyManualRefreshService',
+      },
     },
   };
 

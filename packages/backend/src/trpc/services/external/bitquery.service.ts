@@ -1,15 +1,17 @@
-import { KNOWN_PROTOCOL } from 'constants/contracts.constants';
+import { CHAIN, KNOWN_PROTOCOLS, KNOWN_TOKENS } from 'constants/contracts.constants';
 
 import {
   GetSmartContractCallsByAddressQuery,
   GetSmartContractCallsByAddressQueryVariables,
+  GetTokenHoldingsByAddressQuery,
+  GetTokenHoldingsByAddressQueryVariables,
 } from 'generated/bitquery.types';
 import { DocumentNode, OperationDefinitionNode } from 'graphql';
 import { GraphQLClient } from 'graphql-request';
 import parse from 'graphql-tag';
 import { AddressString } from 'utils';
 
-import { GetSmartContractCallsByAddress } from '../credentials/credentials.graphql';
+import { GetSmartContractCallsByAddress, GetTokenHoldingsByAddress } from '../credentials/credentials.graphql';
 
 const getOperationNames = (definitions: DocumentNode['definitions']) =>
   definitions
@@ -52,7 +54,7 @@ export const graphqlRequest = async <RequestResult, RequestVariables>({
   }
 };
 
-export async function getUsedContractsbyAddress(address: AddressString, protocols: KNOWN_PROTOCOL[]) {
+export async function getUsedContractsbyAddress(address: AddressString, from?: Date) {
   const response = await graphqlRequest<
     GetSmartContractCallsByAddressQuery,
     GetSmartContractCallsByAddressQueryVariables
@@ -60,7 +62,9 @@ export async function getUsedContractsbyAddress(address: AddressString, protocol
     document: GetSmartContractCallsByAddress,
     variables: {
       address,
-      contracts: protocols.map((p) => p.addresses).flat(),
+      from,
+      network: 'matic',
+      contracts: KNOWN_PROTOCOLS.map((p) => p.addresses).flat(),
     },
   });
 
@@ -68,5 +72,31 @@ export async function getUsedContractsbyAddress(address: AddressString, protocol
     (call) => call.smartContract?.address.address?.toString()
   );
 
-  return protocols.filter((p) => p.addresses.some((addr) => usedContractAddresses?.includes(addr)));
+  return KNOWN_PROTOCOLS.filter((p) => p.addresses.some((addr) => usedContractAddresses?.includes(addr)));
+}
+
+export async function getTokenHoldings(address: AddressString, from?: Date) {
+  const response = await graphqlRequest<GetTokenHoldingsByAddressQuery, GetTokenHoldingsByAddressQueryVariables>({
+    document: GetTokenHoldingsByAddress,
+    variables: {
+      network: 'matic',
+      from,
+      tokens: KNOWN_TOKENS.map((p) => p.address).flat(),
+      receiver: address,
+    },
+  });
+
+  return (
+    response.ethereum?.transfers?.map((transfer) => ({
+      token: transfer.currency?.address,
+      symbol: transfer.currency?.symbol,
+      tokenId: transfer.currency?.tokenId,
+      type: transfer.currency?.tokenType,
+      amount: transfer.amount,
+      tx: transfer.transaction?.hash,
+      height: transfer.block?.height,
+      timestamp: transfer.block?.timestamp?.time,
+      chain: CHAIN.POLYGON,
+    })) || []
+  );
 }

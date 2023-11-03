@@ -1,9 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/no-default-export */
-
-import { CodegenConfig } from '@graphql-codegen/cli';
 
 import { join } from 'path';
+
+import { CodegenConfig } from '@graphql-codegen/cli';
 
 require('dotenv').config({ path: join(__dirname, '.env') });
 
@@ -21,6 +20,9 @@ const config: CodegenConfig = {
       },
       documents: [`src/**/*.graphql.ts`],
       plugins: ['typescript', 'typescript-operations'],
+      config: {
+        enumsAsTypes: true,
+      },
     },
   },
 };

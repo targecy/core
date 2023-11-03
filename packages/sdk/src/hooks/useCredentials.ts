@@ -14,6 +14,7 @@ export const useCredentials = (context: TargecyContextType) => {
       const credentialsReceived = JSON.parse(localStorage.getItem('credentials') || '[]');
       const cloned = credentialsReceived.map(cloneCredential);
 
+      
       await context.zkServices.dataStorage.credential.saveAllCredentials(cloned);
 
       setCredentials(await context.zkServices.credWallet.list());
