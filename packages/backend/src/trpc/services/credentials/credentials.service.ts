@@ -1,12 +1,12 @@
 import {
   createTokenHoldingCredentialRequest,
   createUsedProtocolCredentialRequest,
-} from 'constants/credentials/public.credentials';
+} from '../../../constants/credentials/public.credentials';
 
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
-import { storages } from 'utils/zk.utils';
 
+import { storages } from '../../../utils/zk.utils';
 import { getTokenHoldings, getUsedContractsbyAddress } from '../external/bitquery.service';
 
 /**

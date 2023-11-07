@@ -1,7 +1,9 @@
+import { W3CCredential } from '@0xpolygonid/js-sdk';
+import { cloneCredential } from './zk';
+
 const URL = 'http://localhost:3090/storage';
 
-// Issuer
-export function saveCredential(key: string, value: string): Promise<boolean> {
+function saveItem(key: string, value: string): Promise<boolean> {
   // Create an iframe and append it to the DOM
   const iframe = document.createElement('iframe');
   iframe.src = URL;
@@ -31,8 +33,7 @@ export function saveCredential(key: string, value: string): Promise<boolean> {
   });
 }
 
-// Publisher
-export function retrieveCredential(key: string): Promise<string | null> {
+function retrieveItem(key: string): Promise<string | null> {
   return new Promise((resolve, reject) => {
     // Create an iframe and append it to the DOM
     const iframe = document.createElement('iframe');
@@ -61,4 +62,22 @@ export function retrieveCredential(key: string): Promise<string | null> {
       iframe.contentWindow?.postMessage(data, URL);
     };
   });
+}
+
+export async function getSavedCredentials() {
+  const json = JSON.parse((await retrieveItem('credentials')) || '[]');
+  if (!Array.isArray(json)) throw new Error('Invalid credentials');
+
+  return json.map(cloneCredential);
+}
+
+export async function saveCredentials(credentials: W3CCredential[]) {
+  const savedCredentials = await getSavedCredentials();
+  const savedCredentialsDids = savedCredentials.map((c) => c.id);
+
+  // Filter out credentials that are already saved
+  const newCredentials = credentials.filter((c) => !savedCredentialsDids.includes(c.id));
+
+  const json = JSON.stringify(savedCredentials.concat(newCredentials));
+  await saveItem('credentials', json);
 }

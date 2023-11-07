@@ -4,24 +4,39 @@
   "license": "MIT",
   "scripts": {
     "start-chain": "./chain/generate-compose.sh && docker-compose -f ./chain/docker-compose.yml up -d",
-    "start-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml up -d",
-    "start-graph-node": "docker-compose -f ./graph-node/docker-compose.yml up -d",
-    "start-databases": "docker-compose -f ./databases/docker-compose.yml up -d",
-    "start-all": "npm run start-chain && npm run start-explorer && npm run start-graph-node && npm run start-databases",
-    "stop-chain": "docker-compose -f ./chain/docker-compose.yml down",
-    "stop-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml down",
-    "stop-graph-node": "docker-compose -f ./graph-node/docker-compose.yml down",
-    "stop-databases": "docker-compose -f ./databases/docker-compose.yml down",
-    "stop-all": "npm run stop-chain && npm run stop-explorer && npm run stop-graph-node && npm run stop-databases",
+    "stop-chain": "docker-compose -f ./chain/docker-compose.yml stop",
+    "delete-chain": "docker-compose -f ./chain/docker-compose.yml down",
     "restart-chain": "npm run stop-chain && npm run start-chain",
-    "restart-explorer": "npm run stop-explorer && npm run delete-explorer-data && npm run start-explorer",
-    "restart-graph-node": "npm run stop-graph-node && npm run delete-graph-node-data && npm run start-graph-node",
-    "restart-databases": "npm run stop-databases && npm run start-databases",
-    "restart-all": "npm run stop-all && npm run delete-all-data && npm run start-all",
-    "delete-graph-node-data": "rm -rf ./graph-node/data",
+    "reset-chain": "npm run delete-chain && npm run start-chain",
+    
+    "start-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml up -d",
+    "stop-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml stop",
+    "delete-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml down",
+    "restart-explorer": "npm run stop-explorer && npm run start-explorer",
+    "reset-explorer": "npm run delete-explorer && npm run delete-explorer-data && npm run start-explorer",
     "delete-explorer-data": "rm -rf ./explorer/services/logs ./explorer/services/blockscout-db-data ./explorer/services/stats-db-data",
+    
+    "start-graph-node": "docker-compose -f ./graph-node/docker-compose.yml up -d",
+    "stop-graph-node": "docker-compose -f ./graph-node/docker-compose.yml stop",
+    "delete-graph-node": "docker-compose -f ./graph-node/docker-compose.yml down",
+    "restart-graph-node": "npm run stop-graph-node && npm run start-graph-node",
+    "reset-graph-node": "npm run delete-graph-node && npm run delete-graph-node-data && npm run start-graph-node",
+    "delete-graph-node-data": "rm -rf ./graph-node/data",
+    
+    "start-databases": "docker-compose -f ./databases/docker-compose.yml up -d",
+    "stop-databases": "docker-compose -f ./databases/docker-compose.yml stop",
+    "delete-databases": "docker-compose -f ./databases/docker-compose.yml down",
+    "restart-databases": "npm run stop-databases && npm run start-databases",
+    "reset-databases": "npm run delete-databases && npm run start-databases",
     "delete-databases-data": "rm -rf ./databases/backend ./databases/relayer",
+    
+    "start-all": "npm run start-chain && npm run start-explorer && npm run start-graph-node && npm run start-databases",
+    "stop-all": "npm run stop-chain && npm run stop-explorer && npm run stop-graph-node && npm run stop-databases",
+    "delete-all": "npm run delete-chain && npm run delete-explorer && npm run delete-graph-node && npm run delete-databases",
+    "restart-all": "npm run stop-all && npm run start-all",
+    "reset-all": "npm run delete-all && npm run delete-all-data && npm run start-all",
     "delete-all-data": "npm run delete-graph-node-data && npm run delete-explorer-data && npm run delete-databases-data",
+    
     "show-accounts": "cat chain/accounts/accounts.json | jq '.private_keys'"
   }
 }

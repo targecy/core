@@ -1,8 +1,8 @@
-import { TokenHolding as TokenHolding, KNOWN_PROTOCOL, SCANNERS } from 'constants/contracts.constants';
-import { SCHEMAS } from 'constants/schemas/schemas.constant';
-
 import { CredentialRequest, CredentialStatusType } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
+
+import { TokenHolding as TokenHolding, KNOWN_PROTOCOL, SCANNERS } from '../../constants/contracts.constants';
+import { SCHEMAS } from '../../constants/schemas/schemas.constant';
 
 type BaseCredentialType = Omit<CredentialRequest, 'credentialSchema' | 'credentialSubject' | 'type'>;
 

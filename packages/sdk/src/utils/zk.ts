@@ -51,18 +51,18 @@ import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
 import { backendTrpcClient, relayerTrpcClient } from './trpc';
 
-export async function requestPublicCredentials(userDID?: string, wallet?: string, services?: ZkServicesType) {
-  if (!services) throw new Error('Services not initialized');
-  if (!userDID) throw new Error('User DID or signature not provided');
+// export async function requestPublicCredentials(userDID?: string, wallet?: string, services?: ZkServicesType) {
+//   if (!services) throw new Error('Services not initialized');
+//   if (!userDID) throw new Error('User DID or signature not provided');
 
-  const credentials: W3CCredential[] = await backendTrpcClient.credentials.getPublicCredentials.query({
-    did: userDID,
-    signature: "SIG",
-    wallet: wallet ?? '0xEB71ed911e4dFc35Da80103a72fE983C8c709F33',
-  }, {});
+//   const credentials: W3CCredential[] = await backendTrpcClient.credentials.getPublicCredentials.query({
+//     did: userDID,
+//     signature: "SIG",
+//     wallet: wallet ?? '0xEB71ed911e4dFc35Da80103a72fE983C8c709F33',
+//   }, {});
 
-  await services.dataStorage.credential.saveAllCredentials(credentials);
-}
+//   await services.dataStorage.credential.saveAllCredentials(credentials);
+// }
 
 export function cloneCredential(credential: W3CCredential) {
   const cloned = new W3CCredential();

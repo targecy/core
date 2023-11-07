@@ -1,27 +1,31 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
-import { backendTrpcClient, useCredentials } from '@targecy/sdk';
+import { cloneCredential, useCredentials } from '@targecy/sdk';
 import { useContext, useState } from 'react';
 
 import { TargecyServicesContext } from '../../../../sdk/src/components/misc/Context';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { useWallet } from '~~/hooks';
+import { backendTrpcClient } from '~~/utils/trpc';
+import { useSignMessage } from 'wagmi';
 
 const Credentials = () => {
   const context = useContext(TargecyServicesContext);
-  const credentials = useCredentials(context);
-  const { isConnected } = useWallet();
+  const { credentials, setCredentials } = useCredentials(context);
+  const { isConnected, address } = useWallet();
+  const { signMessageAsync } = useSignMessage();
   const [procesingAd, setProcesingAd] = useState(false);
 
-  const getPublicCredentials = backendTrpcClient.credentials.
-  
-  // .endpoints.getPublicCredentials.useQuery({
-  //   signature: '',
-  //   did: '',
-  //   wallet: '',
-  // });
-
-  console.log(credentials);
+  const getPublicCredentials = () =>
+    signMessageAsync({ message: 'public.credentials' }).then((signature) =>
+      backendTrpcClient.credentials.getPublicCredentials
+        .query({
+          signature,
+          wallet: address as `0x${string}`,
+          did: context.userIdentity?.did.id || '',
+        })
+        .then((res) => setCredentials(res.map(cloneCredential)))
+    );
 
   return (
     <>

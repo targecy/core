@@ -1,4 +1,4 @@
-import { storages } from 'utils/zk.utils';
+import { storages } from '../../../utils/zk.utils';
 
 export const getThirdPartyIssuerProfile = async (nonce: number) => {
   if (nonce === 0) throw new Error('Nonce 0 is Targecy issuer');

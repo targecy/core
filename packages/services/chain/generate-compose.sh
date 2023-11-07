@@ -14,7 +14,7 @@ MNEMONIC=$(cat $MNEMONIC_FILE_PATH)
 MNEMONIC_ESCAPED=$(echo $MNEMONIC | sed 's/"/\\"/g')
 
 # Generate docker-compose.yml
-cat <<EOL > docker-compose.yml
+cat <<EOL > $script_dir/docker-compose.yml
 version: '3.8'
 
 services:

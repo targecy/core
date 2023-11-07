@@ -1,9 +1,8 @@
-import { SCHEMAS, SCHEMA_TYPES } from 'constants/schemas/schemas.constant';
-
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
+import { SCHEMAS, SCHEMA_TYPES } from '../../constants/schemas/schemas.constant';
 
 // @todo move logic to service layer and db connections to repository layer
 

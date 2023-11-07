@@ -1,14 +1,13 @@
+import { PrismaClient } from '@prisma/client';
 import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import superjson from 'superjson';
-
-import { prisma } from '../db';
 
 /**
  * Creates a context without req/res, useful for testing
  */
 export const createBaseContext = () => ({
-  prisma,
+  prisma: new PrismaClient(),
 });
 
 export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => {

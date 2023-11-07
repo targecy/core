@@ -1,6 +1,6 @@
-import { isSchemaType } from 'constants/schemas/schemas.constant';
-
 import { W3CCredential } from '@0xpolygonid/js-sdk';
+
+import { isSchemaType } from '../../constants/schemas/schemas.constant';
 
 export const getCredentialIdentifier = (credential: W3CCredential): string => {
   const type = credential.type[0];

@@ -24,6 +24,10 @@ app.use('/', (_req, res) => {
 
 const PORT = process.env.PORT ?? 4001;
 
+
+// Test DB Connection
+
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}.`);
 });

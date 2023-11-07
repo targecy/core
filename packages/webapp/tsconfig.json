@@ -23,10 +23,19 @@
       "~~/*": ["./src/*"],
       "~/*": ["./src/*"],
       "~common/*": ["../common/src/*"],
-      "@targecy/sdk": ["../sdk/src"]
+      "@targecy/sdk": ["../sdk/src"],
+      "@targecy/relayer-api/app.router": ["../relayer/src/trpc/router/index.ts"],
+      "@targecy/backend-api/app.router": ["../backend/src/trpc/router/index.ts"]
     }
   },
-  "include": ["src", "../common/src", "codegen.ts", "apollo.config.js", "../sdk/src/hooks/index.ts", "../sdk/src/utils/zk.ts"],
+  "include": [
+    "src",
+    "../common/src",
+    "codegen.ts",
+    "apollo.config.js",
+    "../sdk/src/hooks/index.ts",
+    "../sdk/src/utils/zk.ts"
+  ],
   "exclude": [
     "**/node_modules",
     ".husky",

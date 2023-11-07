@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useAsync } from 'react-use';
-import { cloneCredential } from '../utils/zk';
-import { CredentialStatusType, W3CCredential } from '@0xpolygonid/js-sdk';
+import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { TargecyContextType } from '../components/misc/Context';
+import { getSavedCredentials, saveCredentials } from '../utils';
 
 export const useCredentials = (context: TargecyContextType) => {
   const [initialized, setInitialized] = useState(false);
@@ -11,23 +11,21 @@ export const useCredentials = (context: TargecyContextType) => {
   useAsync(async () => {
     if (!initialized && context.zkServices && context.userIdentity) {
       setInitialized(true);
-      const credentialsReceived = JSON.parse(localStorage.getItem('credentials') || '[]');
-      const cloned = credentialsReceived.map(cloneCredential);
 
-      
-      await context.zkServices.dataStorage.credential.saveAllCredentials(cloned);
+      // Add saved credentials to the initialized wallet and state
+      const savedCredentials = await getSavedCredentials();
+      await context.zkServices.credWallet.saveAll(savedCredentials);
 
       setCredentials(await context.zkServices.credWallet.list());
-    } else {
+    } else if (context.zkServices && context.userIdentity) {
       if (credentials.length > 0) {
-        localStorage.setItem(
-          'credentials',
-          JSON.stringify(credentials.filter((c) => !c.type.includes('AuthBJJCredential')))
-        );
+        await saveCredentials(credentials);
+        await context.zkServices?.credWallet.saveAll(credentials);
+
+        setCredentials(await context.zkServices.credWallet.list());
       }
     }
   }, [credentials, initialized, context.zkServices, context.userIdentity]);
 
-
-  return credentials;
+  return { credentials, setCredentials };
 };

@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext", "ES2021"],
+    "baseUrl": ".",
+    "paths": {
+      "@router": ["../src/trpc/router/index.ts"]
+    },
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "incremental": true,
+    "strictNullChecks": true,
+
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "jsxImportSource": "preact",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment"
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "test", "scripts", "next.config.js"],
+  "exclude": ["node_modules", "dist"]
+}

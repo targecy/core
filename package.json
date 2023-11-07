@@ -19,51 +19,8 @@
     "migrate-backend": "yarn workspace @targecy/backend prisma:migrate:dev",
     "start-backend": "yarn workspace @targecy/backend dev",
     "start-relayer": "yarn workspace @targecy/relayer dev",
-    "@🔖🔖🔖🔖🔖 commands 🔖🔖🔖🔖🔖 ": "echo 🔖🔖🔖🔖🔖 ",
-    "create-config": "yarn scaffold reset-config",
-    "reset-config": "yarn scaffold reset-config",
-    "set-react": "yarn scaffold set-react",
-    "set-solidity": "yarn scaffold set-solidity",
-    "set-config": "yarn scaffold set-config",
-    "set-network": "yarn scaffold set-network",
-    "scaffold": "yarn workspace @scaffold-eth/commands scaffold",
-    "@🔖🔖🔖🔖🔖 front end 🔖🔖🔖🔖🔖 ": "echo 🔖🔖🔖🔖🔖 ",
-    "start": "yarn scaffold start",
-    "dev": "yarn scaffold start",
-    "build": "yarn scaffold build",
-    "serve": "yarn scaffold serve",
-    "test": "yarn scaffold test",
-    "@🔖🔖🔖🔖🔖 solidity commands 🔖🔖🔖🔖🔖 ": "echo 🔖🔖🔖🔖🔖 ",
-    "compile": "yarn scaffold compile",
-    "deploy": "yarn scaffold deploy",
-    "chain": "yarn scaffold chain",
-    "@🔖🔖🔖🔖🔖 solidity contracts 🔖🔖🔖🔖🔖 ": "echo 🔖🔖🔖🔖🔖",
-    "contracts:build": "yarn workspace @scaffold-eth/common contracts:build",
-    "contracts:clean": "yarn workspace @scaffold-eth/solidity clean && yarn workspace @scaffold-eth/common clean",
-    "contracts:watch": "yarn scaffold watch",
-    "@🔖🔖🔖🔖🔖 toolkit commands 🔖🔖🔖🔖🔖 ": "echo 📖 scripts & commands",
-    "hardhat": "yarn workspace @scaffold-eth/solidity hardhat",
-    "forge": "yarn workspace @scaffold-eth/solidity exec forge",
-    "cast": "yarn workspace @scaffold-eth/solidity exec cast",
-    "anvil": "yarn workspace @scaffold-eth/solidity exec anvil",
-    "@🔖🔖🔖🔖🔖 react: nextjs 🔖🔖🔖🔖🔖 ": "echo 🔖🔖🔖🔖🔖 ",
-    "start:nextjs": "yarn workspace @targecy/webapp dev",
-    "build:nextjs": "yarn workspace @targecy/webapp build",
-    "@🔖🔖🔖🔖🔖 ethereum helpers 🔖🔖🔖🔖🔖": "echo 📖 ethereum helper commands",
-    "generate": "yarn workspace @scaffold-eth/solidity generate",
-    "account": "yarn workspace @scaffold-eth/solidity account",
-    "@🔖🔖🔖🔖🔖 deployment 🔖🔖🔖🔖🔖": "echo 📖 deployment to external services commands",
-    "surge": "yarn workspace @targecy/webapp surge",
-    "@🔖🔖🔖🔖🔖 utilities 🔖🔖🔖🔖🔖": "echo 📖 utilities commands",
-    "syncpack:fix": "yarn syncpack fix-mismatches",
-    "postinstall": "yarn husky install",
-    "install:foundry": "yarn workspace @scaffold-eth/solidity exec foundryup && yarn forge install",
-    "lint": "yarn workspace @targecy/webapp lint --fix && yarn workspace @scaffold-eth/common lint --fix && yarn workspace @scaffold-eth/solidity lint --fix && yarn workspace @targecy/webapp lint --fix",
-    "@🔖🔖🔖🔖🔖 dev linking with yalc 🔖🔖🔖🔖🔖": "echo 📖 dev tools",
-    "dev:link:components": "yarn workspace @targecy/webapp dev:link:components && yarn workspace @scaffold-eth/common dev:link:components",
-    "dev:link:hooks": "yarn workspace @targecy/webapp dev:link:hooks && yarn workspace @scaffold-eth/common dev:link:hooks",
-    "dev:unlink": "yarn workspace @targecy/webapp dev:unlink && yarn workspace @targecy/webapp dev:unlink && yarn workspace @scaffold-eth/common dev:unlink && yarn workspace @scaffold-eth/common dev:unlink"
-  },
+    "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
+},
   "workspaces": {
     "packages": [
       "packages/*"
@@ -84,6 +41,10 @@
     "ts-node": "^10.9.1"
   },
   "lint-staged": {
+    "packages/services/trpc-panel/src/**/*.{ts,tsx}": [
+      "yarn workspace @targecy/trpc-panel lint --fix",
+      "yarn workspace @targecy/trpc-panel format"
+    ],
     "packages/webapp-ts/src/**/*.{ts,tsx}": [
       "yarn workspace @targecy/webapp lint --fix",
       "yarn workspace @targecy/webapp format"

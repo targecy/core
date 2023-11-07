@@ -7071,6 +7071,9 @@ __metadata:
     "@tailwindcss/typography": ^0.5.7
     "@targecy/sdk": "workspace:^"
     "@tippyjs/react": ^4.2.6
+    "@trpc/client": 10.40.0
+    "@trpc/react-query": 10.40.0
+    "@trpc/server": 10.40.0
     "@types/lodash": ^4.14.191
     "@types/node": ^16.11.59
     "@types/pretty-time": ^1.1.2
@@ -7175,6 +7178,7 @@ __metadata:
     sortablejs: ^1.15.0
     stream: ^0.0.2
     stream-browserify: ^3.0.0
+    superjson: ^2.2.0
     surge: ^0.23.1
     sweetalert2: ^11.7.1
     sweetalert2-react-content: ^5.0.7
@@ -31416,6 +31420,15 @@ __metadata:
   dependencies:
     copy-anything: ^3.0.2
   checksum: f5aeb010f24163cb871a4bc402d9164112201c059afc247a75b03131c274aea6eec9cf08be9e4a9465fe4961689009a011584528531d52f7cc91c077e07e5c75
+  languageName: node
+  linkType: hard
+
+"superjson@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "superjson@npm:2.2.0"
+  dependencies:
+    copy-anything: ^3.0.2
+  checksum: d55b44297048ba67c4a4b3d74f224fe485d06fd9a29bde0e5ffc012eb41f95587013989f278ed469f242cdd8322c3a301543c54c29fd8edf6c3367a9245e516d
   languageName: node
   linkType: hard
 

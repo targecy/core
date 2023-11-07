@@ -1,13 +1,13 @@
-import { getThirdPartyIssuerProfile } from 'constants/issuers/default/default.issuer';
-
+import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
 import { TRPCError } from '@trpc/server';
-import * as credentialsService from 'trpc/services/credentials/credentials.service';
-import { getCredentialIdentifier } from 'utils/credentials/credentials.utils';
-import { createCredentialRequest, storages } from 'utils/zk.utils';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
+import { getThirdPartyIssuerProfile } from '../../constants/issuers/default/default.issuer';
+import * as credentialsService from '../../trpc/services/credentials/credentials.service';
+import { getCredentialIdentifier } from '../../utils/credentials/credentials.utils';
+import { createCredentialRequest, storages } from '../../utils/zk.utils';
 
 // @todo move logic to service layer and db connections to repository layer
 
@@ -116,6 +116,6 @@ export const credentialsRouter = router({
       });
 
       console.debug('allCredentials', allCredentials);
-      return allCredentials;
+      return allCredentials.flatMap((credential) => credential.credential);
     }),
 });

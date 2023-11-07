@@ -34,11 +34,6 @@ const Credentials = () => {
     }
   }, [requestCredentialTrigger]);
 
-  const clearCredentials = () => {
-    credentials.forEach((c) => context.zkServices?.credWallet.remove(c.id));
-    localStorage.removeItem('credentials');
-  };
-
   return (
     <div>
       <div>
