@@ -30,11 +30,11 @@
   },
   "include": [
     "src",
-    "../common/src",
+    // "../common/src",
     "codegen.ts",
     "apollo.config.js",
-    "../sdk/src/hooks/index.ts",
-    "../sdk/src/utils/zk.ts"
+    // "../sdk/src/hooks/index.ts",
+    // "../sdk/src/utils/zk.ts"
   ],
   "exclude": [
     "**/node_modules",
@@ -43,6 +43,7 @@
     "tailwind.config.js",
     "node_modules",
     "**/.yalc/**/*",
-    ".yalc/**/*"
+    ".yalc/**/*",
+    "../backend/**/*",
   ]
 }

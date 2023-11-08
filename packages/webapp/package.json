@@ -4,7 +4,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "yarn graphql-codegen && concurrently \"next dev -p 3090\"",
+    "start": "yarn graphql-codegen && next dev -p 3090",
     "dev": "yarn graphql-codegen && concurrently \"next dev -p 3090\" \"yarn graphql-codegen-watch\"",
     "build": "yarn build:anttheme && next build",
     "serve": "next start",

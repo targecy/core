@@ -1,5 +1,5 @@
-import { getTokenHoldings } from 'trpc/services/external/bitquery.service';
-import { AddressString } from 'utils';
+import { getTokenHoldings } from '../trpc/services/external/bitquery.service';
+import { AddressString } from '../utils';
 
 export enum CHAIN {
   MUMBAI = 'MUMBAI',

@@ -12,6 +12,7 @@ import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWall
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useWallet } from '~~/hooks';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
 
 // Helper Functions
@@ -98,7 +99,6 @@ const ZKPRequestForm = (id: { id: string }) => {
 
     try {
       const schemaHash = data.schema; // extracted from PID Platform
-      const schemaEnd = fromLittleEndian(hexToBytes(schemaHash));
 
       let hash;
       if (id?.id) {
@@ -135,7 +135,7 @@ const ZKPRequestForm = (id: { id: string }) => {
             metadataURI: metadataURI,
           },
         ]);
-        console.log(setZKPRequestAsync)
+        console.log(setZKPRequestAsync);
         hash = await setZKPRequestAsync({
           args: [
             {
@@ -216,8 +216,6 @@ const ZKPRequestForm = (id: { id: string }) => {
       value: 5,
     },
   ];
-
-  const [subjectFieldOptions, setSubjectFieldOptions] = useState<{ label: string; value: string }[]>([]);
 
   return (
     <div>

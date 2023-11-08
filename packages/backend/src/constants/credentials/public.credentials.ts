@@ -1,7 +1,7 @@
 import { CredentialRequest, CredentialStatusType } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
 
-import { TokenHolding as TokenHolding, KNOWN_PROTOCOL, SCANNERS } from '../../constants/contracts.constants';
+import { TokenHolding as TokenHolding, KNOWN_PROTOCOL, SCANNERS, CHAIN } from '../../constants/contracts.constants';
 import { SCHEMAS } from '../../constants/schemas/schemas.constant';
 
 type BaseCredentialType = Omit<CredentialRequest, 'credentialSchema' | 'credentialSubject' | 'type'>;
@@ -49,7 +49,7 @@ export function createTokenHoldingCredentialRequest(did: DID, holding: TokenHold
       credentialSchema: schema.schemaUrl,
       type: schema.type,
       evidence: {
-        id: SCANNERS[holding.chain] + '/tx/' + holding.tx,
+        id: SCANNERS[holding.chain as CHAIN] + '/tx/' + holding.tx,
         type: 'EthereumTransaction',
       },
       refreshService: {

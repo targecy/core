@@ -13,6 +13,7 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
 
 const TargetGroupForm = (id?: { id: string }) => {

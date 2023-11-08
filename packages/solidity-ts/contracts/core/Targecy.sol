@@ -169,6 +169,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256[2][2] memory b,
     uint256[2] memory c
   ) public view returns (bool) {
+    // @todo: (martin) validate issuer using inputs[7] = issuerID
     return ICircuitValidator(zkProofsValidator).verify(inputs, a, b, c, requestQueries[requestId].query);
   }
 

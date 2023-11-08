@@ -115,7 +115,7 @@ const Sidebar = () => {
               <li className="nav-item">
                 <ul>
                   <br></br>
-                  <label>Overall</label> 
+                  <label>Overall</label>
                   <li className="nav-item">
                     <Link href="/" className="group">
                       <div className="flex items-center">

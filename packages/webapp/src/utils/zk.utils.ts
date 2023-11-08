@@ -17,7 +17,6 @@ import {
   RHSResolver,
   OnChainResolver,
   AgentResolver,
-  byteEncoder,
   EthStateStorage,
   type CredentialRequest,
   CredentialStatusType,
@@ -26,9 +25,6 @@ import {
 } from '@0xpolygonid/js-sdk';
 
 export type StoragesSide = 'server' | 'client';
-
-const userSeed = 'userseedseedseedseedseedseedseed';
-const issuerSeed = 'issuseedseedseedseedseedseedseed';
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
@@ -70,18 +66,4 @@ export async function issueCredential(
   claimReq: CredentialRequest
 ) {
   return await identityWallet.issueCredential(issuerDID, claimReq);
-}
-
-export async function createIssuerIdentity(wallet: IdentityWallet) {
-  const seedPhraseIssuer: Uint8Array = byteEncoder.encode(issuerSeed);
-  return await wallet.createIdentity({
-    method: core.DidMethod.Iden3,
-    blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
-    seed: seedPhraseIssuer,
-    revocationOpts: {
-      type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-      id: 'https://rhs-staging.polygonid.me',
-    },
-  });
 }

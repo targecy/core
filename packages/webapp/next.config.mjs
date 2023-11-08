@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 const __dirname = resolve();
-import "./src/env.mjs";
+import './src/env.mjs';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -13,6 +13,11 @@ const nextConfig = {
   compiler: {
     emotion: true,
   },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   webpack: (config, { dev, isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,

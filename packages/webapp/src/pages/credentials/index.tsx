@@ -1,20 +1,20 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
-import { cloneCredential, useCredentials } from '@targecy/sdk';
-import { useContext, useState } from 'react';
-
-import { TargecyServicesContext } from '../../../../sdk/src/components/misc/Context';
+import { TargecyComponent, useTargecyContext, cloneCredential, useCredentials } from '@targecy/sdk';
+import { useState } from 'react';
+import { useConfig, useSignMessage } from 'wagmi';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { useWallet } from '~~/hooks';
+import { triggerSweetAlert } from '~~/utils/alerts';
 import { backendTrpcClient } from '~~/utils/trpc';
-import { useSignMessage } from 'wagmi';
 
 const Credentials = () => {
-  const context = useContext(TargecyServicesContext);
+  const { context, initialized } = useTargecyContext();
   const { credentials, setCredentials } = useCredentials(context);
   const { isConnected, address } = useWallet();
   const { signMessageAsync } = useSignMessage();
-  const [procesingAd, setProcesingAd] = useState(false);
+  const [fetchingCredentials, setFetchingCredentials] = useState(false);
+  const wagmiConfig = useConfig();
 
   const getPublicCredentials = () =>
     signMessageAsync({ message: 'public.credentials' }).then((signature) =>
@@ -24,23 +24,32 @@ const Credentials = () => {
           wallet: address as `0x${string}`,
           did: context.userIdentity?.did.id || '',
         })
-        .then((res) => setCredentials(res.map(cloneCredential)))
+        .then((res) => {
+          setCredentials(res.map(cloneCredential));
+          setFetchingCredentials(false);
+        })
     );
 
+  if (!context.userIdentity) return <div>Loading...</div>;
+
   return (
-    <>
+    <TargecyComponent wagmiConfig={wagmiConfig}>
       <div className="panel">
+        {/* Header */}
         <div className="mb-5 flex items-center justify-between p-2">
           <h5 className="text-lg font-semibold dark:text-white-light">Credentials</h5>
 
           {isConnected ? (
             <button
-              disabled={procesingAd}
+              disabled={fetchingCredentials}
               className="btn btn-primary !mt-6"
               onClick={() => {
-                getPublicCredentials();
+                setFetchingCredentials(true);
+                getPublicCredentials()
+                  .then(() => triggerSweetAlert('Public-data credentials retrieved successfully.', 'success'))
+                  .catch(() => triggerSweetAlert('Error retrieving public-data credentials.', 'error'));
               }}>
-              {procesingAd ? 'Fetching Credentials...' : 'Fetch public-data credentials'}
+              {fetchingCredentials ? 'Fetching Credentials...' : 'Fetch public-data credentials'}
             </button>
           ) : (
             <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -48,38 +57,45 @@ const Credentials = () => {
         </div>
         <div>
           <div className="card-body">
-            <div className="flex">
-              <div>
-                {credentials.map((credential: W3CCredential) => (
-                  <div className="mb-2 mt-2 flex flex-row rounded-md border border-primary p-2" key={credential.id}>
-                    <div>
-                      <h1 className="font-semibold">Credential</h1>
-                      <h1>{credential.type.filter((type: string) => type !== 'VerifiableCredential')}</h1>
-                      <h1 color="text.secondary">
-                        Expiration: {credential.expirationDate && new Date(credential.expirationDate).toUTCString()}
-                      </h1>
-                      {/* <h1>Schema: {getSchemaHashFromCredential(credential).toString()}</h1> */}
-                      <h1>
-                        {Object.entries(credential.credentialSubject)
-                          .filter((entry: any[2]) => entry[0] !== 'id' && entry[0] !== 'type')
-                          .map((entry: any[2]) => (
-                            <span key={entry[0]}>
-                              <span>
-                                <b>{entry[0]}</b>: {entry[1].toString()}
-                              </span>
-                              <br />
-                            </span>
-                          ))}
-                      </h1>
-                    </div>
-                  </div>
-                ))}
+            <div className="mb-5 flex">
+              {/* Identity Credential */}
+              <div className="m-3 w-[50rem] rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                <div className="py-7 px-6 w-full" >
+                  <h5 className="mb-4 text-xl font-semibold text-[#3b3f5c] dark:text-white-light">
+                    Identity Credential
+                  </h5>
+                  <p className="text-white-dark">{context.userIdentity?.did.id}</p>
+                </div>
               </div>
+
+              {/* Misc credentials */}
+              {credentials.map((credential: W3CCredential) => (
+                <div
+                  key={credential.id}
+                  className="m-3 w-[50rem] rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                  <div className="py-7 px-6 w-full">
+                    <h5 className="mb-4 text-xl font-semibold text-[#3b3f5c] dark:text-white-light">
+                      {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
+                    </h5>
+                    <p className="text-white-dark">
+                      Expiration: {credential.expirationDate && new Date(credential.expirationDate).toUTCString()}
+                    </p>
+
+                    {Object.entries(credential.credentialSubject)
+                      .filter((entry: any[2]) => entry[0] !== 'id' && entry[0] !== 'type')
+                      .map((entry: any[2]) => (
+                        <p key={entry[0]} className="text-white-dark">
+                          <b>{entry[0]}</b>: {entry[1].toString()}
+                        </p>
+                      ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </TargecyComponent>
   );
 };
 

@@ -32,7 +32,6 @@ export async function requestCredential(credentialRequest: CredentialRequest) {
 
   const tree = issued.getIden3SparseMerkleTreeProof();
 
-
   await storages.dataStorage.credential.saveCredential(issued);
 
   return issued;

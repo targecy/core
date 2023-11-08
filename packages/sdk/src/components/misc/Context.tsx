@@ -37,12 +37,12 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
   useAsync(async () => {
     if (!initialized) {
       const zkServices = await initServices();
-      // @todo: Fetch identity from credential stored or create it.
       const userIdentity = await createUserIdentity(zkServices.identityWallet);
+
       setContext({ zkServices, userIdentity });
       setInitialized(true);
     }
-  }, [initialized]);
+  }, []);
 
   const { chains, publicClient, webSocketPublicClient } = configureChains([mainnet], [publicProvider()]);
 

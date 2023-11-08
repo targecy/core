@@ -57,5 +57,3 @@ export const env = createEnv({
     VERCEL_ENV: process.env.VERCEL_ENV,
   },
 });
-
-console.log('Using Targecy Instance: ', env.NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS);

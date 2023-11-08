@@ -32,6 +32,7 @@ import {
   CredentialStatusType,
   CircuitStorage,
   type CircuitData,
+  getRandomBytes,
 } from '@0xpolygonid/js-sdk';
 import { Hex } from '@iden3/js-crypto';
 import { SchemaHash } from '@iden3/js-iden3-core';
@@ -40,7 +41,6 @@ import { keccak256 } from '@lumeweb/js-sha3-browser';
 export type StoragesSide = 'server' | 'client';
 
 const userSeed = 'userseedseedseedseedseedseedseed';
-const issuerSeed = 'issuseedseedseedseedseedseedseed';
 
 import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
 import { type Dispatch, type SetStateAction } from 'react';
@@ -50,6 +50,8 @@ import { ZkServicesType } from './context';
 import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
 import { backendTrpcClient, relayerTrpcClient } from './trpc';
+import { getSeed, saveSeed } from './sharedStorage';
+import { base64StringToUint8Array, uint8ArrayToBase64String } from './string';
 
 // export async function requestPublicCredentials(userDID?: string, wallet?: string, services?: ZkServicesType) {
 //   if (!services) throw new Error('Services not initialized');
@@ -164,17 +166,31 @@ export function initializeStorages() {
 export type UserIdentityType = Awaited<ReturnType<typeof createUserIdentity>>;
 
 export async function createUserIdentity(identityWallet: IdentityWallet) {
-  const seedPhraseUser: Uint8Array = byteEncoder.encode(userSeed);
-  return await identityWallet.createIdentity({
+  let savedSeed = await getSeed();
+  let seed: Uint8Array;
+
+  if (!savedSeed) {
+    seed = getRandomBytes(32);
+    // @todo (Martin): It isn't secure to store the seed like this, think an alternative.
+    await saveSeed(uint8ArrayToBase64String(seed));
+  } else {
+    seed = base64StringToUint8Array(savedSeed);
+  }
+
+  if (seed.length !== 32) throw new Error('Invalid seed length');
+
+  const identity = await identityWallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
     networkId: core.NetworkId.Mumbai,
-    seed: seedPhraseUser,
+    seed,
     revocationOpts: {
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
       id: 'https://rhs-staging.polygonid.me',
     },
   });
+
+  return identity;
 }
 
 export function createCredentialRequest(id: string) {

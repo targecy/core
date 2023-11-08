@@ -8,21 +8,23 @@ This monorepo contains the code for all the services that make up the Targecy pl
 - [Yarn](https://yarnpkg.com/) (v1.22.4)
 - [Docker](https://www.docker.com/) (v19.03.8)
 
+_Note: It is recommended to have a 16GB (RAM) computer._
+
 ## Installation
 
 To spin up the services, just run the following command:
 
 ```bash
-yarn install
-yarn run start-services
+$ yarn install
+$ yarn start-services
 ```
 
 Once all services are running:
 
 ```bash
-yarn run deploy-contracts
-yarn run deploy-subgraph
-yarn run migrate-backend
+$ yarn deploy-contracts
+$ yarn deploy-subgraph
+$ yarn migrate-backend
 ```
 
 ## Running the Dapp
@@ -30,9 +32,9 @@ yarn run migrate-backend
 Check that the services are running, and then:
 
 ```bash
-yarn run start-dapp
-yarn run start-backend
-yarn run start-relayer
+$ yarn start-dapp or yarn dev-dapp
+$ yarn start-backend
+$ yarn start-relayer
 ```
 
 Now you have all the services (a local blockchain, The Graph Node, databases, backend, relayer and the main DApp) running locally.
