@@ -24,7 +24,7 @@ const config: CodegenConfig = {
         'typescript-operations',
         {
           'typescript-rtk-query': {
-            importBaseApiFrom: '../services/baseApi',
+            importBaseApiFrom: '../services/contractsApi',
             exportHooks: true,
             overrideExisting: true,
           },

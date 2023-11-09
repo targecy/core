@@ -12,6 +12,7 @@ build
 dist
 **/generated/**/*
 !**/generated/README.md
+!**/generated/graphql.types.ts
 
 # solidity
 packages/solidity-ts-ts/cache

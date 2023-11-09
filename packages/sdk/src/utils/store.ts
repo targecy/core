@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { contractsApi, relayerApi, backendApi } from '../services';
+import { api, relayerApi, backendApi } from '../services';
 
 export const rootReducer = combineReducers({
-  baseApi: contractsApi.reducer,
+  baseApi: api.reducer,
   relayerApi: relayerApi.reducer,
   backendApi: backendApi.reducer,
 });
@@ -10,6 +10,6 @@ export const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(contractsApi.middleware).concat(relayerApi.middleware).concat(backendApi.middleware),
+    getDefaultMiddleware().concat(api.middleware).concat(relayerApi.middleware).concat(backendApi.middleware),
 });
 export type IRootState = ReturnType<typeof rootReducer>;

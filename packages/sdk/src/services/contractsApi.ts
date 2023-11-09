@@ -38,7 +38,7 @@ export const testEndpoint = (build: Build): any =>
     },
   });
 
-export const contractsApi = createApi({
+export const api = createApi({
   baseQuery: graphqlBaseQuery(),
   reducerPath: baseApiReducerPath,
   tagTypes: baseApiTagTypes,
@@ -52,4 +52,4 @@ export const contractsApi = createApi({
   }),
 });
 
-export const { useTestQuery } = contractsApi;
+export const { useTestQuery } = api;

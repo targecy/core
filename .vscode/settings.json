@@ -71,6 +71,7 @@
   "solidity.defaultCompiler": "localNodeModule",
   "mochaExplorer.configFile": "./packages/solidity-ts-ts/.mocharc.json",
   "cSpell.words": [
+    "Blockscout",
     "codegen",
     "datasource",
     "Iden",

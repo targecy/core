@@ -3,6 +3,7 @@ version: '3.9'
 services:
   backend_db:
     image: postgres:14
+    mem_limit: 256m
     volumes:
       - ./backend/data:/var/lib/postgresql/data
     restart: always
@@ -26,6 +27,7 @@ services:
     volumes:
       - ./relayer/data:/var/lib/postgresql/data
     restart: always
+    mem_limit: 256m
     container_name: 'relayer_db'
     command: postgres -c 'max_connections=1000'
     environment:

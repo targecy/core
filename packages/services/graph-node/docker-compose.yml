@@ -2,6 +2,7 @@ version: '3'
 services:
   graph-node:
     container_name: graph-node
+    mem_limit: 256m
     image: graphprotocol/graph-node:latest
     ports:
       - '8000:8000'
@@ -23,6 +24,7 @@ services:
   ipfs:
     container_name: ipfs
     image: ipfs/go-ipfs:latest
+    mem_limit: 256m
     ports:
       - '5001:5001'
     volumes:
@@ -30,6 +32,7 @@ services:
   postgres:
     container_name: postgres
     image: postgres
+    mem_limit: 256m
     ports:
       - '5432:5432'
     command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']

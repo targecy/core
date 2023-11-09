@@ -5,6 +5,7 @@ services:
     image: trufflesuite/ganache-cli
     volumes:
       - ./accounts:/app/accounts
+    mem_limit: 1024m
     ports:
       - '8545:8545' # Expose the Ethereum RPC port
     command: >

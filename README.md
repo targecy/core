@@ -24,6 +24,8 @@ $ yarn install
 $ yarn start-services
 ```
 
+_Note: if you want to run the blockchain explorer (a Blockscout instance) as well, which is not essential, run yarn start-explorer_
+
 Once all services are running:
 
 ```bash

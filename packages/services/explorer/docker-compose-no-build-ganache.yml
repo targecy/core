@@ -5,16 +5,19 @@ services:
     extends:
       file: ./services/docker-compose-redis.yml
       service: redis_db
+    mem_limit: 100m
 
   db-init:
     extends:
       file: ./services/docker-compose-db.yml
       service: db-init
+    mem_limit: 256m
 
   db:
     extends:
       file: ./services/docker-compose-db.yml
       service: db
+    mem_limit: 512m
 
   backend:
     depends_on:
@@ -23,6 +26,7 @@ services:
     extends:
       file: ./services/docker-compose-backend.yml
       service: backend
+    mem_limit: 512m
     links:
       - db:database
     environment:
@@ -36,11 +40,13 @@ services:
     extends:
       file: ./services/docker-compose-visualizer.yml
       service: visualizer
+    mem_limit: 256m
 
   sig-provider:
     extends:
       file: ./services/docker-compose-sig-provider.yml
       service: sig-provider
+    mem_limit: 256m
 
   frontend:
     depends_on:
@@ -48,11 +54,13 @@ services:
     extends:
       file: ./services/docker-compose-frontend.yml
       service: frontend
+    mem_limit: 1024m
 
   stats-db-init:
     extends:
       file: ./services/docker-compose-stats.yml
       service: stats-db-init
+    mem_limit: 256m
 
   stats-db:
     depends_on:
@@ -60,6 +68,7 @@ services:
     extends:
       file: ./services/docker-compose-stats.yml
       service: stats-db
+    mem_limit: 512m
 
   stats:
     depends_on:
@@ -67,6 +76,7 @@ services:
     extends:
       file: ./services/docker-compose-stats.yml
       service: stats
+    mem_limit: 256m
 
   proxy:
     depends_on:
@@ -76,3 +86,4 @@ services:
     extends:
       file: ./services/docker-compose-nginx.yml
       service: proxy
+    mem_limit: 256m
