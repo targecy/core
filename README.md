@@ -4,11 +4,16 @@ This monorepo contains the code for all the services that make up the Targecy pl
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/) (v12.16.1)
-- [Yarn](https://yarnpkg.com/) (v1.22.4)
-- [Docker](https://www.docker.com/) (v19.03.8)
+- [Node.js](https://nodejs.org/en/)
+- [Yarn](https://yarnpkg.com/)
+- [Docker](https://www.docker.com/) (make sure to turn on Compose V2 Option)
+- jq
 
-_Note: It is recommended to have a 16GB (RAM) computer._
+```bash
+$ brew install yarn node docker jq
+```
+
+_Note: It is recommended to use a computer with 32GB (RAM) or just run essential services._
 
 ## Installation
 

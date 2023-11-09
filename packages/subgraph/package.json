@@ -12,7 +12,8 @@
     "create-local": "graph create --node http://localhost:8020/ targecy",
     "remove-local": "graph remove --node http://localhost:8020/ targecy",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://127.0.0.1:5001 -l 1.0.0 targecy",
-    "ship-local": "yarn codegen && yarn build && yarn deploy-local"
+    "ship-local": "yarn codegen && yarn build && yarn deploy-local",
+    "remove-unsupported-array": "sh ./remove-unsupported-array.sh"
   },
   "engines": {
     "node": ">=14.0.0 <15.0.0"

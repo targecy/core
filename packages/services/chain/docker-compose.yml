@@ -13,7 +13,7 @@ services:
       -b 10
       -k byzantium
       -i 1337
-      -m ""
+      -m "balance extra idea ceiling multiply shrug sunny familiy scan weapon usual trip"
       --account_keys_path ./accounts/accounts.json
 
 volumes:

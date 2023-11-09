@@ -1,17 +1,22 @@
 #!/bin/bash
 
-# Path to your mnemonic file
+current_dir=$PWD
 
 # Get the directory where the script is located
 script_dir=$(dirname "$0")
 
-MNEMONIC_FILE_PATH="../../$script_dir/solidity-ts/mnemonics/mnemonic.secret"
+cd $script_dir
 
+cd ../..
+
+MNEMONIC_FILE_PATH="./solidity-ts/mnemonics/mnemonic.secret"
 # Read the mnemonic from the file
 MNEMONIC=$(cat $MNEMONIC_FILE_PATH)
 
 # Escape double quotes in the mnemonic
 MNEMONIC_ESCAPED=$(echo $MNEMONIC | sed 's/"/\\"/g')
+
+cd $current_dir
 
 # Generate docker-compose.yml
 cat <<EOL > $script_dir/docker-compose.yml

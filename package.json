@@ -14,14 +14,14 @@
     "stop-services": "yarn workspace @scaffold-eth/services stop-all",
     "restart-services": "yarn workspace @scaffold-eth/services restart-all",
     "deploy-contracts": "rm -rf ./packages/solidity-ts/generated && yarn workspace @scaffold-eth/solidity deploy:hardhat && yarn workspace @scaffold-eth/solidity deploy:hardhat:post",
-    "deploy-subgraph": "sh ./packages/subgraph/create-subgraph.sh && yarn workspace @scaffold-eth/subgraph create-local && yarn workspace @scaffold-eth/subgraph codegen && yarn workspace @scaffold-eth/subgraph build && sh ./packages/subgraph/deploy-local.sh",
+    "deploy-subgraph": "yarn workspace @scaffold-eth/subgraph remove-unsupported-array && sh ./packages/subgraph/create-subgraph.sh && yarn workspace @scaffold-eth/subgraph create-local && yarn workspace @scaffold-eth/subgraph codegen && yarn workspace @scaffold-eth/subgraph build && sh ./packages/subgraph/deploy-local.sh",
     "dev-dapp": "yarn workspace @targecy/webapp dev",
     "start-dapp": "yarn workspace @targecy/webapp start",
     "migrate-backend": "yarn workspace @targecy/backend prisma:migrate:dev",
     "start-backend": "yarn workspace @targecy/backend dev",
     "start-relayer": "yarn workspace @targecy/relayer dev",
     "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
-},
+  },
   "workspaces": {
     "packages": [
       "packages/*"
