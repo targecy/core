@@ -2,9 +2,12 @@
 
 import { useRouter } from 'next/router';
 
-import AdForm from '../editor';
+import { AdEditorComponent } from '../editor';
 
-export default function EditAd() {
-  const router = useRouter();
-  return AdForm(router.query.id?.toString());
-}
+const EditAdPage = () => {
+  const { query } = useRouter();
+
+  return AdEditorComponent(query.id?.toString());
+};
+
+export default EditAdPage;

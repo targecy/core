@@ -1,10 +1,9 @@
 import { useRouter } from 'next/router';
 
-import ZKPRequestForm from '../editor';
+import { ZKPRequestEditorComponent } from '../editor';
 
 export default function EditZKPRequest() {
-  const router = useRouter();
+  const { query } = useRouter();
 
-  console.log(router.query);
-  return ZKPRequestForm(router.query.id?.toString());
+  return ZKPRequestEditorComponent(query.id?.toString());
 }

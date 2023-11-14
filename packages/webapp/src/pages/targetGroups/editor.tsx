@@ -16,7 +16,7 @@ import { useWallet } from '~~/hooks';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
 
-const TargetGroupForm = (id?: { id: string }) => {
+export const TargetGroupEditorComponent = (id?: string) => {
   const { data: zkpRequests } = useGetAllZkpRequestsQuery();
 
   const [processingTargetGroup, setProcessingTargetGroup] = useState(false);
@@ -67,7 +67,7 @@ const TargetGroupForm = (id?: { id: string }) => {
 
     try {
       let hash;
-      if (!id?.id) {
+      if (!id) {
         hash = (
           await createTargetGroup({
             args: [metadataURI, data.zkpRequests],
@@ -76,7 +76,7 @@ const TargetGroupForm = (id?: { id: string }) => {
       } else {
         hash = (
           await editTargetGroup({
-            args: [id?.id, metadataURI, data.zkpRequests],
+            args: [id, metadataURI, data.zkpRequests],
           })
         ).hash;
       }
@@ -87,7 +87,7 @@ const TargetGroupForm = (id?: { id: string }) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `Ad ${id?.id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
+        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 
@@ -137,18 +137,24 @@ const TargetGroupForm = (id?: { id: string }) => {
       </ul>
 
       <div className="space-y-8 pt-5">
-        <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-          <Formik
-            initialValues={{
-              title: '',
-              description: '',
-              zkpRequests: [] as number[],
-            }}
-            validationSchema={toFormikValidationSchema(schema)}
-            onSubmit={() => {}}>
-            {({ errors, submitCount, touched, values }) => (
-              <Form className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
+          <label className="mb-3 text-2xl text-primary">
+            {' '}
+            {id ? <span>Edit </span> : <span>New </span>}
+            Target Group {id ? `#${id}` : ''}
+          </label>
+
+          <div className="grid grid-cols-2 gap-5">
+            <Formik
+              initialValues={{
+                title: '',
+                description: '',
+                zkpRequests: [] as number[],
+              }}
+              validationSchema={toFormikValidationSchema(schema)}
+              onSubmit={() => {}}>
+              {({ errors, submitCount, touched, values }) => (
+                <Form className="space-y-5 text-secondary">
                   <div className={submitCount ? (errors.title ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="title">Title </label>
                     <Field name="title" type="text" id="title" placeholder="Enter Title" className="form-input" />
@@ -163,13 +169,13 @@ const TargetGroupForm = (id?: { id: string }) => {
                       ''
                     )}
                   </div>
-
                   <div className={submitCount ? (errors.description ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="description">Description </label>
                     <Field
                       name="description"
                       type="textarea"
-                      rows={3}
+                      as="textarea"
+                      // rows={3}
                       id="description"
                       placeholder="Enter Description"
                       className="form-input"
@@ -185,13 +191,15 @@ const TargetGroupForm = (id?: { id: string }) => {
                       ''
                     )}
                   </div>
-
                   <div className={submitCount ? (errors.zkpRequests ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="zkpRequests">ZKP Requests</label>
                     <Select
                       classNames={{
-                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
-                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
+                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        singleValue: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                       }}
                       placeholder="Select an option"
                       id="zkpRequests"
@@ -213,34 +221,44 @@ const TargetGroupForm = (id?: { id: string }) => {
                       ''
                     )}
                   </div>
-                </div>
 
-                {isConnected ? (
-                  <button
-                    type="submit"
-                    disabled={processingTargetGroup}
-                    className="btn btn-primary !mt-6"
-                    onClick={() => {
-                      if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
-                        const parsed = schema.safeParse(values);
-                        if (parsed.success) {
-                          // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                          submitForm(parsed.data);
+                  {isConnected ? (
+                    <button
+                      type="submit"
+                      disabled={processingTargetGroup}
+                      className="btn btn-primary !mt-6"
+                      onClick={() => {
+                        if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
+                          const parsed = schema.safeParse(values);
+                          if (parsed.success) {
+                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                            submitForm(parsed.data);
+                          }
                         }
-                      }
-                    }}>
-                    {processingTargetGroup ? 'Creating Ad...' : 'Create'}
-                  </button>
-                ) : (
-                  <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
-                )}
-              </Form>
-            )}
-          </Formik>
+                      }}>
+                      {processingTargetGroup ? 'Creating Ad...' : 'Create'}
+                    </button>
+                  ) : (
+                    <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
+                  )}
+                </Form>
+              )}
+            </Formik>
+
+            <div className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+              <label className="m-5 text-secondary">Potential Reach</label>
+              <div className="h-full w-full">
+                {/* @todo (Martin): Make it automatic */}
+                <label className="text-center align-middle text-9xl">0</label> 
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default TargetGroupForm;
+const NewTargetGroupPage = () => TargetGroupEditorComponent();
+
+export default NewTargetGroupPage;

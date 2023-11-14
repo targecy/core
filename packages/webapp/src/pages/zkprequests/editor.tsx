@@ -8,9 +8,12 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
+import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.constant';
+
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useWallet } from '~~/hooks';
+import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
@@ -50,7 +53,7 @@ const fromLittleEndian = (bytes: number[]) => {
   return result;
 };
 
-const ZKPRequestForm = (id: { id: string }) => {
+export const ZKPRequestEditorComponent = (id?: string) => {
   const [processingZKPRequest, setProcessingZKPRequest] = useState(false);
   const { writeAsync: setZKPRequestAsync } = useContractWrite({
     address: targecyContractAddress,
@@ -68,6 +71,8 @@ const ZKPRequestForm = (id: { id: string }) => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
+    console.log(data);
+
     setProcessingZKPRequest(true);
 
     const zkpRequestMetadata = {
@@ -98,14 +103,12 @@ const ZKPRequestForm = (id: { id: string }) => {
     const metadataURI = (await metadataUploadResponse.json()).uri;
 
     try {
-      const schemaHash = data.schema; // extracted from PID Platform
-
       let hash;
-      if (id?.id) {
+      if (id) {
         hash = (
           await editZKPRequestAsync({
             args: [
-              id?.id,
+              id,
               {
                 query: {
                   schema: data.schema,
@@ -217,6 +220,12 @@ const ZKPRequestForm = (id: { id: string }) => {
     },
   ];
 
+  const [schemas, setSchemas] = useState<SCHEMA[]>([]);
+
+  backendTrpcClient.schemas.getAllSchemas
+    .query()
+    .then((allSchemas) => setSchemas(Object.entries(allSchemas).map(([, schema]) => schema)));
+
   return (
     <div>
       <ul className="flex space-x-2 rtl:space-x-reverse">
@@ -231,7 +240,12 @@ const ZKPRequestForm = (id: { id: string }) => {
       </ul>
 
       <div className="space-y-8 pt-5">
-        <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
+        <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
+          <label className="mb-3 text-2xl text-primary">
+            {' '}
+            {id ? <span>Edit </span> : <span>New </span>}
+            Zero-Knowledge Proof Request {id ? `#${id}` : ''}
+          </label>
           <Formik
             initialValues={{
               title: '',
@@ -246,7 +260,7 @@ const ZKPRequestForm = (id: { id: string }) => {
             validationSchema={toFormikValidationSchema(schema)}
             onSubmit={() => {}}>
             {({ errors, submitCount, touched, values }) => (
-              <Form className="space-y-5">
+              <Form className="space-y-5 text-secondary">
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
                   <div className={submitCount ? (errors.title ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="title">Title </label>
@@ -288,16 +302,25 @@ const ZKPRequestForm = (id: { id: string }) => {
                   <br />
 
                   <div className={submitCount ? (errors.schema ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="schema">Schema </label>
-                    <Field name="schema" type="text" id="schema" placeholder="Enter Schema" className="form-input" />
-                    <p>
-                      {' '}
-                      Refer to{' '}
-                      <Link className="underline" href="https://schema-builder.polygonid.me/">
-                        Schema Builder
-                      </Link>
-                    </p>
-
+                    <label htmlFor="operator">Schema</label>
+                    <Select
+                      classNames={{
+                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        singleValue: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      }}
+                      placeholder="Select an option"
+                      id="schema"
+                      name="schema"
+                      options={schemas?.map((schema) => {
+                        return { label: schema.title, value: schema.bigint };
+                      })}
+                      onChange={(value) => {
+                        values.schema = value?.value ?? '0';
+                      }}
+                    />
                     {submitCount ? (
                       errors.schema ? (
                         <div className="mt-1 text-danger">{errors.schema}</div>
@@ -309,61 +332,39 @@ const ZKPRequestForm = (id: { id: string }) => {
                     )}
                   </div>
 
-                  {/* <div className={submitCount ? (errors.schemaUrl ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="schemaUrl">Schema Url </label>
-                    <Field
-                      name="schemaUrl"
-                      type="string"
-                      id="schemaUrl"
-                      placeholder="Enter Schema Url"
-                      onChangeCapture={async (e: any) => {
-                        const schemaUrl = e.target.value;
-                        try {
-                          const res = await fetch(schemaUrl);
-                          const json = await res.json();
-                          const credentialSubject = json['properties']['credentialSubject'];
-                          const subjectFieldOptions = Object.keys(credentialSubject['properties'])
-                            .filter((property) => property !== 'id')
-                            .map((key) => {
-                              return {
-                                label: key,
-                                value: key,
-                              };
-                            });
-                          setSubjectFieldOptions(subjectFieldOptions);
-                        } catch (e) {
-                          console.log(e);
-                          setSubjectFieldOptions([]);
-                        }
+                  <div className={submitCount ? (errors.schema ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="operator">Field</label>
+                    <Select
+                      classNames={{
+                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        singleValue: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                       }}
-                      className="form-input"
+                      placeholder="Select an option"
+                      noOptionsMessage={() => 'Please select a schema first'}
+                      id="schema"
+                      name="schema"
+                      options={
+                        values.schema
+                          ? Object.keys(
+                              schemas.find((schema) => schema.bigint === values.schema.toString())?.credentialSubject ||
+                                {}
+                            )
+                              .map((key, index) => {
+                                return { label: key, value: index };
+                              })
+                              .slice(1)
+                          : []
+                      }
+                      onChange={(value) => {
+                        values.slotIndex = value?.value ?? 0;
+                      }}
                     />
-
                     {submitCount ? (
-                      errors.schemaUrl ? (
-                        <div className="mt-1 text-danger">{errors.schemaUrl}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div> */}
-
-                  <div className={submitCount ? (errors.slotIndex ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="slotIndex">Slot Index</label>
-                    <div className="flex">
-                      <Field
-                        name="slotIndex"
-                        type="number"
-                        id="slotIndex"
-                        placeholder="Enter Slot Index"
-                        className="form-input ltr:rounded-l-none rtl:rounded-r-none"
-                      />
-                    </div>
-                    {submitCount ? (
-                      errors.slotIndex ? (
-                        <div className="mt-1 text-danger">{errors.slotIndex}</div>
+                      errors.schema ? (
+                        <div className="mt-1 text-danger">{errors.schema}</div>
                       ) : (
                         <div className="mt-1 text-success"></div>
                       )
@@ -373,64 +374,35 @@ const ZKPRequestForm = (id: { id: string }) => {
                   </div>
                 </div>
 
-                {/* <div className={submitCount ? (errors.field ? 'has-error' : 'has-success') : ''}>
-                  <label htmlFor="operator">Field</label>
-                  <Select
-                    classNames={{
-                      control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                      option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                      singleValue: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                      menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                    }}
-                    placeholder="Select an option"
-                    noOptionsMessage={() => 'Insert a valid schema url'}
-                    id="field"
-                    name="field"
-                    options={subjectFieldOptions}
-                    onChange={(value) => {
-                      values.field = value?.value ?? '';
-                    }}
-                  />
-                  {submitCount ? (
-                    errors.field ? (
-                      <div className="mt-1 text-danger">{errors.field}</div>
-                    ) : (
-                      <div className="mt-1 text-success"></div>
-                    )
-                  ) : (
-                    ''
-                  )}
-                </div> */}
-
-                <div className={submitCount ? (errors.operator ? 'has-error' : 'has-success') : ''}>
-                  <label htmlFor="operator">Operator</label>
-                  <Select
-                    classNames={{
-                      control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                      option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                      singleValue: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                      menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                    }}
-                    placeholder="Select an option"
-                    id="operator"
-                    name="operator"
-                    options={operatorOptions}
-                    onChange={(value) => {
-                      values.operator = value?.value ?? 1;
-                    }}
-                  />
-                  {submitCount ? (
-                    errors.operator ? (
-                      <div className="mt-1 text-danger">{errors.operator}</div>
-                    ) : (
-                      <div className="mt-1 text-success"></div>
-                    )
-                  ) : (
-                    ''
-                  )}
-                </div>
-
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                  <div className={submitCount ? (errors.operator ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="operator">Operator</label>
+                    <Select
+                      classNames={{
+                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        singleValue: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      }}
+                      placeholder="Select an option"
+                      id="operator"
+                      name="operator"
+                      options={operatorOptions}
+                      onChange={(value) => {
+                        values.operator = value?.value ?? 1;
+                      }}
+                    />
+                    {submitCount ? (
+                      errors.operator ? (
+                        <div className="mt-1 text-danger">{errors.operator}</div>
+                      ) : (
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
+                  </div>
                   <div className={submitCount ? (errors.value ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="value">Value</label>
                     <Field name="value" type="string" id="value" placeholder="Enter value" className="form-input" />
@@ -474,4 +446,6 @@ const ZKPRequestForm = (id: { id: string }) => {
   );
 };
 
-export default ZKPRequestForm;
+const NewZKPRequestPage = () => ZKPRequestEditorComponent();
+
+export default NewZKPRequestPage;

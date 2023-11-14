@@ -14,11 +14,10 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
 
-const AdForm = (id?: { id: string }) => {
-  console.log(id);
-
+export const AdEditorComponent = (id?: string) => {
   const { data: targetGroups } = useGetAllTargetGroupsQuery();
   const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
@@ -68,12 +67,12 @@ const AdForm = (id?: { id: string }) => {
 
     try {
       let hash;
-      if (id?.id) {
+      if (id) {
         // Edit Ad
         hash = (
           await editAdAsync({
             args: [
-              id?.id,
+              id,
               {
                 metadataURI,
                 budget: data.budget,
@@ -145,6 +144,8 @@ const AdForm = (id?: { id: string }) => {
 
   type FormValues = z.infer<typeof schema>;
 
+  const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
+
   const targetGroupOptions = targetGroups?.targetGroups.map((tg) => {
     return {
       value: tg.id,
@@ -166,27 +167,41 @@ const AdForm = (id?: { id: string }) => {
       </ul>
 
       <div className="space-y-8 pt-5">
-        <div className="panel flex items-center overflow-x-auto whitespace-nowrap p-3 text-primary">
-          <Formik
-            initialValues={{
-              title: '',
-              description: '',
-              image: '',
-              budget: '',
-              maxImpressionPrice: '',
-              minBlock: '',
-              maxBlock: '',
-              targetGroupIds: [] as number[],
-            }}
-            validationSchema={toFormikValidationSchema(schema)}
-            onSubmit={() => {}}>
-            {({ errors, submitCount, touched, values }) => (
-              <Form className="space-y-5">
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
+          <label className="mb-3 text-2xl text-primary">
+            {' '}
+            {id ? <span>Edit </span> : <span>New </span>}
+            Campaign {id ? `#${id}` : ''}
+          </label>
+          <div className="grid grid-cols-2 gap-5">
+            <Formik
+              initialValues={{
+                title: '',
+                description: '',
+                image: '',
+                budget: '',
+                maxImpressionPrice: '',
+                minBlock: '',
+                maxBlock: '',
+                targetGroupIds: [] as number[],
+              }}
+              validationSchema={toFormikValidationSchema(schema)}
+              onSubmit={() => {}}>
+              {({ errors, submitCount, touched, values, handleChange }) => (
+                <Form className="space-y-5 text-secondary">
                   <div className={submitCount ? (errors.title ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="title">Title </label>
-                    <Field name="title" type="text" id="title" placeholder="Enter Title" className="form-input" />
-
+                    <Field
+                      name="title"
+                      type="text"
+                      id="title"
+                      placeholder="Enter Title"
+                      className="form-input"
+                      onChange={(e: any) => {
+                        setPreviewValues((prevState) => ({ ...prevState, title: e.target.value }));
+                        handleChange(e);
+                      }}
+                    />
                     {submitCount ? (
                       errors.title ? (
                         <div className="mt-1 text-danger">{errors.title}</div>
@@ -197,16 +212,19 @@ const AdForm = (id?: { id: string }) => {
                       ''
                     )}
                   </div>
-
                   <div className={submitCount ? (errors.description ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="description">Description </label>
                     <Field
                       name="description"
                       type="textarea"
-                      rows={3}
+                      as="textarea"
                       id="description"
                       placeholder="Enter Description"
                       className="form-input"
+                      onChange={(e: any) => {
+                        setPreviewValues((prevState) => ({ ...prevState, description: e.target.value }));
+                        handleChange(e);
+                      }}
                     />
 
                     {submitCount ? (
@@ -219,166 +237,203 @@ const AdForm = (id?: { id: string }) => {
                       ''
                     )}
                   </div>
-
-                  <br />
-
-                  <div className={submitCount ? (errors.image ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="fullName">Image URL </label>
-                    <Field name="image" type="text" id="image" placeholder="Enter Image URL" className="form-input" />
-
-                    {submitCount ? (
-                      errors.description ? (
-                        <div className="mt-1 text-danger">{errors.description}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div>
-
-                  <div className={submitCount ? (errors.budget ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="budget">budget</label>
-                    <div className="flex">
-                      <div className="flex items-center justify-center border border-white-light bg-[#eee] px-3 font-semibold ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0 dark:border-[#17263c] dark:bg-[#1b2e4b]">
-                        MATIC
-                      </div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.image ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="fullName">Image URL </label>
                       <Field
-                        name="budget"
-                        type="number"
-                        id="budget"
-                        placeholder="Enter budget"
-                        className="form-input ltr:rounded-l-none rtl:rounded-r-none"
+                        name="image"
+                        type="text"
+                        id="image"
+                        placeholder="Enter Image URL"
+                        className="form-input"
+                        onChange={(e: any) => {
+                          setPreviewValues((prevState) => ({ ...prevState, image: e.target.value }));
+                          handleChange(e);
+                        }}
                       />
+
+                      {submitCount ? (
+                        errors.description ? (
+                          <div className="mt-1 text-danger">{errors.description}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
                     </div>
-                    {submitCount ? (
-                      errors.budget ? (
-                        <div className="mt-1 text-danger">{errors.budget}</div>
+
+                    <div className={submitCount ? (errors.budget ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="budget">budget</label>
+                      <div className="flex">
+                        <div className="flex items-center justify-center border border-white-light bg-[#eee] px-3 font-semibold ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0 dark:border-[#17263c] dark:bg-[#1b2e4b]">
+                          MATIC
+                        </div>
+                        <Field
+                          name="budget"
+                          type="number"
+                          id="budget"
+                          placeholder="Enter budget"
+                          className="form-input ltr:rounded-l-none rtl:rounded-r-none"
+                        />
+                      </div>
+                      {submitCount ? (
+                        errors.budget ? (
+                          <div className="mt-1 text-danger">{errors.budget}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
                       ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
+                        ''
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                  <div className={submitCount ? (errors.minBlock ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="minBlock">Starting Block</label>
-                    <Field
-                      name="minBlock"
-                      type="number"
-                      id="minBlock"
-                      placeholder="Enter min block"
-                      className="form-input"
-                    />
-                    {submitCount ? (
-                      errors.minBlock ? (
-                        <div className="mt-1 text-danger">{errors.minBlock}</div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.minBlock ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="minBlock">Starting Block</label>
+                      <Field
+                        name="minBlock"
+                        type="number"
+                        id="minBlock"
+                        placeholder="Enter min block"
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.minBlock ? (
+                          <div className="mt-1 text-danger">{errors.minBlock}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
                       ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="maxBlock">Ending Block</label>
+                      <Field
+                        name="maxBlock"
+                        type="number"
+                        id="maxBlock"
+                        placeholder="Enter max block"
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.maxBlock ? (
+                          <div className="mt-1 text-danger">{errors.maxBlock}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.maxImpressionPrice ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="maxImpressionPrice">Max Impression Price</label>
+                      <Field
+                        name="maxImpressionPrice"
+                        type="number"
+                        id="maxImpressionPrice"
+                        placeholder="Enter maxImpressionPrice"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.maxImpressionPrice ? (
+                          <div className="mt-1 text-danger">{errors.maxImpressionPrice}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="targetGroupIds">Target Groups</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
+                        }}
+                        placeholder="Select an option"
+                        id="targetGroupIds"
+                        options={targetGroupOptions}
+                        name="targetGroupIds"
+                        onChange={(value) => {
+                          values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
+                        }}
+                        isMulti
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.targetGroupIds ? (
+                          <div className="mt-1 text-danger">{errors.targetGroupIds}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
                   </div>
 
-                  <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="maxBlock">Ending Block</label>
-                    <Field
-                      name="maxBlock"
-                      type="number"
-                      id="maxBlock"
-                      placeholder="Enter max block"
-                      className="form-input"
-                    />
-                    {submitCount ? (
-                      errors.maxBlock ? (
-                        <div className="mt-1 text-danger">{errors.maxBlock}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                  <div className={submitCount ? (errors.maxImpressionPrice ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="maxImpressionPrice">Max Impression Price</label>
-                    <Field
-                      name="maxImpressionPrice"
-                      type="number"
-                      id="maxImpressionPrice"
-                      placeholder="Enter maxImpressionPrice"
-                      className="form-input"
-                    />
-
-                    {submitCount ? (
-                      errors.maxImpressionPrice ? (
-                        <div className="mt-1 text-danger">{errors.maxImpressionPrice}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div>
-
-                  <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="targetGroupIds">Target Groups</label>
-                    <Select
-                      classNames={{
-                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
-                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
-                      }}
-                      placeholder="Select an option"
-                      id="targetGroupIds"
-                      options={targetGroupOptions}
-                      name="targetGroupIds"
-                      onChange={(value) => {
-                        values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
-                      }}
-                      isMulti
-                      isSearchable={true}
-                    />
-                    {submitCount ? (
-                      errors.targetGroupIds ? (
-                        <div className="mt-1 text-danger">{errors.targetGroupIds}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div>
-                </div>
-
-                {isConnected ? (
-                  <button
-                    type="submit"
-                    disabled={procesingAd}
-                    className="btn btn-primary !mt-6"
-                    onClick={() => {
-                      if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
-                        const parsed = schema.safeParse(values);
-                        if (parsed.success) {
-                          submitForm(parsed.data);
+                  {isConnected ? (
+                    <button
+                      type="submit"
+                      disabled={procesingAd}
+                      className="btn btn-primary !mt-6"
+                      onClick={() => {
+                        if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
+                          const parsed = schema.safeParse(values);
+                          if (parsed.success) {
+                            submitForm(parsed.data);
+                          }
                         }
+                      }}>
+                      {id ? (procesingAd ? 'Editing Ad...' : 'Edit') : procesingAd ? 'Creating Ad...' : 'Create'}
+                    </button>
+                  ) : (
+                    <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
+                  )}
+                </Form>
+              )}
+            </Formik>
+            <div className="flex flex-col ">
+              {/* Preview  */}
+              <label className="ml-8 mr-8 mt-8 text-2xl text-secondary">Preview </label>
+              <div className="mt-4 mb-4 mr-8 ml-8">
+                <div className="card flex flex-row items-center rounded border border-white-light bg-white p-2 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                  <div className="h-40 w-40 overflow-hidden rounded">
+                    <img
+                      className="h-full w-full object-scale-down"
+                      src={
+                        previewValues.image || 'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
                       }
-                    }}>
-                    {id ? (procesingAd ? 'Editing Ad...' : 'Edit') : procesingAd ? 'Creating Ad...' : 'Create'}
-                  </button>
-                ) : (
-                  <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
-                )}
-              </Form>
-            )}
-          </Formik>
+                    />
+                  </div>
+                  <div className="card-body m-2">
+                    <h1 className="card-title">{previewValues.title || 'Title'}</h1>
+                    <p>{previewValues.description || 'Description'}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 mb-8 mr-8 ml-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
+                <label className="float-right m-5 text-2xl text-primary">0</label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default AdForm;
+export const NewAdPage = () => {
+  return AdEditorComponent();
+};
+
+export default NewAdPage;

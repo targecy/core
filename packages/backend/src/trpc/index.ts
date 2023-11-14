@@ -33,7 +33,7 @@ const logger = t.middleware(async ({ path, type, rawInput, next }) => {
   const result = await next();
 
   if (result.ok) {
-    console.info(`Ok: ${JSON.stringify({ path, type })}`);
+    console.info(`Ok: ${JSON.stringify({ path })}`);
   } else {
     console.error(`Error`, { path, rawInput, type, error: result.error });
   }
