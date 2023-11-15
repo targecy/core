@@ -11,6 +11,12 @@ import { createCredentialRequest, storages } from '../../utils/zk.utils';
 // @todo move logic to service layer and db connections to repository layer
 
 export const credentialsRouter = router({
+  getTotalAmountOfCredentialsIssued: publicProcedure.query(async ({ ctx }) => {
+    const totalAmount = await ctx.prisma.credential.count();
+
+    return totalAmount;
+  }),
+
   issueCredential: publicProcedure
     .input(
       z.object({
