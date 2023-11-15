@@ -18,7 +18,21 @@ const config: CodegenConfig = {
           },
         },
       },
-      documents: [`src/**/*.graphql.ts`],
+      documents: [`src/**/*.bitquery.graphql.ts`],
+      plugins: ['typescript', 'typescript-operations'],
+      config: {
+        enumsAsTypes: true,
+      },
+    },
+    [`src/generated/targecy.types.ts`]: {
+      schema: {
+        [process.env.SUBGRAPH_URL ?? '']: {
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      },
+      documents: [`src/**/*.targecy.graphql.ts`],
       plugins: ['typescript', 'typescript-operations'],
       config: {
         enumsAsTypes: true,

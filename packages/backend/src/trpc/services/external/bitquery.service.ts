@@ -10,7 +10,7 @@ import parse from 'graphql-tag';
 import { AddressString } from 'utils';
 
 import { CHAIN, KNOWN_PROTOCOLS, KNOWN_TOKENS } from '../../../constants/contracts.constants';
-import { GetSmartContractCallsByAddress, GetTokenHoldingsByAddress } from '../credentials/credentials.graphql';
+import { GetSmartContractCallsByAddress, GetTokenHoldingsByAddress } from '../credentials/credentials.bitquery.graphql';
 
 const getOperationNames = (definitions: DocumentNode['definitions']) =>
   definitions

@@ -10,6 +10,7 @@
   ],
   "private": true,
   "scripts": {
+    "download-env-vars": "sh ./download-env-vars.sh",
     "start-services": "yarn workspace @scaffold-eth/services start-all",
     "start-explorer": "yarn workspace @scaffold-eth/services start-explorer",
     "stop-services": "yarn workspace @scaffold-eth/services stop-all",

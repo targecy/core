@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import { router, publicProcedure } from '..';
 
 // @todo move logic to service layer and db connections to repository layer
@@ -12,4 +14,15 @@ export const targetsRouter = router({
       },
     });
   }),
+
+  getTargetReach: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, prisma }) => {
+      // Fetch ZKPRequests for TargetGroup
+      // Compare ZKPRequests to Issued Credentials
+    }),
 });

@@ -7,15 +7,37 @@ This monorepo contains the code for all the services that make up the Targecy pl
 - [Node.js](https://nodejs.org/en/)
 - [Yarn](https://yarnpkg.com/)
 - [Docker](https://www.docker.com/) (make sure to turn on Compose V2 Option)
-- jq
+- [jq](https://jqlang.github.io/jq/)
+- [yq](https://mikefarah.gitbook.io/yq/)
+- [gnupg](https://www.gnupg.org/)
+- [Doppler](https://doppler.com)
 
 ```bash
-$ brew install yarn node docker jq
+$ brew install yarn node docker jq gnupg dopplerhq/cli/doppler
 ```
 
-_Note: It is recommended to use a computer with 32GB (RAM) or just run essential services._
+_Note: It is recommended to use a computer with 16GB (RAM) or just run essential services._
 
 ## Installation
+
+1. Clone the repo
+  
+```bash
+$ git clone git@github.com:targecy/core.git
+```
+
+2. Fetch secrets from Doppler
+
+```bash
+# Ask to the team for access to Doppler!
+
+# Login to Doppler following the instructions in the CLI
+$ doppler login
+
+# Fetch secrets from Doppler for each project
+$ yarn download-env-vars
+```
+
 
 To spin up the services, just run the following command:
 
