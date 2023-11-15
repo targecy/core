@@ -11,7 +11,7 @@ const config: CodegenConfig = {
   generates: {
     [`src/generated/bitquery.types.ts`]: {
       schema: {
-        ['https://graphql.bitquery.io' ?? '']: {
+        [process.env.BITQUERY_URL ?? '']: {
           headers: {
             'content-type': 'application/json',
             'X-API-KEY': process.env.BITQUERY_API_KEY || '',
@@ -19,9 +19,11 @@ const config: CodegenConfig = {
         },
       },
       documents: [`src/**/*.bitquery.graphql.ts`],
-      plugins: ['typescript', 'typescript-operations'],
+      plugins: ['typescript', 'typescript-operations', 'typescript-graphql-request'],
       config: {
         enumsAsTypes: true,
+        addUnderscoreToArgsType: true,
+        extractAllFieldsToTypes: true,
       },
     },
     [`src/generated/targecy.types.ts`]: {
@@ -33,7 +35,7 @@ const config: CodegenConfig = {
         },
       },
       documents: [`src/**/*.targecy.graphql.ts`],
-      plugins: ['typescript', 'typescript-operations'],
+      plugins: ['typescript', 'typescript-operations', 'typescript-graphql-request'],
       config: {
         enumsAsTypes: true,
       },

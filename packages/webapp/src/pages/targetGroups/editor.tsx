@@ -1,7 +1,7 @@
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
@@ -12,6 +12,7 @@ import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWall
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
+import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
@@ -123,6 +124,18 @@ export const TargetGroupEditorComponent = (id?: string) => {
     };
   });
 
+  const [currentZKPRequests, setCurrentZKPRequests] = useState<number[] | undefined>(undefined);
+  const [potentialReach, setPotentialReach] = useState<number>(0);
+  useEffect(() => {
+    if (!currentZKPRequests || currentZKPRequests.length === 0) return;
+
+    backendTrpcClient.zkpRequest.getZKPRequestPotentialReachByIds
+      .query({
+        ids: currentZKPRequests.map((id) => id.toString()),
+      })
+      .then((response) => setPotentialReach(response.count));
+  }, [currentZKPRequests]);
+
   return (
     <div>
       <ul className="flex space-x-2 rtl:space-x-reverse">
@@ -205,6 +218,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
                       id="zkpRequests"
                       name="zkpRequests"
                       onChange={(value) => {
+                        setCurrentZKPRequests(value.map((v) => Number(v.value)));
                         values.zkpRequests = value.map((v) => Number(v.value)) ?? [];
                       }}
                       options={zkpRequestsOptions}
@@ -248,8 +262,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
             <div className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
               <label className="m-5 text-secondary">Potential Reach</label>
               <div className="h-full w-full">
-                {/* @todo (Martin): Make it automatic */}
-                <label className="text-center align-middle text-9xl">0</label> 
+                <label className="text-center align-middle text-9xl">{potentialReach}</label>
               </div>
             </div>
           </div>

@@ -4,12 +4,13 @@
     "outDir": "build",
     "baseUrl": "src",
     "paths": {
-      ".": ["."]
+      "~/*": ["./src/*"]
     },
     "allowJs": true,
     "strict": true,
     "strictNullChecks": true,
     "pretty": true,
+    "types": ["node"],
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -20,6 +21,6 @@
     "module": "commonjs",
     "target": "ES2022"
   },
-  "include": [".", ".eslintrc.js", ".commitlintrc.ts"],
+  "include": ["src", ".eslintrc.js", ".commitlintrc.ts"],
   "exclude": ["build", "node_modules"]
 }

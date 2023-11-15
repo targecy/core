@@ -1,28 +1,38 @@
+import { getPrismaPredicateForCredentialsFromZKPRequests } from 'trpc/services/ZKPRequests/zkpRequests.service';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
+import { getZKPRequestForTargetGroup } from '../services/external/targecy.service';
 
 // @todo move logic to service layer and db connections to repository layer
 
 export const targetsRouter = router({
-  getAllTargets: publicProcedure.query(async ({ ctx }) => {
-    // Group by type and return count
-    return await ctx.prisma.credential.groupBy({
-      by: ['type', 'identifier'],
-      _count: {
-        _all: true,
-      },
-    });
-  }),
-
-  getTargetReach: publicProcedure
+  getTargetGroupsReach: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        ids: z.array(z.string()),
       })
     )
-    .query(async ({ ctx, prisma }) => {
-      // Fetch ZKPRequests for TargetGroup
-      // Compare ZKPRequests to Issued Credentials
+    .query(async ({ ctx, input }) => {
+      const targetGroupReach = await Promise.all(
+        input.ids.map(async (id) => {
+          // Fetch ZKPRequests for TargetGroup
+          const zkpRequests = await getZKPRequestForTargetGroup(id);
+
+          // Generate database conditions to look for issued credentials
+          const predicate = getPrismaPredicateForCredentialsFromZKPRequests(zkpRequests);
+
+          // Compare ZKPRequests to Issued Credentials
+          const count = await ctx.prisma.credential.count({
+            where: predicate,
+          });
+
+          return count;
+        })
+      );
+
+      return {
+        count: targetGroupReach.reduce((a, b) => a + b, 0),
+      };
     }),
 });

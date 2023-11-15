@@ -6,9 +6,28 @@ import superjson from 'superjson';
 /**
  * Creates a context without req/res, useful for testing
  */
-export const createBaseContext = () => ({
-  prisma: new PrismaClient(),
-});
+export const createBaseContext = () => {
+  const prisma = new PrismaClient({
+    log: [
+      {
+        emit: 'event',
+        level: 'query',
+      },
+    ],
+  });
+
+  if (process.env.NODE_ENV === 'development') {
+    prisma.$on('query', (e) => {
+      console.log('Query: ' + e.query);
+      console.log('Params: ' + e.params);
+      console.log('Duration: ' + e.duration + 'ms');
+    });
+  }
+
+  return {
+    prisma,
+  };
+};
 
 export const createContext = ({ req, res }: trpcExpress.CreateExpressContextOptions) => {
   const baseContext = createBaseContext();

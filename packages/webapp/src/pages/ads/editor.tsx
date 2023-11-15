@@ -2,7 +2,7 @@
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
@@ -13,6 +13,7 @@ import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWall
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
+import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/localhost_Targecy.json');
@@ -152,6 +153,18 @@ export const AdEditorComponent = (id?: string) => {
       label: `TG: ${tg.id}`,
     };
   });
+
+  const [currentTargetGroups, setCurrentTargetGroups] = useState<number[] | undefined>(undefined);
+  const [potentialReach, setPotentialReach] = useState<number>(0);
+  useEffect(() => {
+    if (!currentTargetGroups || currentTargetGroups.length === 0) return;
+
+    backendTrpcClient.targets.getTargetGroupsReach
+      .query({
+        ids: currentTargetGroups.map((id) => id.toString()),
+      })
+      .then((response) => setPotentialReach(response.count));
+  }, [currentTargetGroups]);
 
   return (
     <div>
@@ -355,14 +368,18 @@ export const AdEditorComponent = (id?: string) => {
                       <label htmlFor="targetGroupIds">Target Groups</label>
                       <Select
                         classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b]',
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                         }}
                         placeholder="Select an option"
                         id="targetGroupIds"
                         options={targetGroupOptions}
                         name="targetGroupIds"
                         onChange={(value) => {
+                          setCurrentTargetGroups(value.map((v) => Number(v.value)));
                           values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
                         }}
                         isMulti
@@ -422,7 +439,7 @@ export const AdEditorComponent = (id?: string) => {
               </div>
               <div className="mt-4 mb-8 mr-8 ml-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
-                <label className="float-right m-5 text-2xl text-primary">0</label>
+                <label className="float-right m-5 text-2xl text-primary">{potentialReach}</label>
               </div>
             </div>
           </div>

@@ -1,4 +1,3 @@
-import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -91,7 +90,7 @@ export const credentialsRouter = router({
       const saved = await ctx.prisma.credential.createMany({
         data: credentials.map((credential) => ({
           did: credential.id,
-          issuedTo: credential.credentialSubject['@id'].toString(),
+          issuedTo: credential.credentialSubject['@id'] as string,
           type: credential.type.toLocaleString(),
           issuerDid: credential.issuer,
           credential: JSON.parse(JSON.stringify(credential)),

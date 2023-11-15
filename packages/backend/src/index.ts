@@ -25,7 +25,7 @@ app.use('/', (_req, res) => {
 const PORT = process.env.PORT ?? 4001;
 
 
-// Test DB Connection
+// @todo (Martin): Test DB Connection on startup
 
 
 app.listen(PORT, () => {
