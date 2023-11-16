@@ -9,7 +9,6 @@ import type { HardhatUserConfig } from 'hardhat/config';
 import { getMnemonic } from './helpers/functions';
 
 import { hardhatNamedAccounts } from '~common/constants';
-import { getNetworks } from '~common/functions';
 import scaffoldConfig from '~common/scaffold.config';
 import { hardhatArtifactsDir, hardhatDeploymentsDir, typechainOutDir } from '~helpers/constants/toolkitPaths';
 
@@ -45,22 +44,37 @@ if (process.env.BUILDING !== 'true') {
  * loads network list and config from '@scaffold-eth/common/src
  */
 const networks = {
-  ...getNetworks({
+  // Development
+  localhost: {
+    url: 'http://127.0.0.1:8545',
+    chainId: 1337,
+
     accounts: {
       mnemonic: getMnemonic(),
       path: "m/44'/60'/0'/0",
       initialIndex: 0,
     },
-  }),
-  localhost: {
-    url: 'http://127.0.0.1:8545',
-    chainId: 1337,
-    /*
-      if there is no mnemonic, it will just use account 0 of the hardhat node to deploy
-      (you can put in a mnemonic here to set the deployer locally)
-    */
+  },
+
+  // Test
+  mumbai: {
+    url: 'https://rpc-mumbai.matic.today',
+    chainId: 80001,
+
     accounts: {
-      mnemonic: getMnemonic(),
+      mnemonic: getMnemonic(), // @todo (Martin): have distinct mnemonics for each network
+      path: "m/44'/60'/0'/0",
+      initialIndex: 0,
+    },
+  },
+
+  // Production
+  matic: {
+    url: 'https://polygon-rpc.com/',
+    chainId: 137,
+
+    accounts: {
+      mnemonic: getMnemonic(), // @todo (Martin): have distinct mnemonics for each network
       path: "m/44'/60'/0'/0",
       initialIndex: 0,
     },

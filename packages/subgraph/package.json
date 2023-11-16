@@ -8,12 +8,16 @@
     "build": "graph build",
     "test": "graph test",
     "graph-version": "graph -v",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ GITHUB_USERNAME/your-contract",
     "create-local": "graph create --node http://localhost:8020/ targecy",
     "remove-local": "graph remove --node http://localhost:8020/ targecy",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://127.0.0.1:5001 -l 1.0.0 targecy",
     "ship-local": "yarn codegen && yarn build && yarn deploy-local",
-    "remove-unsupported-array": "sh ./remove-unsupported-array.sh"
+    "remove-unsupported-array": "sh ./remove-unsupported-array.sh",
+    "init-test": "graph init --studio targecy_test",
+    "deploy-test": "graph deploy --studio targecy_test",
+    "init-prod": "graph init --studio targecy",
+    "deploy-prod": "graph deploy --studio targecy",
+    "graph-auth": "graph auth"
   },
   "engines": {
     "node": ">=14.0.0 <15.0.0"
