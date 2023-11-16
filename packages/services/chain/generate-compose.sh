@@ -27,15 +27,15 @@ services:
     image: trufflesuite/ganache-cli
     volumes:
       - ./accounts:/app/accounts
+      - ./data:/var/lib/data
     mem_limit: 1024m
     ports:
       - '8545:8545' # Expose the Ethereum RPC port
     command: >
-      -v
       -a 10
-      -b 10
-      -k byzantium
+      -k muirGlacier
       -i 1337
+      --db /var/lib/data
       -m "$MNEMONIC_ESCAPED"
       --account_keys_path ./accounts/accounts.json
 

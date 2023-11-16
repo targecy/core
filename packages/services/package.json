@@ -7,7 +7,8 @@
     "stop-chain": "docker-compose -f ./chain/docker-compose.yml stop",
     "delete-chain": "docker-compose -f ./chain/docker-compose.yml down",
     "restart-chain": "npm run stop-chain && npm run start-chain",
-    "reset-chain": "npm run delete-chain && npm run start-chain",
+    "reset-chain": "npm run delete-chain && npm run delete-chain-data &&  npm run start-chain",
+    "delete-chain-data": "rm -rf ./chain/data",
     "start-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml up -d",
     "stop-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml stop",
     "delete-explorer": "docker-compose -f ./explorer/docker-compose-no-build-ganache.yml down",
@@ -31,7 +32,7 @@
     "delete-all": "npm run delete-chain && npm run delete-graph-node && npm run delete-databases",
     "restart-all": "npm run stop-all && npm run start-all",
     "reset-all": "npm run delete-all && npm run delete-all-data && npm run start-all",
-    "delete-all-data": "npm run delete-graph-node-data && npm run delete-databases-data",
+    "delete-all-data": "npm run delete-graph-node-data && npm run delete-chain-data && npm run delete-databases-data",
     "show-accounts": "cat chain/accounts/accounts.json | jq '.private_keys'"
   }
 }

@@ -4,6 +4,7 @@ import chalk from 'chalk';
 
 import { hardhatDeploymentsDir } from '~helpers/constants/toolkitPaths';
 
+export const contractsDir = './generated';
 export const graphDir = '../subgraph';
 export const webappDir = '../webapp/src/generated';
 export const sdkDir = '../sdk/src/generated';

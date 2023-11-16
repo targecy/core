@@ -1,30 +1,28 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+
+import { issuerData } from './data';
+import { credentialsData } from './seed.helpers';
 
 const prisma = new PrismaClient();
-
-const issuersData: Prisma.IssuerCreateInput[] = [
-  {
-    did: 'did:1234',
-    name: 'Issuer 1',
-  },
-];
 
 export async function main() {
   try {
     console.log(`Start seeding ...`);
-    for (const u of issuersData) {
-      const issuer = await prisma.issuer.create({
-        data: u,
-      });
-      console.log(`Created tx with hash: ${issuer.did}`);
-    }
+    const createdIssuer = await prisma.issuer.create({ data: issuerData });
+
+    console.log(`Created issuer with DID: ${createdIssuer.did}`);
+
+    const created = await prisma.credential.createMany({ data: credentialsData(createdIssuer) });
+
+    console.log(`Created ${created.count} credentials.`);
+
     console.log(`Seeding finished.`);
   } catch (err) {
     console.error(err);
-    process.exit(1);
+    return;
   } finally {
     await prisma.$disconnect();
   }
 }
 
-main();
+main().catch((e) => console.error(e));

@@ -18,4 +18,9 @@ doppler secrets download --project relayer --config dev --format env --no-file >
 cd ../..
 echo "Downloaded env vars for relayer"
 
+cd packages/solidity-ts/
+doppler secrets download --project contracts --config dev --format env --no-file > .env
+cd ../..
+echo "Downloaded env vars for contracts"
+
 echo "Done downloading env vars from Doppler"

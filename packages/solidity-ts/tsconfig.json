@@ -29,8 +29,8 @@
       "~scripts/*": ["./scripts/*"]
     }
   },
-  "include": ["types", "scripts", "tests", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "../common/src", "../common/tsconfig.json"],
-  "exclude": ["**/node_modules"],
+  "include": ["types", "scripts", "tests", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "../common/tsconfig.json"],
+  "exclude": ["**/node_modules", "node_modules"],
   "ts-node": {
     "swc": true,
     "require": ["tsconfig-paths/register"],

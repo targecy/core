@@ -29,7 +29,7 @@ import { hardhatArtifactsDir, hardhatDeploymentsDir, typechainOutDir } from '~he
 if (process.env.BUILDING !== 'true') {
   try {
     glob.sync('./tasks/**/*.ts').forEach((file: string) => {
-      require(path.resolve(file));
+      require(path.resolve(file) as string);
     });
   } catch (e) {
     console.log(chalk.yellow('--------------------------'));
@@ -149,6 +149,21 @@ export const config: HardhatUserConfig = {
   typechain: {
     outDir: typechainOutDir,
     discriminateTypes: true,
+  },
+  etherscan: {
+    apiKey: {
+      localhost: 'none',
+    },
+    customChains: [
+      {
+        network: 'localhost',
+        chainId: 1337,
+        urls: {
+          apiURL: 'http://localhost:8090/api',
+          browserURL: 'http://localhost:8090/',
+        },
+      },
+    ],
   },
 };
 export default config;

@@ -5,16 +5,16 @@ services:
     image: trufflesuite/ganache-cli
     volumes:
       - ./accounts:/app/accounts
+      - ./data:/var/lib/data
     mem_limit: 1024m
     ports:
       - '8545:8545' # Expose the Ethereum RPC port
     command: >
-      -v
       -a 10
-      -b 10
-      -k byzantium
+      -k muirGlacier
       -i 1337
-      -m "balance extra idea ceiling multiply shrug sunny familiy scan weapon usual trip"
+      --db /var/lib/data
+      -m "balance extra idea ceiling multiply shrug sunny family scan weapon usual trip"
       --account_keys_path ./accounts/accounts.json
 
 volumes:

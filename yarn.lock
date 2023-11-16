@@ -5624,15 +5624,15 @@ __metadata:
   linkType: hard
 
 "@openzeppelin/defender-base-client@npm:^1.46.0":
-  version: 1.48.0
-  resolution: "@openzeppelin/defender-base-client@npm:1.48.0"
+  version: 1.52.0
+  resolution: "@openzeppelin/defender-base-client@npm:1.52.0"
   dependencies:
     amazon-cognito-identity-js: ^6.0.1
     async-retry: ^1.3.3
     axios: ^1.4.0
     lodash: ^4.17.19
     node-fetch: ^2.6.0
-  checksum: 7391ac924b48d0ec38853f2d85aef837edbe7b8caf7afb32e6914e2a68ec40a0377bdd0cd60b52d35edaf6b4d7d57ebd4d34805adb410a9d5051f71d2c329455
+  checksum: 7857a656a534e54ae94f50d6bb7ad6a17860375581a792c293f15707ae66088a02e2eb7213bb8e7e00496ea4e86330cbcee1a383c517f0d2e959c76a3722cdcd
   languageName: node
   linkType: hard
 
@@ -5673,7 +5673,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openzeppelin/upgrades-core@npm:^1.24.1, @openzeppelin/upgrades-core@npm:^1.27.0":
+"@openzeppelin/upgrades-core@npm:^1.24.1":
   version: 1.28.0
   resolution: "@openzeppelin/upgrades-core@npm:1.28.0"
   dependencies:
@@ -5688,6 +5688,24 @@ __metadata:
   bin:
     openzeppelin-upgrades-core: dist/cli/cli.js
   checksum: 9da2e057bc16375a5eab7e65a4b13f478ab964e7f96b3d5480f798b241bb8a3590e16339fe23cde08d5ffdb01964be6a829f50a9baee85783f18cb5fb8a41421
+  languageName: node
+  linkType: hard
+
+"@openzeppelin/upgrades-core@npm:^1.27.0":
+  version: 1.31.1
+  resolution: "@openzeppelin/upgrades-core@npm:1.31.1"
+  dependencies:
+    cbor: ^9.0.0
+    chalk: ^4.1.0
+    compare-versions: ^6.0.0
+    debug: ^4.1.1
+    ethereumjs-util: ^7.0.3
+    minimist: ^1.2.7
+    proper-lockfile: ^4.1.1
+    solidity-ast: ^0.4.51
+  bin:
+    openzeppelin-upgrades-core: dist/cli/cli.js
+  checksum: 5b424201e2deb41e8d1be00375768d8477b190ba70ca5af2385fb2437f9804be8fd5fee717c47734e3058a9568b52cad4101de47ef760abcf839e007df3eb2dd
   languageName: node
   linkType: hard
 
@@ -6508,7 +6526,7 @@ __metadata:
     chai: ^4.3.6
     chalk: ^4.1.2
     cross-env: ^7.0.3
-    dotenv: ^16.0.2
+    dotenv: ^16.3.1
     eslint: ^8.23.1
     eslint-config-airbnb: ^19.0.4
     eslint-config-airbnb-typescript: ^17.0.0
@@ -6537,7 +6555,9 @@ __metadata:
     mocha: ^10.0.0
     mocha-github-actions-reporter: ^0.2.4
     mocha-junit-reporter: ^2.0.2
+    nft.storage: ^7.1.1
     node-watch: ^0.7.3
+    path: ^0.12.7
     prettier: ^2.7.1
     prettier-plugin-solidity: ^1.0.0-dev.23
     qrcode-terminal: ^0.12.0
@@ -15248,17 +15268,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0":
+"dotenv@npm:^16.0.0, dotenv@npm:^16.3.1":
   version: 16.3.1
   resolution: "dotenv@npm:16.3.1"
   checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
-  languageName: node
-  linkType: hard
-
-"dotenv@npm:^16.0.2":
-  version: 16.0.2
-  resolution: "dotenv@npm:16.0.2"
-  checksum: ca8f9ca2d67929c7771069f4c31b4e46b9932621009e658e5afd655dde2d69b77642bf36dbc9e72bc170523dfd908a9ee41c26f034c1fdc605ace3b1b4b10faf
   languageName: node
   linkType: hard
 
@@ -31278,6 +31291,15 @@ __metadata:
   dependencies:
     array.prototype.findlast: ^1.2.2
   checksum: 8302faaa9a510b6d9e0d64681bbfb113103035fab1680637b2455f2201fe4e3fa0db5e640bb32222013117df2cb6f770fce705e7e5ff170c9c061c27cea1dd27
+  languageName: node
+  linkType: hard
+
+"solidity-ast@npm:^0.4.51":
+  version: 0.4.53
+  resolution: "solidity-ast@npm:0.4.53"
+  dependencies:
+    array.prototype.findlast: ^1.2.2
+  checksum: f23918d9c0a9e34a1955388037b90614ccf8d3ba0c821c650d546147fac1ed98d87de10c9bbde86c46bceaabb2d6985d059587c502ff3c566626cb11e507b7dc
   languageName: node
   linkType: hard
 

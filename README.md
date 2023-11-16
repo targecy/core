@@ -42,26 +42,29 @@ $ yarn download-env-vars
 To spin up the services, just run the following command:
 
 ```bash
-$ yarn install
-$ yarn start-services
+$ yarn install && yarn start-services
 ```
 
 _Note: if you want to run the blockchain explorer (a Blockscout instance) as well, which is not essential, run yarn start-explorer_
 
-Once all services are running:
+Once all services are running, in order to initialize the contracts, the subgraph and the backend, please execute:
 
 ```bash
-$ yarn deploy-contracts
-$ yarn deploy-subgraph
-$ yarn migrate-backend
+$ yarn setup
+```
+
+If you want to seed Targecy with some data, run:
+
+```bash
+$ yarn seed
 ```
 
 ## Running the Dapp
 
-Check that the services are running, and then:
+Check that the services are running, and then execute the following in different terminals:
 
 ```bash
-$ yarn start-dapp or yarn dev-dapp
+$ yarn dev-dapp
 $ yarn start-backend
 $ yarn start-relayer
 ```

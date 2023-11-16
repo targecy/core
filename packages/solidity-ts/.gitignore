@@ -2,3 +2,4 @@
 !generated/.gitignore
 /generated/**/*
 .openzeppelin
+scripts/addresses
