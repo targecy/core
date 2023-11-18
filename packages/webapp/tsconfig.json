@@ -25,13 +25,7 @@
       "@targecy/sdk": ["../sdk/src"]
     }
   },
-  "include": [
-    "src",
-    // "../common/src",
-    "codegen.ts",
-    "apollo.config.js",
-    // "../sdk/src/utils/zk.ts"
-  ],
+  "include": ["src", "codegen.ts", "apollo.config.js"],
   "exclude": [
     "**/node_modules/**/*",
     ".husky",
