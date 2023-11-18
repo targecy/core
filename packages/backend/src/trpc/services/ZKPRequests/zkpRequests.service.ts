@@ -1,7 +1,7 @@
-import { SCHEMAS } from 'constants/schemas/schemas.constant';
-
 import { Prisma } from '@prisma/client';
-import { ZkpRequest } from 'generated/targecy.types';
+
+import { SCHEMAS } from '../../../constants/schemas/schemas.constant';
+import { ZkpRequest } from '../../../generated/targecy.types';
 
 /**
  * This function takes a ZKPRequests and returns a Prisma predicate to filter credentials.

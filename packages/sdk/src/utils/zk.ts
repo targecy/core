@@ -49,7 +49,7 @@ import { Ad, ZkpRequest } from '../generated/graphql.types';
 import { ZkServicesType } from './context';
 import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
-import { backendTrpcClient, relayerTrpcClient } from './trpc';
+import { relayerTrpcClient } from './trpc';
 import { getSeed, saveSeed } from './sharedStorage';
 import { base64StringToUint8Array, uint8ArrayToBase64String } from './string';
 
@@ -407,10 +407,10 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
   ]);
 
   try {
-    const response = await relayerTrpcClient.txs.send.mutate({
-      signature: '',
-      data,
-    });
+    // const response = await relayerTrpcClient.txs.send.mutate({
+    //   signature: '',
+    //   data,
+    // });
 
     await Swal.mixin({
       toast: true,
@@ -419,7 +419,7 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
       timer: 3000,
     }).fire({
       icon: 'success',
-      title: `Rewards requested successfully. Hash: ${response}`,
+      title: `Rewards requested successfully. Hash: ${'response'}`,
       padding: '10px 20px',
     });
   } catch (e) {

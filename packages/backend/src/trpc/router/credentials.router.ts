@@ -121,6 +121,6 @@ export const credentialsRouter = router({
       });
 
       console.debug('allCredentials', allCredentials);
-      return allCredentials.flatMap((credential) => credential.credential);
+      return allCredentials.flatMap((credential) => JSON.parse(JSON.stringify(credential.credential)));
     }),
 });

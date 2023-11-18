@@ -1,6 +1,7 @@
 import { TRPCError } from '@trpc/server';
-import { getSdk } from 'generated/targecy.types';
 import { GraphQLClient } from 'graphql-request';
+
+import { getSdk } from '../../../generated/targecy.types';
 
 const url = process.env.SUBGRAPH_URL || '';
 const targecyApi = getSdk(new GraphQLClient(url, {}));

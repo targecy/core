@@ -6,7 +6,7 @@
   "scripts": {
     "start": "yarn graphql-codegen && next dev -p 3090",
     "dev": "yarn graphql-codegen && concurrently \"next dev -p 3090\" \"yarn graphql-codegen-watch\"",
-    "build": "yarn build:anttheme && next build",
+    "build": "tsc --noEmit && yarn build:anttheme && next build",
     "serve": "next start",
     "lint:next": "next lint",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src",
@@ -138,7 +138,7 @@
     "tailwindcss": "^3.1.8",
     "timers-browserify": "^2.0.12",
     "ts-invariant": "^0.10.3",
-    "typescript": "4.9.4",
+    "typescript": "5.2.2",
     "use-debounce": "^8.0.4",
     "usehooks-ts": "^2.6.0",
     "util": "^0.12.4",
@@ -203,7 +203,7 @@
     "surge": "^0.23.1",
     "tailwindcss": "^3.1.8",
     "tailwindcss-elevation": "^1.0.1",
-    "typescript": "^4.8.3",
+    "typescript": "5.2.2",
     "typescript-common": "^1.0.5-beta"
   }
 }

@@ -21,12 +21,12 @@ _Note: It is recommended to use a computer with 16GB (RAM) or just run essential
 ## Installation
 
 1. Clone the repo
-  
+
 ```bash
 $ git clone git@github.com:targecy/core.git
 ```
 
-2. Fetch secrets from Doppler
+2. Fetch secrets from [Doppler](https://www.doppler.com/)
 
 ```bash
 # Ask to the team for access to Doppler!
@@ -38,8 +38,7 @@ $ doppler login
 $ yarn download-env-vars
 ```
 
-
-To spin up the services, just run the following command:
+To install dependencies and spin up the services, just run the following command:
 
 ```bash
 $ yarn install && yarn start-services
@@ -73,20 +72,48 @@ Now you have all the services (a local blockchain, The Graph Node, databases, ba
 
 ## Ports and Services
 
+These are the services that make up the Targecy platform:
+
+- [Dapp](./packages/webapp/README.md)
+- [SDK](./packages/sdk/README.md)
+- [Backend](./packages/backend/README.md)
+- [Relayer](./packages/relayer/README.md)
+- [Subgraph](./packages/subgraph/README.md)
+- [Contracts](./packages/solidity-ts/README.md)
+
+Also, this repo provides local instances of the following services:
+
+- [Chain](./packages/services/chain/docker-compose.yml)
+- [Chain Explorer](./packages/services/explorer/docker-compose-no-build-ganache.yml)
+- [Databases](./packages/services/databases/docker-compose.yml)
+- [The Graph Node](./packages/services/subgraph/docker-compose.yml)
+
 The following table shows the ports used by each service:
 
-| Port | Description                |
-| ---- | -------------------------- |
-| 3090 | Main Dapp                  |
-| 4000 | Relayer                    |
-| 4001 | Backend                    |
-| 5001 | Subgraph IPFS              |
-| 5432 | Subgraph Postgres          |
-| 5435 | Backend Postgres           |
-| 5436 | Relayer Postgres           |
-| 7432 | Explorer Postgres          |
-| 8000 | Subgraph Node & GraphQL UI |
-| 8090 | Local Chain Explorer       |
-| 8545 | Local Blockchain RPC       |
+| Port     | Description                                         |
+| -------- | --------------------------------------------------- |
+| **3090** | [Main Dapp](http://localhost:3090)                  |
+| **4000** | Relayer                                             |
+| **4001** | Backend                                             |
+| **5001** | Subgraph IPFS                                       |
+| **5432** | Subgraph Postgres                                   |
+| **5435** | Backend Postgres                                    |
+| **5436** | Relayer Postgres                                    |
+| **7432** | Explorer Postgres                                   |
+| **8000** | [Subgraph Node & GraphQL UI](http://localhost:8000) |
+| **8090** | [Local Chain Explorer](http://localhost:8090)       |
+| **8545** | Local Blockchain RPC                                |
 
 _Note: Each service has its own README.md file with specific information._
+
+## DevX
+
+Some comments:
+
+- As you can see, Targecy requires multiple and different elements to work, this may create friction for builders, so this repo has been designed to provide a smooth DevX, requiring as few steps as possible to get the platform up and running.
+- The main scripts are in the root package.json file. These scripts are used to start the services, setup the contracts, seed the data, etc.
+- There are multiple test, lint, seed, etc. solutions integrated in each part of the platform, the goal is to provide a state-of-the-art DevX while ensuring robustness, we encourage everyone to help us improving this aspect.
+
+## Contact
+
+In case you have any questions, please contact us [here](mailto:martin@targecy.xyz)

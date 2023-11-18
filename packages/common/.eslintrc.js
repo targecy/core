@@ -36,7 +36,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
-  plugins: ['prettier', 'unused-imports'],
+  plugins: ['prettier', 'unused-imports', 'import'],
   rules: {
     eqeqeq: ['error', 'smart'],
     'prettier/prettier': [
@@ -56,6 +56,7 @@ module.exports = {
     ],
     '@typescript-eslint/no-empty-function': 'warn',
     'no-unused-vars': 'off',
+    'import/no-absolute-path': 'error',
     '@typescript-eslint/no-unused-vars': 'off',
     'unused-imports/no-unused-imports-ts': 'warn',
     'unused-imports/no-unused-vars-ts': [

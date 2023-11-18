@@ -1,4 +1,4 @@
-import { walletClient } from 'utils/signer';
+import { walletClient } from '../../utils/signer';
 
 type TxParameters = {
   data: any;

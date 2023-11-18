@@ -1,8 +1,8 @@
-import { useContext } from 'react';
-import { TargecyServicesContext } from './misc/Context';
+// import { useContext } from 'react';
+// import { TargecyServicesContext } from './misc/Context';
 
-export const UserIdentity = () => {
-  const { userIdentity } = useContext(TargecyServicesContext);
+// export const UserIdentity = () => {
+//   const { userIdentity } = useContext(TargecyServicesContext);
 
-  return <span> {userIdentity?.did.id} </span>;
-};
+//   return <span> {userIdentity?.did.id} </span>;
+// };

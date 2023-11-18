@@ -1,8 +1,8 @@
-import { getPrismaPredicateForCredentialsFromZKPRequests } from 'trpc/services/ZKPRequests/zkpRequests.service';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
 import { getZKPRequestForTargetGroup } from '../services/external/targecy.service';
+import { getPrismaPredicateForCredentialsFromZKPRequests } from '../services/ZKPRequests/zkpRequests.service';
 
 // @todo move logic to service layer and db connections to repository layer
 

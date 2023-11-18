@@ -19,14 +19,12 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "@emotion/react",
-    "paths": {
-      "@targecy/relayer-api/app.router": ["../relayer/src/trpc/router/index.ts"],
-      "@targecy/backend-api/app.router": ["../backend/src/trpc/router/index.ts"]
-    }
+    "paths": {}
   },
   "include": ["src", "../common/src", "codegen.ts", "apollo.config.js"],
   "exclude": [
     "**/node_modules",
+    "**/node_modules/**/*",
     ".husky",
     "**/*.css",
     "tailwind.config.js",

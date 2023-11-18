@@ -51,21 +51,19 @@ export const relayerApi = createApi({
     }
   },
   endpoints: (build) => ({
-    listTxs: build.query({
-      queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.list.query>[0]) =>
-        trpcOperation(relayerTrpcClient.txs.list.query, input),
-    }),
-
-    deleteTx: build.mutation({
-      queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.delete.mutate>[0]) =>
-        trpcOperation(relayerTrpcClient.txs.delete.mutate, input),
-    }),
-
-    sendTx: build.mutation({
-      queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.send.mutate>[0]) =>
-        trpcOperation(relayerTrpcClient.txs.send.mutate, input),
-    }),
+    // listTxs: build.query({
+    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.list.query>[0]) =>
+    //     trpcOperation(relayerTrpcClient.txs.list.query, input),
+    // }),
+    // deleteTx: build.mutation({
+    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.delete.mutate>[0]) =>
+    //     trpcOperation(relayerTrpcClient.txs.delete.mutate, input),
+    // }),
+    // sendTx: build.mutation({
+    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.send.mutate>[0]) =>
+    //     trpcOperation(relayerTrpcClient.txs.send.mutate, input),
+    // }),
   }),
 });
 
-export const { useListTxsQuery, useLazyListTxsQuery, useDeleteTxMutation, useSendTxMutation } = relayerApi;
+export const {} = relayerApi;

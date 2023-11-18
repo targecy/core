@@ -42,14 +42,14 @@ const AdComponent = (adParams: AdParams) => {
   });
 
   const { writeAsync: consumeAdAsync } = useContractWrite({
-    address: targecyContractAddress,
+    address: targecyContractAddress as `0x${string}`,
     abi,
     functionName: 'consumeAd',
   });
 
   useEffect(() => {
     if (requestRewardsTrigger.trigger && requestRewardsTrigger.ad) {
-      const proofs = generateProof(context, credentials, requestRewardsTrigger.ad);
+      const proofs = generateProof(context, credentials.credentials, requestRewardsTrigger.ad);
 
       if (adParams.useRelayer) {
         consumeAdThroughRelayer(proofs, requestRewardsTrigger.ad).finally(() => {

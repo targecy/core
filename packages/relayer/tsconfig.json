@@ -15,11 +15,12 @@
     "isolatedModules": true,
     "incremental": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "module": "commonjs",
     "target": "ES2022"
   },
   "include": [".", ".eslintrc.js", ".commitlintrc.ts"],
-  "exclude": ["build", "node_modules"]
+  "exclude": ["build", "**/node_modules/**/*"]
 }

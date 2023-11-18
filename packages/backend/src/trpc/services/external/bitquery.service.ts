@@ -1,8 +1,8 @@
-import { getSdk } from 'generated/bitquery.types';
 import { GraphQLClient } from 'graphql-request';
-import { AddressString } from 'utils';
 
 import { CHAIN, KNOWN_PROTOCOLS, KNOWN_TOKENS } from '../../../constants/contracts.constants';
+import { getSdk } from '../../../generated/bitquery.types';
+import { AddressString } from '../../../utils';
 
 const url = process.env.BITQUERY_URL || '';
 const headers: Record<string, string> = {
