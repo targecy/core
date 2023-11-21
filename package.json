@@ -26,11 +26,9 @@
     "start-relayer": "yarn workspace @targecy/relayer dev",
     "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
   },
-  "workspaces": {
-    "packages": [
+  "workspaces": [
       "packages/*"
-    ]
-  },
+    ],
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
     "chalk": "^4.1.2",

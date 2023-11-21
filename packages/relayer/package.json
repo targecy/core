@@ -9,7 +9,6 @@
   ],
   "scripts": {
     "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
-    "prepare": "husky install",
     "build": "shx rm -rf build && tsc -p tsconfig.json",
     "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
     "start": "NODE_PATH=./build/src node build/src/index.js",
@@ -60,6 +59,6 @@
     "seed": "ts-node ./prisma/seed.ts"
   },
   "engines": {
-    "node": ">=18.17.1"
+    "node": "18"
   }
 }
