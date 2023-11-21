@@ -18,6 +18,7 @@ app.use(
   })
 );
 
+
 app.use('/', (_req, res) => {
   return res.type('html').send(homePage);
 });
