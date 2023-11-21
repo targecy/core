@@ -23,7 +23,7 @@
     "start-dapp": "yarn workspace @targecy/webapp start",
     "migrate-backend": "yarn workspace @targecy/backend prisma:migrate:dev",
     "build-backend": "yarn workspace @targecy/backend build",
-    "start-backend": "yarn workspace @targecy/backend dev",
+    "start-backend": "yarn workspace @targecy/backend start",
     "start-relayer": "yarn workspace @targecy/relayer dev",
     "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
   },
