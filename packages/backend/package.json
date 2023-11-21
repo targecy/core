@@ -4,7 +4,6 @@
   "packageManager": "yarn@1.22.19",
   "scripts": {
     "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
-    "prepare": "husky install",
     "build": "yarn graphql-codegen && shx rm -rf build && tsc -p tsconfig.json",
     "dev": "yarn graphql-codegen && concurrently \"ts-node-dev -r tsconfig-paths/register src/index.ts\" \"yarn graphql-codegen-watch\"",
     "start": "NODE_PATH=./build/src node build/src/index.js",
