@@ -22,7 +22,7 @@
     "graphql-codegen-watch": "gql-gen --config codegen.ts  --watch",
     "graphql-codegen": "gql-gen --config codegen.ts"
   },
-  "packageManager": "yarn@3.2.4",
+  "packageManager": "yarn@4.0.2",
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.3",
     "@ant-design/icons": "^5.2.5",

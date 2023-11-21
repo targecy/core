@@ -1,7 +1,7 @@
 {
   "name": "@targecy/backend",
   "version": "0.0.1",
-  "packageManager": "yarn@3.2.4",
+  "packageManager": "yarn@4.0.2",
   "scripts": {
     "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
     "build": "yarn graphql-codegen && shx rm -rf build && tsc -p tsconfig.json",
