@@ -1,7 +1,7 @@
-import { ethers } from 'ethers';
 import { z } from 'zod';
 
-export const isValidEvmAddress = (potentialAddress: string): boolean => ethers.utils.isAddress(potentialAddress);
+export const isValidEvmAddress = (potentialAddress: string): boolean =>
+  potentialAddress.match(/^0x[a-fA-F0-9]{40}$/) !== null;
 
 export const evmAddressStringSchema = z
   .string()
