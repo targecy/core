@@ -1,0 +1,6 @@
+{
+  "localhost_MockValidatorAddress": "0xF958f9b7253bd184D03FcEdd64D36B4F0964C28F",
+  "localhost_TargecyAddress": "0x13C98Ca5345E2349e2B41F8351025c7A5fA61bc5",
+  "localhost_Targecy_ImplementationAddress": "0xdb44de6788701c161169ed5688f84A03C30bBD49",
+  "localhost_Targecy_ProxyAddress": "0x13C98Ca5345E2349e2B41F8351025c7A5fA61bc5"
+}

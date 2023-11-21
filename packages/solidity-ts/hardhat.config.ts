@@ -1,5 +1,6 @@
 import './helpers/hardhat-imports';
 import path from 'path';
+require('dotenv').config();
 
 import chalk from 'chalk';
 import glob from 'glob';
@@ -10,7 +11,7 @@ import { getMnemonic } from './helpers/functions';
 
 import { hardhatNamedAccounts } from '~common/constants';
 import scaffoldConfig from '~common/scaffold.config';
-import { hardhatArtifactsDir, hardhatDeploymentsDir, typechainOutDir } from '~helpers/constants/toolkitPaths';
+import { hardhatArtifactsDir, typechainOutDir } from '~helpers/constants/toolkitPaths';
 
 // eslint-disable-next-line no-duplicate-imports
 /**
@@ -43,7 +44,7 @@ if (process.env.BUILDING !== 'true') {
 /**
  * loads network list and config from '@scaffold-eth/common/src
  */
-const networks = {
+const networks: HardhatUserConfig['networks'] = {
   // Development
   localhost: {
     url: 'http://127.0.0.1:8545',
@@ -58,26 +59,16 @@ const networks = {
 
   // Test
   mumbai: {
-    url: 'https://rpc-mumbai.matic.today',
+    url: 'https://rpc.ankr.com/polygon_mumbai',
     chainId: 80001,
-
-    accounts: {
-      mnemonic: getMnemonic(), // @todo (Martin): have distinct mnemonics for each network
-      path: "m/44'/60'/0'/0",
-      initialIndex: 0,
-    },
+    accounts: [process.env.PRIVATE_KEY!],
   },
 
   // Production
   matic: {
-    url: 'https://polygon-rpc.com/',
+    url: 'https://rpc.ankr.com/polygon',
     chainId: 137,
-
-    accounts: {
-      mnemonic: getMnemonic(), // @todo (Martin): have distinct mnemonics for each network
-      path: "m/44'/60'/0'/0",
-      initialIndex: 0,
-    },
+    accounts: [process.env.PRIVATE_KEY!],
   },
 };
 
@@ -95,6 +86,10 @@ export const config: HardhatUserConfig = {
   defaultNetwork: scaffoldConfig.runtime.targetNetwork,
   namedAccounts: namedAccounts,
   networks: networks,
+  defender: {
+    apiKey: process.env.DEFENDER_API_KEY!,
+    apiSecret: process.env.DEFENDER_API_SECRET!,
+  },
   solidity: {
     compilers: [
       {
@@ -126,37 +121,9 @@ export const config: HardhatUserConfig = {
       toConsole: true,
     },
   },
-  watcher: {
-    compile: {
-      tasks: ['compile'],
-      files: ['./contracts/**/*'],
-      verbose: false,
-    },
-    test: {
-      tasks: [{ command: 'test', params: { testFiles: ['{path}'] } }],
-      files: ['./tests/**/*'],
-      verbose: true,
-      clearOnStart: true,
-      start: 'echo Running my test task now..',
-    },
-  },
-  gasReporter: {
-    enabled: true,
-    coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    currency: 'USD',
-  },
-  dodoc: {
-    runOnCompile: false,
-    debugMode: false,
-    keepFileStructure: true,
-    freshOutput: true,
-    outputDir: './generated/docs',
-    include: ['contracts'],
-  },
   paths: {
     cache: './generated/hardhat/cache',
     artifacts: hardhatArtifactsDir,
-    deployments: hardhatDeploymentsDir,
     deploy: './scripts/deploy',
     tests: './tests/hardhat-tests',
   },

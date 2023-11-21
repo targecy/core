@@ -17,7 +17,7 @@ import { useWallet } from '~~/hooks';
 import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/localhost_Targecy.json');
+const abi = require('../../generated/abis/Targecy.json');
 
 export const ZKPRequestEditorComponent = (id?: string) => {
   const [processingZKPRequest, setProcessingZKPRequest] = useState(false);

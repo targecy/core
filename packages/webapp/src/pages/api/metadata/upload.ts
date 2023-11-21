@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { NFTStorage } from 'nft.storage';
+import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
 import { z } from 'zod';
 
 import { env } from '~~/env.mjs';

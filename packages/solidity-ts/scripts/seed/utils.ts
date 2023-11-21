@@ -1,6 +1,6 @@
 import { join } from 'path';
 
-import { NFTStorage } from 'nft.storage';
+import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
 require('dotenv').config({ path: join(__dirname, '../../.env') });

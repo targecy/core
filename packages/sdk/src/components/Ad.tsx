@@ -6,7 +6,7 @@ import { consumeAd, consumeAdThroughRelayer, generateProof } from '..';
 import { TargecyBaseProps, TargecyComponent, TargecyServicesContext } from './misc/Context';
 import { useAd } from '../hooks/useAd';
 import { targecyContractAddress } from '../constants/chain';
-const abi = require('../generated/abis/localhost_Targecy.json');
+const abi = require('../generated/abis/Targecy.json');
 import {
   Config,
   WagmiConfig,

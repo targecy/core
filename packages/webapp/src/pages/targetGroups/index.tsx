@@ -9,7 +9,7 @@ import { useContractWrite } from 'wagmi';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 
-const abi = require('../../generated/abis/localhost_Targecy.json');
+const abi = require('../../generated/abis/Targecy.json');
 
 const TargetGroups = () => {
   const data = useGetAllTargetGroupsQuery();

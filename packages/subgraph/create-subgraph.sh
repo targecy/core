@@ -8,10 +8,14 @@ echo "current dir: $current_dir"
 script_dir=$(dirname "$0")
 echo "dir: $script_dir"
 
+# Check if a network argument is provided, default to 'localhost'
+network=${1:-localhost}
+echo "Network: $network"
+
 cd $script_dir
 
 # Extract the address from addresses.json relative to the script location
-address=$(jq -r '.targecyProxy' "../solidity-ts/scripts/addresses.json")
+address=$(jq -r '.targecyProxy' "../solidity-ts/generated/addresses.json")
 
 echo "address: $address"
 
@@ -23,7 +27,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Targecy
-    network: localhost
+    network: $network
     source:
       address: "$address"
       abi: Targecy
@@ -40,7 +44,7 @@ dataSources:
         - Publisher
       abis:
         - name: Targecy
-          file: ./abis/localhost_Targecy.json
+          file: ./abis/Targecy.json
       eventHandlers:
         - event: AdConsumed(indexed uint256,indexed address,indexed address)
           handler: handleAdConsumed

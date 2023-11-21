@@ -19,14 +19,14 @@ export async function seed(): Promise<void> {
   const TargecyAddress = config.localhost_Targecy_ProxyAddress;
 
   // Connect to the Ethereum network
-  const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545', {
+  const provider = new ethers.JsonRpcProvider('http://localhost:8545', {
     chainId: 1337,
     name: 'localhost',
   });
-  const wallet = ethers.Wallet.fromMnemonic(mnemonic, "m/44'/60'/0'/0/1"); // Sent from the second address.
-  const walletConnected = wallet.connect(provider);
-  const Targecy: Targecy__factory = await ethers.getContractFactory('Targecy', walletConnected);
-  const targecy: Targecy = Targecy.attach(TargecyAddress);
+  const wallet = ethers.Wallet.fromPhrase(mnemonic);
+  const walletConnected = wallet.deriveChild(2).connect(provider); // Sent from the second address.
+  const Targecy = await ethers.getContractFactory('Targecy', walletConnected);
+  const targecy = Targecy.attach(TargecyAddress);
 
   // Print current amount of ads, target groups, and ZKP requests
   console.log(`Current amount of ads:  ${Number(await targecy._adId()) - 1}`);
@@ -83,7 +83,7 @@ export async function seed(): Promise<void> {
         targetGroupIds: ad.targetGroupsIds,
       },
       { value: ad.budget }
-  );
+    );
 
     console.log(`Ad '${ad.metadata.title}' created`);
   }

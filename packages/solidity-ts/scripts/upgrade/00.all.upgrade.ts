@@ -1,19 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import * as fs from 'fs';
-import * as path from 'path';
 
 import { ethers, upgrades } from 'hardhat';
-
-export const getStringFromFile = (fileName: string): string => {
-  const filePath = path.join(__dirname, fileName);
-  if (fs.existsSync(filePath)) {
-    const data = fs.readFileSync(filePath, 'utf8');
-    return data;
-  } else {
-    console.log(`File ${filePath} does not exist.`);
-    return '';
-  }
-};
+import { getStringFromFile } from '../utils';
 
 export const upgradeAll = async (): Promise<void> => {
   const addresses = JSON.parse(getStringFromFile('../addresses.json'));

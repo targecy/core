@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import chalk from 'chalk';
 
-import { hardhatDeploymentsDir } from '~helpers/constants/toolkitPaths';
+import { hardhatArtifactsDir, hardhatDeploymentsDir } from '~helpers/constants/toolkitPaths';
 
 export const contractsDir = './generated';
 export const graphDir = '../subgraph';
@@ -11,7 +11,7 @@ export const sdkDir = '../sdk/src/generated';
 
 const publishContract = (dir: string, contractName: string, networkName: string): boolean => {
   try {
-    const contract = fs.readFileSync(`${hardhatDeploymentsDir}/${networkName}/${contractName}.json`).toString();
+    const contract = fs.readFileSync(`${hardhatArtifactsDir}/contracts/core/${contractName}.sol/${contractName}.json`).toString();
     const contractJson: { address: string; abi: [] } = JSON.parse(contract);
     const graphConfigPath = `${dir}/config/config.json`;
     let graphConfigStr = '{}';
@@ -32,9 +32,9 @@ const publishContract = (dir: string, contractName: string, networkName: string)
     }
     fs.writeFileSync(graphConfigPath, JSON.stringify(graphConfig, null, 2));
     if (!fs.existsSync(`${dir}/abis`)) fs.mkdirSync(`${dir}/abis`);
-    fs.writeFileSync(`${dir}/abis/${networkName}_${contractName}.json`, JSON.stringify(contractJson.abi, null, 2));
+    fs.writeFileSync(`${dir}/abis/${contractName}.json`, JSON.stringify(contractJson.abi, null, 2));
 
-    console.log(' 📠 Published ' + chalk.green(contractName) + ' to the frontend');
+    console.log(' 📠 Published ' + chalk.green(contractName));
 
     return true;
   } catch (e) {
@@ -46,11 +46,12 @@ const publishContract = (dir: string, contractName: string, networkName: string)
 export const hardhatPublishToOtherPackage = (dir: string): void => {
   console.log(chalk.white('Running Post Deploy: publish contracts to ' + dir + '...'));
 
-  const deploymentSubdirs = fs.readdirSync(hardhatDeploymentsDir);
+  const deploymentSubdirs = fs.readdirSync(hardhatArtifactsDir + '/contracts/core/Targecy.sol');
   deploymentSubdirs.forEach(function (directory) {
-    const files = fs.readdirSync(`${hardhatDeploymentsDir}/${directory}`);
+    const files = fs.readdirSync(`${hardhatArtifactsDir}/contracts/core/Targecy.sol`);
     files.forEach(function (file) {
-      if (file.includes('.json')) {
+      if (file.includes('.json') && !file.includes('dbg')) {
+        console.log('Publishing ' + file + ' to ' + dir + '...');
         const contractName = file.replace('.json', '');
         publishContract(dir, contractName, directory);
       }

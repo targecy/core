@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useContractRead } from 'wagmi';
 
-import * as abi from '../generated/abis/localhost_Targecy_Implementation.json';
+import * as abi from '../generated/abis/Targecy.json';
 
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useWallet } from '~~/hooks';

@@ -10,7 +10,7 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllZkpRequestsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/localhost_Targecy.json');
+const abi = require('../../generated/abis/Targecy.json');
 
 const ZKPRequests = () => {
   const data = useGetAllZkpRequestsQuery();

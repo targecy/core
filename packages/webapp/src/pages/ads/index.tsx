@@ -10,7 +10,7 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllAdsQuery, useGetAllAdsQuery } from '~~/generated/graphql.types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/localhost_Targecy.json');
+const abi = require('../../generated/abis/Targecy.json');
 
 const Ads = () => {
   const data = useGetAllAdsQuery();
