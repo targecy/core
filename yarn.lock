@@ -95,7 +95,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/icons@npm:^4.7.0":
+"@ant-design/icons@npm:^4.7.0, @ant-design/icons@npm:^4.8.1":
   version: 4.8.1
   resolution: "@ant-design/icons@npm:4.8.1"
   dependencies:
@@ -128,7 +128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ant-design/react-slick@npm:~1.0.0":
+"@ant-design/react-slick@npm:~1.0.2":
   version: 1.0.2
   resolution: "@ant-design/react-slick@npm:1.0.2"
   dependencies:
@@ -1194,7 +1194,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ctrl/tinycolor@npm:^3.4.0":
+"@ctrl/tinycolor@npm:^3.4.0, @ctrl/tinycolor@npm:^3.6.1":
   version: 3.6.1
   resolution: "@ctrl/tinycolor@npm:3.6.1"
   checksum: cefec6fcaaa3eb8ddf193f981e097dccf63b97b93b1e861cb18c645654824c831a568f444996e15ee509f255658ed82fba11c5365494a6e25b9b12ac454099e0
@@ -2817,8 +2817,8 @@ __metadata:
   linkType: hard
 
 "@graphql-tools/executor-graphql-ws@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "@graphql-tools/executor-graphql-ws@npm:1.1.0"
+  version: 1.1.1
+  resolution: "@graphql-tools/executor-graphql-ws@npm:1.1.1"
   dependencies:
     "@graphql-tools/utils": ^10.0.2
     "@types/ws": ^8.0.0
@@ -2828,7 +2828,7 @@ __metadata:
     ws: ^8.13.0
   peerDependencies:
     graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
-  checksum: fa76de4020de49ba2309341f5ee9b0fbf05c6a16e7e9ecf99fad2dea734021122576a7ad82f697299f10c2e2ea8da2e3f30a31c5da1edb0938c9769adfe5c646
+  checksum: 30d29e2ef8fbedf07d7c279218f31a7279e714328f6c24d28ea76536fb4c5ed857ab5e486922000fcf9f85b83a9f3e995b8fd066b01ea4ab31d35efaa770c133
   languageName: node
   linkType: hard
 
@@ -6333,11 +6333,11 @@ __metadata:
   linkType: hard
 
 "@smithy/types@npm:^2.5.0":
-  version: 2.5.0
-  resolution: "@smithy/types@npm:2.5.0"
+  version: 2.6.0
+  resolution: "@smithy/types@npm:2.6.0"
   dependencies:
     tslib: ^2.5.0
-  checksum: 9e03dcf6c9ae7239218ccecae0a04d5f0aaab42e17a326590becfd68f1b15ba1291ed408501efab4a20a0542d995b5a859ab58ca83cd4f3e2dbf430785e207a6
+  checksum: 9233d1e6e414a8b807f9fe7a7c30064626f77b0242d8634b9b1c192f77b27a997a3caf90ecf7f4361d5926c9e9cc761991eecfb47bbfa6ce2be21c5533a3bea6
   languageName: node
   linkType: hard
 
@@ -6995,6 +6995,7 @@ __metadata:
     buffer-browserify: ^0.2.5
     eslint: ^8.23.1
     eslint-plugin-unused-imports: ^2.0.0
+    ethers: ^6.8.1
     ffjavascript: ^0.2.62
     graphql: ^16.8.0
     graphql-codegen-typescript-common: 0.18.2
@@ -10084,56 +10085,56 @@ __metadata:
   linkType: hard
 
 "antd@npm:^4.23.1":
-  version: 4.24.14
-  resolution: "antd@npm:4.24.14"
+  version: 4.24.15
+  resolution: "antd@npm:4.24.15"
   dependencies:
     "@ant-design/colors": ^6.0.0
-    "@ant-design/icons": ^4.7.0
-    "@ant-design/react-slick": ~1.0.0
+    "@ant-design/icons": ^4.8.1
+    "@ant-design/react-slick": ~1.0.2
     "@babel/runtime": ^7.18.3
-    "@ctrl/tinycolor": ^3.4.0
+    "@ctrl/tinycolor": ^3.6.1
     classnames: ^2.2.6
     copy-to-clipboard: ^3.2.0
     lodash: ^4.17.21
     moment: ^2.29.2
-    rc-cascader: ~3.7.0
-    rc-checkbox: ~3.0.0
+    rc-cascader: ~3.7.3
+    rc-checkbox: ~3.0.1
     rc-collapse: ~3.4.2
     rc-dialog: ~9.0.2
     rc-drawer: ~6.3.0
-    rc-dropdown: ~4.0.0
-    rc-field-form: ~1.34.0
+    rc-dropdown: ~4.0.1
+    rc-field-form: ~1.38.2
     rc-image: ~5.13.0
     rc-input: ~0.1.4
-    rc-input-number: ~7.3.9
+    rc-input-number: ~7.3.11
     rc-mentions: ~1.13.1
-    rc-menu: ~9.8.0
-    rc-motion: ^2.6.1
-    rc-notification: ~4.6.0
+    rc-menu: ~9.8.4
+    rc-motion: ^2.9.0
+    rc-notification: ~4.6.1
     rc-pagination: ~3.2.0
-    rc-picker: ~2.7.0
-    rc-progress: ~3.4.1
-    rc-rate: ~2.9.0
-    rc-resize-observer: ^1.2.0
-    rc-segmented: ~2.1.0
-    rc-select: ~14.1.17
-    rc-slider: ~10.0.0
-    rc-steps: ~5.0.0-alpha.2
-    rc-switch: ~3.2.0
+    rc-picker: ~2.7.6
+    rc-progress: ~3.4.2
+    rc-rate: ~2.9.3
+    rc-resize-observer: ^1.3.1
+    rc-segmented: ~2.1.2
+    rc-select: ~14.1.18
+    rc-slider: ~10.0.1
+    rc-steps: ~5.0.0
+    rc-switch: ~3.2.2
     rc-table: ~7.26.0
-    rc-tabs: ~12.5.6
-    rc-textarea: ~0.4.5
-    rc-tooltip: ~5.2.0
-    rc-tree: ~5.7.0
-    rc-tree-select: ~5.5.0
-    rc-trigger: ^5.2.10
-    rc-upload: ~4.3.0
-    rc-util: ^5.35.1
+    rc-tabs: ~12.5.10
+    rc-textarea: ~0.4.7
+    rc-tooltip: ~5.2.2
+    rc-tree: ~5.7.12
+    rc-tree-select: ~5.5.5
+    rc-trigger: ^5.3.4
+    rc-upload: ~4.3.5
+    rc-util: ^5.37.0
     scroll-into-view-if-needed: ^2.2.25
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 36436d9e8b6cad33c9b437ef67dfbf2848d0c81ac0eed7ec91f537b090694d155c1988ed0b3d9d578ab8541bb6df5ca9a061e223d5faa526e8d956625f33f91e
+  checksum: 44fb3657b99f870dd3852bb646bec0ab83da43ecebd017a22e437a25350f9441150c548d2ac83c623f99275ac7dc566e3fedc5e0404c2baf8343a87ca75f7016
   languageName: node
   linkType: hard
 
@@ -10152,9 +10153,11 @@ __metadata:
   linkType: hard
 
 "antlr4ts@npm:^0.5.0-alpha.4":
-  version: 0.5.0-alpha.4
-  resolution: "antlr4ts@npm:0.5.0-alpha.4"
-  checksum: 37948499d59477f5b5a8ea71dfb8b5330e71d5a7cee60f57351dd744219b8619fa6aac1a5b6ec1a9991846e8ddc9ca47680eb166c59b44333369b3115e7aa358
+  version: 0.5.0-dev
+  resolution: "antlr4ts@npm:0.5.0-dev"
+  dependencies:
+    source-map-support: ^0.5.16
+  checksum: 640dae2229124372b0329315e9614ae983bb80b1af237d8c0b3e90a2d85fb534e851c51d65d1897c92b36d27851d041ad8d95aab44af19cf7355b3ad11a3ddbf
   languageName: node
   linkType: hard
 
@@ -11072,9 +11075,9 @@ __metadata:
   linkType: hard
 
 "big-integer@npm:^1.6.16, big-integer@npm:^1.6.44":
-  version: 1.6.51
-  resolution: "big-integer@npm:1.6.51"
-  checksum: 3d444173d1b2e20747e2c175568bedeebd8315b0637ea95d75fd27830d3b8e8ba36c6af40374f36bdaea7b5de376dcada1b07587cb2a79a928fccdb6e6e3c518
+  version: 1.6.52
+  resolution: "big-integer@npm:1.6.52"
+  checksum: 6e86885787a20fed96521958ae9086960e4e4b5e74d04f3ef7513d4d0ad631a9f3bde2730fc8aaa4b00419fc865f6ec573e5320234531ef37505da7da192c40b
   languageName: node
   linkType: hard
 
@@ -14667,9 +14670,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.535":
-  version: 1.4.589
-  resolution: "electron-to-chromium@npm:1.4.589"
-  checksum: 64639fe45950cadc8adf90d3d2d101d3d68431fc41a16b33be3a7ee00ba0d6c335770df862d210311fc7eb9752356966ae67f1b9e9442cf99e5b2667f706bf4b
+  version: 1.4.590
+  resolution: "electron-to-chromium@npm:1.4.590"
+  checksum: 3165a64819ad385e4c732004ceebd9ed2115cbc0e1e311dbfb36cb2809541ab7ea12e58cd1a55a290896a634c58c1a71eeaac203c228aa31e2ec385cdc6b82ee
   languageName: node
   linkType: hard
 
@@ -16619,7 +16622,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:6.8.1":
+"ethers@npm:6.8.1, ethers@npm:^6.8.1":
   version: 6.8.1
   resolution: "ethers@npm:6.8.1"
   dependencies:
@@ -27034,7 +27037,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-cascader@npm:~3.7.0":
+"rc-cascader@npm:~3.7.3":
   version: 3.7.3
   resolution: "rc-cascader@npm:3.7.3"
   dependencies:
@@ -27051,7 +27054,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-checkbox@npm:~3.0.0":
+"rc-checkbox@npm:~3.0.1":
   version: 3.0.1
   resolution: "rc-checkbox@npm:3.0.1"
   dependencies:
@@ -27113,7 +27116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-dropdown@npm:~4.0.0":
+"rc-dropdown@npm:~4.0.0, rc-dropdown@npm:~4.0.1":
   version: 4.0.1
   resolution: "rc-dropdown@npm:4.0.1"
   dependencies:
@@ -27128,9 +27131,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-field-form@npm:~1.34.0":
-  version: 1.34.2
-  resolution: "rc-field-form@npm:1.34.2"
+"rc-field-form@npm:~1.38.2":
+  version: 1.38.2
+  resolution: "rc-field-form@npm:1.38.2"
   dependencies:
     "@babel/runtime": ^7.18.0
     async-validator: ^4.1.0
@@ -27138,7 +27141,7 @@ __metadata:
   peerDependencies:
     react: ">=16.9.0"
     react-dom: ">=16.9.0"
-  checksum: 50535a06fa3f3fa428ab142e4722e6c567a30202c7fec0a7e63685ba1cc356c3159721902aa2fdeb563e9153faa9d1b515624da4d0c5ba4cf93cf6249a763521
+  checksum: a1d180f231220a632b25e317fba107e2d579b18e83dc95f4dfbc014ee8631c4a1167e3ac58838b66fe8116594e81454e69cd8093fa5c023b5f69bd64b4ad5875
   languageName: node
   linkType: hard
 
@@ -27159,7 +27162,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-input-number@npm:~7.3.9":
+"rc-input-number@npm:~7.3.11":
   version: 7.3.11
   resolution: "rc-input-number@npm:7.3.11"
   dependencies:
@@ -27204,7 +27207,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-menu@npm:~9.8.0":
+"rc-menu@npm:~9.8.0, rc-menu@npm:~9.8.4":
   version: 9.8.4
   resolution: "rc-menu@npm:9.8.4"
   dependencies:
@@ -27221,7 +27224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-motion@npm:^2.0.0, rc-motion@npm:^2.0.1, rc-motion@npm:^2.2.0, rc-motion@npm:^2.3.0, rc-motion@npm:^2.3.4, rc-motion@npm:^2.4.3, rc-motion@npm:^2.4.4, rc-motion@npm:^2.6.1, rc-motion@npm:^2.6.2":
+"rc-motion@npm:^2.0.0, rc-motion@npm:^2.0.1, rc-motion@npm:^2.2.0, rc-motion@npm:^2.3.0, rc-motion@npm:^2.3.4, rc-motion@npm:^2.4.3, rc-motion@npm:^2.4.4, rc-motion@npm:^2.6.1, rc-motion@npm:^2.6.2, rc-motion@npm:^2.9.0":
   version: 2.9.0
   resolution: "rc-motion@npm:2.9.0"
   dependencies:
@@ -27235,7 +27238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-notification@npm:~4.6.0":
+"rc-notification@npm:~4.6.1":
   version: 4.6.1
   resolution: "rc-notification@npm:4.6.1"
   dependencies:
@@ -27278,7 +27281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-picker@npm:~2.7.0":
+"rc-picker@npm:~2.7.6":
   version: 2.7.6
   resolution: "rc-picker@npm:2.7.6"
   dependencies:
@@ -27297,7 +27300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-progress@npm:~3.4.1":
+"rc-progress@npm:~3.4.2":
   version: 3.4.2
   resolution: "rc-progress@npm:3.4.2"
   dependencies:
@@ -27311,7 +27314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-rate@npm:~2.9.0":
+"rc-rate@npm:~2.9.3":
   version: 2.9.3
   resolution: "rc-rate@npm:2.9.3"
   dependencies:
@@ -27325,7 +27328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-resize-observer@npm:^1.0.0, rc-resize-observer@npm:^1.1.0, rc-resize-observer@npm:^1.2.0":
+"rc-resize-observer@npm:^1.0.0, rc-resize-observer@npm:^1.1.0, rc-resize-observer@npm:^1.3.1":
   version: 1.4.0
   resolution: "rc-resize-observer@npm:1.4.0"
   dependencies:
@@ -27340,7 +27343,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-segmented@npm:~2.1.0":
+"rc-segmented@npm:~2.1.2":
   version: 2.1.2
   resolution: "rc-segmented@npm:2.1.2"
   dependencies:
@@ -27355,7 +27358,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-select@npm:~14.1.0, rc-select@npm:~14.1.17":
+"rc-select@npm:~14.1.0, rc-select@npm:~14.1.18":
   version: 14.1.18
   resolution: "rc-select@npm:14.1.18"
   dependencies:
@@ -27373,7 +27376,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-slider@npm:~10.0.0":
+"rc-slider@npm:~10.0.1":
   version: 10.0.1
   resolution: "rc-slider@npm:10.0.1"
   dependencies:
@@ -27388,7 +27391,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-steps@npm:~5.0.0-alpha.2":
+"rc-steps@npm:~5.0.0":
   version: 5.0.0
   resolution: "rc-steps@npm:5.0.0"
   dependencies:
@@ -27402,7 +27405,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-switch@npm:~3.2.0":
+"rc-switch@npm:~3.2.2":
   version: 3.2.2
   resolution: "rc-switch@npm:3.2.2"
   dependencies:
@@ -27432,7 +27435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-tabs@npm:~12.5.6":
+"rc-tabs@npm:~12.5.10":
   version: 12.5.10
   resolution: "rc-tabs@npm:12.5.10"
   dependencies:
@@ -27450,7 +27453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-textarea@npm:^0.4.0, rc-textarea@npm:~0.4.5":
+"rc-textarea@npm:^0.4.0, rc-textarea@npm:~0.4.7":
   version: 0.4.7
   resolution: "rc-textarea@npm:0.4.7"
   dependencies:
@@ -27466,7 +27469,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-tooltip@npm:~5.2.0":
+"rc-tooltip@npm:~5.2.2":
   version: 5.2.2
   resolution: "rc-tooltip@npm:5.2.2"
   dependencies:
@@ -27480,7 +27483,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-tree-select@npm:~5.5.0":
+"rc-tree-select@npm:~5.5.5":
   version: 5.5.5
   resolution: "rc-tree-select@npm:5.5.5"
   dependencies:
@@ -27496,7 +27499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-tree@npm:~5.7.0":
+"rc-tree@npm:~5.7.0, rc-tree@npm:~5.7.12":
   version: 5.7.12
   resolution: "rc-tree@npm:5.7.12"
   dependencies:
@@ -27512,7 +27515,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-trigger@npm:^5.0.0, rc-trigger@npm:^5.0.4, rc-trigger@npm:^5.1.2, rc-trigger@npm:^5.2.10, rc-trigger@npm:^5.3.1":
+"rc-trigger@npm:^5.0.0, rc-trigger@npm:^5.0.4, rc-trigger@npm:^5.1.2, rc-trigger@npm:^5.3.1, rc-trigger@npm:^5.3.4":
   version: 5.3.4
   resolution: "rc-trigger@npm:5.3.4"
   dependencies:
@@ -27528,7 +27531,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-upload@npm:~4.3.0":
+"rc-upload@npm:~4.3.5":
   version: 4.3.5
   resolution: "rc-upload@npm:4.3.5"
   dependencies:
@@ -27542,7 +27545,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rc-util@npm:^5.0.1, rc-util@npm:^5.0.6, rc-util@npm:^5.16.0, rc-util@npm:^5.16.1, rc-util@npm:^5.17.0, rc-util@npm:^5.18.1, rc-util@npm:^5.19.2, rc-util@npm:^5.2.0, rc-util@npm:^5.2.1, rc-util@npm:^5.20.1, rc-util@npm:^5.21.0, rc-util@npm:^5.21.2, rc-util@npm:^5.22.5, rc-util@npm:^5.23.0, rc-util@npm:^5.24.4, rc-util@npm:^5.25.2, rc-util@npm:^5.26.0, rc-util@npm:^5.27.0, rc-util@npm:^5.31.1, rc-util@npm:^5.32.2, rc-util@npm:^5.35.1, rc-util@npm:^5.36.0, rc-util@npm:^5.37.0, rc-util@npm:^5.38.0, rc-util@npm:^5.6.1, rc-util@npm:^5.9.4":
+"rc-util@npm:^5.0.1, rc-util@npm:^5.0.6, rc-util@npm:^5.16.0, rc-util@npm:^5.16.1, rc-util@npm:^5.17.0, rc-util@npm:^5.18.1, rc-util@npm:^5.19.2, rc-util@npm:^5.2.0, rc-util@npm:^5.2.1, rc-util@npm:^5.20.1, rc-util@npm:^5.21.0, rc-util@npm:^5.21.2, rc-util@npm:^5.22.5, rc-util@npm:^5.23.0, rc-util@npm:^5.24.4, rc-util@npm:^5.25.2, rc-util@npm:^5.26.0, rc-util@npm:^5.27.0, rc-util@npm:^5.31.1, rc-util@npm:^5.32.2, rc-util@npm:^5.36.0, rc-util@npm:^5.37.0, rc-util@npm:^5.38.0, rc-util@npm:^5.6.1, rc-util@npm:^5.9.4":
   version: 5.38.1
   resolution: "rc-util@npm:5.38.1"
   dependencies:
@@ -30119,7 +30122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.12, source-map-support@npm:^0.5.13, source-map-support@npm:^0.5.20, source-map-support@npm:^0.5.9":
+"source-map-support@npm:^0.5.12, source-map-support@npm:^0.5.13, source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.20, source-map-support@npm:^0.5.9":
   version: 0.5.21
   resolution: "source-map-support@npm:0.5.21"
   dependencies:
@@ -30183,9 +30186,9 @@ __metadata:
   linkType: hard
 
 "spawn-command@npm:^0.0.2-1":
-  version: 0.0.2-1
-  resolution: "spawn-command@npm:0.0.2-1"
-  checksum: 2cac8519332193d1ed37d57298c4a1f73095e9edd20440fbab4aa47f531da83831734f2b51c44bb42b2747bf3485dec3fa2b0a1003f74c67561f2636622e328b
+  version: 0.0.2
+  resolution: "spawn-command@npm:0.0.2"
+  checksum: e35c5d28177b4d461d33c88cc11f6f3a5079e2b132c11e1746453bbb7a0c0b8a634f07541a2a234fa4758239d88203b758def509161b651e81958894c0b4b64b
   languageName: node
   linkType: hard
 
@@ -32277,9 +32280,9 @@ __metadata:
   linkType: hard
 
 "type-fest@npm:^4.2.0":
-  version: 4.8.1
-  resolution: "type-fest@npm:4.8.1"
-  checksum: faffb32d9ab7fe28c91ca6ee6a69da290b66550e114c3f03dccd1c46d7b8e8e73dec3bd8e39e70be2a8e88ad6460e31eda97f9a314bb929a9010c21a1332f663
+  version: 4.8.2
+  resolution: "type-fest@npm:4.8.2"
+  checksum: 1809def7aadc62368fb087d0632b770b0831c8daeccb06e397ad68d6651fbbce11c73ce3a58f3f5a4b6a362a8a2f067f497b26d936973aa0607a00ca74edb2af
   languageName: node
   linkType: hard
 
@@ -32476,7 +32479,7 @@ __metadata:
 
 "typescript@patch:typescript@5.2.2#~builtin<compat/typescript>":
   version: 5.2.2
-  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=7ad353"
+  resolution: "typescript@patch:typescript@npm%3A5.2.2#~builtin<compat/typescript>::version=5.2.2&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -32486,7 +32489,7 @@ __metadata:
 
 "typescript@patch:typescript@^3.2.2#~builtin<compat/typescript>":
   version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=7ad353"
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -32496,7 +32499,7 @@ __metadata:
 
 "typescript@patch:typescript@^4.5.4#~builtin<compat/typescript>":
   version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=7ad353"
+  resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -32506,7 +32509,7 @@ __metadata:
 
 "typescript@patch:typescript@^4.6.4 || ^5.2.2#~builtin<compat/typescript>":
   version: 5.3.2
-  resolution: "typescript@patch:typescript@npm%3A5.3.2#~builtin<compat/typescript>::version=5.3.2&hash=7ad353"
+  resolution: "typescript@patch:typescript@npm%3A5.3.2#~builtin<compat/typescript>::version=5.3.2&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
@@ -33248,8 +33251,8 @@ __metadata:
   linkType: hard
 
 "viem@npm:^1.0.0, viem@npm:^1.11.0":
-  version: 1.19.5
-  resolution: "viem@npm:1.19.5"
+  version: 1.19.6
+  resolution: "viem@npm:1.19.6"
   dependencies:
     "@adraffy/ens-normalize": 1.10.0
     "@noble/curves": 1.2.0
@@ -33264,7 +33267,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: ce4266c91fa382e2db6ae77f91ccfbe0463e1f522f795dc12f95cb00cdc6b05313fdc484c3e53fe01804b17d6e914c5c47c00a3b222e5ce9b8cfa396f694e71b
+  checksum: 124f571136be864210c5b2d9673ab0caf1505fbecaf3d8c7a2de1052bb83c25410a549e1cf41853da04060bcb6c11a62cbc02fccfc54bf16227ec8987a3ad9d0
   languageName: node
   linkType: hard
 

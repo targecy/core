@@ -22,6 +22,7 @@
     "graphql-codegen-watch": "gql-gen --config codegen.ts  --watch",
     "graphql-codegen": "gql-gen --config codegen.ts"
   },
+  "packageManager": "yarn@3.2.4",
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.3",
     "@ant-design/icons": "^5.2.5",
@@ -203,7 +204,6 @@
     "surge": "^0.23.1",
     "tailwindcss": "^3.1.8",
     "tailwindcss-elevation": "^1.0.1",
-    "typescript": "5.2.2",
     "typescript-common": "^1.0.5-beta"
   }
 }

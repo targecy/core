@@ -437,8 +437,8 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
 export const consumeAd = async (
   proofs: ReturnType<typeof generateProof>,
   ad: Ad,
-  consumeAdFn: Function,
-  waitTxFn: Function
+  consumeAdFn: any,
+  waitTxFn: any
 ) => {
   const awaitedProofs = await proofs;
 

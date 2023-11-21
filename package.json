@@ -19,6 +19,7 @@
     "restart-services": "yarn workspace @scaffold-eth/services restart-all",
     "deploy-contracts": "rm -rf ./packages/solidity-ts/generated && yarn workspace @scaffold-eth/solidity deploy:hardhat && yarn workspace @scaffold-eth/solidity deploy:hardhat:post",
     "deploy-subgraph": "yarn workspace @scaffold-eth/subgraph remove-unsupported-array && sh ./packages/subgraph/create-subgraph.sh && yarn workspace @scaffold-eth/subgraph create-local && yarn workspace @scaffold-eth/subgraph codegen && yarn workspace @scaffold-eth/subgraph build && sh ./packages/subgraph/deploy-local.sh",
+    "build-dapp": "yarn workspace @targecy/webapp build",
     "dev-dapp": "yarn workspace @targecy/webapp dev",
     "start-dapp": "yarn workspace @targecy/webapp start",
     "migrate-backend": "yarn workspace @targecy/backend prisma:migrate:dev",
@@ -30,8 +31,10 @@
   "workspaces": [
     "packages/*"
   ],
+  "packageManager": "yarn@3.2.4",
   "engines": {
-    "node": "18"
+    "node": "18",
+    "yarn": "2"
   },
   "devDependencies": {
     "chalk": "^4.1.2",
