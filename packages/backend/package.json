@@ -1,7 +1,7 @@
 {
   "name": "@targecy/backend",
   "version": "0.0.1",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@1.22.1",
   "scripts": {
     "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
     "prepare": "husky install",
