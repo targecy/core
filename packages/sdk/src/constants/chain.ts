@@ -4,5 +4,5 @@ import * as deployedAddresses from '../generated/config/config.json' assert { ty
 
 export const targecyContractAddress = deployedAddresses['localhost_Targecy_ProxyAddress'];
 if (!targecyContractAddress) throw new Error('Missing Targecy address');
-export const addressZero = ethers.constants.AddressZero;
-export const BigNumberZero = ethers.constants.Zero;
+export const addressZero = ethers.ZeroAddress;
+export const BigNumberZero = ethers.getNumber('0');
