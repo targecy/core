@@ -22,13 +22,17 @@
     "dev-dapp": "yarn workspace @targecy/webapp dev",
     "start-dapp": "yarn workspace @targecy/webapp start",
     "migrate-backend": "yarn workspace @targecy/backend prisma:migrate:dev",
-    "start-backend": "yarn workspace @targecy/backend dev",
+    "build-backend": "yarn workspace @targecy/backend build",
+    "start-backend": "yarn workspace @targecy/backend start",
     "start-relayer": "yarn workspace @targecy/relayer dev",
     "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
   },
   "workspaces": [
-      "packages/*"
-    ],
+    "packages/*"
+  ],
+  "engines": {
+    "node": "18"
+  },
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
     "chalk": "^4.1.2",
