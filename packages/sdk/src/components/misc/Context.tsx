@@ -1,12 +1,13 @@
+import { getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { publicProvider } from '@wagmi/core/providers/public';
 import { ReactNode, createContext, useState } from 'react';
-import { useAsync } from 'react-use';
-import { ZkServicesType, initServices } from '../../utils/context';
-import { UserIdentityType, createUserIdentity } from '../..';
 import { Provider } from 'react-redux';
-import { store } from '../../utils/store';
+import { useAsync } from 'react-use';
 import { Config, WagmiConfig, createConfig, configureChains, mainnet } from 'wagmi';
-import { publicProvider } from 'wagmi/providers/public';
-import { InjectedConnector } from '@wagmi/core';
+
+import { UserIdentityType, createUserIdentity } from '../..';
+import { ZkServicesType, initServices } from '../../utils/context';
+import { store } from '../../utils/store';
 
 export type TargecyContextType = {
   zkServices?: ZkServicesType;
@@ -46,11 +47,14 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
 
   const { chains, publicClient, webSocketPublicClient } = configureChains([mainnet], [publicProvider()]);
 
+  const { connectors } = getDefaultWallets({
+    appName: 'Targecy',
+    projectId: 'f9753e832046896b8250567dc3231c56',
+    chains,
+  });
   const config = createConfig({
     autoConnect: true,
-    connectors: [
-      new InjectedConnector({ chains }),
-    ],
+    connectors,
     publicClient,
     webSocketPublicClient,
   });

@@ -1,6 +1,6 @@
 import path from 'path';
-import Swal from 'sweetalert2';
 
+import Swal from 'sweetalert2';
 import {
   BjjProvider,
   CredentialStorage,
@@ -24,7 +24,6 @@ import {
   RHSResolver,
   OnChainResolver,
   AgentResolver,
-  byteEncoder,
   EthStateStorage,
   type CredentialRequest,
   type IIdentityWallet,
@@ -32,9 +31,8 @@ import {
   CredentialStatusType,
   CircuitStorage,
   type CircuitData,
-  getRandomBytes,
 } from '@0xpolygonid/js-sdk';
-import { Hex } from '@iden3/js-crypto';
+import { Hex, getRandomBytes } from '@iden3/js-crypto';
 import { SchemaHash } from '@iden3/js-iden3-core';
 import { keccak256 } from '@lumeweb/js-sha3-browser';
 
@@ -43,13 +41,12 @@ export type StoragesSide = 'server' | 'client';
 const userSeed = 'userseedseedseedseedseedseedseed';
 
 import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
-import { type Dispatch, type SetStateAction } from 'react';
 
-import { Ad, ZkpRequest } from '../generated/graphql.types';
-import { ZkServicesType } from './context';
 import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
-import { relayerTrpcClient } from './trpc';
+import { Ad, ZkpRequest } from '../generated/graphql.types';
+
+import { ZkServicesType } from './context';
 import { getSeed, saveSeed } from './sharedStorage';
 import { base64StringToUint8Array, uint8ArrayToBase64String } from './string';
 
@@ -166,7 +163,7 @@ export function initializeStorages() {
 export type UserIdentityType = Awaited<ReturnType<typeof createUserIdentity>>;
 
 export async function createUserIdentity(identityWallet: IdentityWallet) {
-  let savedSeed = await getSeed();
+  const savedSeed = await getSeed();
   let seed: Uint8Array;
 
   if (!savedSeed) {
