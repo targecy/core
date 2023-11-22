@@ -1343,7 +1343,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.10.4, @emotion/react@npm:^11.11.1, @emotion/react@npm:^11.8.1":
+"@emotion/react@npm:^11.10.4, @emotion/react@npm:^11.8.1":
   version: 11.11.1
   resolution: "@emotion/react@npm:11.11.1"
   dependencies:
@@ -7053,7 +7053,7 @@ __metadata:
     "@babel/runtime": "npm:^7.19.0"
     "@emotion/cache": "npm:^11.10.3"
     "@emotion/core": "npm:^11.0.0"
-    "@emotion/react": "npm:^11.11.1"
+    "@emotion/react": "npm:^11.10.4"
     "@emotion/styled": "npm:^11.11.0"
     "@emotion/types": "npm:^0.7.0"
     "@ethersproject/abi": "npm:^5.7.0"
@@ -7104,10 +7104,10 @@ __metadata:
     "@types/node": "npm:^16.11.59"
     "@types/pretty-time": "npm:^1.1.2"
     "@types/qrcode.react": "npm:^1.0.2"
-    "@types/react": "npm:^18.2.38"
+    "@types/react": "npm:^18.0.20"
     "@types/react-blockies": "npm:^1.4.1"
     "@types/react-copy-to-clipboard": "npm:^5.0.4"
-    "@types/react-dom": "npm:^18.0.6"
+    "@types/react-dom": "npm:18.0.10"
     "@types/react-flatpickr": "npm:^3.8.8"
     "@types/react-qr-reader": "npm:^2.1.4"
     "@types/react-router-dom": "npm:^5.3.3"
@@ -7213,7 +7213,7 @@ __metadata:
     tailwindcss-elevation: "npm:^1.0.1"
     timers-browserify: "npm:^2.0.12"
     ts-invariant: "npm:^0.10.3"
-    typescript: "npm:^5.3.2"
+    typescript: "npm:5.2.2"
     typescript-common: "npm:^1.0.5-beta"
     use-debounce: "npm:^8.0.4"
     usehooks-ts: "npm:^2.6.0"
@@ -7946,6 +7946,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-dom@npm:18.0.10":
+  version: 18.0.10
+  resolution: "@types/react-dom@npm:18.0.10"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: fbc4ea2eb2e5fff8716bd323f850904f3aec1cbb257bf0799a23111b6d98b83c5b7e58b96c4bdd11033004668424672fd29f7412160bb0cdf2305066de1ce300
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^18.0.6":
   version: 18.2.16
   resolution: "@types/react-dom@npm:18.2.16"
@@ -8022,7 +8031,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.20, @types/react@npm:^18.2.38":
+"@types/react@npm:*, @types/react@npm:^18.0.20":
   version: 18.2.38
   resolution: "@types/react@npm:18.2.38"
   dependencies:
@@ -32497,7 +32506,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.4 || ^5.2.2, typescript@npm:^5.3.2":
+"typescript@npm:^4.6.4 || ^5.2.2":
   version: 5.3.2
   resolution: "typescript@npm:5.3.2"
   bin:
@@ -32537,7 +32546,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^4.6.4 || ^5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^4.6.4 || ^5.2.2#optional!builtin<compat/typescript>":
   version: 5.3.2
   resolution: "typescript@patch:typescript@npm%3A5.3.2#optional!builtin<compat/typescript>::version=5.3.2&hash=e012d7"
   bin:

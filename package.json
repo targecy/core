@@ -34,7 +34,8 @@
   "packageManager": "yarn@4.0.2",
   "engines": {
     "node": "18",
-    "yarn": "2"
+    "yarn": "4.0.2",
+    "npm": "use-yarn"
   },
   "devDependencies": {
     "chalk": "^4.1.2",
