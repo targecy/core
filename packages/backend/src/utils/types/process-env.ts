@@ -13,6 +13,8 @@ const envVariables = z.object({
   BITQUERY_API_KEY: z.string().min(10),
   DATABASE_URL: z.string(),
   SUBGRAPH_URL: z.string().url(),
+  NEXTAUTH_URL: z.string().url(),
+  NEXTAUTH_SECRET: z.string().min(10),
 });
 
 declare global {

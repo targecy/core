@@ -3,7 +3,7 @@ import { publicProvider } from '@wagmi/core/providers/public';
 import { ReactNode, createContext, useState } from 'react';
 import { Provider } from 'react-redux';
 import { useAsync } from 'react-use';
-import { Config, WagmiConfig, createConfig, configureChains, mainnet } from 'wagmi';
+import { Config, WagmiConfig, createConfig, configureChains, mainnet, createStorage } from 'wagmi';
 
 import { UserIdentityType, createUserIdentity } from '../..';
 import { ZkServicesType, initServices } from '../../utils/context';
@@ -45,7 +45,7 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
     }
   }, []);
 
-  const { chains, publicClient, webSocketPublicClient } = configureChains([mainnet], [publicProvider()]);
+  const { chains, publicClient } = configureChains([mainnet], [publicProvider()]);
 
   const { connectors } = getDefaultWallets({
     appName: 'Targecy',
@@ -56,7 +56,7 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
     autoConnect: true,
     connectors,
     publicClient,
-    webSocketPublicClient,
+    storage: createStorage({ storage: window.localStorage }),
   });
 
   return (

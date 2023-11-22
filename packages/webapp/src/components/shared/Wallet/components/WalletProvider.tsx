@@ -1,6 +1,8 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { RainbowKitSiweNextAuthProvider, GetSiweMessageOptions } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
+import { SessionProvider } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygonMumbai, localhost } from 'wagmi/chains';
@@ -31,16 +33,25 @@ const wagmiConfig = createConfig({
   publicClient,
 });
 
-export const WalletProvider = ({ children }: WalletProviderProps) => {
+const getSiweMessageOptions: GetSiweMessageOptions = () => ({
+  statement: 'Sign in to my RainbowKit app',
+});
+
+export const WalletProvider = ({ children, session }: WalletProviderProps) => {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider chains={chains} appInfo={{ appName }}>
-        {children}
-      </RainbowKitProvider>
+      <SessionProvider session={session}>
+        <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
+          <RainbowKitProvider chains={chains} appInfo={{ appName }}>
+            {children}
+          </RainbowKitProvider>
+        </RainbowKitSiweNextAuthProvider>
+      </SessionProvider>
     </WagmiConfig>
   );
 };
 
 interface WalletProviderProps {
   children: ReactNode;
+  session?: any;
 }
