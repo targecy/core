@@ -211,5 +211,7 @@
     "typescript": "5.2.2",
     "typescript-common": "^1.0.5-beta"
   },
-  "browserslist": []
+  "resolutions": {
+    "browserslist": "4.6.2"
+  }
 }
