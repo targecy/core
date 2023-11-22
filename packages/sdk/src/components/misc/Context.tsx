@@ -56,7 +56,6 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
     autoConnect: true,
     connectors,
     publicClient,
-    storage: createStorage({ storage: window.localStorage }),
   });
 
   return (
