@@ -11,6 +11,7 @@ export const Home = () => {
     abi,
     functionName: '_adId',
   });
+  
 
   const { data: targetGroupsQuantity } = useContractRead({
     address: targecyContractAddress,
