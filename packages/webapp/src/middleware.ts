@@ -5,12 +5,17 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  console.log('session auth url', (process.env.NEXTAUTH_URL || process.env.VERCEL_URL || '') + '/api/auth/session');
-  console.log('session cookie', req.headers.get('cookie'));
-
   let session;
   if (req.headers.get('cookie')) {
-    const resSession = await fetch((process.env.NEXTAUTH_URL || process.env.VERCEL_URL || '') + '/api/auth/session', {
+    const urlBase = process.env.NEXTAUTH_URL || process.env.VERCEL_URL;
+    if (!urlBase) throw new Error('NEXTAUTH_URL or VERCEL_URL must be set');
+    let url = urlBase + '/api/auth/session';
+    if (!url.includes('http')) url = 'https://' + url;
+    if (URL.canParse(url)) throw new Error('Invalid URL: ' + url);
+
+    console.log('session auth url', url);
+
+    const resSession = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
         Cookie: req.headers.get('cookie') || '',
