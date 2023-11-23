@@ -28,6 +28,7 @@
   "include": ["src", "codegen.ts", "apollo.config.js"],
   "exclude": [
     "**/node_modules/**/*",
+    "**/public/**/*",
     ".husky",
     "**/*.css",
     "tailwind.config.js",

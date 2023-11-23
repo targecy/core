@@ -4,16 +4,14 @@ import { useContractRead } from 'wagmi';
 import * as abi from '../generated/abis/Targecy.json';
 
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useWallet } from '~~/hooks';
 
 export const Home = () => {
-  const wallet = useWallet();
-
   const { data: adsQuantity } = useContractRead({
     address: targecyContractAddress,
     abi,
     functionName: '_adId',
   });
+  
 
   const { data: targetGroupsQuantity } = useContractRead({
     address: targecyContractAddress,
@@ -36,7 +34,7 @@ export const Home = () => {
 
   return (
     <div>
-      <label className="mt-5 ml-5">Network</label>
+      <label className="ml-5 mt-5">Network</label>
 
       <div className="flex">
         {/* create 3 columns with panels  */}
@@ -63,7 +61,7 @@ export const Home = () => {
         </div>
       </div>
 
-      <label className="mt-5 ml-5">Profile</label>
+      <label className="ml-5 mt-5">Profile</label>
 
       <div className="flex">
         {/* create 3 columns with panels  */}
@@ -89,7 +87,7 @@ export const Home = () => {
         </div>
       </div>
 
-      <label className="mt-5 ml-5">Advertiser profile</label>
+      <label className="ml-5 mt-5">Advertiser profile</label>
 
       <div className="flex">
         {/* create 3 columns with panels  */}
