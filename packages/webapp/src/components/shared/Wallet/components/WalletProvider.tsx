@@ -28,7 +28,7 @@ const { connectors } = getDefaultWallets({
 });
 
 const wagmiConfig = createConfig({
-  autoConnect: false, // TODO Set True and fix hydration issue
+  autoConnect: true, // TODO Set True and fix hydration issue
   connectors,
   publicClient,
 });

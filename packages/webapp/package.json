@@ -74,7 +74,6 @@
     "@x1mrdonut1x/nouislider-react": "^3.4.3",
     "antd": "^4.23.1",
     "apexcharts": "^3.37.1",
-    "browserslist": "4.6.3",
     "buffer": "^6.0.3",
     "daisyui": "^2.27.0",
     "easymde": "^2.18.0",
@@ -210,8 +209,5 @@
     "tailwindcss-elevation": "^1.0.1",
     "typescript": "5.2.2",
     "typescript-common": "^1.0.5-beta"
-  },
-  "resolutions": {
-    "browserslist": "4.6.2"
   }
 }

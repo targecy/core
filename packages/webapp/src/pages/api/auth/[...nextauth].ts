@@ -63,9 +63,7 @@ export default async function auth(req: any, res: any) {
     callbacks: {
       session({ session, token }: { session: any; token: any }) {
         session.address = token.sub;
-        session.user = {
-          address: token.sub,
-        };
+
         return session;
       },
     },
