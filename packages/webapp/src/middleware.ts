@@ -21,12 +21,17 @@ export async function middleware(req: NextRequest) {
       },
       method: 'GET',
     });
-
-    session = await resSession.json();
+    try {
+      const body = await resSession.text();
+      console.log('session auth res', body);
+      session = JSON.parse(body || '{}');
+    } catch (e) {
+      console.error('session auth error', e);
+    }
   }
 
-  if (!token || !session.data.isBetaUser) {
-    const requestedPage = req.nextUrl.pathname;
+  if (!token || !session?.data?.isBetaUser) {
+    const requestedPage = '';
     const url = req.nextUrl.clone();
     url.pathname = `/beta`;
     url.search = `p=${requestedPage}`;
