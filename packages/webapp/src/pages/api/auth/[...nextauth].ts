@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 
+import { isVercelDevelopment } from '~~/constants/app.constants';
 import { env } from '~~/env.mjs';
 
 // For more information on each option (and a full list of options) go to
@@ -33,8 +34,6 @@ export default async function auth(req: any, res: any) {
           };
 
           const result = await siwe.verify(verifyParams);
-
-          console.error('NextAuth Validation', verifyParams);
 
           if (!result.success) return { id: 'Could not verify signature.' };
 
@@ -69,10 +68,12 @@ export default async function auth(req: any, res: any) {
     secret: env.NEXTAUTH_SECRET,
     callbacks: {
       session({ session, token }: { session: any; token: any }) {
+        let isBetaUser = false;
+        if (isVercelDevelopment) isBetaUser = true;
 
         session.data = {
           address: token.sub,
-          isBetaUser: true,
+          isBetaUser,
         };
 
         return session;

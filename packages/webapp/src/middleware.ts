@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getSession } from 'next-auth/react';
+import { getToken } from 'next-auth/jwt';
+
+import { env } from './env.mjs';
 
 export async function middleware(req: NextRequest) {
-  // const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const session: any = await getSession();
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  if (!session?.data?.isBetaUser) {
+  const resSession = await fetch((env.NEXTAUTH_URL || env.VERCEL_URL || '') + '/api/auth/session', {
+    headers: {
+      'Content-Type': 'application/json',
+      Cookie: req.headers.get('cookie') || '',
+    },
+    method: 'GET',
+  });
+  const session = await resSession.json();
+
+  if (!token || !session.data.isBetaUser) {
     const requestedPage = req.nextUrl.pathname;
     const url = req.nextUrl.clone();
     url.pathname = `/beta`;
