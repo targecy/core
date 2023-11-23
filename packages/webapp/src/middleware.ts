@@ -7,7 +7,7 @@ import { env } from './env.mjs';
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  const resSession = await fetch((env.NEXTAUTH_URL || env.VERCEL_URL || '') + '/api/auth/session', {
+  const resSession = await fetch((process.env.NEXTAUTH_URL || process.env.VERCEL_URL || '') + '/api/auth/session', {
     headers: {
       'Content-Type': 'application/json',
       Cookie: req.headers.get('cookie') || '',
