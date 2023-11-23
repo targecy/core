@@ -10,7 +10,7 @@ export async function middleware(req: NextRequest) {
     const url = req.nextUrl.clone();
     url.pathname = `/beta`;
     url.search = `p=${requestedPage}`;
-    return NextResponse.rewrite(url);
+    return NextResponse.redirect(url);
   }
   return NextResponse.next();
 }
