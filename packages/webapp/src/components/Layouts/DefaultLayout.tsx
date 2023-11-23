@@ -61,13 +61,26 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
     }, 1100);
   }, [router.asPath]);
 
+  const { pathname } = useRouter();
+  const useFullLayout = pathname !== '/beta';
+
+  if (!useFullLayout)
+    return (
+      <App>
+        <div
+          className={`${themeConfig.navbar} main-content flex min-h-screen flex-col text-black dark:text-white-dark`}>
+          {children}
+        </div>
+      </App>
+    );
+
   return (
     <App>
       {/* BEGIN MAIN CONTAINER */}
       <div className="relative">
         {/* screen loader  */}
         {showLoader && (
-          <div className="screen_loader animate__animated fixed inset-0 z-[60] grid place-content-center bg-[#fafafa] dark:bg-[#060818]">
+          <div className="screen_loader animate__animated dark:bg-[#060818] fixed inset-0 z-[60] grid place-content-center bg-[#fafafa]">
             <svg width="64" height="64" viewBox="0 0 135 135" xmlns="http://www.w3.org/2000/svg" fill="#4361ee">
               <path d="M67.447 58c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10zm9.448 9.447c0 5.523 4.477 10 10 10 5.522 0 10-4.477 10-10s-4.478-10-10-10c-5.523 0-10 4.477-10 10zm-9.448 9.448c-5.523 0-10 4.477-10 10 0 5.522 4.477 10 10 10s10-4.478 10-10c0-5.523-4.477-10-10-10zM58 67.447c0-5.523-4.477-10-10-10s-10 4.477-10 10 4.477 10 10 10 10-4.477 10-10z">
                 <animateTransform
@@ -100,7 +113,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
           {showTopButton && (
             <button
               type="button"
-              className="btn-outline-primary btn animate-pulse rounded-full bg-[#fafafa] p-2 dark:bg-[#060818] dark:hover:bg-primary"
+              className="btn-outline-primary dark:bg-[#060818] btn animate-pulse rounded-full bg-[#fafafa] p-2 dark:hover:bg-primary"
               onClick={goToTop}>
               <svg
                 width="24"

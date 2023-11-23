@@ -10,6 +10,9 @@ export const env = createEnv({
     PRIVATE_KEY: z.string().min(1),
     NODE_ENV: z.string().min(1),
     VERCEL_ENV: z.string().min(1),
+    VERCEL_URL: z.string().url().optional(),
+    NEXTAUTH_URL: z.string().url().optional(),
+    NEXTAUTH_SECRET: z.string().min(10),
   },
   client: {
     // Template: TODO REVIEW
@@ -44,6 +47,8 @@ export const env = createEnv({
     NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: Boolean(process.env.NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED),
     NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: Boolean(process.env.NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY),
     NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
