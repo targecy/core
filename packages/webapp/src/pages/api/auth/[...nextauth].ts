@@ -28,11 +28,18 @@ export default async function auth(req: any, res: any) {
           const siwe = new SiweMessage(JSON.parse(credentials?.message || '{}'));
           const nextAuthUrl = new URL(env.NEXTAUTH_URL || env.VERCEL_URL || '');
 
-          const result = await siwe.verify({
+          const verifyParams = {
             signature: credentials?.signature || '',
-            domain: nextAuthUrl.host,
+
+            // If it is preview don't check domain
+            ...(env.VERCEL_ENV === 'preview' ? {} : { domain: nextAuthUrl.host }),
+
             nonce: await getCsrfToken({ req }),
-          });
+          };
+
+          const result = await siwe.verify(verifyParams);
+
+          console.log('NextAuth Validation', verifyParams);
 
           if (result.success) {
             return {
