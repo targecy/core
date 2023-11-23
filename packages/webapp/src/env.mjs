@@ -10,7 +10,8 @@ export const env = createEnv({
     PRIVATE_KEY: z.string().min(1),
     NODE_ENV: z.string().min(1),
     VERCEL_ENV: z.string().min(1),
-    NEXTAUTH_URL: z.string().url(),
+    VERCEL_URL: z.string().url().optional(),
+    NEXTAUTH_URL: z.string().url().optional(),
     NEXTAUTH_SECRET: z.string().min(10),
   },
   client: {

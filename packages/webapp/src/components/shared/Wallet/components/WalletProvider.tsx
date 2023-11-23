@@ -34,7 +34,7 @@ const wagmiConfig = createConfig({
 });
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
-  statement: 'Sign in to my RainbowKit app',
+  statement: 'Sign in to Targecy',
 });
 
 export const WalletProvider = ({ children, session }: WalletProviderProps) => {
