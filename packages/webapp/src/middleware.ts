@@ -5,38 +5,14 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  let session;
-  if (req.headers.get('cookie')) {
-    const urlBase = process.env.NEXTAUTH_URL || process.env.VERCEL_URL;
-    if (!urlBase) throw new Error('NEXTAUTH_URL or VERCEL_URL must be set');
-    let url = urlBase + '/api/auth/session';
-    if (!url.includes('http')) url = 'https://' + url;
-
-    console.log('session auth url', url);
-
-    const resSession = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        Cookie: req.headers.get('cookie') || '',
-      },
-      method: 'GET',
-    });
-    try {
-      const body = await resSession.text();
-      console.log('session auth res', body);
-      session = JSON.parse(body || '{}');
-    } catch (e) {
-      console.error('session auth error', e);
-    }
-  }
-
-  if (!token || !session?.data?.isBetaUser) {
-    const requestedPage = '';
+  if (!token?.isBetaUser) {
+    const requestedPage = req.nextUrl.pathname || '/';
     const url = req.nextUrl.clone();
     url.pathname = `/beta`;
     url.search = `p=${requestedPage}`;
     return NextResponse.redirect(url);
   }
+
   return NextResponse.next();
 }
 

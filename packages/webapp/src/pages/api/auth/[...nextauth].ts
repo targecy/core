@@ -7,6 +7,7 @@ import { isVercelDevelopment } from '~~/constants/app.constants';
 import { env } from '~~/env.mjs';
 
 const WHITELISTED_ADDRESSES = ['0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a'];
+const isBetaUser = (address: string) => WHITELISTED_ADDRESSES.includes(address) || isVercelDevelopment;
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -70,15 +71,17 @@ export default async function auth(req: any, res: any) {
     secret: env.NEXTAUTH_SECRET,
     callbacks: {
       session({ session, token }: { session: any; token: any }) {
-        let isBetaUser = WHITELISTED_ADDRESSES.includes(token.sub);
-        if (isVercelDevelopment) isBetaUser = true;
-
         session.data = {
           address: token.sub,
-          isBetaUser,
+          isBetaUser: isBetaUser(token.sub),
         };
 
         return session;
+      },
+      jwt({ token }: { token: any }) {
+        token.isBetaUser = isBetaUser(token.sub);
+
+        return token;
       },
     },
   });
