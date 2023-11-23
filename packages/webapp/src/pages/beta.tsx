@@ -1,6 +1,8 @@
+import { useAccountModal } from '@rainbow-me/rainbowkit';
 import { Typography } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
@@ -10,15 +12,18 @@ import { trimAddress } from '~~/utils/evm';
 const FORM_LINK = 'https://skugmdh7toi.typeform.com/to/hEiAYGEx';
 
 export default function Beta() {
+  const { openAccountModal } = useAccountModal();
   const { isConnected, address } = useWallet();
   const router = useRouter();
   const href = router.query.p;
+  const session = useSession();
+  const sessionData: any = session?.data;
 
   useEffect(() => {
-    if (isConnected) {
+    if (sessionData?.isBetaUser) {
       router.push(href?.toString() ?? '/').catch((e) => console.log(e));
     }
-  }, [router, isConnected, href]);
+  }, [router, href, sessionData]);
 
   return (
     <div className=" w-full justify-center ">
@@ -29,13 +34,38 @@ export default function Beta() {
           The revolution starts here.
         </Typography>
 
-        {isConnected && address ? (
+        {isConnected && address && session?.status === 'authenticated' ? (
+          sessionData?.isBetaUser ? (
+            <div className="flex flex-row items-center gap-1">
+              <label className="flex inline-flex text-secondary">
+                {' '}
+                Address <label className="ml-1 mr-1 text-primary">{trimAddress(address)}</label> connected successfully!
+                Redirecting...
+              </label>
+            </div>
+          ) : (
+            <div className="flex flex-row items-center gap-1">
+              <label className="flex inline-flex text-secondary">
+                {' '}
+                Address {trimAddress(address)} is not whitelisted. Please{' '}
+                <Link
+                  href={FORM_LINK}
+                  target="_blank"
+                  className="ml-1 mr-1 text-primary transition-colors	  hover:bg-gradient-to-br  hover:from-slate-50 hover:to-violet-500 hover:bg-clip-text hover:text-transparent ">
+                  request access
+                </Link>{' '}
+                to the beta or
+                <label
+                  onClick={openAccountModal}
+                  className="ml-1 mr-1 text-primary transition-colors	  hover:bg-gradient-to-br  hover:from-slate-50 hover:to-violet-500 hover:bg-clip-text hover:text-transparent ">
+                  review connected wallet
+                </label>
+              </label>
+            </div>
+          )
+        ) : session?.status === 'loading' ? (
           <div className="flex flex-row items-center gap-1">
-            <label className="flex inline-flex text-secondary">
-              {' '}
-              Address <label className="ml-1 mr-1 text-primary">{trimAddress(address)}</label> connected successfully!
-              Redirecting...
-            </label>
+            <label className="flex inline-flex text-secondary"> Loading...</label>
           </div>
         ) : (
           <>

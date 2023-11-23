@@ -28,7 +28,7 @@ export default async function auth(req: any, res: any) {
           const siwe = new SiweMessage(JSON.parse(credentials?.message || '{}'));
 
           const verifyParams = {
-            signature: credentials?.signature || "",
+            signature: credentials?.signature || '',
             nonce: await getCsrfToken({ req }),
           };
 
@@ -36,12 +36,17 @@ export default async function auth(req: any, res: any) {
 
           console.error('NextAuth Validation', verifyParams);
 
-          if (result.success) {
+          if (!result.success) return { id: 'Could not verify signature.' };
+
+          const isBetaUser = true;
+          if (!isBetaUser)
             return {
-              id: siwe.address,
+              id: 'Address is not whitelisted.',
             };
-          }
-          return null;
+
+          return {
+            id: siwe.address,
+          };
         } catch (e) {
           return null;
         }
@@ -64,7 +69,11 @@ export default async function auth(req: any, res: any) {
     secret: env.NEXTAUTH_SECRET,
     callbacks: {
       session({ session, token }: { session: any; token: any }) {
-        session.address = token.sub;
+
+        session.data = {
+          address: token.sub,
+          isBetaUser: true,
+        };
 
         return session;
       },

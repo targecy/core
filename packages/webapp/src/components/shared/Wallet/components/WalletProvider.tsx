@@ -1,5 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { darkTheme, getDefaultWallets, midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider, GetSiweMessageOptions } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { SessionProvider } from 'next-auth/react';
@@ -42,7 +42,7 @@ export const WalletProvider = ({ children, session }: WalletProviderProps) => {
     <WagmiConfig config={wagmiConfig}>
       <SessionProvider session={session}>
         <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
-          <RainbowKitProvider chains={chains} appInfo={{ appName }}>
+          <RainbowKitProvider modalSize="compact" theme={darkTheme()} chains={chains} appInfo={{ appName }}>
             {children}
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>
