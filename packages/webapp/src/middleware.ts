@@ -5,14 +5,21 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  const resSession = await fetch((process.env.NEXTAUTH_URL || process.env.VERCEL_URL || '') + '/api/auth/session', {
-    headers: {
-      'Content-Type': 'application/json',
-      Cookie: req.headers.get('cookie') || '',
-    },
-    method: 'GET',
-  });
-  const session = await resSession.json();
+  console.log('session auth url', (process.env.NEXTAUTH_URL || process.env.VERCEL_URL || '') + '/api/auth/session');
+  console.log('session cookie', req.headers.get('cookie'));
+
+  let session;
+  if (req.headers.get('cookie')) {
+    const resSession = await fetch((process.env.NEXTAUTH_URL || process.env.VERCEL_URL || '') + '/api/auth/session', {
+      headers: {
+        'Content-Type': 'application/json',
+        Cookie: req.headers.get('cookie') || '',
+      },
+      method: 'GET',
+    });
+
+    session = await resSession.json();
+  }
 
   if (!token || !session.data.isBetaUser) {
     const requestedPage = req.nextUrl.pathname;
