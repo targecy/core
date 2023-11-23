@@ -11,7 +11,6 @@ export async function middleware(req: NextRequest) {
     if (!urlBase) throw new Error('NEXTAUTH_URL or VERCEL_URL must be set');
     let url = urlBase + '/api/auth/session';
     if (!url.includes('http')) url = 'https://' + url;
-    if (URL.canParse(url)) throw new Error('Invalid URL: ' + url);
 
     console.log('session auth url', url);
 
