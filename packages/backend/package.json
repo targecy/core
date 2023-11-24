@@ -4,7 +4,7 @@
   "scripts": {
     "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
     "build": "yarn graphql-codegen && shx rm -rf build && tsc -p tsconfig.json",
-    "dev": "yarn graphql-codegen && concurrently \"ts-node-dev -r tsconfig-paths/register src/index.ts\" \"yarn graphql-codegen-watch\"",
+    "dev": "yarn graphql-codegen && concurrently \"ts-node-dev --watch ./src,../sdk/src -r tsconfig-paths/register src/index.ts\" \"yarn graphql-codegen-watch\"",
     "start": "node build/src/index.js",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src",
     "lint:fix": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore --fix ./src ",

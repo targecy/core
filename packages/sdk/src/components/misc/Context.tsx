@@ -24,7 +24,7 @@ export interface TargecyComponentProps {
 }
 
 export interface TargecyBaseProps {
-  wagmiConfig: Config;
+  wagmiConfig?: Config;
 }
 
 export const TargecyComponent = ({ children, ...props }: TargecyComponentProps & TargecyBaseProps) => {
@@ -45,24 +45,24 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
     }
   }, []);
 
-  const { chains, publicClient } = configureChains([mainnet], [publicProvider()]);
+  // const { chains, publicClient } = configureChains([mainnet], [publicProvider()]);
 
-  const { connectors } = getDefaultWallets({
-    appName: 'Targecy',
-    projectId: 'f9753e832046896b8250567dc3231c56',
-    chains,
-  });
-  const config = createConfig({
-    autoConnect: true,
-    connectors,
-    publicClient,
-  });
+  // const { connectors } = getDefaultWallets({
+  //   appName: 'Targecy',
+  //   projectId: 'f9753e832046896b8250567dc3231c56',
+  //   chains,
+  // });
+  // const config = createConfig({
+  //   autoConnect: true,
+  //   connectors,
+  //   publicClient,
+  // });
 
   return (
-    <WagmiConfig config={config}>
+    // <WagmiConfig config={config}>
       <Provider store={store}>
         <TargecyServicesContext.Provider value={context}>{children}</TargecyServicesContext.Provider>
       </Provider>
-    </WagmiConfig>
+    // </WagmiConfig>
   );
 };

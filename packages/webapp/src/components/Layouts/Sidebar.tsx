@@ -185,11 +185,11 @@ const Sidebar = () => {
                   <br></br>
                   <label>Publisher</label>
                   <li className="nav-item">
-                    <Link href="/demo" className="group">
+                    <Link href="/wizard" className="group">
                       <div className="flex items-center">
                         <PlaySquareOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Demo')}
+                          {t('Wizard')}
                         </span>
                       </div>
                     </Link>
