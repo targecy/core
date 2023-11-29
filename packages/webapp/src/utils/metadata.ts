@@ -1,0 +1,10 @@
+export const fetchMetadata = async (metadataURI: string) => {
+  const newMetadata = await fetch(`https://ipfs.io/ipfs/${metadataURI}`);
+  const json = await newMetadata.json();
+
+  return {
+    title: json.title,
+    description: json.description,
+    ...(json.image ? { image: json.image } : {}),
+  };
+};

@@ -69,7 +69,7 @@ const Sidebar = () => {
   return (
     <div className={semidark ? 'dark' : ''}>
       <nav
-        className={`sidebar fixed top-0 bottom-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${
+        className={`sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${
           semidark ? 'text-white-dark' : ''
         }`}>
         <div className="h-full bg-white dark:bg-black">
@@ -141,6 +141,16 @@ const Sidebar = () => {
                   <br></br>
                   <label>Advertiser</label>
                   <li className="nav-item">
+                    <Link href="/targetGroups" className="group">
+                      <div className="flex items-center">
+                        <UsergroupAddOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Audiences')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
                     <Link href="/ads" className="group">
                       <div className="flex items-center">
                         <EditOutlined rev={undefined} />
@@ -153,21 +163,11 @@ const Sidebar = () => {
                   <br></br>
                   <label>Admin</label>
                   <li className="nav-item">
-                    <Link href="/targetGroups" className="group">
-                      <div className="flex items-center">
-                        <UsergroupAddOutlined rev={undefined} />
-                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Target Groups')}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
                     <Link href="/zkprequests" className="group">
                       <div className="flex items-center">
                         <SecurityScanOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('ZKP Requests')}
+                          {t('Attributes')}
                         </span>
                       </div>
                     </Link>
@@ -185,11 +185,11 @@ const Sidebar = () => {
                   <br></br>
                   <label>Publisher</label>
                   <li className="nav-item">
-                    <Link href="/demo" className="group">
+                    <Link href="/wizard" className="group">
                       <div className="flex items-center">
                         <PlaySquareOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Demo')}
+                          {t('Wizard')}
                         </span>
                       </div>
                     </Link>

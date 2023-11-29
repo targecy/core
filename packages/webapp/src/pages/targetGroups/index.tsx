@@ -1,6 +1,7 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
@@ -8,6 +9,7 @@ import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
+import { fetchMetadata } from '~~/utils/metadata';
 
 const abi = require('../../generated/abis/Targecy.json');
 
@@ -23,6 +25,7 @@ const TargetGroups = () => {
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string; image?: string }>>(
     {}
   );
+  const [ZKPMetadata, setZKPMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>({});
   useAsync(async () => {
     if (targetGroups) {
       const metadata: Record<string, { title?: string; description?: string }> = {};
@@ -36,6 +39,15 @@ const TargetGroups = () => {
       }
 
       setMetadata(metadata);
+
+      const ZKPMetedatasURIs = targetGroups?.flatMap((tg) => tg.zkRequests.map((r) => r.metadataURI)) || [];
+      setZKPMetadata(
+        await ZKPMetedatasURIs.reduce(async (acc: any, uri: string) => {
+          const metadata = await fetchMetadata(uri);
+          acc[uri] = metadata;
+          return acc;
+        }, {})
+      );
     }
   }, [targetGroups]);
 
@@ -54,7 +66,11 @@ const TargetGroups = () => {
     { title: 'Id', accessor: 'id' },
     { title: 'Title', accessor: 'id', render: (tg) => metadata[tg.id]?.title },
     { title: 'Description', accessor: 'id', render: (tg) => metadata[tg.id]?.description },
-    { title: 'ZKP Requests', accessor: 'zkRequests', render: (value) => value.zkRequests.map((r) => r.id).join(', ') },
+    {
+      title: 'Attributes',
+      accessor: 'zkRequests',
+      render: (value) => value.zkRequests.map((r) => ZKPMetadata[r.metadataURI]?.title).join(', '),
+    },
     {
       width: 75,
       accessor: 'actions',
@@ -106,6 +122,8 @@ const TargetGroups = () => {
     },
   ];
 
+  const router = useRouter();
+
   return (
     <>
       <div className="panel">
@@ -123,6 +141,11 @@ const TargetGroups = () => {
             className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
             records={targetGroups}
             minHeight={200}
+            highlightOnHover={true}
+            onRowClick={(row) => {
+              console.log(row);
+              router.push(`/ads/editor?targetGroups=${row.id}`).catch((e) => console.log(e));
+            }}
             columns={columns}></DataTable>
         </div>
       </div>

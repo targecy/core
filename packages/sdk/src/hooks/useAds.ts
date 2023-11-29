@@ -21,11 +21,13 @@ export const useAds = (context: TargecyContextType) => {
 
   const validAds =
     data?.ads.filter((ad) =>
-      ad?.targetGroups.some((tg) => tg.zkRequests.every((zk) => getValidCredentialByProofRequest(credentials.credentials, zk)))
+      ad?.targetGroups.some((tg) =>
+        tg.zkRequests.every((zk) => getValidCredentialByProofRequest(credentials.credentials, zk))
+      )
     ) || [];
 
   const [completeAds, setCompleteAds] = useState<
-    { ad: Ad; metadata: { title?: string; description?: string; image?: string } }[]
+    { ad: Ad; metadata: { title: string; description: string; image: string } }[]
   >([]);
 
   useAsync(async () => {
