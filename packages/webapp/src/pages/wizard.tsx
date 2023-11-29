@@ -284,7 +284,7 @@ const Demo = () => {
             </div>
           </div>
           <div className="flex place-items-center  justify-center">
-            <Ad isDemo={true} publisher={params.publisher} styling={params.styling} />{' '}
+            <Ad env="development" isDemo={true} publisher={params.publisher} styling={params.styling} />{' '}
           </div>
         </div>
       </div>

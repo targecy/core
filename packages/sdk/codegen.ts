@@ -13,6 +13,7 @@ const config: CodegenConfig = {
     [`src/generated/graphql.types.ts`]: {
       schema: {
         ['http://localhost:8000/subgraphs/name/targecy' ?? '']: {
+          // @todo (Martin): Check URL
           headers: {
             'content-type': 'application/json',
           },

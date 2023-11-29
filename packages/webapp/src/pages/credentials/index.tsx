@@ -14,6 +14,7 @@ const Credentials = () => {
   const { isConnected, address } = useWallet();
   const { signMessageAsync } = useSignMessage();
   const [fetchingCredentials, setFetchingCredentials] = useState(false);
+  const [credentialsFetched, setCredentialsFetched] = useState(false);
 
   const getPublicCredentials = () =>
     signMessageAsync({ message: 'public.credentials' }).then((signature) =>
@@ -38,17 +39,20 @@ const Credentials = () => {
         <h5 className="text-2xl font-semibold text-primary">Credentials</h5>
 
         {isConnected ? (
-          <button
-            disabled={fetchingCredentials}
-            className="btn btn-primary !mt-6"
-            onClick={() => {
-              setFetchingCredentials(true);
-              getPublicCredentials()
-                .then(() => triggerSweetAlert('Public-data credentials retrieved successfully.', 'success'))
-                .catch(() => triggerSweetAlert('Error retrieving public-data credentials.', 'error'));
-            }}>
-            {fetchingCredentials ? 'Fetching Credentials...' : 'Fetch public-data credentials'}
-          </button>
+          !credentialsFetched && (
+            <button
+              disabled={fetchingCredentials}
+              className="btn btn-primary !mt-6"
+              onClick={() => {
+                setFetchingCredentials(true);
+                setCredentialsFetched(true);
+                getPublicCredentials()
+                  .then(() => triggerSweetAlert('Public-data credentials retrieved successfully.', 'success'))
+                  .catch(() => triggerSweetAlert('Error retrieving public-data credentials.', 'error'));
+              }}>
+              {fetchingCredentials ? 'Fetching Credentials...' : 'Fetch public-data credentials'}
+            </button>
+          )
         ) : (
           <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
         )}
@@ -102,6 +106,12 @@ const Credentials = () => {
               </div>
             </div>
           ))}
+          {!credentials.length && credentialsFetched && (
+            <label className="m-4 mt-7">
+              We could not find any credentials for this wallet. Please try again in the future or request us for
+              specific credentials.
+            </label>
+          )}
         </div>
       </div>
     </div>

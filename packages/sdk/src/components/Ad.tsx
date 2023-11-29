@@ -1,11 +1,11 @@
 import { BaseAd, BaseAdStyling } from './BaseAd';
 import { Address, Config } from 'wagmi';
-import { InteractiveAd, InteractiveAdStyling } from './InteractiveAd';
 import { useAd } from '../hooks/useAd';
 import { useContext } from 'react';
 import { TargecyComponent, TargecyServicesContext } from './misc';
 import { ethers } from 'ethers';
 import { Skeleton } from 'antd';
+import { environment } from 'src/utils/context';
 
 const defaultStyling: BaseAdStyling = {
   width: '500px',
@@ -19,22 +19,14 @@ const defaultStyling: BaseAdStyling = {
 type SharedAdParams = {
   isDemo?: boolean;
   publisher: Address;
+  env?: environment;
 };
 
 type BaseAdParams = {
   styling?: BaseAdStyling;
 } & SharedAdParams;
 
-type InteractiveAdParams = {
-  wagmiConfig: Config;
-  styling?: InteractiveAdStyling;
-} & SharedAdParams;
-
-export type AdParams = BaseAdParams | InteractiveAdParams;
-
-const isInteractiveAd = (params: AdParams): params is InteractiveAdParams => {
-  return 'wagmiConfig' in params;
-};
+export type AdParams = BaseAdParams;
 
 const validateMinWidth = (width: string) => {
   if (width.includes('px')) {
@@ -54,7 +46,7 @@ const validateMinHeight = (height: string) => {
   return false;
 };
 
-const isValidStyling = (styling?: BaseAdStyling | InteractiveAdStyling): boolean =>
+const isValidStyling = (styling?: BaseAdStyling): boolean =>
   (!styling?.width || validateMinWidth(styling.width)) && (!styling?.height || validateMinHeight(styling.height));
 
 export const AdComponent = (params: AdParams) => {
@@ -80,7 +72,7 @@ export const AdComponent = (params: AdParams) => {
       },
       metadata: {
         title: 'Are you looking for the best yield!',
-        description: 'LoremIpsum Protocol is the best yield aggregator in the world.',
+        description: 'Protocol is the best yield aggregator in the world.',
         image:
           'https://cdn.dribbble.com/users/1925451/screenshots/4224926/media/3fec19dcc072afde5c91df61e49cc14e.jpg?resize=400x0',
       },
@@ -92,23 +84,13 @@ export const AdComponent = (params: AdParams) => {
 
   if (!ad) return undefined;
 
-  if (isInteractiveAd(params)) {
-    return InteractiveAd({
-      id: ad.ad.id,
-      title: ad.metadata.title,
-      description: ad.metadata.description,
-      image: ad.metadata.image,
-      isLoading,
-      styling: params.styling,
-    });
-  }
-
   return BaseAd({
     id: ad.ad.id,
     title: ad.metadata.title,
     description: ad.metadata.description,
     image: ad.metadata.image,
     isLoading,
+    env: params.env || 'production',
     styling: params.styling,
   });
 };
@@ -134,7 +116,7 @@ export const Ad = (params: AdParams) => {
           backgroundColor: style?.backgroundColor,
           borderRadius: style?.borderRadius,
         }}>
-        <AdComponent publisher={params.publisher} isDemo={params.isDemo} styling={style} />
+        <AdComponent env={params.env} publisher={params.publisher} isDemo={params.isDemo} styling={style} />
       </div>
     </TargecyComponent>
   );

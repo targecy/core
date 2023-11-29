@@ -2,6 +2,7 @@ import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 import { BaseQueryFn, FetchBaseQueryError, FetchBaseQueryMeta, createApi } from '@reduxjs/toolkit/query/react';
 import { TRPCClientError } from '@trpc/client';
 import { HYDRATE } from 'next-redux-wrapper';
+import { backendTrpcClient } from 'src/utils';
 
 // const backendApiTagTypes = [] as const;
 // const trpcBaseQuery = (): BaseQueryFn => () => ({ data: '' });
@@ -39,22 +40,22 @@ const trpcOperation = async <Operation extends (...args: any) => any, Input exte
   }
 };
 
-// export const backendApi = createApi({
-//   baseQuery: trpcBaseQuery(),
-//   reducerPath: backendApiReducerPath,
-//   tagTypes: backendApiTagTypes,
-//   // eslint-disable-next-line consistent-return
-//   extractRehydrationInfo(action, { reducerPath }) {
-//     if (action.type === HYDRATE) {
-//       return action.payload[reducerPath];
-//     }
-//   },
-//   endpoints: (build) => ({
-//     getPublicCredentials: build.query({
-//       queryFn: async (input: Parameters<typeof backendTrpcClient.credentials.getPublicCredentials.query>[0]) =>
-//         trpcOperation(backendTrpcClient.credentials.getPublicCredentials.query, input),
-//     }),
-//   }),
-// });
+export const backendApi = createApi({
+  baseQuery: trpcBaseQuery(),
+  reducerPath: backendApiReducerPath,
+  tagTypes: backendApiTagTypes,
+  // eslint-disable-next-line consistent-return
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
+  endpoints: (build) => ({
+    getPublicCredentials: build.query({
+      queryFn: async (input: Parameters<typeof backendTrpcClient.credentials.getPublicCredentials.query>[0]) =>
+        trpcOperation(backendTrpcClient.credentials.getPublicCredentials.query, input),
+    }),
+  }),
+});
 
-// export const { useGetPublicCredentialsQuery } = backendApi;
+export const { useGetPublicCredentialsQuery } = backendApi;

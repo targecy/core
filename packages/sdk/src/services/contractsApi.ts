@@ -3,26 +3,35 @@ import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
 import { HYDRATE } from 'next-redux-wrapper';
+import { environment } from 'src/utils/context';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
-export const GRAPHQL_API_URL = 'http://localhost:8000/subgraphs/name/targecy';
+
+const getGraphQLUrl = (env: environment) => {
+  switch (env) {
+    case 'development':
+      return 'http://localhost:8000/subgraphs/name/targecy';
+    case 'preview':
+      return 'https://api.studio.thegraph.com/query/58687/targecy_test/version/latest';
+    case 'production':
+      return 'https://api.studio.thegraph.com/query/58687/targecy_test/version/latest';
+    default:
+      throw new Error('Invalid environment');
+  }
+};
 
 export type Build = EndpointBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
   BaseQueryFn<any, unknown, unknown, {}, {}>,
-  typeof baseApiTagTypes[number],
+  (typeof baseApiTagTypes)[number],
   typeof baseApiReducerPath
 >;
 
 export const graphqlBaseQuery =
-  (
-    { baseUrl } = {
-      baseUrl: GRAPHQL_API_URL,
-    }
-  ): BaseQueryFn =>
+  (env: environment): BaseQueryFn =>
   async ({ document, variables }) => {
-    if (!baseUrl) throw new Error('Missing NEXT_PUBLIC_SUBGRAPH_URL environment variable.');
+    const baseUrl = getGraphQLUrl(env);
 
     const graphQLClient = new GraphQLClient(baseUrl, {});
 
@@ -39,7 +48,7 @@ export const testEndpoint = (build: Build): any =>
   });
 
 export const api = createApi({
-  baseQuery: graphqlBaseQuery(),
+  baseQuery: graphqlBaseQuery('production'), // @todo (Martin): Check
   reducerPath: baseApiReducerPath,
   tagTypes: baseApiTagTypes,
   extractRehydrationInfo(action, { reducerPath }) {
