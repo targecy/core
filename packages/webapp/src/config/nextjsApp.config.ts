@@ -21,3 +21,5 @@ declare global {
     }
   }
 }
+
+export const DEBUG = false;
