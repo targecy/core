@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import { TargecyComponent, TargecyServicesContext } from './misc';
 import { ethers } from 'ethers';
 import { Skeleton } from 'antd';
-import { environment } from 'src/utils/context';
+import { environment } from '../utils/context';
 
 const defaultStyling: BaseAdStyling = {
   width: '500px',

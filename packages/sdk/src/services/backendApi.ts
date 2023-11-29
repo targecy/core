@@ -2,7 +2,7 @@ import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 import { BaseQueryFn, FetchBaseQueryError, FetchBaseQueryMeta, createApi } from '@reduxjs/toolkit/query/react';
 import { TRPCClientError } from '@trpc/client';
 import { HYDRATE } from 'next-redux-wrapper';
-import { backendTrpcClient } from 'src/utils';
+import { backendTrpcClient } from '../utils';
 
 // const backendApiTagTypes = [] as const;
 // const trpcBaseQuery = (): BaseQueryFn => () => ({ data: '' });

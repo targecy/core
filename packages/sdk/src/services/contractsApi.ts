@@ -3,7 +3,7 @@ import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
 import { HYDRATE } from 'next-redux-wrapper';
-import { environment } from 'src/utils/context';
+import { environment } from '../utils/context';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
