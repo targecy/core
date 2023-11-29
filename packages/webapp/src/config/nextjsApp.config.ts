@@ -23,8 +23,3 @@ declare global {
 }
 
 export const DEBUG = false;
-
-/** ******************************
- * SUBGRAPH
- * ****************************** */
-export const SUBGRAPH_URI = 'http://localhost:8000/subgraphs/name/targecy';

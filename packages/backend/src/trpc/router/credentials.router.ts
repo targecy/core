@@ -1,5 +1,6 @@
 import { DID } from '@iden3/js-iden3-core';
 import { TRPCError } from '@trpc/server';
+import { recoverMessageAddress } from 'viem';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
@@ -54,6 +55,7 @@ export const credentialsRouter = router({
   getPublicCredentials: publicProcedure
     .input(
       z.object({
+        message: z.string().optional(),
         signature: z.string(),
         did: z.string(),
         wallet: z.string(),
@@ -63,11 +65,11 @@ export const credentialsRouter = router({
       console.debug('getPublicCredentials');
 
       // Validate signature, only wallet owners can get their credentials.
-      // const walletFromSignature = await recoverMessageAddress({
-      //   message: 'public.credentials',
-      //   signature: input.signature as `0x{string}`,
-      // })
-      // if (walletFromSignature != input.wallet) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+      const walletFromSignature = await recoverMessageAddress({
+        message: input.message ?? 'public.credentials',
+        signature: input.signature as `0x{string}`,
+      });
+      if (walletFromSignature !== input.wallet) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
 
       // Check last time credentials were issued for this wallet
       const lastTimeIssuedForWallet = (
