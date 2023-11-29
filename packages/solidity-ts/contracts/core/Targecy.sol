@@ -12,6 +12,7 @@ import { TargecyStorage } from "./storage/TargecyStorage.sol";
 import { TargecyEvents } from "../libraries/TargecyEvents.sol";
 import { DataTypes } from "../libraries/DataTypes.sol";
 import { Constants } from "../libraries/Constants.sol";
+import { Helpers } from "../libraries/Helpers.sol";
 import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
@@ -236,7 +237,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _unpause();
   }
 
-  function consumeAd(uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) external override whenNotPaused {
+  function _consumeAd(address viewer, uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) internal {
     DataTypes.Ad storage ad = ads[adId];
 
     if (ad.remainingBudget == 0) {
@@ -284,6 +285,52 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     distributeRewards(ad, publisher);
 
     emit AdConsumed(adId, _msgSender(), publisher.publisherVault);
+  }
+
+  /**
+   * This function is used to consume an ad via a tx initialized by the relayer.
+   *
+   * @param adId        The id of the ad to be consumed.
+   * @param publisher   The publisher that has shown the ad.
+   * @param zkProofs    The zk proofs.
+   */
+  function consumeAdViaRelayer(
+    address viewer,
+    uint64 adId,
+    DataTypes.PublisherRewards calldata publisher,
+    DataTypes.ZKProofs calldata zkProofs
+  ) external override whenNotPaused {
+    require(msg.sender == relayerAddress, "Targecy: Only relayer can call this function");
+
+    _consumeAd(viewer, adId, publisher, zkProofs);
+  }
+
+  /**
+   * This function is used to consume an ad via a tx initialized by the user.
+   *
+   * @param adId        The id of the ad to be consumed.
+   * @param publisher   The publisher that has shown the ad.
+   * @param zkProofs    The zk proofs.
+   * @param targecySig  Targecy's signature validating that the ad has been seen.
+   */
+  function consumeAd(
+    uint64 adId,
+    DataTypes.PublisherRewards calldata publisher,
+    DataTypes.ZKProofs calldata zkProofs,
+    DataTypes.EIP712Signature calldata targecySig
+  ) external override whenNotPaused {
+    // Validates Targecy's signature
+    require(!usedSigNonces[targecySig.nonce], "Targecy: Signature nonce already used");
+    unchecked {
+      Helpers._validateRecoveredAddress(
+        Helpers._calculateDigest(keccak256(abi.encode(Constants.CONSUME_AD_VERIFICATION_SIG_TYPEHASH, adId, targecySig.nonce, targecySig.deadline))),
+        relayerAddress,
+        targecySig
+      );
+    }
+    usedSigNonces[targecySig.nonce] = true;
+
+    _consumeAd(msg.sender, adId, publisher, zkProofs);
   }
 
   function whitelistPublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {

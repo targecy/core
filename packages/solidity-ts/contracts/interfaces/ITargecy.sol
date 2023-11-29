@@ -27,16 +27,15 @@ interface ITargecy {
   function consumeAd(
     uint64 adId,
     DataTypes.PublisherRewards calldata publisher,
-    DataTypes.ZKProofs calldata zkProofs
+    DataTypes.ZKProofs calldata zkProofs,
+    DataTypes.EIP712Signature calldata targecySig
   ) external;
+
+  function consumeAdViaRelayer(address viewer, uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) external;
 
   function createTargetGroup(string calldata metadataURI, uint256[] calldata zkRequestIds) external;
 
-  function editTargetGroup(
-    uint256 targetGroupId,
-    string calldata metadataURI,
-    uint256[] calldata zkRequestIds
-  ) external;
+  function editTargetGroup(uint256 targetGroupId, string calldata metadataURI, uint256[] calldata zkRequestIds) external;
 
   function deleteTargetGroup(uint256 targetGroupId) external;
 
