@@ -11,7 +11,7 @@ import { cloneCredential } from './zk';
  */
 
 // @todo (Martin): change this based on environment
-const URL = 'http://localhost:3090/storage';
+const URL = 'https://app.targecy.xyz/storage';
 
 function saveItem(key: string, value: string): Promise<boolean> {
   // Create an iframe and append it to the DOM
@@ -86,7 +86,9 @@ export async function saveCredentials(credentials: W3CCredential[]) {
   const savedCredentialsDids = savedCredentials.map((c) => c.id);
 
   // Filter out credentials that are already saved
-  const newCredentials = credentials.filter((c) => !savedCredentialsDids.includes(c.id)).filter((c) => !c.type.includes('AuthBJJ'));
+  const newCredentials = credentials
+    .filter((c) => !savedCredentialsDids.includes(c.id))
+    .filter((c) => !c.type.includes('AuthBJJ'));
 
   const json = JSON.stringify(savedCredentials.concat(newCredentials));
   await saveItem('credentials', json);
