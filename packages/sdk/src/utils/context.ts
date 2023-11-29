@@ -20,3 +20,5 @@ export const initServices = async () => {
     proofService,
   };
 };
+
+export type environment = 'development' | 'preview' | 'production';

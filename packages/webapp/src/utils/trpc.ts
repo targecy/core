@@ -1,12 +1,16 @@
-import type { AppRouter as backendAppRouter } from '../../../backend/src/trpc/router/index';
+import { getBackendUrl } from '@targecy/sdk';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 // import type { AppRouter as relayerAppRouter } from '../../../relayer/src/trpc/router/index';
 import superjson from 'superjson';
 
+import type { AppRouter as backendAppRouter } from '../../../backend/src/trpc/router/index';
+
+import { env } from '~~/env.mjs';
+
 export const backendTrpcClient = createTRPCProxyClient<backendAppRouter>({
   links: [
     httpBatchLink({
-      url: 'http://localhost:4001/trpc',
+      url: getBackendUrl(env.NEXT_PUBLIC_VERCEL_ENV),
       fetch(url, options) {
         return fetch(url, {
           ...options,
