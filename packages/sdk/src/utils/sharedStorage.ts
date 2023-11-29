@@ -10,8 +10,8 @@ import { cloneCredential } from './zk';
  * different publishers that use the SDK.
  */
 
-// @todo (Martin): change this based on environment
-const URL = 'https://app.targecy.xyz/storage';
+const BASE_URL = 'https://app.targecy.xyz';
+const URL = `${BASE_URL}/storage`;
 
 function saveItem(key: string, value: string): Promise<boolean> {
   // Create an iframe and append it to the DOM
@@ -31,7 +31,7 @@ function saveItem(key: string, value: string): Promise<boolean> {
           value: value,
         };
 
-        iframe.contentWindow?.postMessage(data);
+        iframe.contentWindow?.postMessage(data, BASE_URL);
 
         resolve(true);
       } catch (error) {
@@ -69,7 +69,7 @@ function retrieveItem(key: string): Promise<string | null> {
         key: key,
       };
 
-      iframe.contentWindow?.postMessage(data);
+      iframe.contentWindow?.postMessage(data, BASE_URL);
     };
   });
 }

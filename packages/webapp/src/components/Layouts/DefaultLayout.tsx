@@ -62,7 +62,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
   }, [router.asPath]);
 
   const { pathname } = useRouter();
-  const useFullLayout = pathname !== '/beta';
+  const useFullLayout = pathname !== '/beta' && pathname !== '/storage';
 
   if (!useFullLayout)
     return (
