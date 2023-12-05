@@ -32,6 +32,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@0xpolygonid/js-sdk@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "@0xpolygonid/js-sdk@npm:1.4.2"
+  dependencies:
+    ajv: "npm:8.12.0"
+    ajv-formats: "npm:2.1.1"
+    did-jwt: "npm:6.11.6"
+    did-resolver: "npm:4.1.0"
+    elliptic: "npm:6.5.4"
+    ethers: "npm:6.8.0"
+    idb-keyval: "npm:6.2.0"
+    js-sha3: "npm:0.9.2"
+    jsonld: "npm:8.3.1"
+    uuid: "npm:9.0.1"
+  peerDependencies:
+    "@iden3/js-crypto": 1.0.3
+    "@iden3/js-iden3-core": 1.1.0
+    "@iden3/js-jsonld-merklization": 1.1.2
+    "@iden3/js-jwz": 1.1.2
+    "@iden3/js-merkletree": 1.1.2
+    ffjavascript: 0.2.62
+    rfc4648: 1.5.3
+    snarkjs: 0.7.2
+  checksum: 8d6f8dd28c81f38410b46dc2b2fa763befbe5baa8a32d3b1d7874c23c63af974a288f80158eb1f75b392d61760e4e90a8990a79180e882d43f9743d33ba0f9af
+  languageName: node
+  linkType: hard
+
 "@aashutoshrathi/word-wrap@npm:^1.2.3":
   version: 1.2.6
   resolution: "@aashutoshrathi/word-wrap@npm:1.2.6"
@@ -3498,7 +3525,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iden3/js-crypto@npm:1.0.3, @iden3/js-crypto@npm:^1.0.0":
+"@iden3/js-crypto@npm:1.0.3, @iden3/js-crypto@npm:^1.0.0, @iden3/js-crypto@npm:^1.0.3":
   version: 1.0.3
   resolution: "@iden3/js-crypto@npm:1.0.3"
   checksum: 88b86bff4079584ab75031f40a6e7bd2f576f08c4298980e3b04e954cf802676dafd27c437adf150844704b17cbcf85a0f523bf684cbc556a9a6882dcb544c38
@@ -3516,7 +3543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iden3/js-iden3-core@npm:^1.0.1":
+"@iden3/js-iden3-core@npm:^1.0.1, @iden3/js-iden3-core@npm:^1.1.0":
   version: 1.1.0
   resolution: "@iden3/js-iden3-core@npm:1.1.0"
   peerDependencies:
@@ -6070,7 +6097,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@scaffold-eth/solidity@workspace:packages/solidity-ts"
   dependencies:
-    "@0xpolygonid/js-sdk": "npm:^1.0.3"
+    "@0xpolygonid/js-sdk": "npm:^1.4.2"
     "@atixlabs/hardhat-time-n-mine": "npm:^0.0.5"
     "@defi-wonderland/smock": "npm:^2.3.0"
     "@eth-optimism/hardhat-ovm": "npm:^0.2.4"
@@ -6085,6 +6112,11 @@ __metadata:
     "@ethersproject/providers": "npm:^5.7.1"
     "@ethersproject/solidity": "npm:^5.7.0"
     "@ethersproject/units": "npm:^5.7.0"
+    "@iden3/js-crypto": "npm:^1.0.3"
+    "@iden3/js-iden3-core": "npm:^1.1.0"
+    "@iden3/js-jsonld-merklization": "npm:^1.1.2"
+    "@iden3/js-jwz": "npm:^1.1.2"
+    "@iden3/js-merkletree": "npm:^1.1.2"
     "@nomicfoundation/hardhat-chai-matchers": "npm:^1.0.3"
     "@nomicfoundation/hardhat-ethers": "npm:^3.0.5"
     "@nomicfoundation/hardhat-network-helpers": "npm:^1.0.6"
@@ -6105,6 +6137,7 @@ __metadata:
     "@types/node": "npm:^16.11.59"
     "@types/qrcode-terminal": "npm:^0.12.0"
     "@types/shelljs": "npm:^0.8.11"
+    "@types/snarkjs": "npm:^0"
     "@typescript-eslint/eslint-plugin": "npm:^5.37.0"
     "@typescript-eslint/parser": "npm:^5.37.0"
     bip39: "npm:^3.0.4"
@@ -6144,9 +6177,11 @@ __metadata:
     prettier: "npm:^2.7.1"
     prettier-plugin-solidity: "npm:^1.0.0-dev.23"
     qrcode-terminal: "npm:^0.12.0"
+    rfc4648: "npm:^1.5.3"
     rlp: "npm:^3.0.0"
     shelljs: "npm:^0.8.5"
     shx: "npm:^0.3.4"
+    snarkjs: "npm:^0.7.2"
     solhint: "npm:^3.3.7"
     solhint-plugin-prettier: "npm:^0.0.5"
     solidity-coverage: "npm:^0.7.22"

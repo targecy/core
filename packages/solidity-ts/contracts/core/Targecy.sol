@@ -19,13 +19,20 @@ import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
   bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-  function initialize(address _zkProofsValidator, address _protocolVault, uint256 _defaultImpressionPrice, address targecyAdmin) external initializer {
+  function initialize(
+    address _zkProofsValidator,
+    address _protocolVault,
+    uint256 _defaultImpressionPrice,
+    address targecyAdmin,
+    uint256 _defaultIssuer
+  ) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
     zkProofsValidator = _zkProofsValidator;
     protocolVault = _protocolVault;
     defaultImpressionPrice = _defaultImpressionPrice;
+    defaultIssuer = _defaultIssuer;
 
     _zkRequestId = 1;
     _adId = 1;
@@ -47,6 +54,10 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultImpressionPrice = _defaultImpressionPrice;
   }
 
+  function setDefaultIssuer(uint256 _defaultIssuer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    defaultIssuer = _defaultIssuer;
+  }
+
   function setZKPRequest(DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     requestQueries[_zkRequestId].query.value = _zkpRequest.query.value;
     requestQueries[_zkRequestId].query.operator = _zkpRequest.query.operator;
@@ -54,9 +65,16 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     requestQueries[_zkRequestId].query.slotIndex = _zkpRequest.query.slotIndex;
     requestQueries[_zkRequestId].query.schema = _zkpRequest.query.schema;
 
-    requestQueries[_zkRequestId].query.circuitId = _zkpRequest.query.circuitId;
+    requestQueries[_zkRequestId].metadataURI = _zkpRequest.metadataURI;
 
-    emit ZKPRequestCreated(_zkRequestId, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI);
+    // Use given issuer or default issuer
+    if (_zkpRequest.issuer == 0) {
+      requestQueries[_zkRequestId].issuer = defaultIssuer;
+    } else {
+      requestQueries[_zkRequestId].issuer = _zkpRequest.issuer;
+    }
+
+    emit ZKPRequestCreated(_zkRequestId, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI, _zkpRequest.issuer);
     _zkRequestId += 1;
   }
 
@@ -170,7 +188,9 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256[2][2] memory b,
     uint256[2] memory c
   ) public view returns (bool) {
-    // @todo: (martin) validate issuer using inputs[7] = issuerID
+    // sig circuit has 8th public signal as issuer id
+    require(inputs.length > 7 && inputs[7] == requestQueries[requestId].issuer, "ZKProofs has an invalid issuer.");
+
     return ICircuitValidator(zkProofsValidator).verify(inputs, a, b, c, requestQueries[requestId].query);
   }
 

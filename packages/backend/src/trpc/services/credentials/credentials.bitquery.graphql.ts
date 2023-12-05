@@ -20,6 +20,16 @@ export const GetSmartContractCallsByAddress = gql`
   }
 `;
 
+export const GetTransactionsByAddress = gql`
+  query GetTransactions($network: EthereumNetwork!, $address: String, $from: ISO8601DateTime) {
+    ethereum(network: $network) {
+      transactions(txSender: { is: $address }, date: { since: $from }) {
+        hash
+      }
+    }
+  }
+`;
+
 export const GetTokenHoldingsByAddress = gql`
   query GetTokenHoldingsByAddress(
     $network: EthereumNetwork!

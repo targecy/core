@@ -1,92 +1,317 @@
-export const zkpRequests: Array<{
-  metadata: {
-    title: string;
-    description: string;
-  };
-  metadataURI?: string;
-  query: {
-    schema: bigint;
-    slotIndex: bigint;
-    operator: bigint;
-    value: bigint[];
-    circuitId: string;
-  };
-}> = [
-  {
-    metadata: {
-      title: 'Has used a Compound protocol',
-      description: 'Proves users who have used a Compound protocol.',
-    },
-    query: {
-      schema: 1n,
-      slotIndex: 0n,
-      operator: 0n,
-      value: [1n],
-      circuitId: '0x0',
-    },
-  },
-  {
-    metadata: {
-      title: 'Has a balance of 1 or more USDC',
-      description: 'Proves users who have a balance of 1 or more USDC.',
-    },
-    query: {
-      schema: 2n,
-      slotIndex: 0n,
-      operator: 0n,
-      value: [1n],
-      circuitId: '0x0',
-    },
-  },
-];
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { prepareCircuitArrayValues } from '@0xpolygonid/js-sdk';
+import { MtValue, PoseidonHasher } from '@iden3/js-jsonld-merklization';
 
-export const targetGroups: Array<{
-  metadata: {
-    title: string;
-    description: string;
-  };
-  metadataURI?: string;
-  zkpRequestIds: number[];
-}> = [
-  {
-    metadata: {
-      title: 'Compound users',
-      description: 'Users who have used a Compound protocol.',
-    },
-    zkpRequestIds: [1],
-  },
-  {
-    metadata: {
-      title: 'Users with a balance of 1 or more USDC',
-      description: 'Users who have a balance of 1 or more USDC.',
-    },
-    zkpRequestIds: [2],
-  },
-];
+import { KNOWN_PROTOCOLS, KNOWN_TOKENS } from '~backend/constants/contracts.constants';
+import { SCHEMAS } from '~backend/constants/schemas/schemas.constant';
 
-export const ads: Array<{
-  metadata: {
-    title: string;
-    description: string;
-    imageUrl: string;
-  };
-  metadataURI?: string;
-  targetGroupsIds: number[];
-  budget: bigint;
-  minBlock: number;
-  maxBlock: number;
-  maxImpressionPrice: bigint;
-}> = [
-  {
+const Operators = {
+  NOOP: 0n, // No operation, skip query verification in circuit
+  EQ: 1n, // equal
+  LT: 2n, // less than
+  GT: 3n, // greater than
+  IN: 4n, // in
+  NIN: 5n, // not in
+  NE: 6n, // not equal
+};
+
+const stringToBigInt = async (str: string): Promise<bigint> => await MtValue.mkValueString(new PoseidonHasher(), str);
+const stringToBigIntArray = async (str: string, padding: number): Promise<bigint[]> => prepareCircuitArrayValues([await stringToBigInt(str)], padding);
+
+// @todo (martin): hash title to set custom id easy to find?
+
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export const initializeData = async () => {
+  const zkpRequests: Array<{
     metadata: {
-      title: 'Explore Decentralized Finance',
-      description: 'Join the DeFi revolution with Compound.',
-      imageUrl: 'https://i0.wp.com/startupdope.com/wp-content/uploads/2023/05/compound-protocol.png?fit=1200%2C628&ssl=1',
+      title: string;
+      description: string;
+    };
+    metadataURI?: string;
+    issuer?: bigint;
+    query: {
+      schema: bigint;
+      slotIndex: bigint;
+      operator: bigint;
+      value: bigint[];
+      circuitId: string;
+    };
+  }> = [
+    // Active users on chain
+    {
+      issuer: Operators.EQ,
+      metadata: {
+        title: 'Has executed a tx on ethereum',
+        description: 'Proves users who have executed a tx on ethereum some time ago.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.ActiveOnChainTargecySchema.bigint as string),
+        slotIndex: Operators.EQ, // 0 is the first added slot -> chain
+        operator: Operators.EQ,
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+        value: await stringToBigIntArray('ethereum', 64),
+      },
     },
-    targetGroupsIds: [1],
-    budget: 1000n,
-    minBlock: 0,
-    maxBlock: 100000,
-    maxImpressionPrice: 100n,
-  },
-];
+    {
+      metadata: {
+        title: 'Has executed a tx on polygon',
+        description: 'Proves users who have executed a tx on polygon some time ago.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.ActiveOnChainTargecySchema.bigint as string),
+        slotIndex: Operators.EQ, // 0 is the first added slot -> chain
+        operator: Operators.EQ,
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+        value: await stringToBigIntArray('polygon', 64),
+      },
+    },
+
+    // Token balances
+    {
+      metadata: {
+        title: 'Has balance of USDC',
+        description: 'Proves users who have a balance of USDC',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.TokenHolderTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.TokenHolderTargecySchema.credentialSubject).indexOf('token') - 1),
+        operator: Operators.EQ,
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+        value: await stringToBigIntArray(KNOWN_TOKENS.ethereum.find((data) => data.symbol === 'USDC')?.address ?? '', 64),
+      },
+    },
+    {
+      metadata: {
+        title: 'Has balance of LINK',
+        description: 'Proves users who have a balance of LINK.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.TokenHolderTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.TokenHolderTargecySchema.credentialSubject).indexOf('token') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_TOKENS.ethereum.find((data) => data.symbol === 'LINK')?.address ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+    {
+      metadata: {
+        title: 'Has balance of wBTC',
+        description: 'Proves users who have a balance of wBTC.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.TokenHolderTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.TokenHolderTargecySchema.credentialSubject).indexOf('token') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_TOKENS.ethereum.find((data) => data.symbol === 'wBTC')?.address ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+    {
+      metadata: {
+        title: 'Has balance of AXS',
+        description: 'Proves users who have a balance of AXS (Axie Infinity Token).',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.TokenHolderTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.TokenHolderTargecySchema.credentialSubject).indexOf('token') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_TOKENS.ethereum.find((data) => data.symbol === 'AXS')?.address ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+
+    // Protocol users
+    {
+      metadata: {
+        title: 'Has interacted with Aave',
+        description: 'Proves users who have interacted with Aave.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.ProtocolUsedTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.ProtocolUsedTargecySchema.credentialSubject).indexOf('protocol') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_PROTOCOLS.ethereum.find((data) => data.name === 'Aave')?.addresses[0] ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+    {
+      metadata: {
+        title: 'Has interacted with Compound',
+        description: 'Proves users who have interacted with Compound.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.ProtocolUsedTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.ProtocolUsedTargecySchema.credentialSubject).indexOf('protocol') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_PROTOCOLS.ethereum.find((data) => data.name === 'Compound')?.addresses[0] ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+    {
+      metadata: {
+        title: 'Has interacted with Uniswap',
+        description: 'Proves users who have interacted with Uniswap.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.ProtocolUsedTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.ProtocolUsedTargecySchema.credentialSubject).indexOf('protocol') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_PROTOCOLS.ethereum.find((data) => data.name === 'Uniswap')?.addresses[0] ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+    {
+      metadata: {
+        title: 'Has interacted with Curve',
+        description: 'Proves users who have interacted with Curve.',
+      },
+      query: {
+        schema: BigInt(SCHEMAS.ProtocolUsedTargecySchema.bigint as string),
+        slotIndex: BigInt(Object.keys(SCHEMAS.ProtocolUsedTargecySchema.credentialSubject).indexOf('protocol') - 1),
+        operator: Operators.EQ,
+        value: await stringToBigIntArray(KNOWN_PROTOCOLS.ethereum.find((data) => data.name === 'Curve')?.addresses[0] ?? '', 64),
+        circuitId: 'credentialAtomicQuerySigV2OnChain',
+      },
+    },
+    // {
+    //   metadata: {
+    //     title: 'Has interacted with Lido',
+    //     description: 'Proves users who have interacted with Lido.',
+    //   },
+    //   query: {
+    //     schema: BigInt(SCHEMAS.ProtocolUsedTargecySchema.bigint as string),
+    //     slotIndex: BigInt(Object.keys(SCHEMAS.ProtocolUsedTargecySchema.credentialSubject).indexOf('protocol') - 1),
+    //     operator: Operators.EQ,
+    //     value: await stringToBigIntArray(KNOWN_PROTOCOLS.ethereum.find((data) => data.name === 'Lido')?.addresses[0] ?? '', 64),
+    //     circuitId: 'credentialAtomicQuerySigV2OnChain',
+    //   },
+    // },
+  ];
+
+  const targetGroups: Array<{
+    metadata: {
+      title: string;
+      description: string;
+    };
+    metadataURI?: string;
+    zkpRequestIds: number[];
+  }> = [
+    // Active On Chain
+    {
+      metadata: {
+        title: 'Active on ethereum',
+        description: 'Users that have executed a tx on ethereum some time ago.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has executed a tx on ethereum') + 1],
+    },
+    {
+      metadata: {
+        title: 'Active on polygon',
+        description: 'Users that have executed a tx on polygon some time ago.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has executed a tx on polygon') + 1],
+    },
+
+    // Token Holders
+    {
+      metadata: {
+        title: 'USDC Holder',
+        description: 'Users that hold USDC.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of USDC') + 1],
+    },
+    {
+      metadata: {
+        title: 'LINK Holder',
+        description: 'Users that hold LINK.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of LINK') + 1],
+    },
+    {
+      metadata: {
+        title: 'wBTC Holder',
+        description: 'Users that hold wBTC.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of wBTC') + 1],
+    },
+    {
+      metadata: {
+        title: 'AXS Holder',
+        description: 'Users that hold AXS (Axie Infinity Token).',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of AXS') + 1],
+    },
+
+    // Protocol Users
+    {
+      metadata: {
+        title: 'Interacted with Aave',
+        description: 'Users that have interacted with Aave.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Aave') + 1],
+    },
+    {
+      metadata: {
+        title: 'Interacted with Compound',
+        description: 'Users that have interacted with Compound.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Compound') + 1],
+    },
+    {
+      metadata: {
+        title: 'Interacted with Uniswap',
+        description: 'Users that have interacted with Uniswap.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Uniswap') + 1],
+    },
+    {
+      metadata: {
+        title: 'Interacted with Curve',
+        description: 'Users that have interacted with Curve.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Curve') + 1],
+    },
+    {
+      metadata: {
+        title: 'Interacted with Lido',
+        description: 'Users that have interacted with Lido.',
+      },
+      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Lido') + 1],
+    },
+  ];
+
+  const ads: Array<{
+    metadata: {
+      title: string;
+      description: string;
+      imageUrl: string;
+    };
+    metadataURI?: string;
+    targetGroupsIds: number[];
+    budget: bigint;
+    minBlock: number;
+    maxBlock: number;
+    maxImpressionPrice: bigint;
+  }> = [
+    {
+      metadata: {
+        title: 'Explore Ethereum Ecosystem',
+        description: 'Ethereum is the most actively used blockchain.',
+        imageUrl:
+          'https://statics.ambcrypto.com/wp-content/uploads/2023/08/ambcrypto_Prompt_Enter_the_Crypto_Skies_Ethereum_Soars_Above_Si_014291ef-850a-4bce-ad0c-67624525fbca.jpg',
+      },
+      targetGroupsIds: [targetGroups.findIndex((group) => group.metadata.title === 'Active on ethereum') + 1],
+      budget: 1000000n,
+      minBlock: 0,
+      maxBlock: 99999999999,
+      maxImpressionPrice: 10000n,
+    },
+  ];
+
+  return {
+    zkpRequests,
+    targetGroups,
+    ads,
+  };
+};

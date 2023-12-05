@@ -16,7 +16,8 @@ abstract contract TargecyStorage {
   uint256 public totalImpressions;
 
   uint256 public defaultImpressionPrice;
-
+  uint256 public defaultIssuer;
+    
   mapping(uint256 => bool) public usedSigNonces;
 
   mapping(address => bool) public whitelistedPublishers;

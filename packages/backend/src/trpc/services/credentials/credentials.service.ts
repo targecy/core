@@ -1,13 +1,13 @@
-import {
-  createTokenHoldingCredentialRequest,
-  createUsedProtocolCredentialRequest,
-} from '../../../constants/credentials/public.credentials';
-
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
 
+import {
+  createActiveOnChainCredential,
+  createTokenHoldingCredentialRequest,
+  createUsedProtocolCredentialRequest,
+} from '../../../constants/credentials/public.credentials';
 import { storages } from '../../../utils/zk.utils';
-import { getTokenHoldings, getUsedContractsbyAddress } from '../external/bitquery.service';
+import { getIsActiveOnChainByAddress, getTokenHoldings, getUsedContractsbyAddress } from '../external/bitquery.service';
 
 /**
  * Analyzes public on-chain data and issues credentials
@@ -24,6 +24,7 @@ export const getPublicCredentials = async (wallet: string, claimerDid: DID, from
     await Promise.all([
       getContractInteractionsCredentials(wallet, claimerDid, issuer.did, from),
       getTokenHoldingsCredentials(wallet, claimerDid, issuer.did, from),
+      getActiveOnChainCredentials(wallet, claimerDid, issuer.did, from),
     ])
   ).flat();
 };
@@ -71,6 +72,30 @@ export async function getTokenHoldingsCredentials(
     await storages.dataStorage.credential.saveCredential(credentialIssued);
 
     // await storages.credWallet.save(credentialIssued);
+
+    credentials.push(credentialIssued);
+  }
+
+  return credentials;
+}
+
+export async function getActiveOnChainCredentials(
+  wallet: string,
+  claimerDid: DID,
+  issuerDid: DID,
+  from?: Date
+): Promise<W3CCredential[]> {
+  const credentials: W3CCredential[] = [];
+
+  const isActiveOnChains = await getIsActiveOnChainByAddress(wallet, from);
+  for (const isActiveOnChain of isActiveOnChains) {
+    if (!isActiveOnChain.isActive) continue;
+
+    const credentialRequest = createActiveOnChainCredential(claimerDid, isActiveOnChain.network);
+
+    const credentialIssued = await storages.identityWallet.issueCredential(issuerDid, credentialRequest, {
+      ipfsGatewayURL: 'https://ipfs.io',
+    });
 
     credentials.push(credentialIssued);
   }

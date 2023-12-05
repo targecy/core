@@ -18,6 +18,8 @@ interface ITargecy {
 
   function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external;
 
+  function setDefaultIssuer(uint256 _defaultIssuer) external;
+
   function createAd(DataTypes.NewAd calldata ad) external payable;
 
   function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable;

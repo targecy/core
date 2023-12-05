@@ -24,6 +24,7 @@ import {
   core,
   byteEncoder,
 } from '@0xpolygonid/js-sdk';
+import { DID } from '@iden3/js-iden3-core';
 
 export async function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
@@ -71,8 +72,7 @@ export async function initializeStorages() {
 
   if (!issuer) throw new Error('Could not create issuer');
 
-  // const ethSigner = new ethers.Wallet(env.WALLET_PRIVATE_KEY, dataStorage.states.provider);
-  // const txId = await proofService.transitState(iss, res.oldTreeState, true, dataStorage.states, ethSigner);
+  console.log('Issuer:', issuer.did.id, DID.idFromDID(issuer.did).bigInt());
 
   const defaultProfile = await identityWallet.createProfile(issuer.did, 0, 'DEFAULT');
 

@@ -20,8 +20,12 @@ library Helpers {
    * @dev Calculates EIP712 DOMAIN_SEPARATOR based on the current contract and chain ID.
    */
   function _calculateDomainSeparator() internal view returns (bytes32) {
-    return
-      keccak256(abi.encode(Constants.EIP712_DOMAIN_TYPEHASH, keccak256(bytes(Constants.NAME)), Constants.EIP712_REVISION_HASH, block.chainid, address(this)));
+    uint256 chainId;
+    assembly {
+      chainId := chainid()
+    }
+
+    return keccak256(abi.encode(Constants.EIP712_DOMAIN_TYPEHASH, keccak256(bytes(Constants.NAME)), Constants.EIP712_REVISION_HASH, chainId, address(this)));
   }
 
   /**

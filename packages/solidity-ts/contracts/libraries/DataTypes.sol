@@ -34,6 +34,7 @@ library DataTypes {
   struct ZKPRequest {
     ICircuitValidator.CircuitQuery query;
     string metadataURI;
+    uint256 issuer;
   }
 
   struct TargetGroup {

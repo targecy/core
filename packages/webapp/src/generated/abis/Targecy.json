@@ -55,6 +55,16 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "SignatureExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SignatureInvalid",
+    "type": "error"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -410,6 +420,12 @@
         "internalType": "string",
         "name": "metadataURI",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "issuer",
+        "type": "uint256"
       }
     ],
     "name": "ZKPRequestCreated",
@@ -679,9 +695,103 @@
         "internalType": "struct DataTypes.ZKProofs",
         "name": "zkProofs",
         "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "v",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "r",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "s",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "deadline",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "nonce",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DataTypes.EIP712Signature",
+        "name": "targecySig",
+        "type": "tuple"
       }
     ],
     "name": "consumeAd",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "viewer",
+        "type": "address"
+      },
+      {
+        "internalType": "uint64",
+        "name": "adId",
+        "type": "uint64"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "percentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "publisherVault",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct DataTypes.PublisherRewards",
+        "name": "publisher",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256[][]",
+            "name": "inputs",
+            "type": "uint256[][]"
+          },
+          {
+            "internalType": "uint256[2][]",
+            "name": "a",
+            "type": "uint256[2][]"
+          },
+          {
+            "internalType": "uint256[2][2][]",
+            "name": "b",
+            "type": "uint256[2][2][]"
+          },
+          {
+            "internalType": "uint256[2][]",
+            "name": "c",
+            "type": "uint256[2][]"
+          }
+        ],
+        "internalType": "struct DataTypes.ZKProofs",
+        "name": "zkProofs",
+        "type": "tuple"
+      }
+    ],
+    "name": "consumeAdViaRelayer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -771,6 +881,19 @@
   {
     "inputs": [],
     "name": "defaultImpressionPrice",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "defaultIssuer",
     "outputs": [
       {
         "internalType": "uint256",
@@ -938,6 +1061,11 @@
             "internalType": "string",
             "name": "metadataURI",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "issuer",
+            "type": "uint256"
           }
         ],
         "internalType": "struct DataTypes.ZKPRequest",
@@ -1070,6 +1198,11 @@
         "internalType": "address",
         "name": "targecyAdmin",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_defaultIssuer",
+        "type": "uint256"
       }
     ],
     "name": "initialize",
@@ -1100,6 +1233,19 @@
   {
     "inputs": [],
     "name": "protocolVault",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "relayerAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -1187,6 +1333,11 @@
         "internalType": "string",
         "name": "metadataURI",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "issuer",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -1219,6 +1370,19 @@
       }
     ],
     "name": "setDefaultImpressionPrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_defaultIssuer",
+        "type": "uint256"
+      }
+    ],
+    "name": "setDefaultIssuer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1276,6 +1440,11 @@
             "internalType": "string",
             "name": "metadataURI",
             "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "issuer",
+            "type": "uint256"
           }
         ],
         "internalType": "struct DataTypes.ZKPRequest",
@@ -1362,6 +1531,25 @@
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "usedSigNonces",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

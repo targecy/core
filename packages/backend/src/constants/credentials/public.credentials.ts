@@ -1,7 +1,12 @@
 import { CredentialRequest, CredentialStatusType } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
+import { EthereumNetwork } from 'generated/bitquery.types';
 
-import { TokenHolding as TokenHolding, KNOWN_PROTOCOL, SCANNERS, CHAIN } from '../../constants/contracts.constants';
+import {
+  TokenHolding as TokenHolding,
+  KNOWN_PROTOCOL,
+  SUPPORTED_NETWORKS_DATA,
+} from '../../constants/contracts.constants';
 import { SCHEMAS } from '../../constants/schemas/schemas.constant';
 
 type BaseCredentialType = Omit<CredentialRequest, 'credentialSchema' | 'credentialSubject' | 'type'>;
@@ -32,6 +37,24 @@ export function createUsedProtocolCredentialRequest(did: DID, knownProtocol: KNO
   return req;
 }
 
+export function createActiveOnChainCredential(did: DID, network: EthereumNetwork): CredentialRequest {
+  const schema = SCHEMAS['ActiveOnChainTargecySchema'];
+
+  const req: CredentialRequest = {
+    ...baseCredentialRequest,
+    ...{
+      credentialSubject: {
+        id: 'did:iden3:' + did.id,
+        chain: network,
+      },
+      credentialSchema: schema.schemaUrl,
+      type: schema.type,
+    },
+  };
+
+  return req;
+}
+
 export function createTokenHoldingCredentialRequest(did: DID, holding: TokenHolding): CredentialRequest {
   const schema = SCHEMAS['TokenHolderTargecySchema'];
 
@@ -49,7 +72,7 @@ export function createTokenHoldingCredentialRequest(did: DID, holding: TokenHold
       credentialSchema: schema.schemaUrl,
       type: schema.type,
       evidence: {
-        id: SCANNERS[holding.chain as CHAIN] + '/tx/' + holding.tx,
+        id: SUPPORTED_NETWORKS_DATA[holding.chain].scanner + '/tx/' + holding.tx,
         type: 'EthereumTransaction',
       },
       refreshService: {

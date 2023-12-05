@@ -17,7 +17,7 @@ interface TargecyEvents {
 
   event TargetGroupDeleted(uint256 indexed targetGroupId);
 
-  event ZKPRequestCreated(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
+  event ZKPRequestCreated(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI, uint256 issuer);
 
   event ZKPRequestEdited(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
 
