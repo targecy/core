@@ -9,7 +9,7 @@ export const env = createEnv({
     RPC_URL: z.string().url(),
     PRIVATE_KEY: z.string().min(1),
     NODE_ENV: z.string().min(1),
-    VERCEL_ENV: z.string().min(1),
+    VERCEL_ENV: z.string().min(1).default('development'),
     VERCEL_URL: z.string().url().optional(),
     NEXTAUTH_URL: z.string().url().optional(),
     NEXTAUTH_SECRET: z.string().min(10),
@@ -24,7 +24,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FAUCET_ALLOWED: z.boolean(),
     NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: z.boolean(),
     NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: z.boolean(),
-    NEXT_PUBLIC_VERCEL_ENV: z.string().min(1),
+    NEXT_PUBLIC_VERCEL_ENV: z.string().min(1).default('development'),
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: z.string().url(),

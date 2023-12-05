@@ -1,5 +1,4 @@
-import { EthereumNetwork } from 'generated/bitquery.types';
-
+import { EthereumNetwork } from '../generated/bitquery.types';
 import { getTokenHoldings } from '../trpc/services/external/bitquery.service';
 import { AddressString } from '../utils';
 
@@ -7,7 +6,6 @@ type AvailableNetworks = EthereumNetwork;
 export const SupportedNetworksIterable = ['ethereum', 'matic'] as const;
 type SelectedNetworks = (typeof SupportedNetworksIterable)[number];
 
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type SUPPORTED_NETWORK = AvailableNetworks & SelectedNetworks;
 
 export const SUPPORTED_NETWORKS_DATA: Record<

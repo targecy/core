@@ -16,7 +16,14 @@ export const saveStringToFile = (str: string, fileName: string, override: boolea
   if (override) {
     fs.writeFileSync(filePath, JSON.stringify(JSON.parse(str), null, 2), 'utf8');
   } else {
-    const newJson = { ...JSON.parse(str), ...JSON.parse(getStringFromFile(fileName)) };
+    let old;
+    try {
+      old = JSON.parse(getStringFromFile(fileName));
+    } catch (e) {
+      old = {};
+    }
+
+    const newJson = { ...JSON.parse(str), ...old };
     fs.writeFileSync(filePath, JSON.stringify(newJson, null, 2), 'utf8');
   }
   console.log(`Saved string to ${filePath}`);

@@ -1,6 +1,5 @@
 import { CredentialRequest, CredentialStatusType } from '@0xpolygonid/js-sdk';
 import { DID } from '@iden3/js-iden3-core';
-import { EthereumNetwork } from 'generated/bitquery.types';
 
 import {
   TokenHolding as TokenHolding,
@@ -8,6 +7,7 @@ import {
   SUPPORTED_NETWORKS_DATA,
 } from '../../constants/contracts.constants';
 import { SCHEMAS } from '../../constants/schemas/schemas.constant';
+import { EthereumNetwork } from '../../generated/bitquery.types';
 
 type BaseCredentialType = Omit<CredentialRequest, 'credentialSchema' | 'credentialSubject' | 'type'>;
 

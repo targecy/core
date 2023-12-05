@@ -25,6 +25,7 @@
     "migrate-backend": "yarn workspace @targecy/backend prisma:migrate:dev",
     "build-backend": "yarn workspace @targecy/backend prisma:generate && yarn workspace @targecy/backend build",
     "start-backend": "yarn workspace @targecy/backend start",
+    "dev-backend": "yarn workspace @targecy/backend dev",
     "start-relayer": "yarn workspace @targecy/relayer dev",
     "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
   },

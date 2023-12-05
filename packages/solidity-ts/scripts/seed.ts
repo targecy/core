@@ -88,6 +88,8 @@ export async function seed(network: string): Promise<void> {
   console.log(`Current amount of target groups:  ${Number(await targecy._targetGroupId()) - 1}`);
   console.log(`Current amount of ZKP requests:  ${Number(await targecy._zkRequestId()) - 1}`);
 
+  if (Number(await targecy._adId()) - 1 > 0 || Number(await targecy._targetGroupId()) - 1 > 0 || Number(await targecy._zkRequestId()) - 1 > 0)
+    console.log('> BE CAREFUL: Contract already has some data, adding new ones may break references between new entities as set in data.ts');
   const answer1 = await askQuestion('Do you want to continue? (yes/no) ');
   if (answer1.toLowerCase() === 'yes') {
     console.log('Continuing...');

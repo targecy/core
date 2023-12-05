@@ -15,7 +15,7 @@ echo "Network: $network"
 cd $script_dir
 
 # Extract the address from config.json relative to the script location
-address=$(jq -r '.targecyProxy' "../solidity-ts/generated/config/config.json")
+address=$(jq -r ".${network}_targecyProxy" "../solidity-ts/generated/config/config.json")
 
 echo "address: $address"
 
@@ -60,7 +60,7 @@ dataSources:
           handler: handleTargetGroupDeleted
         - event: TargetGroupEdited(indexed uint256,string,uint256[])
           handler: handleTargetGroupEdited
-        - event: ZKPRequestCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string)
+        - event: ZKPRequestCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string,uint256)
           handler: handleZKPRequestCreated
         - event: PublisherWhitelisted(indexed address)
           handler: handlePublisherWhitelisted
