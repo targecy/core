@@ -135,26 +135,24 @@ const ZKPRequests = () => {
   ];
 
   return (
-    <>
-      <div className="panel">
-        <div className="mb-5 flex items-center justify-between p-2">
-          <h5 className="text-lg font-semibold dark:text-white-light">Attributes</h5>
-          <Link className="btn btn-primary" href="/zkprequests/editor">
-            Create
-          </Link>
-        </div>
-        <div>
-          <DataTable
-            rowClassName="bg-white dark:bg-black dark:text-white text-black"
-            noRecordsText="No results match your search query"
-            className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-            records={zkprequests}
-            highlightOnHover={true}
-            minHeight={200}
-            columns={columns}></DataTable>
-        </div>
+    <div className="panel">
+      <div className="mb-5 flex items-center justify-between p-2">
+        <h5 className="text-lg font-semibold dark:text-white-light">Attributes</h5>
+        <Link className="btn btn-primary" href="/zkprequests/editor">
+          Create
+        </Link>
       </div>
-    </>
+      <div>
+        <DataTable
+          rowClassName="bg-white dark:bg-black dark:text-white text-black"
+          noRecordsText="No results match your search query"
+          className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
+          records={zkprequests}
+          highlightOnHover={true}
+          minHeight={200}
+          columns={columns}></DataTable>
+      </div>
+    </div>
   );
 };
 
