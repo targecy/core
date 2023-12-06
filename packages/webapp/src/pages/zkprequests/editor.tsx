@@ -19,6 +19,29 @@ import { backendTrpcClient } from '~~/utils/trpc';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
+export const operatorOptions = [
+  {
+    label: '=',
+    value: 1,
+  },
+  {
+    label: '<',
+    value: 2,
+  },
+  {
+    label: '>',
+    value: 3,
+  },
+  {
+    label: 'in',
+    value: 4,
+  },
+  {
+    label: 'not in',
+    value: 5,
+  },
+];
+
 export const ZKPRequestEditorComponent = (id?: string) => {
   const [processingZKPRequest, setProcessingZKPRequest] = useState(false);
   const { writeAsync: setZKPRequestAsync } = useContractWrite({
@@ -162,29 +185,6 @@ export const ZKPRequestEditorComponent = (id?: string) => {
   });
 
   type FormValues = z.infer<typeof schema>;
-
-  const operatorOptions = [
-    {
-      label: '=',
-      value: 1,
-    },
-    {
-      label: '<',
-      value: 2,
-    },
-    {
-      label: '>',
-      value: 3,
-    },
-    {
-      label: 'in',
-      value: 4,
-    },
-    {
-      label: 'not in',
-      value: 5,
-    },
-  ];
 
   const [schemas, setSchemas] = useState<SCHEMA[]>([]);
   useAsync(async () => {

@@ -47,7 +47,7 @@ export const initializeData = async () => {
       },
       query: {
         schema: BigInt(SCHEMAS.ActiveOnChainTargecySchema.bigint as string),
-        slotIndex: Operators.EQ, // 0 is the first added slot -> chain
+        slotIndex: BigInt(Object.keys(SCHEMAS.ActiveOnChainTargecySchema.credentialSubject).indexOf('chain') - 1), // 0 is the first added slot -> chain
         operator: Operators.EQ,
         circuitId: 'credentialAtomicQuerySigV2OnChain',
         value: await stringToBigIntArray('ethereum', 64),
@@ -60,7 +60,7 @@ export const initializeData = async () => {
       },
       query: {
         schema: BigInt(SCHEMAS.ActiveOnChainTargecySchema.bigint as string),
-        slotIndex: Operators.EQ, // 0 is the first added slot -> chain
+        slotIndex: BigInt(Object.keys(SCHEMAS.ActiveOnChainTargecySchema.credentialSubject).indexOf('chain') - 1), // 0 is the first added slot -> chain
         operator: Operators.EQ,
         circuitId: 'credentialAtomicQuerySigV2OnChain',
         value: await stringToBigIntArray('polygon', 64),

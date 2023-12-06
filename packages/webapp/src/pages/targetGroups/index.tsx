@@ -25,17 +25,16 @@ const TargetGroups = () => {
   );
   useAsync(async () => {
     if (targetGroups) {
-      const metadata: Record<string, { title?: string; description?: string }> = {};
+      const newMetadataState: Record<string, { title?: string; description?: string }> = {};
       for (const tg of targetGroups) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${tg.metadataURI}`);
+        const newMetadata = await fetch(`https://${tg.metadataURI}.ipfs.nftstorage.link`);
         const json = await newMetadata.json();
-        metadata[tg.id] = {
+        newMetadataState[tg.id] = {
           title: json.title,
           description: json.description,
         };
+        setMetadata(newMetadataState);
       }
-
-      setMetadata(metadata);
     }
   }, [targetGroups]);
 
@@ -54,7 +53,11 @@ const TargetGroups = () => {
     { title: 'Id', accessor: 'id' },
     { title: 'Title', accessor: 'id', render: (tg) => metadata[tg.id]?.title },
     { title: 'Description', accessor: 'id', render: (tg) => metadata[tg.id]?.description },
-    { title: 'ZKP Requests', accessor: 'zkRequests', render: (value) => value.zkRequests.map((r) => r.id).join(', ') },
+    {
+      title: 'Attributes IDs',
+      accessor: 'zkRequests',
+      render: (value) => value.zkRequests.map((r) => r.id).join(', '),
+    },
     {
       width: 75,
       accessor: 'actions',
@@ -118,10 +121,10 @@ const TargetGroups = () => {
         <div>
           <DataTable
             rowClassName="bg-white dark:bg-black dark:text-white text-black"
-            rowBorderColor="border-fuchsia-400"
             noRecordsText="No results match your search query"
             className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
             records={targetGroups}
+            highlightOnHover={true}
             minHeight={200}
             columns={columns}></DataTable>
         </div>

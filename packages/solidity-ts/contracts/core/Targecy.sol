@@ -103,7 +103,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     ads[_adId] = DataTypes.Ad(_msgSender(), ad.targetGroupIds, ad.metadataURI, ad.budget, ad.budget, ad.maxImpressionPrice, ad.minBlock, ad.maxBlock, 0);
 
-    emit AdCreated(_adId, ad);
+    emit AdCreated(_adId, _msgSender(), ad);
     _adId += 1;
   }
 
