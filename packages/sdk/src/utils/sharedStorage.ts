@@ -10,8 +10,8 @@ import { cloneCredential } from './zk';
  * different publishers that use the SDK.
  */
 
-// @todo (Martin): change this based on environment
-const URL = 'http://localhost:3090/storage';
+const BASE_URL = 'https://app.targecy.xyz';
+const URL = `${BASE_URL}/storage`;
 
 function saveItem(key: string, value: string): Promise<boolean> {
   // Create an iframe and append it to the DOM
@@ -31,7 +31,7 @@ function saveItem(key: string, value: string): Promise<boolean> {
           value: value,
         };
 
-        iframe.contentWindow?.postMessage(data);
+        iframe.contentWindow?.postMessage(data, BASE_URL);
 
         resolve(true);
       } catch (error) {
@@ -69,7 +69,7 @@ function retrieveItem(key: string): Promise<string | null> {
         key: key,
       };
 
-      iframe.contentWindow?.postMessage(data);
+      iframe.contentWindow?.postMessage(data, BASE_URL);
     };
   });
 }
@@ -86,7 +86,9 @@ export async function saveCredentials(credentials: W3CCredential[]) {
   const savedCredentialsDids = savedCredentials.map((c) => c.id);
 
   // Filter out credentials that are already saved
-  const newCredentials = credentials.filter((c) => !savedCredentialsDids.includes(c.id)).filter((c) => !c.type.includes('AuthBJJ'));
+  const newCredentials = credentials
+    .filter((c) => !savedCredentialsDids.includes(c.id))
+    .filter((c) => !c.type.includes('AuthBJJ'));
 
   const json = JSON.stringify(savedCredentials.concat(newCredentials));
   await saveItem('credentials', json);

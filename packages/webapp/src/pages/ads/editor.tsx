@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
+import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
@@ -13,6 +14,7 @@ import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWall
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
+import { fetchMetadata } from '~~/utils/metadata';
 import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -147,13 +149,6 @@ export const AdEditorComponent = (id?: string) => {
 
   const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
 
-  const targetGroupOptions = targetGroups?.targetGroups.map((tg) => {
-    return {
-      value: tg.id,
-      label: `TG: ${tg.id}`,
-    };
-  });
-
   const [currentTargetGroups, setCurrentTargetGroups] = useState<number[] | undefined>(undefined);
   const [potentialReach, setPotentialReach] = useState<number>(0);
   useEffect(() => {
@@ -163,8 +158,47 @@ export const AdEditorComponent = (id?: string) => {
       .query({
         ids: currentTargetGroups.map((id) => id.toString()),
       })
-      .then((response) => setPotentialReach(response.count));
+      .then((response) => setPotentialReach(response.count))
+      .catch((error) => console.log(error));
   }, [currentTargetGroups]);
+
+  const { query } = useRouter();
+  const [defaultTargetGroupsOptions, setDefaultTargetGroupsOptions] = useState<any[] | undefined>(undefined);
+  useEffect(() => {
+    const initialTargetGroups = query.targetGroups
+      ? query.targetGroups
+          .toString()
+          .split(',')
+          .map((id) => Number(id))
+      : [];
+
+    if ((!currentTargetGroups || !currentTargetGroups.length) && initialTargetGroups.length) {
+      setCurrentTargetGroups(initialTargetGroups);
+      setDefaultTargetGroupsOptions(targetGroupOptions?.filter((tg) => initialTargetGroups.includes(Number(tg.value))));
+    }
+  }, [query, defaultTargetGroupsOptions]);
+
+  const [targetGroupsMetadata, setTargetGroupsMetadata] = useState<
+    Record<string, Awaited<ReturnType<typeof fetchMetadata>>>
+  >({});
+
+  useAsync(async () => {
+    if (targetGroups) {
+      const metadata: Record<string, Awaited<ReturnType<typeof fetchMetadata>>> = {};
+      for (const tg of targetGroups.targetGroups) {
+        metadata[tg.id] = await fetchMetadata(tg.metadataURI);
+      }
+
+      setTargetGroupsMetadata(metadata);
+    }
+  }, [targetGroups]);
+
+  const targetGroupOptions = targetGroups?.targetGroups.map((tg) => {
+    return {
+      value: tg.id,
+      label: targetGroupsMetadata[tg.id]?.title ?? `Target Group #${tg.id}`,
+    };
+  });
 
   return (
     <div>
@@ -363,38 +397,41 @@ export const AdEditorComponent = (id?: string) => {
                         ''
                       )}
                     </div>
-
-                    <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="targetGroupIds">Target Groups</label>
-                      <Select
-                        classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          singleValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                        }}
-                        placeholder="Select an option"
-                        id="targetGroupIds"
-                        options={targetGroupOptions}
-                        name="targetGroupIds"
-                        onChange={(value) => {
-                          setCurrentTargetGroups(value.map((v) => Number(v.value)));
-                          values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
-                        }}
-                        isMulti
-                        isSearchable={true}
-                      />
-                      {submitCount ? (
-                        errors.targetGroupIds ? (
-                          <div className="mt-1 text-danger">{errors.targetGroupIds}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
+                  </div>
+                  <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="targetGroupIds">Target Groups</label>
+                    <Select
+                      classNames={{
+                        control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        singleValue: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        multiValue: () => 'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                        multiValueLabel: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                        menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                      }}
+                      placeholder="Select an option"
+                      id="targetGroupIds"
+                      options={targetGroupOptions}
+                      name="targetGroupIds"
+                      value={targetGroupOptions?.filter((tg) => currentTargetGroups?.includes(Number(tg.value))) ?? []}
+                      onChange={(value) => {
+                        setCurrentTargetGroups(value.map((v) => Number(v.value)));
+                        values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
+                      }}
+                      isMulti
+                      isSearchable={true}
+                    />
+                    {submitCount ? (
+                      errors.targetGroupIds ? (
+                        <div className="mt-1 text-danger">{errors.targetGroupIds}</div>
                       ) : (
-                        ''
-                      )}
-                    </div>
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
                   </div>
 
                   {isConnected ? (
@@ -421,7 +458,7 @@ export const AdEditorComponent = (id?: string) => {
             <div className="flex flex-col ">
               {/* Preview  */}
               <label className="ml-8 mr-8 mt-8 text-2xl text-secondary">Preview </label>
-              <div className="mt-4 mb-4 mr-8 ml-8">
+              <div className="mb-4 ml-8 mr-8 mt-4">
                 <div className="card flex flex-row items-center rounded border border-white-light bg-white p-2 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                   <div className="h-40 w-40 overflow-hidden rounded">
                     <img
@@ -437,7 +474,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                 </div>
               </div>
-              <div className="mt-4 mb-8 mr-8 ml-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+              <div className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
                 <label className="float-right m-5 text-2xl text-primary">{potentialReach}</label>
               </div>

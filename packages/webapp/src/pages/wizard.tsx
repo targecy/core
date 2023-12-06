@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
+import { env } from '~~/env.mjs';
+
 const schema = z.object({
   width: z.string().describe('Please fill the width'),
   height: z.string().describe('Please fill the height'),
@@ -284,7 +286,7 @@ const Demo = () => {
             </div>
           </div>
           <div className="flex place-items-center  justify-center">
-            <Ad isDemo={true} publisher={params.publisher} styling={params.styling} />{' '}
+            <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={params.publisher} styling={params.styling} />{' '}
           </div>
         </div>
       </div>

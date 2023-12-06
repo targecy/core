@@ -50,19 +50,6 @@ import { ZkServicesType } from './context';
 import { getSeed, saveSeed } from './sharedStorage';
 import { base64StringToUint8Array, uint8ArrayToBase64String } from './string';
 
-// export async function requestPublicCredentials(userDID?: string, wallet?: string, services?: ZkServicesType) {
-//   if (!services) throw new Error('Services not initialized');
-//   if (!userDID) throw new Error('User DID or signature not provided');
-
-//   const credentials: W3CCredential[] = await backendTrpcClient.credentials.getPublicCredentials.query({
-//     did: userDID,
-//     signature: "SIG",
-//     wallet: wallet ?? '0xEB71ed911e4dFc35Da80103a72fE983C8c709F33',
-//   }, {});
-
-//   await services.dataStorage.credential.saveAllCredentials(credentials);
-// }
-
 export function cloneCredential(credential: W3CCredential) {
   const cloned = new W3CCredential();
 

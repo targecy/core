@@ -19,7 +19,9 @@
     "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "@emotion/react",
-    "paths": {}
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   },
   "include": ["src", "../common/src", "codegen.ts", "apollo.config.js"],
   "exclude": [

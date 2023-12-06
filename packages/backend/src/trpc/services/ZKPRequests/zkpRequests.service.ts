@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 
 import { SCHEMAS } from '../../../constants/schemas/schemas.constant';
 import { ZkpRequest } from '../../../generated/targecy.types';
@@ -11,7 +12,7 @@ import { ZkpRequest } from '../../../generated/targecy.types';
 export const getPrismaPredicateForCredentialsFromZKPRequest = (zkpRequest: ZkpRequest): Prisma.CredentialWhereInput => {
   const schema = Object.entries(SCHEMAS).find(([, schema]) => schema.bigint === zkpRequest.query_schema)?.[1];
 
-  if (!schema) throw new Error(`Schema ${zkpRequest.query_schema} not found`);
+  if (!schema) throw new TRPCError({ code: 'NOT_FOUND', message: `Schema ${zkpRequest.query_schema} not found` });
 
   const schemaSlots = Object.keys(schema.credentialSubject);
   const slotName = schemaSlots[zkpRequest.query_slotIndex];

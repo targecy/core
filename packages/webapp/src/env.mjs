@@ -35,7 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_FAUCET_ALLOWED: z.boolean(),
     NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: z.boolean(),
     NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: z.boolean(),
-    NEXT_PUBLIC_VERCEL_ENV: z.string().min(1).default('development'),
+    NEXT_PUBLIC_VERCEL_ENV: z.union([z.literal('production'), z.literal('preview'), z.literal('development')]).default('development'),
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: z.string().url(),
