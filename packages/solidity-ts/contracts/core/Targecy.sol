@@ -12,19 +12,27 @@ import { TargecyStorage } from "./storage/TargecyStorage.sol";
 import { TargecyEvents } from "../libraries/TargecyEvents.sol";
 import { DataTypes } from "../libraries/DataTypes.sol";
 import { Constants } from "../libraries/Constants.sol";
+import { Helpers } from "../libraries/Helpers.sol";
 import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
   bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-  function initialize(address _zkProofsValidator, address _protocolVault, uint256 _defaultImpressionPrice, address targecyAdmin) external initializer {
+  function initialize(
+    address _zkProofsValidator,
+    address _protocolVault,
+    uint256 _defaultImpressionPrice,
+    address targecyAdmin,
+    uint256 _defaultIssuer
+  ) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
     zkProofsValidator = _zkProofsValidator;
     protocolVault = _protocolVault;
     defaultImpressionPrice = _defaultImpressionPrice;
+    defaultIssuer = _defaultIssuer;
 
     _zkRequestId = 1;
     _adId = 1;
@@ -46,6 +54,10 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultImpressionPrice = _defaultImpressionPrice;
   }
 
+  function setDefaultIssuer(uint256 _defaultIssuer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    defaultIssuer = _defaultIssuer;
+  }
+
   function setZKPRequest(DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     requestQueries[_zkRequestId].query.value = _zkpRequest.query.value;
     requestQueries[_zkRequestId].query.operator = _zkpRequest.query.operator;
@@ -53,9 +65,16 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     requestQueries[_zkRequestId].query.slotIndex = _zkpRequest.query.slotIndex;
     requestQueries[_zkRequestId].query.schema = _zkpRequest.query.schema;
 
-    requestQueries[_zkRequestId].query.circuitId = _zkpRequest.query.circuitId;
+    requestQueries[_zkRequestId].metadataURI = _zkpRequest.metadataURI;
 
-    emit ZKPRequestCreated(_zkRequestId, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI);
+    // Use given issuer or default issuer
+    if (_zkpRequest.issuer == 0) {
+      requestQueries[_zkRequestId].issuer = defaultIssuer;
+    } else {
+      requestQueries[_zkRequestId].issuer = _zkpRequest.issuer;
+    }
+
+    emit ZKPRequestCreated(_zkRequestId, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI, _zkpRequest.issuer);
     _zkRequestId += 1;
   }
 
@@ -84,7 +103,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     ads[_adId] = DataTypes.Ad(_msgSender(), ad.targetGroupIds, ad.metadataURI, ad.budget, ad.budget, ad.maxImpressionPrice, ad.minBlock, ad.maxBlock, 0);
 
-    emit AdCreated(_adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
+    emit AdCreated(_adId, _msgSender(), ad);
     _adId += 1;
   }
 
@@ -169,7 +188,9 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256[2][2] memory b,
     uint256[2] memory c
   ) public view returns (bool) {
-    // @todo: (martin) validate issuer using inputs[7] = issuerID
+    // sig circuit has 8th public signal as issuer id
+    require(inputs.length > 7 && inputs[7] == requestQueries[requestId].issuer, "ZKProofs has an invalid issuer.");
+
     return ICircuitValidator(zkProofsValidator).verify(inputs, a, b, c, requestQueries[requestId].query);
   }
 
@@ -236,7 +257,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _unpause();
   }
 
-  function consumeAd(uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) external override whenNotPaused {
+  function _consumeAd(address viewer, uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) internal {
     DataTypes.Ad storage ad = ads[adId];
 
     if (ad.remainingBudget == 0) {
@@ -284,6 +305,52 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     distributeRewards(ad, publisher);
 
     emit AdConsumed(adId, _msgSender(), publisher.publisherVault);
+  }
+
+  /**
+   * This function is used to consume an ad via a tx initialized by the relayer.
+   *
+   * @param adId        The id of the ad to be consumed.
+   * @param publisher   The publisher that has shown the ad.
+   * @param zkProofs    The zk proofs.
+   */
+  function consumeAdViaRelayer(
+    address viewer,
+    uint64 adId,
+    DataTypes.PublisherRewards calldata publisher,
+    DataTypes.ZKProofs calldata zkProofs
+  ) external override whenNotPaused {
+    require(msg.sender == relayerAddress, "Targecy: Only relayer can call this function");
+
+    _consumeAd(viewer, adId, publisher, zkProofs);
+  }
+
+  /**
+   * This function is used to consume an ad via a tx initialized by the user.
+   *
+   * @param adId        The id of the ad to be consumed.
+   * @param publisher   The publisher that has shown the ad.
+   * @param zkProofs    The zk proofs.
+   * @param targecySig  Targecy's signature validating that the ad has been seen.
+   */
+  function consumeAd(
+    uint64 adId,
+    DataTypes.PublisherRewards calldata publisher,
+    DataTypes.ZKProofs calldata zkProofs,
+    DataTypes.EIP712Signature calldata targecySig
+  ) external override whenNotPaused {
+    // Validates Targecy's signature
+    require(!usedSigNonces[targecySig.nonce], "Targecy: Signature nonce already used");
+    unchecked {
+      Helpers._validateRecoveredAddress(
+        Helpers._calculateDigest(keccak256(abi.encode(Constants.CONSUME_AD_VERIFICATION_SIG_TYPEHASH, adId, targecySig.nonce, targecySig.deadline))),
+        relayerAddress,
+        targecySig
+      );
+    }
+    usedSigNonces[targecySig.nonce] = true;
+
+    _consumeAd(msg.sender, adId, publisher, zkProofs);
   }
 
   function whitelistPublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {

@@ -31,18 +31,17 @@ const Ads = () => {
   );
   useAsync(async () => {
     if (ads) {
-      const metadata: Record<string, { title?: string; description?: string; image?: string }> = {};
+      const newMetadataState: Record<string, { title?: string; description?: string; image?: string }> = {};
       for (const ad of ads) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${ad.metadataURI}`);
+        const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
         const json = await newMetadata.json();
-        metadata[ad.id] = {
+        newMetadataState[ad.id] = {
           title: json.title,
           description: json.description,
-          image: json.image,
+          image: json.imageUrl,
         };
+        setMetadata(newMetadataState);
       }
-
-      setMetadata(metadata);
     }
   }, [ads]);
 
@@ -68,7 +67,7 @@ const Ads = () => {
     { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
     { title: 'Impressions', accessor: 'impressions' },
     {
-      title: 'Target Groups',
+      title: 'Audiences IDs',
       accessor: 'targetGroupsIds',
       render: (value) => value.targetGroups.map((tg) => tg.id).join(', '),
     },
@@ -136,7 +135,6 @@ const Ads = () => {
         <div>
           <DataTable
             rowClassName="bg-white dark:bg-black dark:text-white text-black"
-            rowBorderColor="border-fuchsia-400"
             noRecordsText="No results match your search query"
             className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
             records={ads || []}

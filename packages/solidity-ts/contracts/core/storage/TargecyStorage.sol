@@ -8,6 +8,7 @@ import { ICircuitValidator } from "../../interfaces/ICircuitValidator.sol";
 abstract contract TargecyStorage {
   address public zkProofsValidator;
   address public protocolVault;
+  address public relayerAddress;
 
   uint256 public _zkRequestId;
   uint256 public _adId;
@@ -15,6 +16,9 @@ abstract contract TargecyStorage {
   uint256 public totalImpressions;
 
   uint256 public defaultImpressionPrice;
+  uint256 public defaultIssuer;
+    
+  mapping(uint256 => bool) public usedSigNonces;
 
   mapping(address => bool) public whitelistedPublishers;
   mapping(address => uint256) public customImpressionPrices;

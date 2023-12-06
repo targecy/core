@@ -21,6 +21,10 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: 'localhost:http://host.docker.internal:8545'
       GRAPH_LOG: debug
+      # DISABLE_BLOCK_INGESTOR: 'true'
+      ETHEREUM_REORG_THRESHOLD: 1
+      # ETHEREUM_ANCESTOR_COUNT: 0
+      GRAPH_ETHEREUM_GENESIS_BLOCK_NUMBER: 43259277
   ipfs:
     container_name: ipfs
     image: ipfs/go-ipfs:latest
@@ -41,7 +45,3 @@ services:
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
       POSTGRES_INITDB_ARGS: '--lc-collate=C --lc-ctype=C --encoding=UTF8'
-    # volumes:
-    #   - ./data/postgres:/var/lib/postgresql/data
-    #   - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
-

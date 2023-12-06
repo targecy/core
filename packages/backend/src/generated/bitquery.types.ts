@@ -43920,6 +43920,15 @@ export type GetSmartContractCallsByAddressQueryVariables = Exact<{
 
 export type GetSmartContractCallsByAddressQuery = { __typename?: 'Query', ethereum?: { __typename?: 'Ethereum', smartContractCalls?: Array<{ __typename?: 'EthereumSmartContractCalls', count?: number | null, smartContract?: { __typename?: 'EthereumSmartContract', address: { __typename?: 'Address', address?: string | null } } | null }> | null } | null };
 
+export type GetTransactionsQueryVariables = Exact<{
+  network: EthereumNetwork;
+  address?: InputMaybe<Scalars['String']>;
+  from?: InputMaybe<Scalars['ISO8601DateTime']>;
+}>;
+
+
+export type GetTransactionsQuery = { __typename?: 'Query', ethereum?: { __typename?: 'Ethereum', transactions?: Array<{ __typename?: 'EthereumTransactions', hash: string }> | null } | null };
+
 export type GetTokenHoldingsByAddressQueryVariables = Exact<{
   network: EthereumNetwork;
   tokens?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -43946,6 +43955,15 @@ export const GetSmartContractCallsByAddressDocument = gql`
           address
         }
       }
+    }
+  }
+}
+    `;
+export const GetTransactionsDocument = gql`
+    query GetTransactions($network: EthereumNetwork!, $address: String, $from: ISO8601DateTime) {
+  ethereum(network: $network) {
+    transactions(txSender: {is: $address}, date: {since: $from}) {
+      hash
     }
   }
 }
@@ -43998,6 +44016,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     GetSmartContractCallsByAddress(variables: GetSmartContractCallsByAddressQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetSmartContractCallsByAddressQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetSmartContractCallsByAddressQuery>(GetSmartContractCallsByAddressDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetSmartContractCallsByAddress', 'query');
+    },
+    GetTransactions(variables: GetTransactionsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetTransactionsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTransactionsQuery>(GetTransactionsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetTransactions', 'query');
     },
     GetTokenHoldingsByAddress(variables: GetTokenHoldingsByAddressQueryVariables, requestHeaders?: GraphQLClientRequestHeaders): Promise<GetTokenHoldingsByAddressQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetTokenHoldingsByAddressQuery>(GetTokenHoldingsByAddressDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'GetTokenHoldingsByAddress', 'query');

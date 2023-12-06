@@ -1,4 +1,6 @@
 chain/accounts
+chain/data
+chain/docker-compose.yml
 
 explorer/services/logs
 explorer/services/blockscout-db-data

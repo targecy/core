@@ -1,26 +1,26 @@
+# Define the list of packages
+packages=("webapp" "backend" "relayer" "solidity-ts" "subgraph")
 
 script_dir=$(dirname "$0")
 cd $script_dir
 echo "Downloading env vars from Doppler..."
 
-cd packages/webapp/
-doppler secrets download --project dapp --config dev --format env --no-file > .env
-cd ../..
-echo "Downloaded env vars for webapp"
+env=${1:-dev}
+echo "env: $env"
 
-cd packages/backend/
-doppler secrets download --project backend --config dev --format env --no-file > .env
-cd ../..
-echo "Downloaded env vars for backend"
-
-cd packages/relayer/
-doppler secrets download --project relayer --config dev --format env --no-file > .env
-cd ../..
-echo "Downloaded env vars for relayer"
-
-cd packages/solidity-ts/
-doppler secrets download --project contracts --config dev --format env --no-file > .env
-cd ../..
-echo "Downloaded env vars for contracts"
+# Loop through each package
+for package in "${packages[@]}"; do
+    # Navigate to the package directory
+    cd "packages/$package/"
+    
+    # Download the environment variables using Doppler
+    doppler secrets download --project "$package" --config "$env" --format env --no-file > .env
+    
+    # Navigate back to the root directory
+    cd ../..
+    
+    # Echo the completion message
+    echo "Downloaded env vars for $package"
+done
 
 echo "Done downloading env vars from Doppler"

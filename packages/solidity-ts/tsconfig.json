@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["node", "ethers", "chai", "mocha"],
     "allowJs": false,
@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "commonjs",
+    "module": "ES2022",
     "moduleResolution": "Node",
     "incremental": true,
     "resolveJsonModule": true,
@@ -26,7 +26,8 @@
       "~generated/*": ["./generated/*"],
       "~tasks/*": ["./tasks/*"],
       "~common/*": ["../common/src/*"],
-      "~scripts/*": ["./scripts/*"]
+      "~scripts/*": ["./scripts/*"],
+      "~backend/*": ["../backend/src/*"]
     }
   },
   "include": ["types", "scripts", "tests", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "../common/tsconfig.json"],

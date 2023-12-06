@@ -47,12 +47,25 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
 export function handleAdCreated(event: AdCreatedEvent): void {
   let entity = new Ad(event.params.adId.toString());
 
-  entity.metadataURI = event.params.metadataURI;
-  entity.totalBudget = event.params.budget;
-  entity.remainingBudget = event.params.budget;
+  entity.metadataURI = event.params.ad.metadataURI;
+  entity.totalBudget = event.params.ad.budget;
+  entity.remainingBudget = event.params.ad.budget;
+  entity.minBlock = event.params.ad.minBlock;
+  entity.maxBlock = event.params.ad.maxBlock;
+  entity.maxImpressionPrice = event.params.ad.maxImpressionPrice;
 
-  entity.targetGroups = event.params.targetGroupIds.map<string>((id) => id.toString());
+  entity.targetGroups = event.params.ad.targetGroupIds.map<string>((id) => id.toString());
   entity.impressions = BigInt.fromI32(0);
+
+  let adv = '0x0000000000000000000000000000'; // @todo (Martin): add advertiser
+  let advertiser = User.load(adv);
+  if (advertiser == null) {
+    advertiser = new User(adv);
+    advertiser.impressions = BigInt.fromI32(0);
+    advertiser.save();
+  }
+
+  entity.advertiser = adv;
 
   entity.save();
 }
