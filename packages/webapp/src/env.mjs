@@ -2,6 +2,17 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 import * as deployedAddresses from './generated/config/config.json' assert { type: 'json' };
 
+const deployedAddressName = (env) => {
+  switch (env) {
+    case 'preview':
+      return 'mumbai_TargecyProxy';
+    case 'production':
+      return 'matic_TargecyProxy';
+    default:
+      return 'localhost_TargecyProxy';
+  }
+};
+
 export const env = createEnv({
   server: {
     CIRCUITS_PATH: z.string().min(1),
@@ -52,7 +63,7 @@ export const env = createEnv({
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
-    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: deployedAddresses.default['localhost_Targecy_ProxyAddress'],
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: deployedAddressName(process.env.NEXT_PUBLIC_VERCEL_ENV),
 
     CIRCUITS_PATH: process.env.CIRCUITS_PATH,
     NFT_STORAGE_TOKEN: process.env.NFT_STORAGE_TOKEN,

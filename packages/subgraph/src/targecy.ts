@@ -47,11 +47,13 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
 export function handleAdCreated(event: AdCreatedEvent): void {
   let entity = new Ad(event.params.adId.toString());
 
-  entity.metadataURI = event.params.metadataURI;
-  entity.totalBudget = event.params.budget;
-  entity.remainingBudget = event.params.budget;
+  entity.metadataURI = event.params.ad.metadataURI;
+  entity.totalBudget = event.params.ad.budget;
+  entity.remainingBudget = event.params.ad.budget;
+  entity.minBlock = event.params.ad.minBlock;
+  entity.maxBlock = event.params.ad.maxBlock;
 
-  entity.targetGroups = event.params.targetGroupIds.map<string>((id) => id.toString());
+  entity.targetGroups = event.params.ad.targetGroupIds.map<string>((id) => id.toString());
   entity.impressions = BigInt.fromI32(0);
 
   entity.save();

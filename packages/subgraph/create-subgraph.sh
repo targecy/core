@@ -19,6 +19,12 @@ address=$(jq -r ".${network}_targecyProxy" "../solidity-ts/generated/config/conf
 
 echo "address: $address"
 
+# Starting block is 43259277 in local (or mumbai) and 50000000 in matic
+startBlock=43259277
+if [ $network == "matic" ]; then
+  startBlock=50000000
+fi
+
 # Create the subgraph.yaml file with the new address
 cat > ./subgraph.yaml <<EOL
 specVersion: 0.0.6
@@ -31,7 +37,7 @@ dataSources:
     source:
       address: "$address"
       abi: Targecy
-      startBlock: 0 # Change by network
+      startBlock: $startBlock
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -48,7 +54,7 @@ dataSources:
       eventHandlers:
         - event: AdConsumed(indexed uint256,indexed address,indexed address)
           handler: handleAdConsumed
-        - event: AdCreated(indexed uint256,string,uint256,uint256[])
+        - event: AdCreated(indexed uint256,(string,uint256,uint256,uint256,uint256,uint256[]))
           handler: handleAdCreated
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted

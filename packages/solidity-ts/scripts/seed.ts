@@ -68,6 +68,10 @@ export async function seed(network: string): Promise<void> {
       exit(1);
   }
 
+  // Test Provider
+  const number = await provider.getBlockNumber();
+  console.log(`Provider is up and running. Current block number: ${number}`);
+
   // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
   if (!env.ADMIN_KEY) throw new Error('ADMIN_KEY env variable not set');
   const wallet = new ethers.Wallet(env.ADMIN_KEY).connect(provider);
@@ -82,6 +86,8 @@ export async function seed(network: string): Promise<void> {
 
   const Targecy = await ethers.getContractFactory('Targecy', wallet);
   const targecy = Targecy.attach(address as string);
+
+  // const targecy = new Targecy__factory().connect(wallet).attach(address);
 
   // Print current amount of ads, target groups, and ZKP requests
   console.log(`Current amount of ads:  ${Number(await targecy._adId()) - 1}`);
@@ -141,7 +147,7 @@ export async function seed(network: string): Promise<void> {
     targetGroups[index].metadataURI = uri;
 
     // Call smart contract function to create a target group
-    await targecy.createTargetGroup(((targetGroup.metadataURI as string) ?? '', targetGroup.zkpRequestIds as number[]));
+    await targecy.createTargetGroup((targetGroup.metadataURI as string) ?? '', targetGroup.zkpRequestIds as number[]);
 
     console.log(`Target group '${targetGroup.metadata.title}' created`);
   }

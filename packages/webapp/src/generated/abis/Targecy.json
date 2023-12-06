@@ -99,22 +99,42 @@
         "type": "uint256"
       },
       {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "metadataURI",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "budget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxImpressionPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minBlock",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxBlock",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "targetGroupIds",
+            "type": "uint256[]"
+          }
+        ],
         "indexed": false,
-        "internalType": "string",
-        "name": "metadataURI",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "budget",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256[]",
-        "name": "targetGroupIds",
-        "type": "uint256[]"
+        "internalType": "struct DataTypes.NewAd",
+        "name": "ad",
+        "type": "tuple"
       }
     ],
     "name": "AdCreated",

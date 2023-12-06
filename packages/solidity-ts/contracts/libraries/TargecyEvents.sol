@@ -3,9 +3,10 @@
 pragma solidity 0.8.10;
 
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
+import { DataTypes } from "../libraries/DataTypes.sol";
 
 interface TargecyEvents {
-  event AdCreated(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);
+  event AdCreated(uint256 indexed adId, DataTypes.NewAd ad);
 
   event AdEdited(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);
 

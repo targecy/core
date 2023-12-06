@@ -20,7 +20,7 @@
     "delete-graph-node": "docker-compose -f ./graph-node/docker-compose.yml down",
     "restart-graph-node": "npm run stop-graph-node && npm run start-graph-node",
     "reset-graph-node": "npm run delete-graph-node && npm run delete-graph-node-data && npm run start-graph-node",
-    "delete-graph-node-data": "rm -rf ./graph-node/data",
+    "delete-graph-node-data": "rm -rf ./graph-node/data && mkdir ./graph-node/data && mkdir ./graph-node/data/ipfs && touch ./graph-node/data/ipfs/test",
     "start-databases": "docker-compose -f ./databases/docker-compose.yml up -d",
     "stop-databases": "docker-compose -f ./databases/docker-compose.yml stop",
     "delete-databases": "docker-compose -f ./databases/docker-compose.yml down",
