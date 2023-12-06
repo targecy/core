@@ -29,17 +29,20 @@ const ZKPRequests = () => {
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string }>>({});
   useAsync(async () => {
     if (zkprequests) {
-      const newMetadataState: Record<string, { title?: string; description?: string }> = {};
-      for (const zkpr of zkprequests) {
-        const newMetadata = await fetch(`https://${zkpr.metadataURI}.ipfs.nftstorage.link`);
-        const json = await newMetadata.json();
-        if (!newMetadataState[zkpr.id])
-          newMetadataState[zkpr.id] = {
-            title: json.title,
-            description: json.description,
-          };
-        setMetadata(newMetadataState);
-      }
+      setMetadata(
+        (
+          await Promise.all(
+            zkprequests.map(async (zkpr) => {
+              const newMetadata = await fetch(`https://${zkpr.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return { id: zkpr.id, metadata: { title: json.title, description: json.description } };
+            })
+          )
+        ).reduce<typeof metadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
     }
   }, [zkprequests]);
 

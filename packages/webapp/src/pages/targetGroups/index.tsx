@@ -29,24 +29,32 @@ const TargetGroups = () => {
   const [ZKPMetadata, setZKPMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>({});
   useAsync(async () => {
     if (targetGroups) {
-      const newMetadataState: Record<string, { title?: string; description?: string }> = {};
-      for (const tg of targetGroups) {
-        const newMetadata = await fetch(`https://${tg.metadataURI}.ipfs.nftstorage.link`);
-        const json = await newMetadata.json();
-        newMetadataState[tg.id] = {
-          title: json.title,
-          description: json.description,
-        };
-        setMetadata(newMetadataState);
-      }
-
-      setMetadata(metadata);
+      setMetadata(
+        (
+          await Promise.all(
+            targetGroups.map(async (tg) => {
+              const newMetadata = await fetch(`https://${tg.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return { id: tg.id, metadata: { title: json.title, description: json.description } };
+            })
+          )
+        ).reduce<typeof metadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
 
       const ZKPMetedatasURIs = targetGroups?.flatMap((tg) => tg.zkRequests.map((r) => r.metadataURI)) || [];
       setZKPMetadata(
-        await ZKPMetedatasURIs.reduce(async (acc: any, uri: string) => {
-          const metadata = await fetchMetadata(uri);
-          acc[uri] = metadata;
+        (
+          await Promise.all(
+            ZKPMetedatasURIs.map(async (uri) => {
+              const received = await fetchMetadata(uri);
+              return { uri, metadata: received };
+            })
+          )
+        ).reduce<typeof ZKPMetadata>((acc, curr) => {
+          acc[curr.uri] = curr.metadata;
           return acc;
         }, {})
       );
@@ -69,7 +77,7 @@ const TargetGroups = () => {
     { title: 'Title', accessor: 'id', render: (tg) => metadata[tg.id]?.title },
     { title: 'Description', accessor: 'id', render: (tg) => metadata[tg.id]?.description },
     {
-      title: 'Attributes IDs',
+      title: 'Attributes',
       accessor: 'zkRequests',
       render: (value) => value.zkRequests.map((r) => ZKPMetadata[r.metadataURI]?.title).join(', '),
     },

@@ -31,17 +31,23 @@ const Ads = () => {
   );
   useAsync(async () => {
     if (ads) {
-      const newMetadataState: Record<string, { title?: string; description?: string; image?: string }> = {};
-      for (const ad of ads) {
-        const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
-        const json = await newMetadata.json();
-        newMetadataState[ad.id] = {
-          title: json.title,
-          description: json.description,
-          image: json.imageUrl,
-        };
-        setMetadata(newMetadataState);
-      }
+      setMetadata(
+        (
+          await Promise.all(
+            ads.map(async (ad) => {
+              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return {
+                id: ad.id,
+                metadata: { title: json.title, description: json.description, image: json.imageUrl },
+              };
+            })
+          )
+        ).reduce<typeof metadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
     }
   }, [ads]);
 
@@ -67,7 +73,7 @@ const Ads = () => {
     { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
     { title: 'Impressions', accessor: 'impressions' },
     {
-      title: 'Audiences IDs',
+      title: 'Audiences',
       accessor: 'targetGroupsIds',
       render: (value) => value.targetGroups.map((tg) => tg.id).join(', '),
     },
