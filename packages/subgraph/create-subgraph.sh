@@ -54,7 +54,7 @@ dataSources:
       eventHandlers:
         - event: AdConsumed(indexed uint256,indexed address,indexed address)
           handler: handleAdConsumed
-        - event: AdCreated(indexed uint256,(string,uint256,uint256,uint256,uint256,uint256[]))
+        - event: AdCreated(indexed uint256,indexed address,(string,uint256,uint256,uint256,uint256,uint256[]))
           handler: handleAdCreated
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted

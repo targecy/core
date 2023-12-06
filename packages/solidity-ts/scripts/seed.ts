@@ -175,10 +175,21 @@ export async function seed(network: string): Promise<void> {
   }
   console.log('\nContract populated with ads, target groups, and ZKP requests.');
 
-  // Print current amount of ads, target groups, and ZKP requests
-  console.log(`Current amount of ads:  ${Number(await targecy._adId()) - 1}`);
-  console.log(`Current amount of target groups:  ${Number(await targecy._targetGroupId()) - 1}`);
-  console.log(`Current amount of ZKP requests:  ${Number(await targecy._zkRequestId()) - 1}`);
+  console.log('See data at playground: ');
+  switch (network) {
+    case 'localhost':
+      console.log('http://http://localhost:8000/subgraphs/name/targecy/graphql');
+      break;
+    case 'mumbai':
+      console.log('https://api.studio.thegraph.com/query/58687/targecy_test/version/latest');
+      break;
+    case 'matic':
+      console.log('https://api.studio.thegraph.com/query/58687/targecy_test/version/latest');
+      break;
+    default:
+      console.log('Network not supported');
+      exit(1);
+  }
 }
 
 const consoleParam: string | undefined = process.argv[2]; // Get the console parameter from command line arguments
