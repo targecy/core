@@ -34,7 +34,7 @@ export const useAds = (context: TargecyContextType) => {
     if (validAds) {
       const finalAds = [];
       for (const ad of validAds) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${ad.metadataURI}`);
+        const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
         const json = await newMetadata.json();
         finalAds.push({
           ad,

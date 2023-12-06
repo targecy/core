@@ -1,5 +1,5 @@
 export const fetchMetadata = async (metadataURI: string) => {
-  const newMetadata = await fetch(`https://ipfs.io/ipfs/${metadataURI}`);
+  const newMetadata = await fetch(`https://${metadataURI}.ipfs.nftstorage.link`);
   const json = await newMetadata.json();
 
   return {
