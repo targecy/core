@@ -7,5 +7,7 @@ See package.json for available scripts.
 To run:
 
 ```bash
+yarn build
 yarn dev
+yarn start
 ```
