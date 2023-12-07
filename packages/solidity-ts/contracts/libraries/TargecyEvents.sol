@@ -3,9 +3,10 @@
 pragma solidity 0.8.10;
 
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
+import { DataTypes } from "../libraries/DataTypes.sol";
 
 interface TargecyEvents {
-  event AdCreated(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);
+  event AdCreated(uint256 indexed adId, address indexed advertiser, DataTypes.NewAd ad);
 
   event AdEdited(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);
 
@@ -17,7 +18,7 @@ interface TargecyEvents {
 
   event TargetGroupDeleted(uint256 indexed targetGroupId);
 
-  event ZKPRequestCreated(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
+  event ZKPRequestCreated(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI, uint256 issuer);
 
   event ZKPRequestEdited(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
 

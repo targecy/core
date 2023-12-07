@@ -1,6 +1,6 @@
 import { GraphQLClient } from 'graphql-request';
 
-import { CHAIN, KNOWN_PROTOCOLS, KNOWN_TOKENS } from '../../../constants/contracts.constants';
+import { KNOWN_PROTOCOLS, KNOWN_TOKENS, SupportedNetworksIterable } from '../../../constants/contracts.constants';
 import { getSdk } from '../../../generated/bitquery.types';
 import { AddressString } from '../../../utils';
 
@@ -17,39 +17,70 @@ const bitqueryApi = getSdk(
 );
 
 export async function getUsedContractsbyAddress(address: AddressString, from?: Date) {
-  const response = await bitqueryApi.GetSmartContractCallsByAddress({
-    address,
-    from,
-    network: 'matic',
-    contracts: KNOWN_PROTOCOLS.map((p) => p.addresses).flat(),
-  });
+  const promises = await Promise.all(
+    SupportedNetworksIterable.map(async (network) => {
+      const response = await bitqueryApi.GetSmartContractCallsByAddress({
+        address,
+        from,
+        network,
+        contracts: KNOWN_PROTOCOLS[network].map((p) => p.addresses).flat(),
+      });
 
-  const usedContractAddresses = response.ethereum?.smartContractCalls?.map(
-    (call) => call.smartContract?.address.address?.toString()
+      const usedContractAddresses = response.ethereum?.smartContractCalls?.map(
+        (call) => call.smartContract?.address.address?.toString()
+      );
+
+      return KNOWN_PROTOCOLS[network].filter((p) => p.addresses.some((addr) => usedContractAddresses?.includes(addr)));
+    })
   );
 
-  return KNOWN_PROTOCOLS.filter((p) => p.addresses.some((addr) => usedContractAddresses?.includes(addr)));
+  return promises.flat();
+}
+
+export async function getIsActiveOnChainByAddress(address: AddressString, from?: Date) {
+  const promises = await Promise.all(
+    SupportedNetworksIterable.map(async (network) => {
+      const response = await bitqueryApi.GetTransactions({
+        network,
+        address,
+        from,
+      });
+
+      return {
+        network,
+        isActive: (response.ethereum?.transactions?.length ?? 0) > 0,
+      };
+    })
+  );
+
+  return promises.flat();
 }
 
 export async function getTokenHoldings(address: AddressString, from?: Date) {
-  const response = await bitqueryApi.GetTokenHoldingsByAddress({
-    network: 'matic',
-    from,
-    tokens: KNOWN_TOKENS.map((p) => p.address).flat(),
-    receiver: address,
-  });
+  const promises = await Promise.all(
+    SupportedNetworksIterable.map(async (network) => {
+      const response = await bitqueryApi.GetTokenHoldingsByAddress({
+        network,
+        from,
+        tokens: KNOWN_TOKENS[network].map((p) => p.address).flat(),
+        receiver: address,
+      });
 
-  return (
-    response.ethereum?.transfers?.map((transfer) => ({
-      token: transfer.currency?.address,
-      symbol: transfer.currency?.symbol,
-      tokenId: transfer.currency?.tokenId,
-      type: transfer.currency?.tokenType,
-      amount: transfer.amount,
-      tx: transfer.transaction?.hash,
-      height: transfer.block?.height,
-      timestamp: transfer.block?.timestamp?.time,
-      chain: CHAIN.POLYGON,
-    })) || []
+      return (
+        response.ethereum?.transfers?.map((transfer) => ({
+          token: transfer.currency?.address,
+          symbol: transfer.currency?.symbol,
+          tokenId: transfer.currency?.tokenId,
+          type: transfer.currency?.tokenType,
+          amount: transfer.amount,
+          tx: transfer.transaction?.hash,
+          height: transfer.block?.height,
+          timestamp: transfer.block?.timestamp?.time,
+          chain: network,
+        })) || []
+      );
+    })
   );
+
+  return promises.flat();
 }

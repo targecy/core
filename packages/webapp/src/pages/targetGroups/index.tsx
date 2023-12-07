@@ -11,6 +11,7 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
 import { fetchMetadata } from '~~/utils/metadata';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
 const TargetGroups = () => {
@@ -28,23 +29,32 @@ const TargetGroups = () => {
   const [ZKPMetadata, setZKPMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>({});
   useAsync(async () => {
     if (targetGroups) {
-      const metadata: Record<string, { title?: string; description?: string }> = {};
-      for (const tg of targetGroups) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${tg.metadataURI}`);
-        const json = await newMetadata.json();
-        metadata[tg.id] = {
-          title: json.title,
-          description: json.description,
-        };
-      }
-
-      setMetadata(metadata);
+      setMetadata(
+        (
+          await Promise.all(
+            targetGroups.map(async (tg) => {
+              const newMetadata = await fetch(`https://${tg.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return { id: tg.id, metadata: { title: json.title, description: json.description } };
+            })
+          )
+        ).reduce<typeof metadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
 
       const ZKPMetedatasURIs = targetGroups?.flatMap((tg) => tg.zkRequests.map((r) => r.metadataURI)) || [];
       setZKPMetadata(
-        await ZKPMetedatasURIs.reduce(async (acc: any, uri: string) => {
-          const metadata = await fetchMetadata(uri);
-          acc[uri] = metadata;
+        (
+          await Promise.all(
+            ZKPMetedatasURIs.map(async (uri) => {
+              const received = await fetchMetadata(uri);
+              return { uri, metadata: received };
+            })
+          )
+        ).reduce<typeof ZKPMetadata>((acc, curr) => {
+          acc[curr.uri] = curr.metadata;
           return acc;
         }, {})
       );
@@ -125,31 +135,28 @@ const TargetGroups = () => {
   const router = useRouter();
 
   return (
-    <>
-      <div className="panel">
-        <div className="mb-5 flex items-center justify-between p-2">
-          <h5 className="text-lg font-semibold dark:text-white-light">Target Groups</h5>
-          <Link className="btn btn-primary" href="/targetGroups/editor">
-            Create
-          </Link>
-        </div>
-        <div>
-          <DataTable
-            rowClassName="bg-white dark:bg-black dark:text-white text-black"
-            rowBorderColor="border-fuchsia-400"
-            noRecordsText="No results match your search query"
-            className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-            records={targetGroups}
-            minHeight={200}
-            highlightOnHover={true}
-            onRowClick={(row) => {
-              console.log(row);
-              router.push(`/ads/editor?targetGroups=${row.id}`).catch((e) => console.log(e));
-            }}
-            columns={columns}></DataTable>
-        </div>
+    <div className="panel">
+      <div className="mb-5 flex items-center justify-between p-2">
+        <h5 className="text-lg font-semibold dark:text-white-light">Target Groups</h5>
+        <Link className="btn btn-primary" href="/targetGroups/editor">
+          Create
+        </Link>
       </div>
-    </>
+      <div>
+        <DataTable
+          rowClassName="bg-white dark:bg-black dark:text-white text-black"
+          noRecordsText="No results match your search query"
+          className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
+          records={targetGroups}
+          highlightOnHover={true}
+          minHeight={200}
+          onRowClick={(row) => {
+            console.log(row);
+            router.push(`/ads/editor?targetGroups=${row.id}`).catch((e) => console.log(e));
+          }}
+          columns={columns}></DataTable>
+      </div>
+    </div>
   );
 };
 

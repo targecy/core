@@ -31,18 +31,23 @@ const Ads = () => {
   );
   useAsync(async () => {
     if (ads) {
-      const metadata: Record<string, { title?: string; description?: string; image?: string }> = {};
-      for (const ad of ads) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${ad.metadataURI}`);
-        const json = await newMetadata.json();
-        metadata[ad.id] = {
-          title: json.title,
-          description: json.description,
-          image: json.image,
-        };
-      }
-
-      setMetadata(metadata);
+      setMetadata(
+        (
+          await Promise.all(
+            ads.map(async (ad) => {
+              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return {
+                id: ad.id,
+                metadata: { title: json.title, description: json.description, image: json.imageUrl },
+              };
+            })
+          )
+        ).reduce<typeof metadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
     }
   }, [ads]);
 
@@ -68,7 +73,7 @@ const Ads = () => {
     { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
     { title: 'Impressions', accessor: 'impressions' },
     {
-      title: 'Target Groups',
+      title: 'Audiences',
       accessor: 'targetGroupsIds',
       render: (value) => value.targetGroups.map((tg) => tg.id).join(', '),
     },
@@ -125,26 +130,24 @@ const Ads = () => {
   ];
 
   return (
-    <>
-      <div className="panel">
-        <div className="mb-5 flex items-center justify-between p-2">
-          <h5 className="text-lg font-semibold dark:text-white-light">Ads</h5>
-          <Link className="btn btn-primary" href="/ads/editor">
-            Create
-          </Link>
-        </div>
-        <div>
-          <DataTable
-            rowClassName="bg-white dark:bg-black dark:text-white text-black"
-            rowBorderColor="border-fuchsia-400"
-            noRecordsText="No results match your search query"
-            className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-            records={ads || []}
-            minHeight={200}
-            columns={columns}></DataTable>
-        </div>
+    <div className="panel">
+      <div className="mb-5 flex items-center justify-between p-2">
+        <h5 className="text-lg font-semibold dark:text-white-light">Ads</h5>
+        <Link className="btn btn-primary" href="/ads/editor">
+          Create
+        </Link>
       </div>
-    </>
+      <div>
+        <DataTable
+          rowClassName="bg-white dark:bg-black dark:text-white text-black"
+          noRecordsText="No results match your search query"
+          className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
+          records={ads || []}
+          highlightOnHover={true}
+          minHeight={200}
+          columns={columns}></DataTable>
+      </div>
+    </div>
   );
 };
 

@@ -6,8 +6,13 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.constant';
+
+import { operatorOptions } from './editor';
+
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllZkpRequestsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
+import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -24,17 +29,20 @@ const ZKPRequests = () => {
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string }>>({});
   useAsync(async () => {
     if (zkprequests) {
-      const metadata: Record<string, { title?: string; description?: string }> = {};
-      for (const tg of zkprequests) {
-        const newMetadata = await fetch(`https://ipfs.io/ipfs/${tg.metadataURI}`);
-        const json = await newMetadata.json();
-        metadata[tg.id] = {
-          title: json.title,
-          description: json.description,
-        };
-      }
-
-      setMetadata(metadata);
+      setMetadata(
+        (
+          await Promise.all(
+            zkprequests.map(async (zkpr) => {
+              const newMetadata = await fetch(`https://${zkpr.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return { id: zkpr.id, metadata: { title: json.title, description: json.description } };
+            })
+          )
+        ).reduce<typeof metadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
     }
   }, [zkprequests]);
 
@@ -49,15 +57,38 @@ const ZKPRequests = () => {
     return undefined;
   };
 
+  const [schemas, setSchemas] = useState<SCHEMA[]>([]);
+  useAsync(async () => {
+    const response = await backendTrpcClient.schemas.getAllSchemas.query();
+    setSchemas(Object.entries(response).map(([, schema]) => schema));
+  }, []);
+
   const columns: DataTableColumn<GetAllZkpRequestsQuery['zkprequests'][number]>[] = [
     { title: 'Id', accessor: 'id' },
-    { title: 'Title', accessor: 'id', render: (tg) => metadata[tg.id]?.title },
-    { title: 'Description', accessor: 'id', render: (tg) => metadata[tg.id]?.description },
-    { title: 'Validator', accessor: 'validator' },
-    { title: 'Schema', accessor: 'query_schema' },
-    { title: 'Spot Index', accessor: 'query_spotIndex' },
-    { title: 'Operator', accessor: 'query_operator' },
-    { title: 'Value', accessor: 'query_value' },
+    { title: 'Title', accessor: 'id', render: (zkpr) => metadata[zkpr.id]?.title },
+    { title: 'Description', accessor: 'id', render: (zkpr) => metadata[zkpr.id]?.description },
+    // { title: 'Validator', accessor: 'validator' },
+    {
+      title: 'Schema',
+      accessor: 'query_schema',
+      render: (zkpr) => schemas.find((schema) => schema.bigint === zkpr.query_schema)?.title,
+    },
+    {
+      title: 'Field',
+      accessor: 'query_spotIndex',
+      render: (zkpr) => {
+        const subject = schemas.find((schema) => schema.bigint === zkpr.query_schema)?.credentialSubject;
+        if (!subject) return undefined;
+        const keys = Object.keys(subject);
+        return keys[Number(zkpr.query_slotIndex) + 1];
+      },
+    },
+    {
+      title: 'Operator',
+      accessor: 'query_operator',
+      render: (zkpr) => operatorOptions.find((op) => op.value === Number(zkpr.query_operator))?.label,
+    },
+    { title: 'Value (parsed)', accessor: 'query_value', render: (zkpr) => zkpr.query_value.toString() },
     {
       width: 75,
       accessor: 'actions',
@@ -107,26 +138,24 @@ const ZKPRequests = () => {
   ];
 
   return (
-    <>
-      <div className="panel">
-        <div className="mb-5 flex items-center justify-between p-2">
-          <h5 className="text-lg font-semibold dark:text-white-light">ZKP Requests</h5>
-          <Link className="btn btn-primary" href="/zkprequests/editor">
-            Create
-          </Link>
-        </div>
-        <div>
-          <DataTable
-            rowClassName="bg-white dark:bg-black dark:text-white text-black"
-            rowBorderColor="border-fuchsia-400"
-            noRecordsText="No results match your search query"
-            className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-            records={zkprequests}
-            minHeight={200}
-            columns={columns}></DataTable>
-        </div>
+    <div className="panel">
+      <div className="mb-5 flex items-center justify-between p-2">
+        <h5 className="text-lg font-semibold dark:text-white-light">Attributes</h5>
+        <Link className="btn btn-primary" href="/zkprequests/editor">
+          Create
+        </Link>
       </div>
-    </>
+      <div>
+        <DataTable
+          rowClassName="bg-white dark:bg-black dark:text-white text-black"
+          noRecordsText="No results match your search query"
+          className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
+          records={zkprequests}
+          highlightOnHover={true}
+          minHeight={200}
+          columns={columns}></DataTable>
+      </div>
+    </div>
   );
 };
 

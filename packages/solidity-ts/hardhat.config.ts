@@ -1,11 +1,12 @@
 import './helpers/hardhat-imports';
 import path from 'path';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
 import chalk from 'chalk';
 import glob from 'glob';
-import { removeConsoleLog } from 'hardhat-preprocessor';
 import type { HardhatUserConfig } from 'hardhat/config';
+import { removeConsoleLog } from 'hardhat-preprocessor';
 
 import { getMnemonic } from './helpers/functions';
 
@@ -41,6 +42,8 @@ if (process.env.BUILDING !== 'true') {
   }
 }
 
+if (process.env.PRIVATE_KEY == null) throw new Error('PRIVATE_KEY env variable not set');
+
 /**
  * loads network list and config from '@scaffold-eth/common/src
  */
@@ -61,14 +64,14 @@ const networks: HardhatUserConfig['networks'] = {
   mumbai: {
     url: 'https://rpc.ankr.com/polygon_mumbai',
     chainId: 80001,
-    accounts: [process.env.PRIVATE_KEY!],
+    accounts: [process.env.PRIVATE_KEY],
   },
 
   // Production
   matic: {
     url: 'https://rpc.ankr.com/polygon',
     chainId: 137,
-    accounts: [process.env.PRIVATE_KEY!],
+    accounts: [process.env.PRIVATE_KEY],
   },
 };
 
@@ -87,15 +90,15 @@ export const config: HardhatUserConfig = {
   namedAccounts: namedAccounts,
   networks: networks,
   defender: {
-    apiKey: process.env.DEFENDER_API_KEY!,
-    apiSecret: process.env.DEFENDER_API_SECRET!,
+    apiKey: process.env.DEFENDER_API_KEY ?? '',
+    apiSecret: process.env.DEFENDER_API_SECRET ?? '',
   },
   solidity: {
     compilers: [
       {
         version: '0.8.10',
         settings: {
-          evmVersion: 'byzantium',
+          evmVersion: 'istanbul',
           optimizer: {
             enabled: true,
             runs: 250,
@@ -130,21 +133,6 @@ export const config: HardhatUserConfig = {
   typechain: {
     outDir: typechainOutDir,
     discriminateTypes: true,
-  },
-  etherscan: {
-    apiKey: {
-      localhost: 'none',
-    },
-    customChains: [
-      {
-        network: 'localhost',
-        chainId: 1337,
-        urls: {
-          apiURL: 'http://localhost:8090/api',
-          browserURL: 'http://localhost:8090/',
-        },
-      },
-    ],
   },
 };
 export default config;

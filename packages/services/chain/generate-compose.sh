@@ -24,7 +24,7 @@ version: '3.8'
 
 services:
   ganache:
-    image: trufflesuite/ganache-cli
+    image: trufflesuite/ganache
     volumes:
       - ./accounts:/app/accounts
       - ./data:/var/lib/data
@@ -33,9 +33,10 @@ services:
       - '8545:8545' # Expose the Ethereum RPC port
     command: >
       -a 10
-      -k muirGlacier
       -i 1337
+      -f https://rpc.ankr.com/polygon_mumbai@43259277
       --db /var/lib/data
+      --verbose
       -m "$MNEMONIC_ESCAPED"
       --account_keys_path ./accounts/accounts.json
 

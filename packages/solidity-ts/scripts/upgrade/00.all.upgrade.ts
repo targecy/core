@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 
 import { ethers, upgrades } from 'hardhat';
+
 import { getStringFromFile } from '../utils';
 
 export const upgradeAll = async (): Promise<void> => {
@@ -10,7 +11,7 @@ export const upgradeAll = async (): Promise<void> => {
 
   const Targecy = await ethers.getContractFactory('Targecy');
   const targecy = await upgrades.upgradeProxy(addresses.targecyProxy as string, Targecy);
-  console.log('Targecy upgraded at address ' + targecy.address);
+  console.log('Targecy upgraded at address ' + targecy.address.toString());
 };
 
 export default upgradeAll;
