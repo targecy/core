@@ -57,7 +57,7 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   entity.targetGroups = event.params.ad.targetGroupIds.map<string>((id) => id.toString());
   entity.impressions = BigInt.fromI32(0);
 
-  let adv = '0x0000000000000000000000000000'; // @todo (Martin): add advertiser
+  let adv = event.params.advertiser.toHexString();
   let advertiser = User.load(adv);
   if (advertiser == null) {
     advertiser = new User(adv);
@@ -128,12 +128,9 @@ export function handleZKPRequestCreated(event: ZKPRequestCreatedEvent): void {
 
   entity.query_circuitId = event.params.query.circuitId;
   entity.query_operator = event.params.query.operator;
-  entity.query_value = new Array<BigInt>();
-  for (let i = 0; i < event.params.query.value.length; i++) {
-    entity.query_value[i] = event.params.query.value[i];
-  }
   entity.query_schema = event.params.query.schema;
   entity.query_slotIndex = event.params.query.slotIndex;
+  entity.query_value = event.params.query.value;
 
   entity.save();
 

@@ -14,6 +14,12 @@ import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllZkpRequestsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
 import { backendTrpcClient } from '~~/utils/trpc';
 
+// Makes string shorter by removing the middle part and replacing it with ...
+const shortString = (str: string, length: number) => {
+  if (str.length <= length) return str;
+  return `${str.substring(0, length / 2)}...${str.substring(str.length - length / 2, str.length)}`;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
@@ -88,7 +94,12 @@ const ZKPRequests = () => {
       accessor: 'query_operator',
       render: (zkpr) => operatorOptions.find((op) => op.value === Number(zkpr.query_operator))?.label,
     },
-    { title: 'Value (parsed)', accessor: 'query_value', render: (zkpr) => zkpr.query_value.toString() },
+    {
+      title: 'Value (hashed)',
+      accessor: 'query_value',
+      // eslint-disable-next-line eqeqeq
+      render: (zkpr) => shortString(zkpr.query_value.filter((e) => e != 0).toString(), 10),
+    },
     {
       width: 75,
       accessor: 'actions',
