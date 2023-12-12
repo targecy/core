@@ -13,6 +13,7 @@ import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.consta
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
+import { useGetSegmentQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { backendTrpcClient } from '~~/utils/trpc';
 
@@ -43,6 +44,8 @@ export const operatorOptions = [
 ];
 
 export const SegmentEditorComponent = (id?: string) => {
+  const editingMode = !!id;
+
   const [processingSegment, setProcessingSegment] = useState(false);
   const { writeAsync: setSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
@@ -60,8 +63,6 @@ export const SegmentEditorComponent = (id?: string) => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    console.log(data);
-
     setProcessingSegment(true);
 
     const segmentMetadata = {
@@ -93,7 +94,7 @@ export const SegmentEditorComponent = (id?: string) => {
 
     try {
       let hash;
-      if (id) {
+      if (editingMode) {
         hash = (
           await editSegmentAsync({
             args: [
@@ -113,21 +114,6 @@ export const SegmentEditorComponent = (id?: string) => {
           })
         ).hash;
       } else {
-        console.log([
-          {
-            validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
-            query: {
-              schema: data.schema,
-              slotIndex: data.slotIndex,
-              operator: data.operator,
-              value: [data.value],
-
-              circuitId: 'credentialAtomicQuerySig',
-            },
-            metadataURI: metadataURI,
-          },
-        ]);
-        console.log(setSegmentAsync);
         hash = await setSegmentAsync({
           args: [
             {
@@ -152,7 +138,7 @@ export const SegmentEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `Segment ${id ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
+        title: `Segment ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
         padding: '10px 20px',
       });
 
@@ -165,7 +151,7 @@ export const SegmentEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'error',
-        title: `Error ${id ? 'editing' : 'creating'} ad`,
+        title: `Error ${editingMode ? 'editing' : 'creating'} segment`,
         padding: '10px 20px',
       });
 
@@ -175,7 +161,7 @@ export const SegmentEditorComponent = (id?: string) => {
 
   const schema = z.object({
     title: z.string().min(1).max(50).describe('Please fill the title'),
-    description: z.string().min(1).max(50).describe('Please fill the description'),
+    description: z.string().min(1).max(500).describe('Please fill the description'),
     schema: z.string().describe('Please fill the schema'),
     // schemaUrl: z.string().url().describe('Please fill the schema url'),
     slotIndex: z.number().describe('Please fill the slotIndex'),
@@ -192,12 +178,15 @@ export const SegmentEditorComponent = (id?: string) => {
     setSchemas(Object.entries(response).map(([, schema]) => schema));
   }, []);
 
+  const schemaOptions = schemas?.map((schema) => {
+    return { label: schema.title, value: schema.bigint };
+  });
+
   const [currentParams, setCurrentParams] = useState<
     { operator?: number; value?: any; slotIndex?: number; schema?: string } | undefined
   >(undefined);
-  const [potentialReach, setPotentialReach] = useState<number>(0);
+  const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
-    console.log(currentParams);
     if (
       !currentParams ||
       !currentParams.operator ||
@@ -214,8 +203,64 @@ export const SegmentEditorComponent = (id?: string) => {
         slotIndex: currentParams.slotIndex,
         schema: currentParams.schema,
       })
-      .then((response) => setPotentialReach(response.count));
+      .catch((error) => {
+        console.error(error);
+      })
+      .then((response) => setPotentialReach(typeof response === 'number' ? response : undefined));
   }, [currentParams]);
+
+  const [currentMetadata, setCurrentMetadata] = useState<
+    { title?: string; description?: string; image?: string } | undefined
+  >(undefined);
+  const { data: segmentData } = useGetSegmentQuery({ id: id ?? '' });
+  const segment = segmentData?.segment;
+  useAsync(async () => {
+    if (segment) {
+      const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+      const json = await newMetadata.json();
+      setCurrentMetadata({ title: json.title, description: json.description });
+    }
+  }, [segment]);
+
+  const [currentSchema, setCurrentSchema] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    const initialSchema = segment?.querySchema;
+
+    if (!currentSchema && initialSchema) {
+      setCurrentSchema(initialSchema);
+    }
+  }, [segment]);
+
+  const [currentOperator, setCurrentOperator] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    const initialOperator = segment?.queryOperator;
+
+    if (!currentOperator && initialOperator) {
+      setCurrentOperator(initialOperator);
+    }
+  }, [segment]);
+
+  const [currentSlotIndex, setCurrentSlotIndex] = useState<number | undefined>(undefined);
+  useEffect(() => {
+    const initialSlotIndex = segment?.querySlotIndex;
+
+    if (!currentSlotIndex && initialSlotIndex) {
+      setCurrentSlotIndex(initialSlotIndex);
+    }
+  }, [segment]);
+
+  const [slotIndexOptions, setSlotIndexOptions] = useState<{ label: string; value: number }[]>([]);
+  useEffect(() => {
+    setSlotIndexOptions(
+      currentSchema
+        ? Object.keys(schemas.find((schema) => schema.bigint === currentSchema.toString())?.credentialSubject || {})
+            .map((key, index) => {
+              return { label: key, value: index };
+            })
+            .slice(1)
+        : []
+    );
+  }, [currentSchema]);
 
   return (
     <div>
@@ -234,20 +279,19 @@ export const SegmentEditorComponent = (id?: string) => {
         <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
           <label className="mb-3 text-2xl text-primary">
             {' '}
-            {id ? <span>Edit </span> : <span>New </span>}
-            Zero-Knowledge Proof Request {id ? `#${id}` : ''}
+            {editingMode ? <span>Edit </span> : <span>New </span>}
+            {editingMode ? `'${currentMetadata?.title}'` : 'Segment'}
           </label>
           <div className="grid grid-cols-3">
             <Formik
+              enableReinitialize={true}
               initialValues={{
-                title: '',
-                description: '',
-                schema: '',
-                // schemaUrl: '',
-                slotIndex: 0,
-                // field: '',
-                operator: 0,
-                value: '',
+                title: currentMetadata?.title,
+                description: currentMetadata?.description,
+                schema: segment?.querySchema,
+                slotIndex: Number(segment?.querySlotIndex),
+                operator: Number(segment?.queryOperator),
+                value: segment?.queryValue.filter((e: string) => e !== '0').toString(),
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -304,17 +348,16 @@ export const SegmentEditorComponent = (id?: string) => {
                         placeholder="Select an option"
                         id="schema"
                         name="schema"
-                        options={schemas?.map((schema) => {
-                          return { label: schema.title, value: schema.bigint };
-                        })}
-                        onChange={(value) => {
-                          setCurrentParams((prevState) => ({ ...prevState, schema: value?.value ?? '0' }));
-                          values.schema = value?.value ?? '0';
+                        value={schemaOptions?.find((a) => a.value === currentSchema?.toString()) ?? undefined}
+                        onChange={(value: any) => {
+                          setCurrentSchema(value.value);
+                          values.schema = value;
                         }}
+                        options={schemaOptions}
                       />
                       {submitCount ? (
                         errors.schema ? (
-                          <div className="mt-1 text-danger">{errors.schema}</div>
+                          <div className="mt-1 text-danger">{errors.schema.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -323,8 +366,8 @@ export const SegmentEditorComponent = (id?: string) => {
                       )}
                     </div>
 
-                    <div className={submitCount ? (errors.schema ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="operator">Field</label>
+                    <div className={submitCount ? (errors.slotIndex ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="field">Field</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -335,28 +378,19 @@ export const SegmentEditorComponent = (id?: string) => {
                         }}
                         placeholder="Select an option"
                         noOptionsMessage={() => 'Please select a schema first'}
-                        id="schema"
-                        name="schema"
-                        options={
-                          values.schema
-                            ? Object.keys(
-                                schemas.find((schema) => schema.bigint === values.schema.toString())
-                                  ?.credentialSubject || {}
-                              )
-                                .map((key, index) => {
-                                  return { label: key, value: index };
-                                })
-                                .slice(1)
-                            : []
-                        }
-                        onChange={(value) => {
-                          setCurrentParams((prevState) => ({ ...prevState, slotIndex: value?.value ?? 0 }));
-                          values.slotIndex = value?.value ?? 0;
+                        id="slotIndex"
+                        name="slotIndex"
+                        options={slotIndexOptions}
+                        // eslint-disable-next-line eqeqeq
+                        value={slotIndexOptions?.find((a) => a.value == (currentSlotIndex ?? 0) + 1) ?? undefined}
+                        onChange={(value: any) => {
+                          setCurrentSlotIndex(value);
+                          values.schema = value;
                         }}
                       />
                       {submitCount ? (
                         errors.schema ? (
-                          <div className="mt-1 text-danger">{errors.schema}</div>
+                          <div className="mt-1 text-danger">{errors.schema.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -367,7 +401,7 @@ export const SegmentEditorComponent = (id?: string) => {
                   </div>
 
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-                    <div className={submitCount ? (errors.operator ? 'has-error' : 'has-success') : ''}>
+                    <div className={`${submitCount ? (errors.operator ? 'has-error' : 'has-success') : ''} col-span-1`}>
                       <label htmlFor="operator">Operator</label>
                       <Select
                         classNames={{
@@ -381,14 +415,16 @@ export const SegmentEditorComponent = (id?: string) => {
                         id="operator"
                         name="operator"
                         options={operatorOptions}
-                        onChange={(value) => {
-                          setCurrentParams((prevState) => ({ ...prevState, operator: value?.value ?? 1 }));
-                          values.operator = value?.value ?? 1;
+                        // eslint-disable-next-line eqeqeq
+                        value={operatorOptions?.find((a) => a.value == currentOperator) ?? undefined}
+                        onChange={(value: any) => {
+                          setCurrentOperator(value);
+                          values.operator = value;
                         }}
                       />
                       {submitCount ? (
                         errors.operator ? (
-                          <div className="mt-1 text-danger">{errors.operator}</div>
+                          <div className="mt-1 text-danger">{errors.operator.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -396,7 +432,7 @@ export const SegmentEditorComponent = (id?: string) => {
                         ''
                       )}
                     </div>
-                    <div className={submitCount ? (errors.value ? 'has-error' : 'has-success') : ''}>
+                    <div className={`${submitCount ? (errors.value ? 'has-error' : 'has-success') : ''} col-span-2`}>
                       <label htmlFor="value">Value</label>
                       <Field
                         name="value"
@@ -411,7 +447,7 @@ export const SegmentEditorComponent = (id?: string) => {
                       />
                       {submitCount ? (
                         errors.value ? (
-                          <div className="mt-1 text-danger">{errors.value}</div>
+                          <div className="mt-1 text-danger">{errors.value.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -424,7 +460,7 @@ export const SegmentEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={processingSegment}
+                      disabled={processingSegment || Object.keys(touched).length === 0}
                       className="btn btn-primary !mt-6"
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -432,10 +468,17 @@ export const SegmentEditorComponent = (id?: string) => {
                           if (parsed.success) {
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             submitForm(parsed.data);
+                          } else {
+                            console.error(parsed.error);
                           }
+                        } else {
+                          console.error(errors);
                         }
                       }}>
-                      {processingSegment ? 'Creating Ad...' : 'Create'}
+                      {editingMode && processingSegment && 'Editing Segment...'}
+                      {editingMode && !processingSegment && 'Edit'}
+                      {!editingMode && processingSegment && 'Creating Segment...'}
+                      {!editingMode && !processingSegment && 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -443,7 +486,7 @@ export const SegmentEditorComponent = (id?: string) => {
                 </Form>
               )}
             </Formik>
-            <div className="col-span-1">
+            <div hidden={potentialReach === undefined} className="col-span-1">
               <div className="m-7 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="m-5 mb-0 text-secondary">Potential Reach</label>
                 <div className="h-full w-full p-5">

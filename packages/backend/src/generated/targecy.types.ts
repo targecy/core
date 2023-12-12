@@ -29,7 +29,7 @@ export type Ad = {
   consumptions: Scalars['BigInt'];
   consumptionsPerDay: Array<ConsumptionsPerDay>;
   endingTimestamp: Scalars['BigInt'];
-  id: Scalars['Bytes'];
+  id: Scalars['ID'];
   maxConsumptionsPerDay: Scalars['BigInt'];
   maxPricePerConsumption: Scalars['BigInt'];
   metadataURI: Scalars['String'];
@@ -141,16 +141,14 @@ export type Ad_Filter = {
   endingTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   endingTimestamp_not?: InputMaybe<Scalars['BigInt']>;
   endingTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  id?: InputMaybe<Scalars['Bytes']>;
-  id_contains?: InputMaybe<Scalars['Bytes']>;
-  id_gt?: InputMaybe<Scalars['Bytes']>;
-  id_gte?: InputMaybe<Scalars['Bytes']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']>;
-  id_lte?: InputMaybe<Scalars['Bytes']>;
-  id_not?: InputMaybe<Scalars['Bytes']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
   maxConsumptionsPerDay?: InputMaybe<Scalars['BigInt']>;
   maxConsumptionsPerDay_gt?: InputMaybe<Scalars['BigInt']>;
   maxConsumptionsPerDay_gte?: InputMaybe<Scalars['BigInt']>;
@@ -336,7 +334,7 @@ export type Advertiser_OrderBy =
 export type Audience = {
   __typename?: 'Audience';
   consumptions: Scalars['BigInt'];
-  id: Scalars['Bytes'];
+  id: Scalars['ID'];
   metadataURI: Scalars['String'];
   segments: Array<Segment>;
 };
@@ -362,16 +360,14 @@ export type Audience_Filter = {
   consumptions_lte?: InputMaybe<Scalars['BigInt']>;
   consumptions_not?: InputMaybe<Scalars['BigInt']>;
   consumptions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  id?: InputMaybe<Scalars['Bytes']>;
-  id_contains?: InputMaybe<Scalars['Bytes']>;
-  id_gt?: InputMaybe<Scalars['Bytes']>;
-  id_gte?: InputMaybe<Scalars['Bytes']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']>;
-  id_lte?: InputMaybe<Scalars['Bytes']>;
-  id_not?: InputMaybe<Scalars['Bytes']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
   metadataURI?: InputMaybe<Scalars['String']>;
   metadataURI_contains?: InputMaybe<Scalars['String']>;
   metadataURI_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -420,7 +416,7 @@ export type Block_Height = {
 
 export type ConsumptionsPerDay = {
   __typename?: 'ConsumptionsPerDay';
-  adId: Scalars['Bytes'];
+  adId: Scalars['ID'];
   consumptions: Scalars['BigInt'];
   day: Scalars['BigInt'];
   id: Scalars['String'];
@@ -429,16 +425,14 @@ export type ConsumptionsPerDay = {
 export type ConsumptionsPerDay_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  adId?: InputMaybe<Scalars['Bytes']>;
-  adId_contains?: InputMaybe<Scalars['Bytes']>;
-  adId_gt?: InputMaybe<Scalars['Bytes']>;
-  adId_gte?: InputMaybe<Scalars['Bytes']>;
-  adId_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  adId_lt?: InputMaybe<Scalars['Bytes']>;
-  adId_lte?: InputMaybe<Scalars['Bytes']>;
-  adId_not?: InputMaybe<Scalars['Bytes']>;
-  adId_not_contains?: InputMaybe<Scalars['Bytes']>;
-  adId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  adId?: InputMaybe<Scalars['ID']>;
+  adId_gt?: InputMaybe<Scalars['ID']>;
+  adId_gte?: InputMaybe<Scalars['ID']>;
+  adId_in?: InputMaybe<Array<Scalars['ID']>>;
+  adId_lt?: InputMaybe<Scalars['ID']>;
+  adId_lte?: InputMaybe<Scalars['ID']>;
+  adId_not?: InputMaybe<Scalars['ID']>;
+  adId_not_in?: InputMaybe<Array<Scalars['ID']>>;
   and?: InputMaybe<Array<InputMaybe<ConsumptionsPerDay_Filter>>>;
   consumptions?: InputMaybe<Scalars['BigInt']>;
   consumptions_gt?: InputMaybe<Scalars['BigInt']>;
@@ -753,7 +747,7 @@ export type QuerySegmentsArgs = {
 
 export type Segment = {
   __typename?: 'Segment';
-  id: Scalars['Bytes'];
+  id: Scalars['ID'];
   issuer: Issuer;
   metadataURI: Scalars['String'];
   queryCircuitId: Scalars['String'];
@@ -761,23 +755,21 @@ export type Segment = {
   querySchema: Scalars['BigInt'];
   querySlotIndex: Scalars['BigInt'];
   queryValue: Array<Scalars['BigInt']>;
-  validator: Scalars['Bytes'];
+  validator: Scalars['String'];
 };
 
 export type Segment_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Segment_Filter>>>;
-  id?: InputMaybe<Scalars['Bytes']>;
-  id_contains?: InputMaybe<Scalars['Bytes']>;
-  id_gt?: InputMaybe<Scalars['Bytes']>;
-  id_gte?: InputMaybe<Scalars['Bytes']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']>;
-  id_lte?: InputMaybe<Scalars['Bytes']>;
-  id_not?: InputMaybe<Scalars['Bytes']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
   issuer?: InputMaybe<Scalars['String']>;
   issuer_?: InputMaybe<Issuer_Filter>;
   issuer_contains?: InputMaybe<Scalars['String']>;
@@ -870,16 +862,26 @@ export type Segment_Filter = {
   queryValue_not?: InputMaybe<Array<Scalars['BigInt']>>;
   queryValue_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
   queryValue_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
-  validator?: InputMaybe<Scalars['Bytes']>;
-  validator_contains?: InputMaybe<Scalars['Bytes']>;
-  validator_gt?: InputMaybe<Scalars['Bytes']>;
-  validator_gte?: InputMaybe<Scalars['Bytes']>;
-  validator_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  validator_lt?: InputMaybe<Scalars['Bytes']>;
-  validator_lte?: InputMaybe<Scalars['Bytes']>;
-  validator_not?: InputMaybe<Scalars['Bytes']>;
-  validator_not_contains?: InputMaybe<Scalars['Bytes']>;
-  validator_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  validator?: InputMaybe<Scalars['String']>;
+  validator_contains?: InputMaybe<Scalars['String']>;
+  validator_contains_nocase?: InputMaybe<Scalars['String']>;
+  validator_ends_with?: InputMaybe<Scalars['String']>;
+  validator_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  validator_gt?: InputMaybe<Scalars['String']>;
+  validator_gte?: InputMaybe<Scalars['String']>;
+  validator_in?: InputMaybe<Array<Scalars['String']>>;
+  validator_lt?: InputMaybe<Scalars['String']>;
+  validator_lte?: InputMaybe<Scalars['String']>;
+  validator_not?: InputMaybe<Scalars['String']>;
+  validator_not_contains?: InputMaybe<Scalars['String']>;
+  validator_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  validator_not_ends_with?: InputMaybe<Scalars['String']>;
+  validator_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  validator_not_in?: InputMaybe<Array<Scalars['String']>>;
+  validator_not_starts_with?: InputMaybe<Scalars['String']>;
+  validator_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  validator_starts_with?: InputMaybe<Scalars['String']>;
+  validator_starts_with_nocase?: InputMaybe<Scalars['String']>;
 };
 
 export type Segment_OrderBy =
@@ -1078,33 +1080,33 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | 'deny';
 
-export type SegmentFragment = { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: any, metadataURI: string, validator: any, issuer: { __typename?: 'Issuer', id: string } };
+export type SegmentFragment = { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } };
 
 export type GetAllSegmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: any, metadataURI: string, validator: any, issuer: { __typename?: 'Issuer', id: string } }> };
+export type GetAllSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
 export type GetSegmentQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSegmentQuery = { __typename?: 'Query', segment?: { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: any, metadataURI: string, validator: any, issuer: { __typename?: 'Issuer', id: string } } | null };
+export type GetSegmentQuery = { __typename?: 'Query', segment?: { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } } | null };
 
 export type GetSegmentsQueryVariables = Exact<{
-  ids: Array<Scalars['Bytes']> | Scalars['Bytes'];
+  ids: Array<Scalars['ID']> | Scalars['ID'];
 }>;
 
 
-export type GetSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: any, metadataURI: string, validator: any, issuer: { __typename?: 'Issuer', id: string } }> };
+export type GetSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
 export type GetSegmentForAudienceQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSegmentForAudienceQuery = { __typename?: 'Query', audience?: { __typename?: 'Audience', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: any, metadataURI: string, validator: any, issuer: { __typename?: 'Issuer', id: string } }> } | null };
+export type GetSegmentForAudienceQuery = { __typename?: 'Query', audience?: { __typename?: 'Audience', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } }> } | null };
 
 export const SegmentFragmentDoc = gql`
     fragment Segment on Segment {
@@ -1136,7 +1138,7 @@ export const GetSegmentDocument = gql`
 }
     ${SegmentFragmentDoc}`;
 export const GetSegmentsDocument = gql`
-    query GetSegments($ids: [Bytes!]!) {
+    query GetSegments($ids: [ID!]!) {
   segments(where: {id_in: $ids}) {
     ...Segment
   }

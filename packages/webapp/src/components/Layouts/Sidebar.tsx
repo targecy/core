@@ -143,16 +143,6 @@ const Sidebar = () => {
                   <br></br>
                   <label>Advertiser</label>
                   <li className="nav-item">
-                    <Link href="/audiences" className="group">
-                      <div className="flex items-center">
-                        <UsergroupAddOutlined rev={undefined} />
-                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Audiences')}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
                     <Link href="/ads" className="group">
                       <div className="flex items-center">
                         <EditOutlined rev={undefined} />
@@ -162,10 +152,32 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
+                  <br></br>
+                  <label>Publisher</label>
+                  <li className="nav-item">
+                    <Link href="/wizard" className="group">
+                      <div className="flex items-center">
+                        <PlaySquareOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Wizard')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
                   <div hidden={!isAdmin}>
                     <br></br>
 
                     <label>Admin</label>
+                    <li className="nav-item">
+                      <Link href="/audiences" className="group">
+                        <div className="flex items-center">
+                          <UsergroupAddOutlined rev={undefined} />
+                          <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                            {t('Audiences')}
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
                     <li className="nav-item">
                       <Link href="/segments" className="group">
                         <div className="flex items-center">
@@ -187,18 +199,6 @@ const Sidebar = () => {
                       </Link>
                     </li>
                   </div>
-                  <br></br>
-                  <label>Publisher</label>
-                  <li className="nav-item">
-                    <Link href="/wizard" className="group">
-                      <div className="flex items-center">
-                        <PlaySquareOutlined rev={undefined} />
-                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Wizard')}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
                 </ul>
               </li>
             </ul>

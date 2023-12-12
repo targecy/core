@@ -1,6 +1,6 @@
 type Ad @entity {
   # Properties
-  id: Bytes! # uint256
+  id: ID! # uint256
   advertiser: Advertiser! # address
   metadataURI: String! # string TODO
   attribution: Int8! # 0 = impressions, 1 = clicks, 2 = conversions
@@ -22,23 +22,23 @@ type Ad @entity {
 
 type ConsumptionsPerDay @entity {
   id: String! # {adId}-{day from epoch bigint}
-  adId: Bytes! # uint256
+  adId: ID! # uint256
   day: BigInt! # uint256
   consumptions: BigInt! # uint256
 }
 
 type Audience @entity {
-  id: Bytes! # uint256
+  id: ID! # uint256
   metadataURI: String! # string
   segments: [Segment!]! # uint256[]
   consumptions: BigInt! # uint256
 }
 
 type Segment @entity {
-  id: Bytes! # uint256
+  id: ID! # uint256
   metadataURI: String! # string
   issuer: Issuer! # address
-  validator: Bytes! # address
+  validator: String! # address
   querySchema: BigInt! # uint256
   querySlotIndex: BigInt! # uint256
   queryOperator: BigInt! # uint256

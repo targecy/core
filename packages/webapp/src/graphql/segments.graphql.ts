@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const GetAllSegments = gql`
+export const Segments = gql`
   fragment SegmentFragment on Segment {
     id
     metadataURI
@@ -17,6 +17,12 @@ export const GetAllSegments = gql`
 
   query GetAllSegments {
     segments {
+      ...SegmentFragment
+    }
+  }
+
+  query GetSegment($id: ID!) {
+    segment(id: $id) {
       ...SegmentFragment
     }
   }

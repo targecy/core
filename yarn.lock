@@ -3580,6 +3580,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iden3/js-jwz@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@iden3/js-jwz@npm:1.2.0"
+  peerDependencies:
+    "@iden3/js-crypto": 1.0.3
+    "@iden3/js-iden3-core": 1.2.0
+    "@iden3/js-merkletree": 1.1.2
+    ffjavascript: 0.2.62
+    rfc4648: 1.5.3
+    snarkjs: 0.7.2
+  checksum: 75c365d3c5203955e5e71a14414d9a0f1c4be3e9326fd4a879e23d2ffa3eb376b634c2f6940e1488aa17a1182fcc27c426a250700eac24ec125d6640497134e4
+  languageName: node
+  linkType: hard
+
 "@iden3/js-merkletree@npm:^1.1.2":
   version: 1.1.2
   resolution: "@iden3/js-merkletree@npm:1.1.2"
@@ -7297,6 +7311,9 @@ __metadata:
     "@headlessui/react": "npm:^1.7.8"
     "@iden3/js-crypto": "npm:^1.0.0"
     "@iden3/js-iden3-core": "npm:^1.0.1"
+    "@iden3/js-jsonld-merklization": "npm:^1.1.2"
+    "@iden3/js-jwz": "npm:^1.2.0"
+    "@iden3/js-merkletree": "npm:^1.1.2"
     "@lumeweb/js-sha3-browser": "npm:^0.8.1"
     "@mantine/core": "npm:^5.10.5"
     "@mantine/hooks": "npm:^5.10.5"
@@ -7331,6 +7348,7 @@ __metadata:
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-stack-grid": "npm:^0.7.3"
     "@types/react-text-mask": "npm:^5.4.11"
+    "@types/snarkjs": "npm:^0"
     "@types/sortablejs": "npm:^1.15.0"
     "@typescript-eslint/eslint-plugin": "npm:^5.37.0"
     "@typescript-eslint/parser": "npm:^5.37.0"
@@ -7418,9 +7436,11 @@ __metadata:
     react-text-mask: "npm:^5.5.0"
     react-use: "npm:^17.3.1"
     request: "npm:^2.88.2"
+    rfc4648: "npm:^1.5.3"
     rollup-plugin-polyfill-node: "npm:^0.10.2"
     shx: "npm:^0.3.4"
     siwe: "npm:^2.1.4"
+    snarkjs: "npm:^0.7.2"
     sortablejs: "npm:^1.15.0"
     stream: "npm:^0.0.2"
     stream-browserify: "npm:^3.0.0"

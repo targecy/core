@@ -272,13 +272,13 @@ export const initializeData = async () => {
       },
       segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Curve') + 1],
     },
-    {
-      metadata: {
-        title: 'Interacted with Lido',
-        description: 'Users that have interacted with Lido.',
-      },
-      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Lido') + 1],
-    },
+    // {
+    //   metadata: {
+    //     title: 'Interacted with Lido',
+    //     description: 'Users that have interacted with Lido.',
+    //   },
+    //   segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Lido') + 1],
+    // },
   ];
 
   const ads: Array<{

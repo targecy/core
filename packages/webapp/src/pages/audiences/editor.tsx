@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
+import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
@@ -10,15 +11,19 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAllSegmentsQuery } from '~~/generated/graphql.types';
+import { Segment, useGetAllSegmentsQuery, useGetAudienceQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
+import { fetchMetadata } from '~~/utils/metadata';
 import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
 export const AudienceEditorComponent = (id?: string) => {
-  const { data: segments } = useGetAllSegmentsQuery();
+  const { data } = useGetAllSegmentsQuery();
+  const segments: Segment[] = data?.segments || [];
+
+  const editingMode = id !== undefined;
 
   const [processingAudience, setProcessingAudience] = useState(false);
   const { writeAsync: createAudience } = useContractWrite({
@@ -33,8 +38,20 @@ export const AudienceEditorComponent = (id?: string) => {
   });
 
   const router = useRouter();
-
   const { isConnected } = useWallet();
+
+  const [currentMetadata, setCurrentMetadata] = useState<
+    { title?: string; description?: string; image?: string } | undefined
+  >(undefined);
+  const { data: audienceData, isLoading } = useGetAudienceQuery({ id: id ?? '' });
+  const audience = audienceData?.audience;
+  useAsync(async () => {
+    if (audience) {
+      const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+      const json = await newMetadata.json();
+      setCurrentMetadata({ title: json.title, description: json.description });
+    }
+  }, [audience]);
 
   const submitForm = async (data: FormValues) => {
     setProcessingAudience(true);
@@ -68,7 +85,7 @@ export const AudienceEditorComponent = (id?: string) => {
 
     try {
       let hash;
-      if (!id) {
+      if (!editingMode) {
         hash = (
           await createAudience({
             args: [metadataURI, data.segments],
@@ -88,12 +105,13 @@ export const AudienceEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
+        title: `Ad ${editingMode ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 
       await router.push('/audiences');
     } catch (e) {
+      console.log(e);
       await Swal.mixin({
         toast: true,
         position: 'top',
@@ -101,7 +119,7 @@ export const AudienceEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'error',
-        title: `Error ${id ? 'editing' : 'creating'} ad`,
+        title: `Error ${editingMode ? 'editing' : 'creating'} audience`,
         padding: '10px 20px',
       });
 
@@ -116,16 +134,8 @@ export const AudienceEditorComponent = (id?: string) => {
   });
 
   type FormValues = z.infer<typeof schema>;
-
-  const segmentsOptions = segments?.segments.map((req) => {
-    return {
-      value: req.id,
-      label: `Segment: ${req.id}`,
-    };
-  });
-
   const [currentSegments, setCurrentSegments] = useState<number[] | undefined>(undefined);
-  const [potentialReach, setPotentialReach] = useState<number>(0);
+  const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
     if (!currentSegments || currentSegments.length === 0) return;
 
@@ -133,8 +143,52 @@ export const AudienceEditorComponent = (id?: string) => {
       .query({
         ids: currentSegments.map((id) => id.toString()),
       })
-      .then((response) => setPotentialReach(response.count));
+      .catch((error) => console.log(error))
+      .then((response) =>
+        setPotentialReach(typeof response === 'object' && 'count' in response ? response.count : undefined)
+      );
   }, [currentSegments]);
+
+  const [segmentsMetadata, setSegmentsMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>(
+    {}
+  );
+
+  useAsync(async () => {
+    if (segments) {
+      setSegmentsMetadata(
+        (
+          await Promise.all(
+            segments.map(async (s) => {
+              const newMetadata = await fetch(`https://${s.metadataURI}.ipfs.nftstorage.link`);
+              const json = await newMetadata.json();
+              return {
+                id: s.id,
+                metadata: json,
+              };
+            })
+          )
+        ).reduce<typeof segmentsMetadata>((acc, curr) => {
+          acc[curr.id] = curr.metadata;
+          return acc;
+        }, {})
+      );
+    }
+  }, [segments]);
+
+  useEffect(() => {
+    const initialAudiences = audience?.segments ? audience?.segments.map((id) => Number(id)) : [];
+
+    if ((!currentSegments || !currentSegments.length) && initialAudiences.length) {
+      setCurrentSegments(initialAudiences);
+    }
+  }, [audience]);
+
+  const segmentsOptions = segments.map((req) => {
+    return {
+      value: req.id,
+      label: segmentsMetadata[req.id]?.title ?? `Segment ${req.id}`,
+    };
+  });
 
   return (
     <div>
@@ -145,7 +199,7 @@ export const AudienceEditorComponent = (id?: string) => {
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-          {id ? <span>Edit</span> : <span>New</span>}
+          {editingMode ? <span>Edit</span> : <span>New</span>}
         </li>
       </ul>
 
@@ -153,15 +207,16 @@ export const AudienceEditorComponent = (id?: string) => {
         <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
           <label className="mb-3 text-2xl text-primary">
             {' '}
-            {id ? <span>Edit </span> : <span>New </span>}
-            Target Group {id ? `#${id}` : ''}
+            {editingMode ? <span>Edit </span> : <span>New </span>}
+            {editingMode ? `'${currentMetadata?.title}'` : 'Audience'}
           </label>
 
           <div className="grid grid-cols-2 gap-5">
             <Formik
+              enableReinitialize={true}
               initialValues={{
-                title: '',
-                description: '',
+                title: currentMetadata?.title ?? '',
+                description: currentMetadata?.description ?? '',
                 segments: [] as number[],
               }}
               validationSchema={toFormikValidationSchema(schema)}
@@ -188,7 +243,6 @@ export const AudienceEditorComponent = (id?: string) => {
                       name="description"
                       type="textarea"
                       as="textarea"
-                      // rows={3}
                       id="description"
                       placeholder="Enter Description"
                       className="form-input"
@@ -212,6 +266,9 @@ export const AudienceEditorComponent = (id?: string) => {
                         option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                         singleValue: () =>
                           'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        multiValue: () => 'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                        multiValueLabel: () =>
+                          'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
                         menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                       }}
                       placeholder="Select an option"
@@ -239,7 +296,7 @@ export const AudienceEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={processingAudience}
+                      disabled={processingAudience || Object.keys(touched).length === 0}
                       className="btn btn-primary !mt-6"
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -247,10 +304,15 @@ export const AudienceEditorComponent = (id?: string) => {
                           if (parsed.success) {
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             submitForm(parsed.data);
+                          } else {
+                            console.log(parsed.error);
                           }
                         }
                       }}>
-                      {processingAudience ? 'Creating Ad...' : 'Create'}
+                      {editingMode && processingAudience && 'Editing Audience...'}
+                      {editingMode && !processingAudience && 'Edit'}
+                      {!editingMode && processingAudience && 'Creating Audience...'}
+                      {!editingMode && !processingAudience && 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -259,7 +321,9 @@ export const AudienceEditorComponent = (id?: string) => {
               )}
             </Formik>
 
-            <div className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+            <div
+              hidden={potentialReach === undefined}
+              className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
               <label className="m-5 text-secondary">Potential Reach</label>
               <div className="h-full w-full">
                 <label className="text-center align-middle text-9xl">{potentialReach}</label>

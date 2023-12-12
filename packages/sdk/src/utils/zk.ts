@@ -352,7 +352,7 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
       proofs.push({ proof, id: proofRequest.id });
     }
     if (proofs.length === audience.segments.length) break;
-    else proofs = []; // Will try next target group
+    else proofs = []; // Will try next audience
   }
 
   if (proofs.length === 0 && ad.audiences.length > 0) {

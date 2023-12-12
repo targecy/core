@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const GetAllAds = gql`
+export const Ads = gql`
   fragment AdFragment on Ad {
     id
     advertiser {
@@ -42,8 +42,8 @@ export const GetAllAds = gql`
     }
   }
 
-  query GetAdById($id: Bytes!) {
-    ads(where: { id: $id }) {
+  query GetAd($id: ID!) {
+    ad(id: $id) {
       ...AdFragment
     }
   }

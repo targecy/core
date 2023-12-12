@@ -56,7 +56,7 @@ export const GetAllAds = gql`
     }
   }
 
-  query GetAdById($id: Bytes) {
+  query GetAdById($id: ID) {
     ads(where: { id: $id }) {
       ...AdFragment
     }

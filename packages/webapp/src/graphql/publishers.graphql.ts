@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const GetAllPublishers = gql`
+export const Publisher = gql`
   fragment PublisherFragment on Publisher {
     id
     adsQuantity
@@ -11,6 +11,12 @@ export const GetAllPublishers = gql`
 
   query GetAllPublishers {
     publishers {
+      ...PublisherFragment
+    }
+  }
+
+  query GetPublisher($id: ID!) {
+    publisher(id: $id) {
       ...PublisherFragment
     }
   }

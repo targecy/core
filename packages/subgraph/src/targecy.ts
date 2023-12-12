@@ -10,7 +10,7 @@ import {
   AudienceEdited as AudienceEditedEvent,
   SegmentCreated as SegmentCreatedEvent,
 } from '../generated/Targecy/Targecy';
-import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay } from '../generated/schema';
+import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay, Issuer } from '../generated/schema';
 import { BigInt, Bytes, store, log } from '@graphprotocol/graph-ts';
 
 function createAdvertiser(id: string): Advertiser {
@@ -34,13 +34,13 @@ function createAdvertiser(id: string): Advertiser {
 }
 
 export function handleAdCreated(event: AdCreatedEvent): void {
-  let adEntity = Ad.load(Bytes.fromI32(event.params.adId.toI32()));
+  let adEntity = Ad.load(event.params.adId.toString());
 
   if (adEntity != null) {
     throw new Error('Ad already created.' + event.params.adId.toString());
   }
 
-  let entity = new Ad(Bytes.fromI32(event.params.adId.toI32()));
+  let entity = new Ad(event.params.adId.toString());
 
   // Properties
   entity.advertiser = createAdvertiser(event.params.advertiser.toHexString()).id;
@@ -50,7 +50,7 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   // Conditions
   entity.startingTimestamp = event.params.ad.startingTimestamp;
   entity.endingTimestamp = event.params.ad.endingTimestamp;
-  entity.audiences = event.params.ad.audienceIds.map<Bytes>((id) => Bytes.fromI32(id.toI32()));
+  entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = new Array<string>(event.params.ad.blacklistedPublishers.length);
   for (let i = 0; i < event.params.ad.blacklistedPublishers.length; i++) {
     const address = event.params.ad.blacklistedPublishers[i];
@@ -102,7 +102,7 @@ function getConsumptionsPerDay(adId: BigInt, day: BigInt): ConsumptionsPerDay {
 
   if (entity == null) {
     entity = new ConsumptionsPerDay(id);
-    entity.adId = Bytes.fromI32(adId.toI32());
+    entity.adId = adId.toString();
     entity.day = day;
     entity.consumptions = BigInt.fromI32(0);
     entity.save();
@@ -134,7 +134,7 @@ function pushToArray<T>(array: Array<T>, element: T): Array<T> {
 }
 
 export function handleAdConsumed(event: AdConsumedEvent): void {
-  let adEntity = Ad.load(Bytes.fromI32(event.params.adId.toI32()));
+  let adEntity = Ad.load(event.params.adId.toString());
 
   if (adEntity == null) {
     throw new Error('Ad not found. Cannot consume.');
@@ -183,7 +183,7 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
 }
 
 export function handleAdDeleted(event: AdDeletedEvent): void {
-  let entity = Ad.load(Bytes.fromI32(event.params.adId.toI32()));
+  let entity = Ad.load(event.params.adId.toString());
   if (entity == null) {
     throw new Error('Ad not found. Cannot delete.');
   }
@@ -203,7 +203,7 @@ export function handleAdDeleted(event: AdDeletedEvent): void {
 }
 
 export function handleAdEdited(event: AdEditedEvent): void {
-  let entity = Ad.load(Bytes.fromI32(event.params.adId.toI32()));
+  let entity = Ad.load(event.params.adId.toString());
 
   if (entity == null) {
     // LOG SOMETHING
@@ -213,7 +213,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
   entity.metadataURI = event.params.ad.metadataURI;
   entity.totalBudget = event.params.ad.totalBudget;
   entity.remainingBudget = event.params.ad.remainingBudget;
-  entity.audiences = event.params.ad.audienceIds.map<Bytes>((id) => Bytes.fromI32(id.toI32()));
+  entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
   entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
@@ -224,10 +224,11 @@ export function handleAdEdited(event: AdEditedEvent): void {
 }
 
 export function handleAudienceCreated(event: AudienceCreatedEvent): void {
-  let entity = new Audience(Bytes.fromI32(event.params.audienceId.toI32()));
+  let entity = new Audience(event.params.audienceId.toString());
 
   entity.metadataURI = event.params.metadataURI;
-  entity.segments = event.params.segmentIds.map<Bytes>((id) => Bytes.fromI32(id.toI32()));
+  entity.segments = event.params.segmentIds.map<string>((id) => id.toString());
+  entity.consumptions = BigInt.fromI32(0);
 
   entity.save();
 }
@@ -237,7 +238,7 @@ export function handleAudienceDeleted(event: AudienceDeletedEvent): void {
 }
 
 export function handleAudienceEdited(event: AudienceEditedEvent): void {
-  let entity = Audience.load(Bytes.fromI32(event.params.audienceId.toI32()));
+  let entity = Audience.load(event.params.audienceId.toString());
 
   if (entity == null) {
     // LOG SOMETHING
@@ -245,7 +246,7 @@ export function handleAudienceEdited(event: AudienceEditedEvent): void {
   }
 
   entity.metadataURI = event.params.metadataURI;
-  entity.segments = event.params.segmentIds.map<Bytes>((id) => Bytes.fromI32(id.toI32()));
+  entity.segments = event.params.segmentIds.map<string>((id) => id.toString());
 
   entity.save();
 }
@@ -255,16 +256,23 @@ export function handleSegmentCreated(event: SegmentCreatedEvent): void {
   log.debug('handleSegmentCreated metadataURI: {}', [event.params.metadataURI]);
   log.debug('asd', []);
 
-  let entity = new Segment(Bytes.fromI32(event.params.segmentId.toI32()));
+  let entity = new Segment(event.params.segmentId.toString());
 
   entity.metadataURI = event.params.metadataURI;
-  entity.validator = event.params.validator;
+  entity.validator = event.params.validator.toHexString();
 
   entity.queryCircuitId = event.params.query.circuitId;
   entity.queryOperator = event.params.query.operator;
   entity.querySchema = event.params.query.schema;
   entity.querySlotIndex = event.params.query.slotIndex;
   entity.queryValue = event.params.query.value;
+
+  let issuer = Issuer.load(event.params.issuer.toHexString());
+  if (issuer == null) {
+    issuer = new Issuer(event.params.issuer.toHexString());
+    issuer.save();
+  }
+  entity.issuer = issuer.id;
 
   entity.save();
 

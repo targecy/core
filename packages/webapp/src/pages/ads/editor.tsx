@@ -12,7 +12,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAllAudiencesQuery } from '~~/generated/graphql.types';
+import { useGetAdQuery, useGetAllAudiencesQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { fetchMetadata } from '~~/utils/metadata';
 import { backendTrpcClient } from '~~/utils/trpc';
@@ -21,6 +21,7 @@ import { backendTrpcClient } from '~~/utils/trpc';
 const abi = require('../../generated/abis/Targecy.json');
 
 export const AdEditorComponent = (id?: string) => {
+  const editingMode = !!id;
   const { data: audiences } = useGetAllAudiencesQuery();
   const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
@@ -113,12 +114,13 @@ export const AdEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
+        title: `Ad ${editingMode ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 
       await router.push('/ads');
     } catch (e) {
+      console.error(e);
       Swal.mixin({
         toast: true,
         position: 'top',
@@ -126,7 +128,7 @@ export const AdEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'error',
-        title: `Error ${id ? 'editing' : 'creating'} ad`,
+        title: `Error ${editingMode ? 'editing' : 'creating'} ad`,
         padding: '10px 20px',
       });
 
@@ -140,8 +142,8 @@ export const AdEditorComponent = (id?: string) => {
     image: z.string().describe('Please provide an image URL'),
     budget: z.number().describe('Please choose a budget'),
     maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
-    startingTimestamp: z.number().describe('Please provide a starting block'),
-    endingTimestamp: z.number().describe('Please provide a ending block'),
+    startingTimestamp: z.number().describe('Please provide a starting timestamp'),
+    endingTimestamp: z.number().describe('Please provide a ending timestamp'),
     audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
   });
 
@@ -150,7 +152,7 @@ export const AdEditorComponent = (id?: string) => {
   const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
 
   const [currentAudiences, setCurrentAudiences] = useState<number[] | undefined>(undefined);
-  const [potentialReach, setPotentialReach] = useState<number>(0);
+  const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
     if (!currentAudiences || currentAudiences.length === 0) return;
 
@@ -159,24 +161,8 @@ export const AdEditorComponent = (id?: string) => {
         ids: currentAudiences.map((id) => id.toString()),
       })
       .then((response) => setPotentialReach(response.count))
-      .catch((error) => console.log(error));
+      .catch((error) => console.error(error));
   }, [currentAudiences]);
-
-  const { query } = useRouter();
-  const [defaultAudiencesOptions, setDefaultAudiencesOptions] = useState<any[] | undefined>(undefined);
-  useEffect(() => {
-    const initialAudiences = query.audiences
-      ? query.audiences
-          .toString()
-          .split(',')
-          .map((id) => Number(id))
-      : [];
-
-    if ((!currentAudiences || !currentAudiences.length) && initialAudiences.length) {
-      setCurrentAudiences(initialAudiences);
-      setDefaultAudiencesOptions(audienceOptions?.filter((a) => initialAudiences.includes(Number(a.value))));
-    }
-  }, [query, defaultAudiencesOptions]);
 
   const [audiencesMetadata, setAudiencesMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>(
     {}
@@ -196,9 +182,33 @@ export const AdEditorComponent = (id?: string) => {
   const audienceOptions = audiences?.audiences.map((a) => {
     return {
       value: a.id,
-      label: audiencesMetadata[a.id]?.title ?? `Target Group #${a.id}`,
+      label: audiencesMetadata[a.id]?.title ?? `Audience #${a.id}`,
     };
   });
+
+  const [currentMetadata, setCurrentMetadata] = useState<
+    { title?: string; description?: string; image?: string } | undefined
+  >(undefined);
+  const { data: adData } = useGetAdQuery({ id: id ?? '' });
+  const ad = adData?.ad;
+  useAsync(async () => {
+    if (ad) {
+      const initialAudiences = ad?.audiences.map((a) => Number(a.id)) ?? [];
+      if ((!currentAudiences || !currentAudiences.length) && initialAudiences.length) {
+        setCurrentAudiences(initialAudiences);
+      }
+
+      const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+      const json = await newMetadata.json();
+      setCurrentMetadata({ title: json.title, description: json.description, image: json.imageUrl });
+
+      setPreviewValues({
+        title: json?.title,
+        description: json?.description,
+        image: json?.imageUrl,
+      });
+    }
+  }, [ad]);
 
   return (
     <div>
@@ -209,7 +219,7 @@ export const AdEditorComponent = (id?: string) => {
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-          {id ? <span>Edit</span> : <span>New</span>}
+          {editingMode ? <span>Edit</span> : <span>New</span>}
         </li>
       </ul>
 
@@ -217,19 +227,20 @@ export const AdEditorComponent = (id?: string) => {
         <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
           <label className="mb-3 text-2xl text-primary">
             {' '}
-            {id ? <span>Edit </span> : <span>New </span>}
-            Campaign {id ? `#${id}` : ''}
+            {editingMode ? <span>Edit </span> : <span>New </span>}
+            {editingMode ? `'${currentMetadata?.title}'` : 'Campaign'}
           </label>
           <div className="grid grid-cols-2 gap-5">
             <Formik
+              enableReinitialize={true}
               initialValues={{
-                title: '',
-                description: '',
-                image: '',
-                budget: '',
-                maxPricePerConsumption: '',
-                startingTimestamp: '',
-                endingTimestamp: '',
+                title: currentMetadata?.title ?? '',
+                description: currentMetadata?.description ?? '',
+                image: currentMetadata?.image ?? '',
+                budget: Number(ad?.remainingBudget),
+                maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
+                startingTimestamp: Number(ad?.startingTimestamp),
+                endingTimestamp: Number(ad?.endingTimestamp),
                 audienceIds: [] as number[],
               }}
               validationSchema={toFormikValidationSchema(schema)}
@@ -311,7 +322,7 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
 
                     <div className={submitCount ? (errors.budget ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="budget">budget</label>
+                      <label htmlFor="budget">{editingMode ? 'Remaining Budget' : 'Budget'}</label>
                       <div className="flex">
                         <div className="flex items-center justify-center border border-white-light bg-[#eee] px-3 font-semibold ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0 dark:border-[#17263c] dark:bg-[#1b2e4b]">
                           MATIC
@@ -326,7 +337,7 @@ export const AdEditorComponent = (id?: string) => {
                       </div>
                       {submitCount ? (
                         errors.budget ? (
-                          <div className="mt-1 text-danger">{errors.budget}</div>
+                          <div className="mt-1 text-danger">{errors.budget.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -337,17 +348,17 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.startingTimestamp ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Starting Block</label>
+                      <label htmlFor="startingTimestamp">Starting Timestamp</label>
                       <Field
                         name="startingTimestamp"
                         type="number"
                         id="startingTimestamp"
-                        placeholder="Enter min block"
+                        placeholder="Enter min timestamp"
                         className="form-input"
                       />
                       {submitCount ? (
                         errors.startingTimestamp ? (
-                          <div className="mt-1 text-danger">{errors.startingTimestamp}</div>
+                          <div className="mt-1 text-danger">{errors.startingTimestamp.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -357,17 +368,17 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
 
                     <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="endingTimestamp">Ending Block</label>
+                      <label htmlFor="endingTimestamp">Ending Timestamp</label>
                       <Field
                         name="endingTimestamp"
                         type="number"
                         id="endingTimestamp"
-                        placeholder="Enter max block"
+                        placeholder="Enter max timestamp"
                         className="form-input"
                       />
                       {submitCount ? (
                         errors.endingTimestamp ? (
-                          <div className="mt-1 text-danger">{errors.endingTimestamp}</div>
+                          <div className="mt-1 text-danger">{errors.endingTimestamp.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -389,7 +400,7 @@ export const AdEditorComponent = (id?: string) => {
 
                       {submitCount ? (
                         errors.maxPricePerConsumption ? (
-                          <div className="mt-1 text-danger">{errors.maxPricePerConsumption}</div>
+                          <div className="mt-1 text-danger">{errors.maxPricePerConsumption.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -437,17 +448,24 @@ export const AdEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={procesingAd}
-                      className="btn btn-primary !mt-6"
+                      disabled={procesingAd || Object.keys(touched).length === 0}
+                      className={`btn btn-primary !mt-6 `}
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
                           const parsed = schema.safeParse(values);
                           if (parsed.success) {
                             submitForm(parsed.data);
+                          } else {
+                            console.error(parsed.error);
                           }
+                        } else {
+                          console.error(errors);
                         }
                       }}>
-                      {id ? (procesingAd ? 'Editing Ad...' : 'Edit') : procesingAd ? 'Creating Ad...' : 'Create'}
+                      {editingMode && procesingAd && 'Editing Ad...'}
+                      {editingMode && !procesingAd && 'Edit'}
+                      {!editingMode && procesingAd && 'Creating Ad...'}
+                      {!editingMode && !procesingAd && 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -474,7 +492,9 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                 </div>
               </div>
-              <div className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+              <div
+                hidden={potentialReach === undefined}
+                className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
                 <label className="float-right m-5 text-2xl text-primary">{potentialReach}</label>
               </div>

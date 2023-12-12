@@ -33,7 +33,7 @@ export const GetSegment = gql`
 `;
 
 export const GetSegments = gql`
-  query GetSegments($ids: [Bytes!]!) {
+  query GetSegments($ids: [ID!]!) {
     segments(where: { id_in: $ids }) {
       ...Segment
     }
