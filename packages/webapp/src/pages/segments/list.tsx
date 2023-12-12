@@ -148,13 +148,16 @@ const SegmentsList = () => {
   return (
     <div className="panel">
       <div className="mb-5 flex items-center justify-between p-2">
-        <h5 className="text-lg font-semibold dark:text-white-light">Segments</h5>
-        <Link className="btn btn-primary" href="/segments/editor">
+        <h5 className="text-2xl font-semibold dark:text-white-light">Segments</h5>
+        <Link className="btn-outline-secondary btn" href="/segments/editor">
           Create
         </Link>
       </div>
       <div>
         <DataTable
+          rowBorderColor="transparent"
+          borderColor="grey"
+          noRecordsIcon={<div></div>}
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
           noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"

@@ -73,7 +73,23 @@ const AdsList = () => {
     },
     { title: 'Title', accessor: 'id', render: (ad) => metadata[ad.id]?.title },
     { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
-    { title: 'consumptions', accessor: 'consumptions' },
+    {
+      title: 'Attribution',
+      accessor: 'attribution',
+      render: (value) => {
+        switch (value.attribution) {
+          case '0':
+            return 'Impression';
+          case '1':
+            return 'Click';
+          case '2':
+            return 'Conversion';
+          default:
+            throw new Error('Invalid attribution');
+        }
+      },
+    },
+    { title: 'Consumptions', accessor: 'consumptions', render: (value) => value.consumptions },
     {
       title: 'Audiences',
       accessor: 'audiencesIds',
@@ -91,7 +107,7 @@ const AdsList = () => {
             <EditOutlined
               rev={undefined}
               onClick={() => {}}
-              className="align-middle text-warning hover:text-secondary"></EditOutlined>
+              className="align-middle text-warning transition-all  hover:text-secondary"></EditOutlined>
           </Link>
           <Link href="#">
             <DeleteOutlined
@@ -124,7 +140,7 @@ const AdsList = () => {
                     console.log(error);
                   });
               }}
-              className="align-middle text-danger hover:text-secondary"></DeleteOutlined>
+              className="ml-2 align-middle text-danger transition-all hover:text-secondary"></DeleteOutlined>
           </Link>
         </div>
       ),
@@ -134,13 +150,16 @@ const AdsList = () => {
   return (
     <div className="panel">
       <div className="mb-5 flex items-center justify-between p-2">
-        <h5 className="text-lg font-semibold dark:text-white-light">Ads</h5>
-        <Link className="btn btn-primary" href="/ads/editor">
+        <h5 className="text-2xl font-semibold dark:text-white-light">Ads</h5>
+        <Link className="btn-outline-secondary btn" href="/ads/editor">
           Create
         </Link>
       </div>
       <div>
         <DataTable
+          rowBorderColor="transparent"
+          borderColor="grey"
+          noRecordsIcon={<div></div>}
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
           noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
@@ -149,7 +168,7 @@ const AdsList = () => {
             router.push(`/ads/${row.id}`).catch((e) => console.log(e));
           }}
           highlightOnHover={true}
-          minHeight={200}
+          minHeight={100}
           columns={columns}></DataTable>
       </div>
     </div>

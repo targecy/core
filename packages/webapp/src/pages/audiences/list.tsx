@@ -92,7 +92,7 @@ const ListAudiences = () => {
             <EditOutlined
               rev={undefined}
               onClick={() => {}}
-              className="align-middle text-warning hover:text-secondary"></EditOutlined>
+              className="align-middle text-warning transition-all hover:text-secondary"></EditOutlined>
           </Link>
           <Link href="#">
             <DeleteOutlined
@@ -125,7 +125,7 @@ const ListAudiences = () => {
                     console.log(error);
                   });
               }}
-              className="align-middle text-danger hover:text-secondary"></DeleteOutlined>
+              className="align-middle text-danger transition-all hover:text-secondary"></DeleteOutlined>
           </Link>
         </div>
       ),
@@ -137,13 +137,16 @@ const ListAudiences = () => {
   return (
     <div className="panel">
       <div className="mb-5 flex items-center justify-between p-2">
-        <h5 className="text-lg font-semibold dark:text-white-light">Audiences</h5>
-        <Link className="btn btn-primary" href="/audiences/editor">
+        <h5 className="text-2xl font-semibold dark:text-white-light">Audiences</h5>
+        <Link className="btn-outline-secondary btn" href="/audiences/editor">
           Create
         </Link>
       </div>
       <div>
         <DataTable
+          rowBorderColor="transparent"
+          borderColor="grey"
+          noRecordsIcon={<div></div>}
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
           noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
