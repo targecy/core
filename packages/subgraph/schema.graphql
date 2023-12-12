@@ -1,39 +1,71 @@
 type Ad @entity {
-  id: String! # uint256
+  # Properties
+  id: Bytes! # uint256
+  advertiser: Advertiser! # address
   metadataURI: String! # string TODO
+  attribution: Int8! # 0 = impressions, 1 = clicks, 2 = conversions
+  # Conditions
+  startingTimestamp: BigInt! # uint256
+  endingTimestamp: BigInt! # uint256
+  audiences: [Audience!]! # uint256[]
+  blacklistedPublishers: [Publisher!]! # address[]
+  blacklistedWeekdays: [BigInt!]! # uint256[]
+  # Budget
   totalBudget: BigInt! # uint256
   remainingBudget: BigInt! # uint256
-  targetGroups: [TargetGroup!]! # uint256[]
-  minBlock: BigInt! # uint256
-  maxBlock: BigInt! # uint256
-  maxImpressionPrice: BigInt! # uint256
-  advertiser: User! # address
-  impressions: BigInt! # uint256
+  maxConsumptionsPerDay: BigInt! # uint256
+  maxPricePerConsumption: BigInt! # uint256
+  # Statistics
+  consumptions: BigInt! # uint256
+  consumptionsPerDay: [ConsumptionsPerDay!]! # uint256[]
 }
 
-type TargetGroup @entity {
-  id: String! # uint256
-  metadataURI: String! # string
-  zkRequests: [ZKPRequest!]! # uint256[]
+type ConsumptionsPerDay @entity {
+  id: String! # {adId}-{day from epoch bigint}
+  adId: Bytes! # uint256
+  day: BigInt! # uint256
+  consumptions: BigInt! # uint256
 }
 
-type ZKPRequest @entity {
-  id: String! # uint256
+type Audience @entity {
+  id: Bytes! # uint256
   metadataURI: String! # string
+  segments: [Segment!]! # uint256[]
+  consumptions: BigInt! # uint256
+}
+
+type Segment @entity {
+  id: Bytes! # uint256
+  metadataURI: String! # string
+  issuer: Issuer! # address
   validator: Bytes! # address
-  query_schema: BigInt! # uint256
-  query_slotIndex: BigInt! # uint256
-  query_operator: BigInt! # uint256
-  query_value: [BigInt!]! # uint256[]
-  query_circuitId: String! # string
+  querySchema: BigInt! # uint256
+  querySlotIndex: BigInt! # uint256
+  queryOperator: BigInt! # uint256
+  queryValue: [BigInt!]! # uint256[]
+  queryCircuitId: String! # string
 }
 
-type User @entity {
+type Advertiser @entity {
   id: String! # address
+  # Statistics
+  totalBudget: BigInt! # uint256
+  remainingBudget: BigInt! # uint256
+  adsQuantity: BigInt! # uint256
   impressions: BigInt! # uint256
+  clicks: BigInt! # uint256
+  conversions: BigInt! # uint256
+}
+
+type Issuer @entity {
+  id: String! # address
 }
 
 type Publisher @entity {
   id: String! # address
+  # Statistics
+  adsQuantity: BigInt! # uint256
   impressions: BigInt! # uint256
+  clicks: BigInt! # uint256
+  conversions: BigInt! # uint256
 }

@@ -11,7 +11,7 @@ import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.consta
 import { operatorOptions } from './editor';
 
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllZkpRequestsQuery, useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
+import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~~/generated/graphql.types';
 import { backendTrpcClient } from '~~/utils/trpc';
 
 // Makes string shorter by removing the middle part and replacing it with ...
@@ -23,22 +23,22 @@ const shortString = (str: string, length: number) => {
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
-const ZKPRequests = () => {
-  const data = useGetAllZkpRequestsQuery();
+const Segments = () => {
+  const data = useGetAllSegmentsQuery();
 
   useInterval(() => {
     data.refetch();
   }, 3000);
 
-  const zkprequests = data?.data?.zkprequests;
+  const segments = data?.data?.segments;
 
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string }>>({});
   useAsync(async () => {
-    if (zkprequests) {
+    if (segments) {
       setMetadata(
         (
           await Promise.all(
-            zkprequests.map(async (zkpr) => {
+            segments.map(async (zkpr) => {
               const newMetadata = await fetch(`https://${zkpr.metadataURI}.ipfs.nftstorage.link`);
               const json = await newMetadata.json();
               return { id: zkpr.id, metadata: { title: json.title, description: json.description } };
@@ -50,16 +50,16 @@ const ZKPRequests = () => {
         }, {})
       );
     }
-  }, [zkprequests]);
+  }, [segments]);
 
-  const { writeAsync: deleteZKPRequestAsync } = useContractWrite({
+  const { writeAsync: deleteSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'deleteZKPRequest',
+    functionName: 'deleteSegment',
   });
 
-  const deleteZKPRequest = async (id: number) => {
-    await deleteZKPRequestAsync({ args: [id] });
+  const deleteSegment = async (id: number) => {
+    await deleteSegmentAsync({ args: [id] });
     return undefined;
   };
 
@@ -69,7 +69,7 @@ const ZKPRequests = () => {
     setSchemas(Object.entries(response).map(([, schema]) => schema));
   }, []);
 
-  const columns: DataTableColumn<GetAllZkpRequestsQuery['zkprequests'][number]>[] = [
+  const columns: DataTableColumn<GetAllSegmentsQuery['segments'][number]>[] = [
     { title: 'Id', accessor: 'id' },
     { title: 'Title', accessor: 'id', render: (zkpr) => metadata[zkpr.id]?.title },
     { title: 'Description', accessor: 'id', render: (zkpr) => metadata[zkpr.id]?.description },
@@ -77,28 +77,28 @@ const ZKPRequests = () => {
     {
       title: 'Schema',
       accessor: 'query_schema',
-      render: (zkpr) => schemas.find((schema) => schema.bigint === zkpr.query_schema)?.title,
+      render: (zkpr) => schemas.find((schema) => schema.bigint === zkpr.querySchema)?.title,
     },
     {
       title: 'Field',
       accessor: 'query_spotIndex',
       render: (zkpr) => {
-        const subject = schemas.find((schema) => schema.bigint === zkpr.query_schema)?.credentialSubject;
+        const subject = schemas.find((schema) => schema.bigint === zkpr.querySchema)?.credentialSubject;
         if (!subject) return undefined;
         const keys = Object.keys(subject);
-        return keys[Number(zkpr.query_slotIndex) + 1];
+        return keys[Number(zkpr.querySlotIndex) + 1];
       },
     },
     {
       title: 'Operator',
       accessor: 'query_operator',
-      render: (zkpr) => operatorOptions.find((op) => op.value === Number(zkpr.query_operator))?.label,
+      render: (zkpr) => operatorOptions.find((op) => op.value === Number(zkpr.queryOperator))?.label,
     },
     {
       title: 'Value (hashed)',
       accessor: 'query_value',
       // eslint-disable-next-line eqeqeq
-      render: (zkpr) => shortString(zkpr.query_value.filter((e) => e != 0).toString(), 10),
+      render: (zkpr) => shortString(zkpr.queryValue.filter((e) => e != 0).toString(), 10),
     },
     {
       width: 75,
@@ -107,14 +107,14 @@ const ZKPRequests = () => {
       textAlignment: 'right',
       render: (item) => (
         <div className="flex justify-between">
-          <Link href={`/zkprequests/edit/${item.id}`}>
+          <Link href={`/segments/edit/${item.id}`}>
             <EditOutlined rev={undefined} className="align-middle text-warning hover:text-secondary"></EditOutlined>
           </Link>
           <Link href="#">
             <DeleteOutlined
               rev={undefined}
               onClick={() => {
-                deleteZKPRequest(Number(item.id))
+                deleteSegment(Number(item.id))
                   .then(async () => {
                     await Swal.mixin({
                       toast: true,
@@ -123,7 +123,7 @@ const ZKPRequests = () => {
                       timer: 3000,
                     }).fire({
                       icon: 'success',
-                      title: 'ZKPRequest deleted successfully',
+                      title: 'Segment deleted successfully',
                       padding: '10px 20px',
                     });
                   })
@@ -135,7 +135,7 @@ const ZKPRequests = () => {
                       timer: 3000,
                     }).fire({
                       icon: 'error',
-                      title: 'Could not delete ZKPRequest.',
+                      title: 'Could not delete Segment.',
                       padding: '10px 20px',
                     });
                     console.log(error);
@@ -151,8 +151,8 @@ const ZKPRequests = () => {
   return (
     <div className="panel">
       <div className="mb-5 flex items-center justify-between p-2">
-        <h5 className="text-lg font-semibold dark:text-white-light">Attributes</h5>
-        <Link className="btn btn-primary" href="/zkprequests/editor">
+        <h5 className="text-lg font-semibold dark:text-white-light">Segments</h5>
+        <Link className="btn btn-primary" href="/segments/editor">
           Create
         </Link>
       </div>
@@ -161,7 +161,7 @@ const ZKPRequests = () => {
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
           noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-          records={zkprequests}
+          records={segments}
           highlightOnHover={true}
           minHeight={200}
           columns={columns}></DataTable>
@@ -170,4 +170,4 @@ const ZKPRequests = () => {
   );
 };
 
-export default ZKPRequests;
+export default Segments;

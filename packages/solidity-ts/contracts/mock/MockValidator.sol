@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -11,7 +11,13 @@ contract MockValidator is ICircuitValidator {
     uint256[2][2] memory b,
     uint256[2] memory c,
     CircuitQuery memory query
-  ) external view returns (bool r) {
+  ) external pure returns (bool r) {
+    require(inputs.length > 0, "Invalid inputs length");
+    require(a.length > 0, "Invalid a length");
+    require(b.length > 0, "Invalid b length");
+    require(c.length > 0, "Invalid c length");
+    require(query.operator > 0, "Invalid operator");
+
     return true;
   }
 

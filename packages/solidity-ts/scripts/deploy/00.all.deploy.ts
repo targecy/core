@@ -5,9 +5,10 @@ import { ethers } from 'hardhat';
 import { DeployFunction } from 'hardhat-deploy/types';
 
 import { THardhatRuntimeEnvironmentExtended } from '~helpers/types/THardhatRuntimeEnvironmentExtended';
-import { saveStringToFile } from '~scripts/utils';
+import { getStringFromFile, saveStringToFile } from '~scripts/utils';
 
 const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => {
+  console.log("Starting deployment of Targecy's contracts...");
   const { deployments, getNamedAccounts, network, upgrades } = hre;
   const { deployer } = await getNamedAccounts();
 
@@ -80,13 +81,19 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     console.log('Transferred ownership of ProxyAdmin to:', config.multisig);
   }
 
-  saveStringToFile(
-    JSON.stringify({
-      [`${network.name}_targecyProxy`]: await deploymentResult.getAddress(),
-    }),
-    '../generated/config/config.json',
-    false
-  );
+  let current;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    current = JSON.parse(getStringFromFile('../generated/config/config.json'));
+  } catch (e) {
+    current = {};
+    console.log('No config file found, creating new one.');
+  }
+
+  current = { ...current, ...{ [`${network.name}_targecyProxy`]: address } };
+  console.log(current);
+
+  saveStringToFile(JSON.stringify(current), '../generated/config/config.json', true);
 };
 export default func;
 func.tags = ['MockValidator', 'Targecy'];

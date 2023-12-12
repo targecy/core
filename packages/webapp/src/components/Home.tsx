@@ -11,18 +11,17 @@ export const Home = () => {
     abi,
     functionName: '_adId',
   });
-  
 
-  const { data: targetGroupsQuantity } = useContractRead({
+  const { data: audiencesQuantity } = useContractRead({
     address: targecyContractAddress,
     abi,
-    functionName: '_targetGroupId',
+    functionName: '_audienceId',
   });
 
-  const { data: zkpRequestsQuantity } = useContractRead({
+  const { data: segmentsQuantity } = useContractRead({
     address: targecyContractAddress,
     abi,
-    functionName: '_zkRequestId',
+    functionName: '_audienceId',
   });
 
   const [mounted, setMounted] = useState(false);
@@ -49,14 +48,14 @@ export const Home = () => {
           <div className="panel">
             <h5 className="text-md font-semibold dark:text-white-light">Users</h5>
 
-            <h5 className="text-3xl font-semibold dark:text-white">{targetGroupsQuantity?.toString() || '0'}</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">{audiencesQuantity?.toString() || '0'}</h5>
           </div>
         </div>
 
         <div className="m-3 flex w-1/3 flex-col p-2">
           <div className="panel">
             <h5 className="text-md font-semibold dark:text-white-light">Issued credentials</h5>
-            <h5 className="text-3xl font-semibold dark:text-white">{zkpRequestsQuantity?.toString() || '0'}</h5>
+            <h5 className="text-3xl font-semibold dark:text-white">{segmentsQuantity?.toString() || '0'}</h5>
           </div>
         </div>
       </div>

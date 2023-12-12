@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -22,37 +22,57 @@ library DataTypes {
     uint256 nonce;
   }
 
+  enum Attribution {
+    Impression,
+    Click,
+    Conversion
+  }
   struct NewAd {
+    // Properties
     string metadataURI;
+    Attribution attribution; // 0: impression, 1: click, 2: conversion
+    // Conditions
+    uint256 startingTimestamp;
+    uint256 endingTimestamp;
+    uint256[] audienceIds;
+    address[] blacklistedPublishers;
+    uint8[] blacklistedWeekdays;
+    // Budget
     uint256 budget;
-    uint256 maxImpressionPrice;
-    uint256 minBlock;
-    uint256 maxBlock;
-    uint256[] targetGroupIds;
+    uint256 maxPricePerConsumption;
+    uint256 maxConsumptionsPerDay;
   }
 
-  struct ZKPRequest {
+  struct Ad {
+    // Properties
+    address advertiser;
+    string metadataURI;
+    Attribution attribution; // 0: impression, 1: click, 2: conversion
+    // Conditions
+    uint256 startingTimestamp;
+    uint256 endingTimestamp;
+    uint256[] audienceIds;
+    address[] blacklistedPublishers;
+    uint8[] blacklistedWeekdays;
+    // Budget
+    uint256 totalBudget;
+    uint256 remainingBudget;
+    uint256 maxConsumptionsPerDay;
+    uint256 maxPricePerConsumption;
+    // Stats
+    uint256 consumptions;
+  }
+
+  struct Segment {
     ICircuitValidator.CircuitQuery query;
     string metadataURI;
     uint256 issuer;
   }
 
-  struct TargetGroup {
+  struct Audience {
     string metadataURI;
-    uint256[] zkRequestIds;
-    uint256 impressions;
-  }
-
-  struct Ad {
-    address advertiser;
-    uint256[] targetGroupIds;
-    string metadataURI;
-    uint256 totalBudget;
-    uint256 remainingBudget;
-    uint256 maxImpressionPrice;
-    uint256 minBlock;
-    uint256 maxBlock;
-    uint256 impressions;
+    uint256[] segmentIds;
+    uint256 consumptions;
   }
 
   struct ZKProofs {

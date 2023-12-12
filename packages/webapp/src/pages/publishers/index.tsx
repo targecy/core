@@ -9,7 +9,7 @@ const PublishersPage = () => {
       {publishers.data?.publishers.map((publisher) => (
         <div key={publisher.id}>
           <h1>{publisher.id}</h1>
-          <h2>{publisher.impressions}</h2>
+          {/* @todo (Martin): add data */}
         </div>
       ))}
     </div>

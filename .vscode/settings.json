@@ -22,7 +22,7 @@
     "**/node_modules": true
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "search.exclude": {
     "**/.git": true,
@@ -77,13 +77,14 @@
     "Iden",
     "ipfs",
     "Merkle",
+    "nomicfoundation",
     "rainbowkit",
     "superjson",
     "targecy",
     "trpc",
     "viem",
     "Wagmi",
-    "zkprequest",
-    "zkprequests"
+    "audiences",
+    "segments"
   ]
 }

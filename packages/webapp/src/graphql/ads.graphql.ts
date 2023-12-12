@@ -6,16 +6,28 @@ export const GetAllAds = gql`
     advertiser {
       id
     }
-    impressions
-    minBlock
-    maxBlock
-    maxImpressionPrice
-    targetGroups {
-      ...TargetGroupFragment
-    }
     metadataURI
-    remainingBudget
+    attribution
+    startingTimestamp
+    endingTimestamp
+    audiences {
+      ...AudienceFragment
+    }
+    blacklistedPublishers {
+      id
+    }
+    blacklistedWeekdays
     totalBudget
+    remainingBudget
+    maxConsumptionsPerDay
+    maxPricePerConsumption
+    consumptions
+    consumptionsPerDay {
+      id
+      day
+      adId
+      consumptions
+    }
   }
 
   query GetAllAds {
@@ -25,12 +37,12 @@ export const GetAllAds = gql`
   }
 
   query GetAdToShow {
-    ads(where: { targetGroups_not: [] }, orderBy: id, orderDirection: desc) {
+    ads(where: { audiences_not: [] }, orderBy: remainingBudget, orderDirection: desc) {
       ...AdFragment
     }
   }
 
-  query GetAdById($id: String) {
+  query GetAdById($id: Bytes!) {
     ads(where: { id: $id }) {
       ...AdFragment
     }

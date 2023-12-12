@@ -10,26 +10,26 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAllZkpRequestsQuery } from '~~/generated/graphql.types';
+import { useGetAllSegmentsQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { backendTrpcClient } from '~~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
-export const TargetGroupEditorComponent = (id?: string) => {
-  const { data: zkpRequests } = useGetAllZkpRequestsQuery();
+export const AudienceEditorComponent = (id?: string) => {
+  const { data: segments } = useGetAllSegmentsQuery();
 
-  const [processingTargetGroup, setProcessingTargetGroup] = useState(false);
-  const { writeAsync: createTargetGroup } = useContractWrite({
+  const [processingAudience, setProcessingAudience] = useState(false);
+  const { writeAsync: createAudience } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'createTargetGroup',
+    functionName: 'createAudience',
   });
-  const { writeAsync: editTargetGroup } = useContractWrite({
+  const { writeAsync: editAudience } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'editTargetGroup',
+    functionName: 'editAudience',
   });
 
   const router = useRouter();
@@ -37,16 +37,16 @@ export const TargetGroupEditorComponent = (id?: string) => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    setProcessingTargetGroup(true);
+    setProcessingAudience(true);
 
-    const targetGroupMetadata = {
+    const audienceMetadata = {
       title: data.title,
       description: data.description,
     };
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
-      body: JSON.stringify({ json: targetGroupMetadata }),
+      body: JSON.stringify({ json: audienceMetadata }),
     });
 
     if (!metadataUploadResponse.ok) {
@@ -60,7 +60,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setProcessingTargetGroup(false);
+      setProcessingAudience(false);
       return;
     }
 
@@ -70,14 +70,14 @@ export const TargetGroupEditorComponent = (id?: string) => {
       let hash;
       if (!id) {
         hash = (
-          await createTargetGroup({
-            args: [metadataURI, data.zkpRequests],
+          await createAudience({
+            args: [metadataURI, data.segments],
           })
         ).hash;
       } else {
         hash = (
-          await editTargetGroup({
-            args: [id, metadataURI, data.zkpRequests],
+          await editAudience({
+            args: [id, metadataURI, data.segments],
           })
         ).hash;
       }
@@ -92,7 +92,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
         padding: '10px 20px',
       });
 
-      await router.push('/targetGroups');
+      await router.push('/audiences');
     } catch (e) {
       await Swal.mixin({
         toast: true,
@@ -105,43 +105,43 @@ export const TargetGroupEditorComponent = (id?: string) => {
         padding: '10px 20px',
       });
 
-      setProcessingTargetGroup(false);
+      setProcessingAudience(false);
     }
   };
 
   const schema = z.object({
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
-    zkpRequests: z.array(z.number()).describe('You must set a list of zkpRequests'),
+    segments: z.array(z.number()).describe('You must set a list of segments'),
   });
 
   type FormValues = z.infer<typeof schema>;
 
-  const zkpRequestsOptions = zkpRequests?.zkprequests.map((req) => {
+  const segmentsOptions = segments?.segments.map((req) => {
     return {
       value: req.id,
-      label: `ZKPRequest: ${req.id}`,
+      label: `Segment: ${req.id}`,
     };
   });
 
-  const [currentZKPRequests, setCurrentZKPRequests] = useState<number[] | undefined>(undefined);
+  const [currentSegments, setCurrentSegments] = useState<number[] | undefined>(undefined);
   const [potentialReach, setPotentialReach] = useState<number>(0);
   useEffect(() => {
-    if (!currentZKPRequests || currentZKPRequests.length === 0) return;
+    if (!currentSegments || currentSegments.length === 0) return;
 
-    backendTrpcClient.zkpRequest.getZKPRequestPotentialReachByIds
+    backendTrpcClient.segment.getSegmentPotentialReachByIds
       .query({
-        ids: currentZKPRequests.map((id) => id.toString()),
+        ids: currentSegments.map((id) => id.toString()),
       })
       .then((response) => setPotentialReach(response.count));
-  }, [currentZKPRequests]);
+  }, [currentSegments]);
 
   return (
     <div>
       <ul className="flex space-x-2 rtl:space-x-reverse">
         <li>
-          <Link href="/targetGroups" className="text-primary hover:underline">
-            Target Groups
+          <Link href="/audiences" className="text-primary hover:underline">
+            Audiences
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
@@ -162,7 +162,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
               initialValues={{
                 title: '',
                 description: '',
-                zkpRequests: [] as number[],
+                segments: [] as number[],
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -204,8 +204,8 @@ export const TargetGroupEditorComponent = (id?: string) => {
                       ''
                     )}
                   </div>
-                  <div className={submitCount ? (errors.zkpRequests ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="zkpRequests">ZKP Requests</label>
+                  <div className={submitCount ? (errors.segments ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="segments">Segments</label>
                     <Select
                       classNames={{
                         control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -215,19 +215,19 @@ export const TargetGroupEditorComponent = (id?: string) => {
                         menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                       }}
                       placeholder="Select an option"
-                      id="zkpRequests"
-                      name="zkpRequests"
+                      id="segments"
+                      name="segments"
                       onChange={(value) => {
-                        setCurrentZKPRequests(value.map((v) => Number(v.value)));
-                        values.zkpRequests = value.map((v) => Number(v.value)) ?? [];
+                        setCurrentSegments(value.map((v) => Number(v.value)));
+                        values.segments = value.map((v) => Number(v.value)) ?? [];
                       }}
-                      options={zkpRequestsOptions}
+                      options={segmentsOptions}
                       isMulti
                       isSearchable={true}
                     />
                     {submitCount ? (
-                      errors.zkpRequests ? (
-                        <div className="mt-1 text-danger">{errors.zkpRequests}</div>
+                      errors.segments ? (
+                        <div className="mt-1 text-danger">{errors.segments}</div>
                       ) : (
                         <div className="mt-1 text-success"></div>
                       )
@@ -239,7 +239,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={processingTargetGroup}
+                      disabled={processingAudience}
                       className="btn btn-primary !mt-6"
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -250,7 +250,7 @@ export const TargetGroupEditorComponent = (id?: string) => {
                           }
                         }
                       }}>
-                      {processingTargetGroup ? 'Creating Ad...' : 'Create'}
+                      {processingAudience ? 'Creating Ad...' : 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -272,6 +272,6 @@ export const TargetGroupEditorComponent = (id?: string) => {
   );
 };
 
-const NewTargetGroupPage = () => TargetGroupEditorComponent();
+const NewAudiencePage = () => AudienceEditorComponent();
 
-export default NewTargetGroupPage;
+export default NewAudiencePage;

@@ -27,6 +27,8 @@ fi
 
 # Create the subgraph.yaml file with the new address
 cat > ./subgraph.yaml <<EOL
+# DO NOT MODIFY THIS FILE DIRECTLY -> modify ./create-subgraph.sh instead
+
 specVersion: 0.0.6
 schema:
   file: ./schema.graphql
@@ -44,30 +46,30 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Ad
-        - TargetGroup
-        - ZKPRequest
+        - Audience
+        - Segment
         - User
         - Publisher
       abis:
         - name: Targecy
           file: ./abis/Targecy.json
       eventHandlers:
-        - event: AdConsumed(indexed uint256,indexed address,indexed address)
+        - event: AdConsumed(indexed uint256,(address,string,uint8,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),address,uint256)
           handler: handleAdConsumed
-        - event: AdCreated(indexed uint256,indexed address,(string,uint256,uint256,uint256,uint256,uint256[]))
+        - event: AdCreated(indexed uint256,indexed address,(string,uint8,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256))
           handler: handleAdCreated
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted
-        - event: AdEdited(indexed uint256,string,uint256,uint256[])
+        - event: AdEdited(indexed uint256,(address,string,uint8,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
           handler: handleAdEdited
-        - event: TargetGroupCreated(indexed uint256,string,uint256[])
-          handler: handleTargetGroupCreated
-        - event: TargetGroupDeleted(indexed uint256)
-          handler: handleTargetGroupDeleted
-        - event: TargetGroupEdited(indexed uint256,string,uint256[])
-          handler: handleTargetGroupEdited
-        - event: ZKPRequestCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string,uint256)
-          handler: handleZKPRequestCreated
+        - event: AudienceCreated(indexed uint256,string,uint256[])
+          handler: handleAudienceCreated
+        - event: AudienceDeleted(indexed uint256)
+          handler: handleAudienceDeleted
+        - event: AudienceEdited(indexed uint256,string,uint256[])
+          handler: handleAudienceEdited
+        - event: SegmentCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string,uint256)
+          handler: handleSegmentCreated
         - event: PublisherWhitelisted(indexed address)
           handler: handlePublisherWhitelisted
         - event: PublisherRemovedFromWhitelist(indexed address)

@@ -132,6 +132,7 @@ export const config: HardhatUserConfig = {
   },
   typechain: {
     outDir: typechainOutDir,
+    target: 'ethers-v6',
     discriminateTypes: true,
   },
 };

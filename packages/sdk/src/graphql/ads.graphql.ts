@@ -1,22 +1,47 @@
 import { gql } from 'graphql-request';
 
 export const GetAllAds = gql`
+  fragment AdvertiserFragment on Advertiser {
+    id
+    adsQuantity
+    impressions
+    clicks
+    conversions
+    remainingBudget
+    totalBudget
+  }
+
+  fragment ConsumptionsPerDayFragment on ConsumptionsPerDay {
+    id
+    day
+    adId
+    consumptions
+  }
+
   fragment AdFragment on Ad {
     id
     advertiser {
-      id
-      impressions
-    }
-    impressions
-    minBlock
-    maxBlock
-    maxImpressionPrice
-    targetGroups {
-      ...TargetGroupFragment
+      ...AdvertiserFragment
     }
     metadataURI
-    remainingBudget
+    attribution
+    startingTimestamp
+    endingTimestamp
+    audiences {
+      ...AudienceFragment
+    }
+    blacklistedPublishers {
+      ...PublisherFragment
+    }
+    blacklistedWeekdays
     totalBudget
+    remainingBudget
+    maxConsumptionsPerDay
+    maxPricePerConsumption
+    consumptions
+    consumptionsPerDay {
+      ...ConsumptionsPerDayFragment
+    }
   }
 
   query GetAllAds {
@@ -26,12 +51,12 @@ export const GetAllAds = gql`
   }
 
   query GetAdToShow {
-    ads(where: { targetGroups_not: [] }, orderBy: id, orderDirection: desc) {
+    ads(where: { audiences_not: [] }, orderBy: id, orderDirection: desc) {
       ...AdFragment
     }
   }
 
-  query GetAdById($id: String) {
+  query GetAdById($id: Bytes) {
     ads(where: { id: $id }) {
       ...AdFragment
     }

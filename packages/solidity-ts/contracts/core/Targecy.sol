@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -17,8 +17,6 @@ import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
-  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-
   function initialize(
     address _zkProofsValidator,
     address _protocolVault,
@@ -32,14 +30,29 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     zkProofsValidator = _zkProofsValidator;
     protocolVault = _protocolVault;
     defaultImpressionPrice = _defaultImpressionPrice;
+    defaultClickPrice = 2 * _defaultImpressionPrice;
+    defaultConversionPrice = 3 * _defaultImpressionPrice;
     defaultIssuer = _defaultIssuer;
 
-    _zkRequestId = 1;
     _adId = 1;
-    _targetGroupId = 1;
-    totalImpressions = 0;
+    _segmentId = 1;
+    _audienceId = 1;
+    totalconsumptions = 0;
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
+    emit AdminSet(targecyAdmin);
+  }
+
+  function setAdmin(address targecyAdmin) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    _setupRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
+
+    emit AdminSet(targecyAdmin);
+  }
+
+  function removeAdmin(address targecyAdmin) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    revokeRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
+
+    emit AdminRemoved(targecyAdmin);
   }
 
   function setZKProofsValidator(address _zkProofsValidator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -54,46 +67,54 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultImpressionPrice = _defaultImpressionPrice;
   }
 
+  function setDefaultClickPrice(uint256 _defaultClickPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    defaultClickPrice = _defaultClickPrice;
+  }
+
+  function setDefaultConversionPrice(uint256 _defaultConversionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    defaultConversionPrice = _defaultConversionPrice;
+  }
+
   function setDefaultIssuer(uint256 _defaultIssuer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     defaultIssuer = _defaultIssuer;
   }
 
-  function setZKPRequest(DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    requestQueries[_zkRequestId].query.value = _zkpRequest.query.value;
-    requestQueries[_zkRequestId].query.operator = _zkpRequest.query.operator;
-    requestQueries[_zkRequestId].query.circuitId = _zkpRequest.query.circuitId;
-    requestQueries[_zkRequestId].query.slotIndex = _zkpRequest.query.slotIndex;
-    requestQueries[_zkRequestId].query.schema = _zkpRequest.query.schema;
+  function setSegment(DataTypes.Segment calldata _segment) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    requestQueries[_segmentId].query.value = _segment.query.value;
+    requestQueries[_segmentId].query.operator = _segment.query.operator;
+    requestQueries[_segmentId].query.circuitId = _segment.query.circuitId;
+    requestQueries[_segmentId].query.slotIndex = _segment.query.slotIndex;
+    requestQueries[_segmentId].query.schema = _segment.query.schema;
 
-    requestQueries[_zkRequestId].metadataURI = _zkpRequest.metadataURI;
+    requestQueries[_segmentId].metadataURI = _segment.metadataURI;
 
     // Use given issuer or default issuer
-    if (_zkpRequest.issuer == 0) {
-      requestQueries[_zkRequestId].issuer = defaultIssuer;
+    if (_segment.issuer == 0) {
+      requestQueries[_segmentId].issuer = defaultIssuer;
     } else {
-      requestQueries[_zkRequestId].issuer = _zkpRequest.issuer;
+      requestQueries[_segmentId].issuer = _segment.issuer;
     }
 
-    emit ZKPRequestCreated(_zkRequestId, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI, _zkpRequest.issuer);
-    _zkRequestId += 1;
+    emit SegmentCreated(_segmentId, address(zkProofsValidator), _segment.query, _segment.metadataURI, _segment.issuer);
+    _segmentId += 1;
   }
 
-  function editZKPRequest(uint256 id, DataTypes.ZKPRequest calldata _zkpRequest) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    requestQueries[id].query.value = _zkpRequest.query.value;
-    requestQueries[id].query.operator = _zkpRequest.query.operator;
-    requestQueries[id].query.circuitId = _zkpRequest.query.circuitId;
-    requestQueries[id].query.slotIndex = _zkpRequest.query.slotIndex;
-    requestQueries[id].query.schema = _zkpRequest.query.schema;
+  function editSegment(uint256 id, DataTypes.Segment calldata _segment) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    requestQueries[id].query.value = _segment.query.value;
+    requestQueries[id].query.operator = _segment.query.operator;
+    requestQueries[id].query.circuitId = _segment.query.circuitId;
+    requestQueries[id].query.slotIndex = _segment.query.slotIndex;
+    requestQueries[id].query.schema = _segment.query.schema;
 
-    requestQueries[id].query.circuitId = _zkpRequest.query.circuitId;
+    requestQueries[id].query.circuitId = _segment.query.circuitId;
 
-    emit ZKPRequestEdited(id, address(zkProofsValidator), _zkpRequest.query, _zkpRequest.metadataURI);
+    emit SegmentEdited(id, address(zkProofsValidator), _segment.query, _segment.metadataURI);
   }
 
-  function deleteZKPRequest(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+  function deleteSegment(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete requestQueries[id];
 
-    emit ZKPRequestDeleted(id);
+    emit SegmentDeleted(id);
   }
 
   function createAd(DataTypes.NewAd calldata ad) external payable override {
@@ -101,13 +122,31 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.InsufficientFunds();
     }
 
-    ads[_adId] = DataTypes.Ad(_msgSender(), ad.targetGroupIds, ad.metadataURI, ad.budget, ad.budget, ad.maxImpressionPrice, ad.minBlock, ad.maxBlock, 0);
+    require(ad.attribution != DataTypes.Attribution.Conversion, "Targecy: Conversion ads are not allowed yet.");
+
+    ads[_adId] = DataTypes.Ad(
+      // Properties
+      _msgSender(),
+      ad.metadataURI,
+      ad.attribution,
+      // Conditions
+      ad.startingTimestamp,
+      ad.endingTimestamp,
+      ad.audienceIds,
+      ad.blacklistedPublishers,
+      ad.blacklistedWeekdays,
+      // Budget
+      ad.budget,
+      ad.budget,
+      ad.maxConsumptionsPerDay,
+      ad.maxPricePerConsumption,
+      // Stats
+      0
+    );
 
     emit AdCreated(_adId, _msgSender(), ad);
     _adId += 1;
   }
-
-  // TODO Add edit and delete ad, target group and zk request.
 
   function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable override whenNotPaused {
     DataTypes.Ad storage adStorage = ads[adId];
@@ -136,9 +175,17 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
 
     adStorage.metadataURI = ad.metadataURI;
-    adStorage.targetGroupIds = ad.targetGroupIds;
+    adStorage.audienceIds = ad.audienceIds;
 
-    emit AdEdited(adId, ad.metadataURI, ad.budget, ad.targetGroupIds);
+    adStorage.blacklistedPublishers = ad.blacklistedPublishers;
+    adStorage.blacklistedWeekdays = ad.blacklistedWeekdays;
+    adStorage.startingTimestamp = ad.startingTimestamp;
+    adStorage.endingTimestamp = ad.endingTimestamp;
+    adStorage.maxConsumptionsPerDay = ad.maxConsumptionsPerDay;
+    adStorage.maxPricePerConsumption = ad.maxPricePerConsumption;
+    adStorage.attribution = ad.attribution;
+
+    emit AdEdited(adId, adStorage);
   }
 
   function deleteAd(uint256 adId) external override whenNotPaused {
@@ -155,30 +202,30 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     emit AdDeleted(adId);
   }
 
-  function createTargetGroup(string calldata metadataURI, uint256[] calldata zkRequestIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    targetGroups[_targetGroupId] = DataTypes.TargetGroup(metadataURI, zkRequestIds, 0);
+  function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    audiences[_audienceId] = DataTypes.Audience(metadataURI, audienceIds, 0);
 
-    emit TargetGroupCreated(_targetGroupId, metadataURI, zkRequestIds);
-    _targetGroupId += 1;
+    emit AudienceCreated(_audienceId, metadataURI, audienceIds);
+    _audienceId += 1;
   }
 
-  function editTargetGroup(uint256 targetGroupId, string calldata metadataURI, uint256[] calldata zkRequestIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    DataTypes.TargetGroup storage targetGroupStorage = targetGroups[targetGroupId];
+  function editAudience(uint256 audienceId, string calldata metadataURI, uint256[] calldata segmentIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    DataTypes.Audience storage audienceStorage = audiences[audienceId];
 
-    if (zkRequestIds.length == 0) {
+    if (segmentIds.length == 0) {
       revert Errors.InvalidZKProofsLength();
     }
 
-    targetGroupStorage.metadataURI = metadataURI;
-    targetGroupStorage.zkRequestIds = zkRequestIds;
+    audienceStorage.metadataURI = metadataURI;
+    audienceStorage.segmentIds = segmentIds;
 
-    emit TargetGroupEdited(targetGroupId, metadataURI, zkRequestIds);
+    emit AudienceEdited(audienceId, metadataURI, segmentIds);
   }
 
-  function deleteTargetGroup(uint256 targetGroupId) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    delete targetGroups[targetGroupId];
+  function deleteAudience(uint256 audienceId) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    delete audiences[audienceId];
 
-    emit TargetGroupDeleted(targetGroupId);
+    emit AudienceDeleted(audienceId);
   }
 
   function verifyZKProof(
@@ -195,18 +242,18 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   }
 
   function _bulkVerifyZKProofs(
-    uint256[] memory zkRequestIds,
+    uint256[] memory audienceIds,
     uint256[][] memory inputs,
     uint256[2][] memory a,
     uint256[2][2][] memory b,
     uint256[2][] memory c
   ) internal view returns (bool) {
-    if (zkRequestIds.length != inputs.length || zkRequestIds.length != a.length || zkRequestIds.length != b.length || zkRequestIds.length != c.length) {
+    if (audienceIds.length != inputs.length || audienceIds.length != a.length || audienceIds.length != b.length || audienceIds.length != c.length) {
       return false;
     }
 
-    for (uint256 i = 0; i < zkRequestIds.length; i++) {
-      if (!verifyZKProof(zkRequestIds[i], inputs[i], a[i], b[i], c[i])) {
+    for (uint256 i = 0; i < audienceIds.length; i++) {
+      if (!verifyZKProof(audienceIds[i], inputs[i], a[i], b[i], c[i])) {
         return false;
       }
     }
@@ -214,22 +261,31 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     return true;
   }
 
-  function distributeRewards(DataTypes.Ad storage ad, DataTypes.PublisherRewards calldata publisher) internal {
-    uint256 impressionPrice = _getImpressionPrice(_msgSender());
-
-    if (impressionPrice > ad.maxImpressionPrice) {
-      revert Errors.ImpressionPriceTooHigh();
+  function distributeRewards(uint256 adId, address user, DataTypes.Ad storage ad, DataTypes.PublisherRewards calldata publisher) internal {
+    uint256 consumptionPrice;
+    if (ad.attribution == DataTypes.Attribution.Impression) {
+      consumptionPrice = defaultImpressionPrice;
+    } else if (ad.attribution == DataTypes.Attribution.Click) {
+      consumptionPrice = defaultClickPrice;
+    } else if (ad.attribution == DataTypes.Attribution.Conversion) {
+      consumptionPrice = defaultConversionPrice;
+    } else {
+      revert Errors.InvalidAttribution();
     }
 
-    if (impressionPrice > ad.remainingBudget) {
+    if (consumptionPrice > ad.maxPricePerConsumption) {
+      revert Errors.ConsumptionPriceTooHigh();
+    }
+
+    if (consumptionPrice > ad.remainingBudget) {
       revert Errors.InsufficientFunds();
     }
 
-    ad.remainingBudget = ad.remainingBudget - impressionPrice;
-    ad.impressions = ad.impressions + 1;
+    ad.remainingBudget = ad.remainingBudget - consumptionPrice;
+    ad.consumptions = ad.consumptions + 1;
 
     // Protocol Fee
-    uint256 protocolFee = calculatePercentage(impressionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
+    uint256 protocolFee = calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
     payable(protocolVault).transfer(protocolFee);
 
     // Publisher Fee
@@ -238,22 +294,24 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       if (publisher.percentage > (Constants.PERCENTAGES_PRECISION - Constants.PROTOCOL_FEE_PERCENTAGE)) {
         revert Errors.PublisherPercentageTooBig();
       }
-      publisherFee = calculatePercentage(impressionPrice, publisher.percentage);
+      publisherFee = calculatePercentage(consumptionPrice, publisher.percentage);
       payable(publisher.publisherVault).transfer(publisherFee);
     }
 
     // User Rewards
-    uint256 userRewards = impressionPrice - protocolFee - publisherFee;
-    payable(_msgSender()).transfer(userRewards);
+    uint256 userRewards = consumptionPrice - protocolFee - publisherFee;
+    payable(user).transfer(userRewards);
+
+    emit AdConsumed(adId, ad, publisher.publisherVault, consumptionPrice);
   }
 
   /// @notice Sets the pause state to true in case of emergency, triggered by an authorized account.
-  function pause() external onlyRole(PAUSER_ROLE) {
+  function pause() external onlyRole(DEFAULT_ADMIN_ROLE) {
     _pause();
   }
 
   /// @notice Sets the pause state to false when threat is gone, triggered by an authorized account.
-  function unpause() external onlyRole(PAUSER_ROLE) {
+  function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
     _unpause();
   }
 
@@ -264,27 +322,51 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.AdConsumed();
     }
 
-    if (ad.minBlock > block.number || ad.maxBlock < block.number) {
+    if (ad.startingTimestamp > block.timestamp || ad.endingTimestamp < block.timestamp) {
       revert Errors.AdNotAvailable();
     }
 
-    // Verify ZKProofs - At least one TargetGroup must be valid
-    bool targetGroupValidated;
-    for (uint256 i = 0; i < ad.targetGroupIds.length; i++) {
-      DataTypes.TargetGroup memory targetGroup = targetGroups[ad.targetGroupIds[i]];
+    for (uint256 i = 0; i < ad.blacklistedPublishers.length; i++) {
+      if (ad.blacklistedPublishers[i] == publisher.publisherVault) {
+        revert Errors.PublisherBlacklistedInAd();
+      }
+    }
 
-      if (targetGroup.zkRequestIds.length == 0) {
-        // TargetGroup does not exists.
+    if (publisher.percentage > 0 && publisher.publisherVault != address(0) && whitelistedPublishers[publisher.publisherVault] == false) {
+      // The call should come from an whitelisted publisher
+      revert Errors.PublisherNotWhitelisted();
+    }
+
+    uint256 weekDay = Helpers.getWeekDayFromTimestamp(block.timestamp);
+    for (uint256 i = 0; i < ad.blacklistedWeekdays.length; i++) {
+      if (ad.blacklistedWeekdays[i] == weekDay) {
+        revert Errors.WeekdayBlacklistedInAd();
+      }
+    }
+
+    uint256 dayFromEpoch = Helpers.getDayFromEpoch(block.timestamp);
+    if (ad.maxConsumptionsPerDay > 0 && (consumptionsPerDay[adId][dayFromEpoch] + 1) > ad.maxConsumptionsPerDay) {
+      revert Errors.NoRemainingComsumptionsForTheDay();
+    }
+    consumptionsPerDay[adId][dayFromEpoch] = consumptionsPerDay[adId][dayFromEpoch] + 1;
+
+    // Verify ZKProofs - At least one Audience must be valid
+    bool audienceValidated;
+    for (uint256 i = 0; i < ad.audienceIds.length; i++) {
+      DataTypes.Audience memory audience = audiences[ad.audienceIds[i]];
+
+      if (audience.segmentIds.length == 0) {
+        // Audience does not exists.
         continue;
       }
 
-      if (_bulkVerifyZKProofs(targetGroup.zkRequestIds, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c)) {
-        targetGroupValidated = true;
-        targetGroup.impressions = targetGroup.impressions + 1;
+      if (_bulkVerifyZKProofs(audience.segmentIds, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c)) {
+        audienceValidated = true;
+        audience.consumptions = audience.consumptions + 1;
         break;
       }
     }
-    if (!targetGroupValidated) {
+    if (!audienceValidated) {
       revert Errors.InvalidZKProofsInput();
     }
 
@@ -294,17 +376,10 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     // Accept user's signature (for gasless txs)
     // TODO: Validate publisher's signature to avoid calls from code.
 
-    if (publisher.percentage > 0 && publisher.publisherVault != address(0) && whitelistedPublishers[publisher.publisherVault] == false) {
-      // The call should come from an whitelisted publisher
-      revert Errors.PublisherNotWhitelisted();
-    }
-
-    totalImpressions += 1;
+    totalconsumptions += 1;
 
     // Proofs verified, distribute rewards
-    distributeRewards(ad, publisher);
-
-    emit AdConsumed(adId, _msgSender(), publisher.publisherVault);
+    distributeRewards(adId, viewer, ad, publisher);
   }
 
   /**
@@ -365,14 +440,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     emit PublisherRemovedFromWhitelist(publisher);
   }
 
-  function _getImpressionPrice(address addr) internal view returns (uint256) {
-    if (customImpressionPrices[addr] != 0) {
-      return customImpressionPrices[addr];
-    }
-
-    return defaultImpressionPrice;
-  }
-
   function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {
     // if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
     if (percentage > Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTooBig();
@@ -380,11 +447,11 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     return (total * percentage) / Constants.PERCENTAGES_PRECISION;
   }
 
-  function getTargetGroupZKRequests(uint256 targetGroupId) external view override returns (uint256[] memory) {
-    return targetGroups[targetGroupId].zkRequestIds;
+  function getAudienceSegments(uint256 audienceId) external view override returns (uint256[] memory) {
+    return audiences[audienceId].segmentIds;
   }
 
-  function getAdTargetGroups(uint256 adId) external view override returns (uint256[] memory) {
-    return ads[adId].targetGroupIds;
+  function getAdAudiences(uint256 adId) external view override returns (uint256[] memory) {
+    return ads[adId].audienceIds;
   }
 }

@@ -12,7 +12,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
+import { useGetAllAudiencesQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { fetchMetadata } from '~~/utils/metadata';
 import { backendTrpcClient } from '~~/utils/trpc';
@@ -21,7 +21,7 @@ import { backendTrpcClient } from '~~/utils/trpc';
 const abi = require('../../generated/abis/Targecy.json');
 
 export const AdEditorComponent = (id?: string) => {
-  const { data: targetGroups } = useGetAllTargetGroupsQuery();
+  const { data: audiences } = useGetAllAudiencesQuery();
   const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
@@ -79,10 +79,10 @@ export const AdEditorComponent = (id?: string) => {
               {
                 metadataURI,
                 budget: data.budget,
-                maxImpressionPrice: data.maxImpressionPrice,
-                minBlock: data.minBlock,
-                maxBlock: data.maxBlock,
-                targetGroupIds: data.targetGroupIds,
+                maxPricePerConsumption: data.maxPricePerConsumption,
+                startingTimestamp: data.startingTimestamp,
+                endingTimestamp: data.endingTimestamp,
+                audienceIds: data.audienceIds,
               },
             ],
             value: BigInt(data.budget),
@@ -96,10 +96,10 @@ export const AdEditorComponent = (id?: string) => {
               {
                 metadataURI,
                 budget: data.budget,
-                maxImpressionPrice: data.maxImpressionPrice,
-                minBlock: data.minBlock,
-                maxBlock: data.maxBlock,
-                targetGroupIds: data.targetGroupIds,
+                maxPricePerConsumption: data.maxPricePerConsumption,
+                startingTimestamp: data.startingTimestamp,
+                endingTimestamp: data.endingTimestamp,
+                audienceIds: data.audienceIds,
               },
             ],
             value: BigInt(data.budget),
@@ -139,64 +139,64 @@ export const AdEditorComponent = (id?: string) => {
     description: z.string().describe('Please fill the description'),
     image: z.string().describe('Please provide an image URL'),
     budget: z.number().describe('Please choose a budget'),
-    maxImpressionPrice: z.number().describe('Please provide a max impression price'),
-    minBlock: z.number().describe('Please provide a starting block'),
-    maxBlock: z.number().describe('Please provide a ending block'),
-    targetGroupIds: z.array(z.number()).describe('You must set a list of target groups'),
+    maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
+    startingTimestamp: z.number().describe('Please provide a starting block'),
+    endingTimestamp: z.number().describe('Please provide a ending block'),
+    audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
   });
 
   type FormValues = z.infer<typeof schema>;
 
   const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
 
-  const [currentTargetGroups, setCurrentTargetGroups] = useState<number[] | undefined>(undefined);
+  const [currentAudiences, setCurrentAudiences] = useState<number[] | undefined>(undefined);
   const [potentialReach, setPotentialReach] = useState<number>(0);
   useEffect(() => {
-    if (!currentTargetGroups || currentTargetGroups.length === 0) return;
+    if (!currentAudiences || currentAudiences.length === 0) return;
 
-    backendTrpcClient.targets.getTargetGroupsReach
+    backendTrpcClient.targets.getAudiencesReach
       .query({
-        ids: currentTargetGroups.map((id) => id.toString()),
+        ids: currentAudiences.map((id) => id.toString()),
       })
       .then((response) => setPotentialReach(response.count))
       .catch((error) => console.log(error));
-  }, [currentTargetGroups]);
+  }, [currentAudiences]);
 
   const { query } = useRouter();
-  const [defaultTargetGroupsOptions, setDefaultTargetGroupsOptions] = useState<any[] | undefined>(undefined);
+  const [defaultAudiencesOptions, setDefaultAudiencesOptions] = useState<any[] | undefined>(undefined);
   useEffect(() => {
-    const initialTargetGroups = query.targetGroups
-      ? query.targetGroups
+    const initialAudiences = query.audiences
+      ? query.audiences
           .toString()
           .split(',')
           .map((id) => Number(id))
       : [];
 
-    if ((!currentTargetGroups || !currentTargetGroups.length) && initialTargetGroups.length) {
-      setCurrentTargetGroups(initialTargetGroups);
-      setDefaultTargetGroupsOptions(targetGroupOptions?.filter((tg) => initialTargetGroups.includes(Number(tg.value))));
+    if ((!currentAudiences || !currentAudiences.length) && initialAudiences.length) {
+      setCurrentAudiences(initialAudiences);
+      setDefaultAudiencesOptions(audienceOptions?.filter((a) => initialAudiences.includes(Number(a.value))));
     }
-  }, [query, defaultTargetGroupsOptions]);
+  }, [query, defaultAudiencesOptions]);
 
-  const [targetGroupsMetadata, setTargetGroupsMetadata] = useState<
-    Record<string, Awaited<ReturnType<typeof fetchMetadata>>>
-  >({});
+  const [audiencesMetadata, setAudiencesMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>(
+    {}
+  );
 
   useAsync(async () => {
-    if (targetGroups) {
+    if (audiences) {
       const metadata: Record<string, Awaited<ReturnType<typeof fetchMetadata>>> = {};
-      for (const tg of targetGroups.targetGroups) {
-        metadata[tg.id] = await fetchMetadata(tg.metadataURI);
+      for (const a of audiences.audiences) {
+        metadata[a.id] = await fetchMetadata(a.metadataURI);
       }
 
-      setTargetGroupsMetadata(metadata);
+      setAudiencesMetadata(metadata);
     }
-  }, [targetGroups]);
+  }, [audiences]);
 
-  const targetGroupOptions = targetGroups?.targetGroups.map((tg) => {
+  const audienceOptions = audiences?.audiences.map((a) => {
     return {
-      value: tg.id,
-      label: targetGroupsMetadata[tg.id]?.title ?? `Target Group #${tg.id}`,
+      value: a.id,
+      label: audiencesMetadata[a.id]?.title ?? `Target Group #${a.id}`,
     };
   });
 
@@ -227,10 +227,10 @@ export const AdEditorComponent = (id?: string) => {
                 description: '',
                 image: '',
                 budget: '',
-                maxImpressionPrice: '',
-                minBlock: '',
-                maxBlock: '',
-                targetGroupIds: [] as number[],
+                maxPricePerConsumption: '',
+                startingTimestamp: '',
+                endingTimestamp: '',
+                audienceIds: [] as number[],
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -336,18 +336,18 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.minBlock ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="minBlock">Starting Block</label>
+                    <div className={submitCount ? (errors.startingTimestamp ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingTimestamp">Starting Block</label>
                       <Field
-                        name="minBlock"
+                        name="startingTimestamp"
                         type="number"
-                        id="minBlock"
+                        id="startingTimestamp"
                         placeholder="Enter min block"
                         className="form-input"
                       />
                       {submitCount ? (
-                        errors.minBlock ? (
-                          <div className="mt-1 text-danger">{errors.minBlock}</div>
+                        errors.startingTimestamp ? (
+                          <div className="mt-1 text-danger">{errors.startingTimestamp}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -356,18 +356,18 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
 
-                    <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="maxBlock">Ending Block</label>
+                    <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="endingTimestamp">Ending Block</label>
                       <Field
-                        name="maxBlock"
+                        name="endingTimestamp"
                         type="number"
-                        id="maxBlock"
+                        id="endingTimestamp"
                         placeholder="Enter max block"
                         className="form-input"
                       />
                       {submitCount ? (
-                        errors.maxBlock ? (
-                          <div className="mt-1 text-danger">{errors.maxBlock}</div>
+                        errors.endingTimestamp ? (
+                          <div className="mt-1 text-danger">{errors.endingTimestamp}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -377,19 +377,19 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.maxImpressionPrice ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="maxImpressionPrice">Max Impression Price</label>
+                    <div className={submitCount ? (errors.maxPricePerConsumption ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="maxPricePerConsumption">Max Impression Price</label>
                       <Field
-                        name="maxImpressionPrice"
+                        name="maxPricePerConsumption"
                         type="number"
-                        id="maxImpressionPrice"
-                        placeholder="Enter maxImpressionPrice"
+                        id="maxPricePerConsumption"
+                        placeholder="Enter maxPricePerConsumption"
                         className="form-input"
                       />
 
                       {submitCount ? (
-                        errors.maxImpressionPrice ? (
-                          <div className="mt-1 text-danger">{errors.maxImpressionPrice}</div>
+                        errors.maxPricePerConsumption ? (
+                          <div className="mt-1 text-danger">{errors.maxPricePerConsumption}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -398,8 +398,8 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
-                  <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="targetGroupIds">Target Groups</label>
+                  <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="audienceIds">Audiences</label>
                     <Select
                       classNames={{
                         control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -412,20 +412,20 @@ export const AdEditorComponent = (id?: string) => {
                         menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                       }}
                       placeholder="Select an option"
-                      id="targetGroupIds"
-                      options={targetGroupOptions}
-                      name="targetGroupIds"
-                      value={targetGroupOptions?.filter((tg) => currentTargetGroups?.includes(Number(tg.value))) ?? []}
+                      id="audienceIds"
+                      options={audienceOptions}
+                      name="audienceIds"
+                      value={audienceOptions?.filter((a) => currentAudiences?.includes(Number(a.value))) ?? []}
                       onChange={(value) => {
-                        setCurrentTargetGroups(value.map((v) => Number(v.value)));
-                        values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
+                        setCurrentAudiences(value.map((v) => Number(v.value)));
+                        values.audienceIds = value.map((v) => Number(v.value)) ?? [];
                       }}
                       isMulti
                       isSearchable={true}
                     />
                     {submitCount ? (
-                      errors.targetGroupIds ? (
-                        <div className="mt-1 text-danger">{errors.targetGroupIds}</div>
+                      errors.audienceIds ? (
+                        <div className="mt-1 text-danger">{errors.audienceIds}</div>
                       ) : (
                         <div className="mt-1 text-success"></div>
                       )

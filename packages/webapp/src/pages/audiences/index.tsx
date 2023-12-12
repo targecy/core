@@ -8,34 +8,34 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllTargetGroupsQuery, useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
+import { GetAllAudiencesQuery, useGetAllAudiencesQuery } from '~~/generated/graphql.types';
 import { fetchMetadata } from '~~/utils/metadata';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
-const TargetGroups = () => {
-  const data = useGetAllTargetGroupsQuery();
+const Audiences = () => {
+  const data = useGetAllAudiencesQuery();
 
   useInterval(() => {
     data.refetch();
   }, 3000);
 
-  const targetGroups = data?.data?.targetGroups;
+  const audiences = data?.data?.audiences;
 
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string; image?: string }>>(
     {}
   );
   const [ZKPMetadata, setZKPMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>({});
   useAsync(async () => {
-    if (targetGroups) {
+    if (audiences) {
       setMetadata(
         (
           await Promise.all(
-            targetGroups.map(async (tg) => {
-              const newMetadata = await fetch(`https://${tg.metadataURI}.ipfs.nftstorage.link`);
+            audiences.map(async (a) => {
+              const newMetadata = await fetch(`https://${a.metadataURI}.ipfs.nftstorage.link`);
               const json = await newMetadata.json();
-              return { id: tg.id, metadata: { title: json.title, description: json.description } };
+              return { id: a.id, metadata: { title: json.title, description: json.description } };
             })
           )
         ).reduce<typeof metadata>((acc, curr) => {
@@ -44,7 +44,7 @@ const TargetGroups = () => {
         }, {})
       );
 
-      const ZKPMetedatasURIs = targetGroups?.flatMap((tg) => tg.zkRequests.map((r) => r.metadataURI)) || [];
+      const ZKPMetedatasURIs = audiences?.flatMap((a) => a.segments.map((s) => s.metadataURI)) || [];
       setZKPMetadata(
         (
           await Promise.all(
@@ -59,27 +59,27 @@ const TargetGroups = () => {
         }, {})
       );
     }
-  }, [targetGroups]);
+  }, [audiences]);
 
-  const { writeAsync: deleteTargetGroupAsync } = useContractWrite({
+  const { writeAsync: deleteAudienceAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'deleteTargetGroup',
+    functionName: 'deleteAudience',
   });
 
-  const deleteTargetGroup = async (id: number) => {
-    await deleteTargetGroupAsync({ args: [id] });
+  const deleteAudience = async (id: number) => {
+    await deleteAudienceAsync({ args: [id] });
     return undefined;
   };
 
-  const columns: DataTableColumn<GetAllTargetGroupsQuery['targetGroups'][number]>[] = [
+  const columns: DataTableColumn<GetAllAudiencesQuery['audiences'][number]>[] = [
     { title: 'Id', accessor: 'id' },
-    { title: 'Title', accessor: 'id', render: (tg) => metadata[tg.id]?.title },
-    { title: 'Description', accessor: 'id', render: (tg) => metadata[tg.id]?.description },
+    { title: 'Title', accessor: 'id', render: (a) => metadata[a.id]?.title },
+    { title: 'Description', accessor: 'id', render: (a) => metadata[a.id]?.description },
     {
-      title: 'Attributes',
-      accessor: 'zkRequests',
-      render: (value) => value.zkRequests.map((r) => ZKPMetadata[r.metadataURI]?.title).join(', '),
+      title: 'Segments',
+      accessor: 'segments',
+      render: (value) => value.segments.map((s) => ZKPMetadata[s.metadataURI]?.title).join(', '),
     },
     {
       width: 75,
@@ -88,7 +88,7 @@ const TargetGroups = () => {
       textAlignment: 'right',
       render: (item) => (
         <div className="flex justify-between">
-          <Link href={`/targetGroups/edit/${item.id}`}>
+          <Link href={`/audiences/edit/${item.id}`}>
             <EditOutlined
               rev={undefined}
               onClick={() => {}}
@@ -98,7 +98,7 @@ const TargetGroups = () => {
             <DeleteOutlined
               rev={undefined}
               onClick={() => {
-                deleteTargetGroup(Number(item.id))
+                deleteAudience(Number(item.id))
                   .then(async () => {
                     await Swal.mixin({
                       toast: true,
@@ -137,8 +137,8 @@ const TargetGroups = () => {
   return (
     <div className="panel">
       <div className="mb-5 flex items-center justify-between p-2">
-        <h5 className="text-lg font-semibold dark:text-white-light">Target Groups</h5>
-        <Link className="btn btn-primary" href="/targetGroups/editor">
+        <h5 className="text-lg font-semibold dark:text-white-light">Audiences</h5>
+        <Link className="btn btn-primary" href="/audiences/editor">
           Create
         </Link>
       </div>
@@ -147,12 +147,12 @@ const TargetGroups = () => {
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
           noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
-          records={targetGroups}
+          records={audiences}
           highlightOnHover={true}
           minHeight={200}
           onRowClick={(row) => {
             console.log(row);
-            router.push(`/ads/editor?targetGroups=${row.id}`).catch((e) => console.log(e));
+            router.push(`/ads/editor?audiences=${row.id}`).catch((e) => console.log(e));
           }}
           columns={columns}></DataTable>
       </div>
@@ -160,4 +160,4 @@ const TargetGroups = () => {
   );
 };
 
-export default TargetGroups;
+export default Audiences;

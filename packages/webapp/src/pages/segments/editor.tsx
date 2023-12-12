@@ -42,17 +42,17 @@ export const operatorOptions = [
   },
 ];
 
-export const ZKPRequestEditorComponent = (id?: string) => {
-  const [processingZKPRequest, setProcessingZKPRequest] = useState(false);
-  const { writeAsync: setZKPRequestAsync } = useContractWrite({
+export const SegmentEditorComponent = (id?: string) => {
+  const [processingSegment, setProcessingSegment] = useState(false);
+  const { writeAsync: setSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'setZKPRequest',
+    functionName: 'setSegment',
   });
-  const { writeAsync: editZKPRequestAsync } = useContractWrite({
+  const { writeAsync: editSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'editZKPRequest',
+    functionName: 'editSegment',
   });
 
   const router = useRouter();
@@ -62,16 +62,16 @@ export const ZKPRequestEditorComponent = (id?: string) => {
   const submitForm = async (data: FormValues) => {
     console.log(data);
 
-    setProcessingZKPRequest(true);
+    setProcessingSegment(true);
 
-    const zkpRequestMetadata = {
+    const segmentMetadata = {
       title: data.title,
       description: data.description,
     };
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
-      body: JSON.stringify({ json: zkpRequestMetadata }),
+      body: JSON.stringify({ json: segmentMetadata }),
     });
 
     if (!metadataUploadResponse.ok) {
@@ -85,7 +85,7 @@ export const ZKPRequestEditorComponent = (id?: string) => {
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setProcessingZKPRequest(false);
+      setProcessingSegment(false);
       return;
     }
 
@@ -95,7 +95,7 @@ export const ZKPRequestEditorComponent = (id?: string) => {
       let hash;
       if (id) {
         hash = (
-          await editZKPRequestAsync({
+          await editSegmentAsync({
             args: [
               id,
               {
@@ -127,8 +127,8 @@ export const ZKPRequestEditorComponent = (id?: string) => {
             metadataURI: metadataURI,
           },
         ]);
-        console.log(setZKPRequestAsync);
-        hash = await setZKPRequestAsync({
+        console.log(setSegmentAsync);
+        hash = await setSegmentAsync({
           args: [
             {
               validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
@@ -152,11 +152,11 @@ export const ZKPRequestEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `ZKPRequest ${id ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
+        title: `Segment ${id ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
         padding: '10px 20px',
       });
 
-      await router.push('/zkprequests');
+      await router.push('/segments');
     } catch (e) {
       await Swal.mixin({
         toast: true,
@@ -169,7 +169,7 @@ export const ZKPRequestEditorComponent = (id?: string) => {
         padding: '10px 20px',
       });
 
-      setProcessingZKPRequest(false);
+      setProcessingSegment(false);
     }
   };
 
@@ -207,7 +207,7 @@ export const ZKPRequestEditorComponent = (id?: string) => {
     )
       return;
 
-    backendTrpcClient.zkpRequest.getZKPRequestPotentialReachByParams
+    backendTrpcClient.segment.getSegmentPotentialReachByParams
       .query({
         operator: currentParams.operator,
         value: currentParams.value,
@@ -221,8 +221,8 @@ export const ZKPRequestEditorComponent = (id?: string) => {
     <div>
       <ul className="flex space-x-2 rtl:space-x-reverse">
         <li>
-          <Link href="/zkprequests" className="text-primary hover:underline">
-            ZKP Requests
+          <Link href="/segments" className="text-primary hover:underline">
+            Segments
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
@@ -424,7 +424,7 @@ export const ZKPRequestEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={processingZKPRequest}
+                      disabled={processingSegment}
                       className="btn btn-primary !mt-6"
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -435,7 +435,7 @@ export const ZKPRequestEditorComponent = (id?: string) => {
                           }
                         }
                       }}>
-                      {processingZKPRequest ? 'Creating Ad...' : 'Create'}
+                      {processingSegment ? 'Creating Ad...' : 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -458,6 +458,6 @@ export const ZKPRequestEditorComponent = (id?: string) => {
   );
 };
 
-const NewZKPRequestPage = () => ZKPRequestEditorComponent();
+const NewSegmentPage = () => SegmentEditorComponent();
 
-export default NewZKPRequestPage;
+export default NewSegmentPage;

@@ -66,6 +66,8 @@ const Sidebar = () => {
     }
   }, [router.pathname]);
 
+  const [isAdmin, setIsAdmin] = useState(true); // @todo (Martin): fetch from contracts
+
   return (
     <div className={semidark ? 'dark' : ''}>
       <nav
@@ -141,7 +143,7 @@ const Sidebar = () => {
                   <br></br>
                   <label>Advertiser</label>
                   <li className="nav-item">
-                    <Link href="/targetGroups" className="group">
+                    <Link href="/audiences" className="group">
                       <div className="flex items-center">
                         <UsergroupAddOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
@@ -160,28 +162,31 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
-                  <br></br>
-                  <label>Admin</label>
-                  <li className="nav-item">
-                    <Link href="/zkprequests" className="group">
-                      <div className="flex items-center">
-                        <SecurityScanOutlined rev={undefined} />
-                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Attributes')}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link href="/publishers" className="group">
-                      <div className="flex items-center">
-                        <ShareAltOutlined rev={undefined} />
-                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Publishers')}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
+                  <div hidden={!isAdmin}>
+                    <br></br>
+
+                    <label>Admin</label>
+                    <li className="nav-item">
+                      <Link href="/segments" className="group">
+                        <div className="flex items-center">
+                          <SecurityScanOutlined rev={undefined} />
+                          <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                            {t('Segments')}
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link href="/publishers" className="group">
+                        <div className="flex items-center">
+                          <ShareAltOutlined rev={undefined} />
+                          <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                            {t('Publishers')}
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                  </div>
                   <br></br>
                   <label>Publisher</label>
                   <li className="nav-item">
