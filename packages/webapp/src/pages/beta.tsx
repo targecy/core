@@ -30,7 +30,7 @@ export default function Beta() {
       <div className="flex min-h-screen w-full flex-col items-center justify-center gap-3  pb-40">
         <img className="m-5 w-24 flex-none opacity-80 " src="/images/logo.svg" alt="logo" />
 
-        <Typography className="text-bold bg-gradient-to-tr from-gray-800 to-violet-500 bg-clip-text text-8xl text-transparent">
+        <Typography className="text-bold bg-gradient-to-tr from-gray-800 to-violet-500 bg-clip-text text-3xl  text-transparent  lg:text-6xl xl:text-8xl">
           The revolution starts here.
         </Typography>
 
@@ -69,7 +69,7 @@ export default function Beta() {
           </div>
         ) : (
           <>
-            <p className="mb-12 text-2xl">
+            <p className="mb-12 md:text-lg lg:text-2xl">
               Have you joined our private beta? Not yet,{' '}
               <Link
                 href={FORM_LINK}

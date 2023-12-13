@@ -21,4 +21,10 @@ export const Audiences = gql`
       ...AudienceFragment
     }
   }
+
+  query GetLastAudiences($limit: Int!) {
+    audiences(first: $limit) {
+      ...AudienceFragment
+    }
+  }
 `;

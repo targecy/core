@@ -26,4 +26,10 @@ export const Segments = gql`
       ...SegmentFragment
     }
   }
+
+  query GetLastSegments($limit: Int!) {
+    segments(first: $limit) {
+      ...SegmentFragment
+    }
+  }
 `;

@@ -71,6 +71,8 @@
   "solidity.defaultCompiler": "localNodeModule",
   "mochaExplorer.configFile": "./packages/solidity-ts-ts/.mocharc.json",
   "cSpell.words": [
+    "audiences",
+    "behaviour",
     "Blockscout",
     "codegen",
     "datasource",
@@ -79,12 +81,11 @@
     "Merkle",
     "nomicfoundation",
     "rainbowkit",
+    "segments",
     "superjson",
     "targecy",
     "trpc",
     "viem",
-    "Wagmi",
-    "audiences",
-    "segments"
+    "Wagmi"
   ]
 }

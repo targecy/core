@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { setPageTitle } from '../../../webapp/src/store/themeConfigSlice';
+import { setPageTitle } from '../store/themeConfigSlice';
 
 import BlankLayout from '~/components/Layouts/BlankLayout';
 import { IRootState } from '~/store';
@@ -16,7 +16,7 @@ const Error503 = () => {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden">
-      <div className="before:bg-[linear-gradient(180deg,#4361EE_0%,rgba(67,97,238,0)_50.73%)] px-6 py-16 text-center font-semibold before:container before:absolute before:left-1/2 before:aspect-square before:-translate-x-1/2 before:rounded-full before:opacity-10 md:py-20">
+      <div className="px-6 py-16 text-center font-semibold before:container before:absolute before:left-1/2 before:aspect-square before:-translate-x-1/2 before:rounded-full before:bg-[linear-gradient(180deg,#4361EE_0%,rgba(67,97,238,0)_50.73%)] before:opacity-10 md:py-20">
         <div className="relative">
           <img
             src={isDark ? '/images/error/503-dark.svg' : '/images/error/503-light.svg'}

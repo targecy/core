@@ -47,4 +47,10 @@ export const Ads = gql`
       ...AdFragment
     }
   }
+
+  query GetLastAds($limit: Int!) {
+    ads(first: $limit) {
+      ...AdFragment
+    }
+  }
 `;

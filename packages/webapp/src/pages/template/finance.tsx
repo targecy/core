@@ -1,20 +1,16 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import Dropdown from '../../webapp/src/components/Dropdown';
-import { IRootState } from '../../webapp/src/store';
-import { setPageTitle } from '../../webapp/src/store/themeConfigSlice';
+import Dropdown from '~~/components/Dropdown';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 const Finance = () => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(setPageTitle('Finance'));
-  });
+
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -386,7 +382,7 @@ const Finance = () => {
     },
   };
 
-  const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+  const isRtl = true;
 
   return (
     <div>

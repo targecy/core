@@ -1106,6 +1106,27 @@ export type GetAdQueryVariables = Exact<{
 
 export type GetAdQuery = { __typename?: 'Query', ad?: { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> } | null };
 
+export type GetLastAdsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetLastAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+
+export type AdvertiserFragmentFragment = { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any };
+
+export type GetAllAdvertisersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllAdvertisersQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+
+export type GetAdvertiserQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetAdvertiserQuery = { __typename?: 'Query', advertiser?: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any } | null };
+
 export type AudienceFragmentFragment = { __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
 export type GetAllAudiencesQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1119,6 +1140,13 @@ export type GetAudienceQueryVariables = Exact<{
 
 
 export type GetAudienceQuery = { __typename?: 'Query', audience?: { __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> } | null };
+
+export type GetLastAudiencesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetLastAudiencesQuery = { __typename?: 'Query', audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }> };
 
 export type PublisherFragmentFragment = { __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any };
 
@@ -1147,6 +1175,13 @@ export type GetSegmentQueryVariables = Exact<{
 
 
 export type GetSegmentQuery = { __typename?: 'Query', segment?: { __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } } | null };
+
+export type GetLastSegmentsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetLastSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
 export const SegmentFragmentFragmentDoc = `
     fragment SegmentFragment on Segment {
@@ -1203,6 +1238,17 @@ export const AdFragmentFragmentDoc = `
   }
 }
     ${AudienceFragmentFragmentDoc}`;
+export const AdvertiserFragmentFragmentDoc = `
+    fragment AdvertiserFragment on Advertiser {
+  id
+  totalBudget
+  remainingBudget
+  adsQuantity
+  impressions
+  clicks
+  conversions
+}
+    `;
 export const PublisherFragmentFragmentDoc = `
     fragment PublisherFragment on Publisher {
   id
@@ -1233,6 +1279,27 @@ export const GetAdDocument = `
   }
 }
     ${AdFragmentFragmentDoc}`;
+export const GetLastAdsDocument = `
+    query GetLastAds($limit: Int!) {
+  ads(first: $limit) {
+    ...AdFragment
+  }
+}
+    ${AdFragmentFragmentDoc}`;
+export const GetAllAdvertisersDocument = `
+    query GetAllAdvertisers {
+  ads {
+    ...AdFragment
+  }
+}
+    ${AdFragmentFragmentDoc}`;
+export const GetAdvertiserDocument = `
+    query GetAdvertiser($id: ID!) {
+  advertiser(id: $id) {
+    ...AdvertiserFragment
+  }
+}
+    ${AdvertiserFragmentFragmentDoc}`;
 export const GetAllAudiencesDocument = `
     query GetAllAudiences {
   audiences {
@@ -1243,6 +1310,13 @@ export const GetAllAudiencesDocument = `
 export const GetAudienceDocument = `
     query GetAudience($id: ID!) {
   audience(id: $id) {
+    ...AudienceFragment
+  }
+}
+    ${AudienceFragmentFragmentDoc}`;
+export const GetLastAudiencesDocument = `
+    query GetLastAudiences($limit: Int!) {
+  audiences(first: $limit) {
     ...AudienceFragment
   }
 }
@@ -1275,6 +1349,13 @@ export const GetSegmentDocument = `
   }
 }
     ${SegmentFragmentFragmentDoc}`;
+export const GetLastSegmentsDocument = `
+    query GetLastSegments($limit: Int!) {
+  segments(first: $limit) {
+    ...SegmentFragment
+  }
+}
+    ${SegmentFragmentFragmentDoc}`;
 
 const injectedRtkApi = api.injectEndpoints({
   overrideExisting: true,
@@ -1288,11 +1369,23 @@ const injectedRtkApi = api.injectEndpoints({
     GetAd: build.query<GetAdQuery, GetAdQueryVariables>({
       query: (variables) => ({ document: GetAdDocument, variables })
     }),
+    GetLastAds: build.query<GetLastAdsQuery, GetLastAdsQueryVariables>({
+      query: (variables) => ({ document: GetLastAdsDocument, variables })
+    }),
+    GetAllAdvertisers: build.query<GetAllAdvertisersQuery, GetAllAdvertisersQueryVariables | void>({
+      query: (variables) => ({ document: GetAllAdvertisersDocument, variables })
+    }),
+    GetAdvertiser: build.query<GetAdvertiserQuery, GetAdvertiserQueryVariables>({
+      query: (variables) => ({ document: GetAdvertiserDocument, variables })
+    }),
     GetAllAudiences: build.query<GetAllAudiencesQuery, GetAllAudiencesQueryVariables | void>({
       query: (variables) => ({ document: GetAllAudiencesDocument, variables })
     }),
     GetAudience: build.query<GetAudienceQuery, GetAudienceQueryVariables>({
       query: (variables) => ({ document: GetAudienceDocument, variables })
+    }),
+    GetLastAudiences: build.query<GetLastAudiencesQuery, GetLastAudiencesQueryVariables>({
+      query: (variables) => ({ document: GetLastAudiencesDocument, variables })
     }),
     GetAllPublishers: build.query<GetAllPublishersQuery, GetAllPublishersQueryVariables | void>({
       query: (variables) => ({ document: GetAllPublishersDocument, variables })
@@ -1306,9 +1399,12 @@ const injectedRtkApi = api.injectEndpoints({
     GetSegment: build.query<GetSegmentQuery, GetSegmentQueryVariables>({
       query: (variables) => ({ document: GetSegmentDocument, variables })
     }),
+    GetLastSegments: build.query<GetLastSegmentsQuery, GetLastSegmentsQueryVariables>({
+      query: (variables) => ({ document: GetLastSegmentsDocument, variables })
+    }),
   }),
 });
 
 export { injectedRtkApi as api };
-export const { useGetAllAdsQuery, useLazyGetAllAdsQuery, useGetAdToShowQuery, useLazyGetAdToShowQuery, useGetAdQuery, useLazyGetAdQuery, useGetAllAudiencesQuery, useLazyGetAllAudiencesQuery, useGetAudienceQuery, useLazyGetAudienceQuery, useGetAllPublishersQuery, useLazyGetAllPublishersQuery, useGetPublisherQuery, useLazyGetPublisherQuery, useGetAllSegmentsQuery, useLazyGetAllSegmentsQuery, useGetSegmentQuery, useLazyGetSegmentQuery } = injectedRtkApi;
+export const { useGetAllAdsQuery, useLazyGetAllAdsQuery, useGetAdToShowQuery, useLazyGetAdToShowQuery, useGetAdQuery, useLazyGetAdQuery, useGetLastAdsQuery, useLazyGetLastAdsQuery, useGetAllAdvertisersQuery, useLazyGetAllAdvertisersQuery, useGetAdvertiserQuery, useLazyGetAdvertiserQuery, useGetAllAudiencesQuery, useLazyGetAllAudiencesQuery, useGetAudienceQuery, useLazyGetAudienceQuery, useGetLastAudiencesQuery, useLazyGetLastAudiencesQuery, useGetAllPublishersQuery, useLazyGetAllPublishersQuery, useGetPublisherQuery, useLazyGetPublisherQuery, useGetAllSegmentsQuery, useLazyGetAllSegmentsQuery, useGetSegmentQuery, useLazyGetSegmentQuery, useGetLastSegmentsQuery, useLazyGetLastSegmentsQuery } = injectedRtkApi;
 

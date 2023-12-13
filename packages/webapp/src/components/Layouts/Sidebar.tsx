@@ -1,10 +1,15 @@
 import {
   BookOutlined,
+  DotChartOutlined,
   EditOutlined,
+  FileTextOutlined,
+  GiftOutlined,
   HomeOutlined,
   PlaySquareOutlined,
+  RiseOutlined,
   SecurityScanOutlined,
   ShareAltOutlined,
+  TwitterOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
@@ -112,7 +117,7 @@ const Sidebar = () => {
               </svg>
             </button>
           </div>
-          <PerfectScrollbar className="relative h-[calc(100vh-80px)]">
+          <PerfectScrollbar className="relative h-[calc(98vh-80px)]">
             <ul className="relative space-y-0.5 p-4 py-0 font-semibold">
               <li className="nav-item">
                 <ul>
@@ -140,6 +145,26 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
+                  <li className="nav-item opacity-50">
+                    <Link href="#" className="group hover:bg-transparent">
+                      <div className="flex items-center">
+                        <RiseOutlined rev={undefined} />
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
+                          {t('Leaderboard (coming soon)')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <li className="nav-item opacity-50">
+                    <Link href="#" className="group hover:bg-transparent">
+                      <div className="flex items-center">
+                        <GiftOutlined rev={undefined} />
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
+                          {t('Rewards (coming soon)')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
                   <br></br>
                   <label>Advertiser</label>
                   <li className="nav-item">
@@ -152,6 +177,16 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
+                  <li className="nav-item opacity-50">
+                    <Link href="#" className="group hover:bg-transparent">
+                      <div className="flex items-center">
+                        <DotChartOutlined rev={undefined} />
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
+                          {t('Performace (coming soon)')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
                   <br></br>
                   <label>Publisher</label>
                   <li className="nav-item">
@@ -160,6 +195,16 @@ const Sidebar = () => {
                         <PlaySquareOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Wizard')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <li className="nav-item opacity-50">
+                    <Link href="#" className="group hover:bg-transparent">
+                      <div className="flex items-center">
+                        <FileTextOutlined rev={undefined} />
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
+                          {t('Docs (coming soon)')}
                         </span>
                       </div>
                     </Link>
@@ -203,6 +248,19 @@ const Sidebar = () => {
               </li>
             </ul>
           </PerfectScrollbar>
+          <div className="flex justify-center p-3">
+            <span className="hover:color-primary flex align-middle">
+              Follow us on
+              <Link
+                href="https://twitter.com/targecy_ads"
+                target="_blank"
+                className="group flex pl-2 hover:text-primary">
+                <div className="flex items-center">
+                  <TwitterOutlined rev={undefined} />
+                </div>
+              </Link>
+            </span>
+          </div>
         </div>
       </nav>
     </div>
