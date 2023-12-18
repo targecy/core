@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -7,6 +7,14 @@ import { Errors } from "./Errors.sol";
 import { Constants } from "./Constants.sol";
 
 library Helpers {
+  function getDayFromEpoch(uint256 timestamp) internal pure returns (uint256) {
+    return timestamp / 86400;
+  }
+
+  function getWeekDayFromTimestamp(uint256 timestamp) internal pure returns (uint256) {
+    return (timestamp / 86400 + 4) % 7;
+  }
+
   /**
    * @dev Wrapper for ecrecover to reduce code size, used in meta-tx specific functions.
    */

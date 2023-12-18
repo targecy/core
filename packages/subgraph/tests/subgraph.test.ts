@@ -1,6 +1,6 @@
 import { describe, test, newMockEvent, assert } from 'matchstick-as/assembly/index';
-import { handleZKPRequestCreated } from '../src/targecy';
-import { ZKPRequestCreated, ZKPRequestCreated__Params } from '../generated/Targecy/Targecy';
+import { handleSegmentCreated } from '../src/targecy';
+import { SegmentCreated, SegmentCreated__Params } from '../generated/Targecy/Targecy';
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts';
 
 describe('Targecy', () => {
@@ -11,9 +11,9 @@ describe('Targecy', () => {
   //   ...
   // })
 
-  test('create zkprequests should save new entity', () => {
+  test('create segments should save new entity', () => {
     const mockEvent = newMockEvent();
-    const event = new ZKPRequestCreated(
+    const event = new SegmentCreated(
       mockEvent.address,
       mockEvent.logIndex,
       mockEvent.transactionLogIndex,
@@ -27,7 +27,7 @@ describe('Targecy', () => {
     const randomId = 100;
 
     event.parameters = new Array();
-    event.parameters.push(new ethereum.EventParam('zkRequestId', ethereum.Value.fromI32(randomId)));
+    event.parameters.push(new ethereum.EventParam('audienceId', ethereum.Value.fromI32(randomId)));
     event.parameters.push(new ethereum.EventParam('metadataURI', ethereum.Value.fromString('metadataURI')));
 
     const address = Address.zero();
@@ -42,16 +42,16 @@ describe('Targecy', () => {
 
     event.parameters.push(new ethereum.EventParam('query', ethereum.Value.fromTuple(query)));
 
-    assert.entityCount('ZKPRequest', 0);
+    assert.entityCount('Segment', 0);
 
-    const a = new ZKPRequestCreated__Params(event);
+    const a = new SegmentCreated__Params(event);
 
     console.log(a.metadataURI);
 
-    handleZKPRequestCreated(event);
+    handleSegmentCreated(event);
 
-    assert.entityCount('ZKPRequest', 1);
+    assert.entityCount('Segment', 1);
 
-    assert.fieldEquals('ZKPRequest', randomId.toString(), 'id', randomId.toString());
+    assert.fieldEquals('Segment', randomId.toString(), 'id', randomId.toString());
   });
 });

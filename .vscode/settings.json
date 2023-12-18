@@ -22,7 +22,7 @@
     "**/node_modules": true
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "search.exclude": {
     "**/.git": true,
@@ -71,19 +71,21 @@
   "solidity.defaultCompiler": "localNodeModule",
   "mochaExplorer.configFile": "./packages/solidity-ts-ts/.mocharc.json",
   "cSpell.words": [
+    "audiences",
+    "behaviour",
     "Blockscout",
     "codegen",
     "datasource",
     "Iden",
     "ipfs",
     "Merkle",
+    "nomicfoundation",
     "rainbowkit",
+    "segments",
     "superjson",
     "targecy",
     "trpc",
     "viem",
-    "Wagmi",
-    "zkprequest",
-    "zkprequests"
+    "Wagmi"
   ]
 }

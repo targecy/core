@@ -21,9 +21,7 @@ export const useAds = (context: TargecyContextType) => {
 
   const validAds =
     data?.ads.filter((ad) =>
-      ad?.targetGroups.some((tg) =>
-        tg.zkRequests.every((zk) => getValidCredentialByProofRequest(credentials.credentials, zk))
-      )
+      ad?.audiences.some((a) => a.segments.every((zk) => getValidCredentialByProofRequest(credentials.credentials, zk)))
     ) || [];
 
   const [completeAds, setCompleteAds] = useState<
@@ -32,7 +30,14 @@ export const useAds = (context: TargecyContextType) => {
 
   useAsync(async () => {
     if (validAds) {
-      const finalAds = [];
+      const finalAds: {
+        ad: Ad;
+        metadata: {
+          title: string;
+          description: string;
+          image: string;
+        };
+      }[] = [];
       for (const ad of validAds) {
         const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
         const json = await newMetadata.json();

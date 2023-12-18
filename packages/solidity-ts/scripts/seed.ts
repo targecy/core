@@ -12,6 +12,8 @@ import * as deployedAddresses from '../generated/config/config.json';
 import { initializeData } from './seed/data';
 import { uploadMetadata } from './seed/utils';
 
+import { Targecy, Targecy__factory } from '~generated/contract-types';
+
 // @todo set multiple logging levels
 
 const readline = require('readline');
@@ -40,8 +42,8 @@ const stringifySupportingBigInts = (obj: any) =>
     2
   );
 
-export async function seed(network: string): Promise<void> {
-  console.log('Seeding contract...');
+export async function seed(network: string, force = false): Promise<void> {
+  console.log('Seeding contract... network:' + network + ' force: ' + force.toString());
 
   const addresses: any = deployedAddresses;
 
@@ -84,72 +86,74 @@ export async function seed(network: string): Promise<void> {
   console.log(`Targecy's address: ${address}`);
   console.log(`Wallet's address: ${wallet.address}`);
 
-  const Targecy = await ethers.getContractFactory('Targecy', wallet);
-  const targecy = Targecy.attach(address as string);
+  const Targecy = (await ethers.getContractFactory('Targecy', wallet)) as Targecy__factory;
+  const targecy = Targecy.attach(address as string) as Targecy;
 
-  // const targecy = new Targecy__factory().connect(wallet).attach(address);
-
-  // Print current amount of ads, target groups, and ZKP requests
+  // Print current amount of ads, audiences, and segments
   console.log(`Current amount of ads:  ${Number(await targecy._adId()) - 1}`);
-  console.log(`Current amount of target groups:  ${Number(await targecy._targetGroupId()) - 1}`);
-  console.log(`Current amount of ZKP requests:  ${Number(await targecy._zkRequestId()) - 1}`);
+  console.log(`Current amount of audiences:  ${Number(await targecy._audienceId()) - 1}`);
+  console.log(`Current amount of segments:  ${Number(await targecy._segmentId()) - 1}`);
 
-  if (Number(await targecy._adId()) - 1 > 0 || Number(await targecy._targetGroupId()) - 1 > 0 || Number(await targecy._zkRequestId()) - 1 > 0)
-    console.log('> BE CAREFUL: Contract already has some data, adding new ones may break references between new entities as set in data.ts');
-  const answer1 = await askQuestion('Do you want to continue? (yes/no) ');
-  if (answer1.toLowerCase() === 'yes') {
-    console.log('Continuing...');
-  } else {
-    console.log('Operation aborted.');
-    exit(0);
+  if (!force) {
+    if (Number(await targecy._adId()) - 1 > 0 || Number(await targecy._audienceId()) - 1 > 0 || Number(await targecy._segmentId()) - 1 > 0)
+      console.log('> BE CAREFUL: Contract already has some data, adding new ones may break references between new entities as set in data.ts');
+    const answer1 = await askQuestion('Do you want to continue? (yes/no) ');
+    if (answer1.toLowerCase() === 'yes') {
+      console.log('Continuing...');
+    } else {
+      console.log('Operation aborted.');
+      exit(0);
+    }
   }
 
-  console.log('Data to be uploaded:');
-  const { zkpRequests, targetGroups, ads } = await initializeData();
-  console.log('ZKP Requests:' + stringifySupportingBigInts(zkpRequests));
-  console.log('Target Groups:' + stringifySupportingBigInts(targetGroups));
-  console.log('Ads:' + stringifySupportingBigInts(ads));
+  const { segments, audiences, ads } = await initializeData();
+  if (!force) {
+    console.log('Data to be uploaded:');
+    console.log('segments:' + stringifySupportingBigInts(segments));
+    console.log('audiences:' + stringifySupportingBigInts(audiences));
+    console.log('Ads:' + stringifySupportingBigInts(ads));
 
-  const answer = await askQuestion('Do you want to continue? (yes/no) ');
-  if (answer.toLowerCase() === 'yes') {
-    console.log('Continuing...');
-  } else {
-    console.log('Operation aborted.');
-    exit(0);
+    const answer = await askQuestion('Do you want to continue? (yes/no) ');
+    if (answer.toLowerCase() === 'yes') {
+      console.log('Continuing...');
+    } else {
+      console.log('Operation aborted.');
+      exit(0);
+    }
   }
 
-  // Upload ZKP requests
-  console.log('\nUploading ZKP requests...');
-  for (const [index, zkpRequest] of zkpRequests.entries()) {
-    const uri = await uploadMetadata(zkpRequest.metadata);
-    zkpRequests[index].metadataURI = uri;
+  // Upload segments
+  console.log('\nUploading segments...');
+  for (const [index, segment] of segments.entries()) {
+    const uri = await uploadMetadata(segment.metadata);
+    segments[index].metadataURI = uri;
 
-    // Call smart contract function to create a ZKP request
-    await targecy.setZKPRequest({
-      metadataURI: zkpRequest.metadataURI ?? '',
+    // Call smart contract function to create a segment
+    await targecy.setSegment({
+      metadataURI: segment.metadataURI ?? '',
       issuer: ethers.ZeroAddress, // use default
       query: {
-        schema: zkpRequest.query.schema,
-        slotIndex: zkpRequest.query.slotIndex,
-        operator: zkpRequest.query.operator,
-        value: zkpRequest.query.value,
-        circuitId: zkpRequest.query.circuitId,
+        schema: segment.query.schema,
+        slotIndex: segment.query.slotIndex,
+        operator: segment.query.operator,
+        value: segment.query.value,
+        circuitId: segment.query.circuitId,
       },
     });
 
-    console.log(`ZKP request '${zkpRequest.metadata.title}' created`);
+    console.log(`Segment '${segment.metadata.title}' created`);
   }
 
-  // Upload target groups
-  console.log('\nUploading target groups...');
-  for (const [index, targetGroup] of targetGroups.entries()) {
-    const uri = await uploadMetadata(targetGroup.metadata);
-    targetGroups[index].metadataURI = uri;
+  // Upload audiences
+  console.log('\nUploading audiences...');
+  for (const [index, audience] of audiences.entries()) {
+    const uri = await uploadMetadata(audience.metadata);
+    audiences[index].metadataURI = uri;
 
     // Call smart contract function to create a target group
-    await targecy.createTargetGroup((targetGroup.metadataURI as string) ?? '', targetGroup.zkpRequestIds as number[]);
+    await targecy.createAudience((audience.metadataURI as string) ?? '', audience.segmentIds as number[]);
 
-    console.log(`Target group '${targetGroup.metadata.title}' created`);
+    console.log(`Target group '${audience.metadata.title}' created`);
   }
 
   // Upload Ads
@@ -161,19 +165,24 @@ export async function seed(network: string): Promise<void> {
     // Call smart contract function to create an ad
     await targecy.createAd(
       {
-        budget: ad.budget,
         metadataURI: ad.metadataURI ?? '',
-        maxImpressionPrice: ad.maxImpressionPrice,
-        minBlock: ad.minBlock,
-        maxBlock: ad.maxBlock,
-        targetGroupIds: ad.targetGroupsIds,
+        attribution: ad.attribution,
+        active: true,
+        startingTimestamp: ad.startingTimestamp,
+        endingTimestamp: ad.endingTimestamp,
+        audienceIds: ad.audiencesIds,
+        blacklistedPublishers: ad.blacklistedPublishers,
+        blacklistedWeekdays: ad.blacklistedWeekdays,
+        budget: ad.budget,
+        maxPricePerConsumption: ad.maxPricePerConsumption,
+        maxConsumptionsPerDay: ad.maxConsumptionsPerDay,
       },
       { value: ad.budget }
     );
 
     console.log(`Ad '${ad.metadata.title}' created`);
   }
-  console.log('\nContract populated with ads, target groups, and ZKP requests.');
+  console.log('\nContract populated with ads, audiences, and segments.');
 
   console.log('See data at playground: ');
   switch (network) {
@@ -193,7 +202,8 @@ export async function seed(network: string): Promise<void> {
 }
 
 const consoleParam: string | undefined = process.argv[2]; // Get the console parameter from command line arguments
+const force = process.argv[3] === 'force'; // Get the force parameter from command line arguments
 
-seed(consoleParam ?? 'localhost')
+seed(consoleParam ?? 'localhost', force)
   .then(() => process.exit(0))
   .catch((error) => console.error(error));

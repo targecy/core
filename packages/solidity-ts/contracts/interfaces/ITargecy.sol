@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -10,42 +10,55 @@ interface ITargecy {
 
   function setProtocolVault(address _protocolVault) external;
 
-  function setZKPRequest(DataTypes.ZKPRequest memory _zkpRequest) external;
+  function setSegment(DataTypes.Segment memory _segment) external;
 
-  function editZKPRequest(uint256 zkRequestId, DataTypes.ZKPRequest memory _zkpRequest) external;
+  function editSegment(uint256 audienceId, DataTypes.Segment memory _segment) external;
 
-  function deleteZKPRequest(uint256 zkRequestId) external;
+  function deleteSegment(uint256 audienceId) external;
 
   function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external;
+
+  function setDefaultClickPrice(uint256 _defaultClickPrice) external;
+
+  function setDefaultConversionPrice(uint256 _defaultConversionPrice) external;
 
   function setDefaultIssuer(uint256 _defaultIssuer) external;
 
   function createAd(DataTypes.NewAd calldata ad) external payable;
 
+  function pauseAd(uint256 adId) external;
+
+  function unpauseAd(uint256 adId) external;
+
   function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable;
 
   function deleteAd(uint256 adId) external;
 
-  function consumeAd(
-    uint64 adId,
-    DataTypes.PublisherRewards calldata publisher,
-    DataTypes.ZKProofs calldata zkProofs,
-    DataTypes.EIP712Signature calldata targecySig
-  ) external;
+  function consumeAd(uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, DataTypes.EIP712Signature calldata targecySig) external;
 
-  function consumeAdViaRelayer(address viewer, uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) external;
+  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external;
 
-  function createTargetGroup(string calldata metadataURI, uint256[] calldata zkRequestIds) external;
+  function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external;
 
-  function editTargetGroup(uint256 targetGroupId, string calldata metadataURI, uint256[] calldata zkRequestIds) external;
+  function editAudience(uint256 audienceId, string calldata metadataURI, uint256[] calldata audienceIds) external;
 
-  function deleteTargetGroup(uint256 targetGroupId) external;
+  function deleteAudience(uint256 audienceId) external;
 
-  function getTargetGroupZKRequests(uint256 targetGroupId) external view returns (uint256[] memory);
+  function getAudienceSegments(uint256 audienceId) external view returns (uint256[] memory);
 
-  function getAdTargetGroups(uint256 targetGroupId) external view returns (uint256[] memory);
+  function getAdAudiences(uint256 audienceId) external view returns (uint256[] memory);
 
-  function whitelistPublisher(address publisher) external;
+  function setPublisher(DataTypes.PublisherSettings memory publisher) external;
 
-  function removePublisherFromWhitelist(address publisher) external;
+  function removePublisher(address publisher) external;
+
+  function changePublisherAddress(address oldAddress, address newAddress) external;
+
+  function pausePublisher(address publisher) external;
+
+  function unpausePublisher(address publisher) external;
+
+  function setAdmin(address targecyAdmin) external;
+
+  function removeAdmin(address targecyAdmin) external;
 }

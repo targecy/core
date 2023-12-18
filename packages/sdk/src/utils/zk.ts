@@ -44,7 +44,7 @@ import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
 
 import { TargecyContextType } from '../components/misc/Context';
 import { addressZero, BigNumberZero } from '../constants/chain';
-import { Ad, ZkpRequest } from '../generated/graphql.types';
+import { Ad, Segment } from '../generated/graphql.types';
 
 import { ZkServicesType } from './context';
 import { getSeed, saveSeed } from './sharedStorage';
@@ -72,12 +72,12 @@ const operatorKeyByNumber: Record<number, string> = {
 
 export async function generateZKProof(
   match: ProofCredentialMatch,
-  zkpRequest: ZkpRequest,
+  segment: Segment,
   services: ZkServicesType,
   userDID: core.DID
 ) {
   const proofReqSig = {
-    id: Number(zkpRequest.id),
+    id: Number(segment.id),
     circuitId: CircuitId.AtomicQuerySigV2OnChain,
     optional: false,
     query: {
@@ -272,30 +272,30 @@ export type ProofCredentialMatch = {
 
 export function getValidCredentialByProofRequest(
   credentials: W3CCredential[],
-  zkprequest: ZkpRequest
+  segment: Segment
 ): ProofCredentialMatch | undefined {
   for (const credential of credentials) {
     const schemaHash = getSchemaHashFromCredential(credential);
 
-    if (schemaHash !== BigInt(zkprequest.query_schema)) {
+    if (schemaHash !== BigInt(segment.querySchema)) {
       continue;
     }
 
     const credentialKeys = Object.keys(credential.credentialSubject);
-    const slotKey = credentialKeys[zkprequest.query_slotIndex];
+    const slotKey = credentialKeys[segment.querySlotIndex];
     const slot = credential.credentialSubject[slotKey].toString();
-    const value = new Uint8Array(zkprequest.query_value).toString(); // TODO CHECK THIS
+    const value = new Uint8Array(segment.queryValue).toString(); // TODO CHECK THIS
 
     let match = false;
 
-    switch (Number(zkprequest.query_operator)) {
+    switch (Number(segment.queryOperator)) {
       case 1: // EQ
         if (slot === value) {
           return {
             credential,
             credentialSubjectField: slotKey,
             credentialSubjectValue: slot,
-            operator: zkprequest.query_operator,
+            operator: segment.queryOperator,
           };
         }
         break;
@@ -327,7 +327,7 @@ export function getValidCredentialByProofRequest(
         credential,
         credentialSubjectField: slotKey,
         credentialSubjectValue: slot,
-        operator: zkprequest.query_operator,
+        operator: segment.queryOperator,
       };
   }
 
@@ -338,8 +338,8 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
   if (!context.userIdentity || !context.zkServices) throw new Error('User or zkServices not initialized');
 
   let proofs = [];
-  for (const targetGroup of ad.targetGroups) {
-    for (const proofRequest of targetGroup.zkRequests) {
+  for (const audience of ad.audiences) {
+    for (const proofRequest of audience.segments) {
       const proofCredentialMatch = getValidCredentialByProofRequest(credentials, proofRequest);
       if (!proofCredentialMatch) continue;
 
@@ -351,11 +351,11 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
       );
       proofs.push({ proof, id: proofRequest.id });
     }
-    if (proofs.length === targetGroup.zkRequests.length) break;
-    else proofs = []; // Will try next target group
+    if (proofs.length === audience.segments.length) break;
+    else proofs = []; // Will try next audience
   }
 
-  if (proofs.length === 0 && ad.targetGroups.length > 0) {
+  if (proofs.length === 0 && ad.audiences.length > 0) {
     await Swal.mixin({
       toast: true,
       position: 'top',
@@ -421,12 +421,7 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
   }
 };
 
-export const consumeAd = async (
-  proofs: ReturnType<typeof generateProof>,
-  ad: Ad,
-  consumeAdFn: any,
-  waitTxFn: any
-) => {
+export const consumeAd = async (proofs: ReturnType<typeof generateProof>, ad: Ad, consumeAdFn: any, waitTxFn: any) => {
   const awaitedProofs = await proofs;
 
   try {

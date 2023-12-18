@@ -12,7 +12,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAllTargetGroupsQuery } from '~~/generated/graphql.types';
+import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { fetchMetadata } from '~~/utils/metadata';
 import { backendTrpcClient } from '~~/utils/trpc';
@@ -20,8 +20,32 @@ import { backendTrpcClient } from '~~/utils/trpc';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
+const attributionOptions = [
+  { value: 0, label: 'Impression' },
+  { value: 1, label: 'Click' },
+  { value: 2, label: 'Conversion' },
+];
+
+const activeOptions = [
+  { value: true, label: 'Active' },
+  { value: false, label: 'Inactive' },
+];
+
+const weekdaysOptions = [
+  { value: 0, label: 'Monday' },
+  { value: 1, label: 'Tuesday' },
+  { value: 2, label: 'Wednesday' },
+  { value: 3, label: 'Thursday' },
+  { value: 4, label: 'Friday' },
+  { value: 5, label: 'Saturday' },
+  { value: 6, label: 'Sunday' },
+];
+
 export const AdEditorComponent = (id?: string) => {
-  const { data: targetGroups } = useGetAllTargetGroupsQuery();
+  const editingMode = !!id;
+  const { data: audiences } = useGetAllAudiencesQuery();
+  const { data: publishers } = useGetAllPublishersQuery();
+
   const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
@@ -70,21 +94,26 @@ export const AdEditorComponent = (id?: string) => {
 
     try {
       let hash;
+      const newAdArgs = {
+        // @todo (Martin): Type this based on function's args
+        metadataURI,
+        attribution: data.attribution,
+        active: data.active,
+        startingTimestamp: data.startingTimestamp,
+        endingTimestamp: data.endingTimestamp,
+        audienceIds: data.audienceIds,
+        blacklistedPublishers: data.blacklistedPublishers,
+        blacklistedWeekdays: data.blacklistedWeekdays,
+        budget: data.budget,
+        maxPricePerConsumption: data.maxPricePerConsumption,
+        maxConsumptionsPerDay: data.maxConsumptionsPerDay,
+      };
+
       if (id) {
         // Edit Ad
         hash = (
           await editAdAsync({
-            args: [
-              id,
-              {
-                metadataURI,
-                budget: data.budget,
-                maxImpressionPrice: data.maxImpressionPrice,
-                minBlock: data.minBlock,
-                maxBlock: data.maxBlock,
-                targetGroupIds: data.targetGroupIds,
-              },
-            ],
+            args: [id, newAdArgs],
             value: BigInt(data.budget),
           })
         ).hash;
@@ -92,16 +121,7 @@ export const AdEditorComponent = (id?: string) => {
         // Create Ad
         hash = (
           await createAdAsync({
-            args: [
-              {
-                metadataURI,
-                budget: data.budget,
-                maxImpressionPrice: data.maxImpressionPrice,
-                minBlock: data.minBlock,
-                maxBlock: data.maxBlock,
-                targetGroupIds: data.targetGroupIds,
-              },
-            ],
+            args: [newAdArgs],
             value: BigInt(data.budget),
           })
         ).hash;
@@ -113,12 +133,13 @@ export const AdEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'success',
-        title: `Ad ${id ? 'edited' : 'created'} successfully! Tx: ${hash}`,
+        title: `Ad ${editingMode ? 'edited' : 'created'} successfully! Tx: ${hash}`,
         padding: '10px 20px',
       });
 
       await router.push('/ads');
     } catch (e) {
+      console.error(e);
       Swal.mixin({
         toast: true,
         position: 'top',
@@ -126,7 +147,7 @@ export const AdEditorComponent = (id?: string) => {
         timer: 3000,
       }).fire({
         icon: 'error',
-        title: `Error ${id ? 'editing' : 'creating'} ad`,
+        title: `Error ${editingMode ? 'editing' : 'creating'} ad`,
         padding: '10px 20px',
       });
 
@@ -138,67 +159,107 @@ export const AdEditorComponent = (id?: string) => {
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
     image: z.string().describe('Please provide an image URL'),
+    attribution: z.number().describe('Please provide an attribution'),
+    active: z.boolean().describe('Please provide an active'),
+    blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
+    blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
     budget: z.number().describe('Please choose a budget'),
-    maxImpressionPrice: z.number().describe('Please provide a max impression price'),
-    minBlock: z.number().describe('Please provide a starting block'),
-    maxBlock: z.number().describe('Please provide a ending block'),
-    targetGroupIds: z.array(z.number()).describe('You must set a list of target groups'),
+    maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
+    maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
+    startingTimestamp: z.number().describe('Please provide a starting timestamp'),
+    endingTimestamp: z.number().describe('Please provide a ending timestamp'),
+    audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
   });
 
   type FormValues = z.infer<typeof schema>;
 
   const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
 
-  const [currentTargetGroups, setCurrentTargetGroups] = useState<number[] | undefined>(undefined);
-  const [potentialReach, setPotentialReach] = useState<number>(0);
+  const [currentAudiences, setCurrentAudiences] = useState<number[] | undefined>(undefined);
+  const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
-    if (!currentTargetGroups || currentTargetGroups.length === 0) return;
+    if (!currentAudiences || currentAudiences.length === 0) return;
 
-    backendTrpcClient.targets.getTargetGroupsReach
+    backendTrpcClient.targets.getAudiencesReach
       .query({
-        ids: currentTargetGroups.map((id) => id.toString()),
+        ids: currentAudiences.map((id) => id.toString()),
       })
       .then((response) => setPotentialReach(response.count))
-      .catch((error) => console.log(error));
-  }, [currentTargetGroups]);
+      .catch((error) => console.error(error));
+  }, [currentAudiences]);
 
-  const { query } = useRouter();
-  const [defaultTargetGroupsOptions, setDefaultTargetGroupsOptions] = useState<any[] | undefined>(undefined);
-  useEffect(() => {
-    const initialTargetGroups = query.targetGroups
-      ? query.targetGroups
-          .toString()
-          .split(',')
-          .map((id) => Number(id))
-      : [];
-
-    if ((!currentTargetGroups || !currentTargetGroups.length) && initialTargetGroups.length) {
-      setCurrentTargetGroups(initialTargetGroups);
-      setDefaultTargetGroupsOptions(targetGroupOptions?.filter((tg) => initialTargetGroups.includes(Number(tg.value))));
-    }
-  }, [query, defaultTargetGroupsOptions]);
-
-  const [targetGroupsMetadata, setTargetGroupsMetadata] = useState<
-    Record<string, Awaited<ReturnType<typeof fetchMetadata>>>
-  >({});
+  const [audiencesMetadata, setAudiencesMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>(
+    {}
+  );
 
   useAsync(async () => {
-    if (targetGroups) {
+    if (audiences) {
       const metadata: Record<string, Awaited<ReturnType<typeof fetchMetadata>>> = {};
-      for (const tg of targetGroups.targetGroups) {
-        metadata[tg.id] = await fetchMetadata(tg.metadataURI);
+      for (const a of audiences.audiences) {
+        metadata[a.id] = await fetchMetadata(a.metadataURI);
       }
 
-      setTargetGroupsMetadata(metadata);
+      setAudiencesMetadata(metadata);
     }
-  }, [targetGroups]);
+  }, [audiences]);
 
-  const targetGroupOptions = targetGroups?.targetGroups.map((tg) => {
+  const audienceOptions = audiences?.audiences.map((a) => {
     return {
-      value: tg.id,
-      label: targetGroupsMetadata[tg.id]?.title ?? `Target Group #${tg.id}`,
+      value: a.id,
+      label: audiencesMetadata[a.id]?.title ?? `Audience #${a.id}`,
     };
   });
+
+  const publisherOptions = publishers?.publishers.map((p) => {
+    return {
+      value: p.id,
+      label: p.id,
+    };
+  });
+
+  const [currentAttribution, setCurrentAttribution] = useState<number | undefined>(undefined);
+  const [currentActive, setCurrentActive] = useState<boolean | undefined>(undefined);
+  const [currentBlacklistedPublishers, setCurrentBlacklistedPublishers] = useState<string[] | undefined>(undefined);
+  const [currentBlacklistedWeekdays, setCurrentBlacklistedWeekdays] = useState<number[] | undefined>(undefined);
+
+  const [currentMetadata, setCurrentMetadata] = useState<
+    { title?: string; description?: string; image?: string } | undefined
+  >(undefined);
+  const { data: adData } = useGetAdQuery({ id: id ?? '' });
+  const ad = adData?.ad;
+  useAsync(async () => {
+    if (ad) {
+      const initialAudiences = ad?.audiences.map((a) => Number(a.id)) ?? [];
+      if ((!currentAudiences || !currentAudiences.length) && initialAudiences.length) {
+        setCurrentAudiences(initialAudiences);
+      }
+
+      if (currentAttribution === undefined && ad.attribution !== undefined) setCurrentAttribution(ad.attribution);
+      if (currentActive === undefined && ad.active !== undefined) setCurrentActive(ad.active);
+      if (
+        currentBlacklistedPublishers === undefined &&
+        ad.blacklistedPublishers !== undefined &&
+        ad.blacklistedPublishers.length
+      )
+        setCurrentBlacklistedPublishers(ad.blacklistedPublishers.map((p) => p.id));
+      if (
+        currentBlacklistedWeekdays === undefined &&
+        ad.blacklistedWeekdays !== undefined &&
+        ad.blacklistedWeekdays.length
+      )
+        setCurrentBlacklistedWeekdays(ad.blacklistedWeekdays);
+
+      const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+      const json = await newMetadata.json();
+      setCurrentMetadata({ title: json.title, description: json.description, image: json.imageUrl });
+
+      setPreviewValues({
+        title: json?.title,
+        description: json?.description,
+        image: json?.imageUrl,
+      });
+    }
+  }, [ad]);
 
   return (
     <div>
@@ -209,7 +270,7 @@ export const AdEditorComponent = (id?: string) => {
           </Link>
         </li>
         <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
-          {id ? <span>Edit</span> : <span>New</span>}
+          {editingMode ? <span>Edit</span> : <span>New</span>}
         </li>
       </ul>
 
@@ -217,20 +278,27 @@ export const AdEditorComponent = (id?: string) => {
         <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
           <label className="mb-3 text-2xl text-primary">
             {' '}
-            {id ? <span>Edit </span> : <span>New </span>}
-            Campaign {id ? `#${id}` : ''}
+            {editingMode ? <span>Edit </span> : <span>New </span>}
+            {editingMode ? `'${currentMetadata?.title}'` : 'Campaign'}
           </label>
           <div className="grid grid-cols-2 gap-5">
             <Formik
+              enableReinitialize={true}
               initialValues={{
-                title: '',
-                description: '',
-                image: '',
-                budget: '',
-                maxImpressionPrice: '',
-                minBlock: '',
-                maxBlock: '',
-                targetGroupIds: [] as number[],
+                title: currentMetadata?.title ?? '',
+                description: currentMetadata?.description ?? '',
+                image: currentMetadata?.image ?? '',
+                budget: Number(ad?.remainingBudget),
+                maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
+                maxConsumptionsPerDay: Number(ad?.maxConsumptionsPerDay),
+                startingTimestamp: Number(ad?.startingTimestamp),
+                endingTimestamp: Number(ad?.endingTimestamp),
+                attribution: Number(ad?.attribution),
+                active: Boolean(ad?.active),
+                blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
+                blacklistedWeekdays: ad?.blacklistedWeekdays ?? [],
+
+                audienceIds: [] as number[],
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -311,7 +379,7 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
 
                     <div className={submitCount ? (errors.budget ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="budget">budget</label>
+                      <label htmlFor="budget">{editingMode ? 'Remaining Budget' : 'Budget'}</label>
                       <div className="flex">
                         <div className="flex items-center justify-center border border-white-light bg-[#eee] px-3 font-semibold ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0 dark:border-[#17263c] dark:bg-[#1b2e4b]">
                           MATIC
@@ -326,7 +394,7 @@ export const AdEditorComponent = (id?: string) => {
                       </div>
                       {submitCount ? (
                         errors.budget ? (
-                          <div className="mt-1 text-danger">{errors.budget}</div>
+                          <div className="mt-1 text-danger">{errors.budget.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -336,18 +404,34 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.minBlock ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="minBlock">Starting Block</label>
-                      <Field
-                        name="minBlock"
-                        type="number"
-                        id="minBlock"
-                        placeholder="Enter min block"
-                        className="form-input"
+                    <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingTimestamp">Attribution</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="attribution"
+                        options={attributionOptions}
+                        name="attribution"
+                        value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? []}
+                        onChange={(value) => {
+                          setCurrentAttribution(Number(value?.value) ?? 0);
+                          values.attribution = Number(value?.value) ?? 0;
+                        }}
+                        isSearchable={true}
                       />
                       {submitCount ? (
-                        errors.minBlock ? (
-                          <div className="mt-1 text-danger">{errors.minBlock}</div>
+                        errors.attribution ? (
+                          <div className="mt-1 text-danger">{errors.attribution.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -356,18 +440,34 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
 
-                    <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="maxBlock">Ending Block</label>
-                      <Field
-                        name="maxBlock"
-                        type="number"
-                        id="maxBlock"
-                        placeholder="Enter max block"
-                        className="form-input"
+                    <div className={submitCount ? (errors.active ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="active">Active</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="active"
+                        options={activeOptions}
+                        name="active"
+                        value={activeOptions?.filter((a) => currentActive === a.value) ?? true}
+                        onChange={(value) => {
+                          setCurrentActive(value?.value ?? true);
+                          values.active = value?.value ?? true;
+                        }}
+                        isSearchable={true}
                       />
                       {submitCount ? (
-                        errors.maxBlock ? (
-                          <div className="mt-1 text-danger">{errors.maxBlock}</div>
+                        errors.active ? (
+                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -377,19 +477,38 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.maxImpressionPrice ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="maxImpressionPrice">Max Impression Price</label>
+                    <div className={submitCount ? (errors.startingTimestamp ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingTimestamp">Starting Timestamp</label>
                       <Field
-                        name="maxImpressionPrice"
+                        name="startingTimestamp"
                         type="number"
-                        id="maxImpressionPrice"
-                        placeholder="Enter maxImpressionPrice"
+                        id="startingTimestamp"
+                        placeholder="Enter min timestamp"
                         className="form-input"
                       />
-
                       {submitCount ? (
-                        errors.maxImpressionPrice ? (
-                          <div className="mt-1 text-danger">{errors.maxImpressionPrice}</div>
+                        errors.startingTimestamp ? (
+                          <div className="mt-1 text-danger">{errors.startingTimestamp.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="endingTimestamp">Ending Timestamp</label>
+                      <Field
+                        name="endingTimestamp"
+                        type="number"
+                        id="endingTimestamp"
+                        placeholder="Enter max timestamp"
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.endingTimestamp ? (
+                          <div className="mt-1 text-danger">{errors.endingTimestamp.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -398,8 +517,127 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
-                  <div className={submitCount ? (errors.maxBlock ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="targetGroupIds">Target Groups</label>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.maxPricePerConsumption ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="maxPricePerConsumption">Max Impression Price</label>
+                      <Field
+                        name="maxPricePerConsumption"
+                        type="number"
+                        id="maxPricePerConsumption"
+                        placeholder="Enter max impression price"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.maxPricePerConsumption ? (
+                          <div className="mt-1 text-danger">{errors.maxPricePerConsumption.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={submitCount ? (errors.maxConsumptionsPerDay ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="maxPricePerConsumption">Max Consumptions per day</label>
+                      <Field
+                        name="maxConsumptionsPerDay"
+                        type="number"
+                        id="maxConsumptionsPerDay"
+                        placeholder="Enter max consumptions per day"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.maxConsumptionsPerDay ? (
+                          <div className="mt-1 text-danger">{errors.maxConsumptionsPerDay.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingTimestamp">Blacklisted Publishers</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="blacklistedPublishers"
+                        options={publisherOptions}
+                        name="blacklistedPublishers"
+                        isMulti
+                        value={publisherOptions?.filter((a) => currentBlacklistedPublishers?.includes(a.value)) ?? []}
+                        onChange={(value) => {
+                          setCurrentBlacklistedPublishers(value.map((v) => v.value));
+                          values.blacklistedPublishers = value.map((v) => v.value) ?? [];
+                        }}
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.blacklistedPublishers ? (
+                          <div className="mt-1 text-danger">{errors.blacklistedPublishers.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.blacklistedWeekdays ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="active">Blacklisted Weekdays</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="blacklistedWeekdays"
+                        options={weekdaysOptions}
+                        name="blacklistedWeekdays"
+                        value={
+                          weekdaysOptions?.filter((a) => currentBlacklistedWeekdays?.includes(Number(a.value))) ?? []
+                        }
+                        onChange={(value) => {
+                          setCurrentBlacklistedWeekdays(value?.map((v) => Number(v.value)) ?? []);
+                          values.blacklistedWeekdays = value?.map((v) => Number(v.value)) ?? [];
+                        }}
+                        isMulti
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.active ? (
+                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="audienceIds">Audiences</label>
                     <Select
                       classNames={{
                         control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -412,20 +650,20 @@ export const AdEditorComponent = (id?: string) => {
                         menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                       }}
                       placeholder="Select an option"
-                      id="targetGroupIds"
-                      options={targetGroupOptions}
-                      name="targetGroupIds"
-                      value={targetGroupOptions?.filter((tg) => currentTargetGroups?.includes(Number(tg.value))) ?? []}
+                      id="audienceIds"
+                      options={audienceOptions}
+                      name="audienceIds"
+                      value={audienceOptions?.filter((a) => currentAudiences?.includes(Number(a.value))) ?? []}
                       onChange={(value) => {
-                        setCurrentTargetGroups(value.map((v) => Number(v.value)));
-                        values.targetGroupIds = value.map((v) => Number(v.value)) ?? [];
+                        setCurrentAudiences(value.map((v) => Number(v.value)));
+                        values.audienceIds = value.map((v) => Number(v.value)) ?? [];
                       }}
                       isMulti
                       isSearchable={true}
                     />
                     {submitCount ? (
-                      errors.targetGroupIds ? (
-                        <div className="mt-1 text-danger">{errors.targetGroupIds}</div>
+                      errors.audienceIds ? (
+                        <div className="mt-1 text-danger">{errors.audienceIds}</div>
                       ) : (
                         <div className="mt-1 text-success"></div>
                       )
@@ -437,17 +675,24 @@ export const AdEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={procesingAd}
-                      className="btn btn-primary !mt-6"
+                      disabled={procesingAd || Object.keys(touched).length === 0}
+                      className={`btn btn-primary !mt-6 `}
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
                           const parsed = schema.safeParse(values);
                           if (parsed.success) {
                             submitForm(parsed.data);
+                          } else {
+                            console.error(parsed.error);
                           }
+                        } else {
+                          console.error(errors);
                         }
                       }}>
-                      {id ? (procesingAd ? 'Editing Ad...' : 'Edit') : procesingAd ? 'Creating Ad...' : 'Create'}
+                      {editingMode && procesingAd && 'Editing Ad...'}
+                      {editingMode && !procesingAd && 'Edit'}
+                      {!editingMode && procesingAd && 'Creating Ad...'}
+                      {!editingMode && !procesingAd && 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -474,7 +719,9 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                 </div>
               </div>
-              <div className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+              <div
+                hidden={potentialReach === undefined}
+                className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
                 <label className="float-right m-5 text-2xl text-primary">{potentialReach}</label>
               </div>
