@@ -112,11 +112,6 @@ const AdsList = () => {
       },
     },
     { title: 'Consumptions', accessor: 'consumptions', render: (value) => value.consumptions },
-    {
-      title: 'Audiences',
-      accessor: 'audiencesIds',
-      render: (value) => value.audiences.map((a) => a.id).join(', '),
-    },
     { title: 'Remaining Budget', accessor: 'remainingBudget' },
     { title: 'Total Budget', accessor: 'totalBudget' },
     {

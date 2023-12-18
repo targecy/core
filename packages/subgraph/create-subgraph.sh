@@ -78,6 +78,10 @@ dataSources:
           handler: handlePausePublisher
         - event: UnpausePublisher(indexed address)
           handler: handleUnpausePublisher
+        - event: AdminSet(indexed address)
+          handler: handleAdminSet
+        - event: AdminRemoved(indexed address)
+          handler: handleAdminRemoved
       file: ./src/targecy.ts
 EOL
 

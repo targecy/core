@@ -241,6 +241,42 @@ export enum Ad_OrderBy {
   TotalBudget = 'totalBudget'
 }
 
+export type Admin = {
+  __typename?: 'Admin';
+  id: Scalars['String'];
+};
+
+export type Admin_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Admin_Filter>>>;
+  id?: InputMaybe<Scalars['String']>;
+  id_contains?: InputMaybe<Scalars['String']>;
+  id_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_ends_with?: InputMaybe<Scalars['String']>;
+  id_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_gt?: InputMaybe<Scalars['String']>;
+  id_gte?: InputMaybe<Scalars['String']>;
+  id_in?: InputMaybe<Array<Scalars['String']>>;
+  id_lt?: InputMaybe<Scalars['String']>;
+  id_lte?: InputMaybe<Scalars['String']>;
+  id_not?: InputMaybe<Scalars['String']>;
+  id_not_contains?: InputMaybe<Scalars['String']>;
+  id_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_not_ends_with?: InputMaybe<Scalars['String']>;
+  id_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_not_in?: InputMaybe<Array<Scalars['String']>>;
+  id_not_starts_with?: InputMaybe<Scalars['String']>;
+  id_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id_starts_with?: InputMaybe<Scalars['String']>;
+  id_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  or?: InputMaybe<Array<InputMaybe<Admin_Filter>>>;
+};
+
+export enum Admin_OrderBy {
+  Id = 'id'
+}
+
 export type Advertiser = {
   __typename?: 'Advertiser';
   adsQuantity: Scalars['BigInt'];
@@ -656,6 +692,8 @@ export type Query = {
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   ad?: Maybe<Ad>;
+  admin?: Maybe<Admin>;
+  admins: Array<Admin>;
   ads: Array<Ad>;
   advertiser?: Maybe<Advertiser>;
   advertisers: Array<Advertiser>;
@@ -681,6 +719,24 @@ export type QueryAdArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryAdminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryAdminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Admin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Admin_Filter>;
 };
 
 
@@ -959,6 +1015,8 @@ export type Subscription = {
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   ad?: Maybe<Ad>;
+  admin?: Maybe<Admin>;
+  admins: Array<Admin>;
   ads: Array<Ad>;
   advertiser?: Maybe<Advertiser>;
   advertisers: Array<Advertiser>;
@@ -984,6 +1042,24 @@ export type SubscriptionAdArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionAdminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionAdminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Admin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Admin_Filter>;
 };
 
 
@@ -1139,6 +1215,20 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny'
 }
 
+export type AdminFragmentFragment = { __typename?: 'Admin', id: string };
+
+export type GetAllAdminsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllAdminsQuery = { __typename?: 'Query', admins: Array<{ __typename?: 'Admin', id: string }> };
+
+export type GetAdminQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetAdminQuery = { __typename?: 'Query', admin?: { __typename?: 'Admin', id: string } | null };
+
 export type AdFragmentFragment = { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> };
 
 export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1235,6 +1325,11 @@ export type GetLastSegmentsQueryVariables = Exact<{
 
 export type GetLastSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
+export const AdminFragmentFragmentDoc = `
+    fragment AdminFragment on Admin {
+  id
+}
+    `;
 export const SegmentFragmentFragmentDoc = `
     fragment SegmentFragment on Segment {
   id
@@ -1316,6 +1411,20 @@ export const PublisherFragmentFragmentDoc = `
   conversions
 }
     `;
+export const GetAllAdminsDocument = `
+    query GetAllAdmins {
+  admins {
+    ...AdminFragment
+  }
+}
+    ${AdminFragmentFragmentDoc}`;
+export const GetAdminDocument = `
+    query GetAdmin($id: ID!) {
+  admin(id: $id) {
+    ...AdminFragment
+  }
+}
+    ${AdminFragmentFragmentDoc}`;
 export const GetAllAdsDocument = `
     query GetAllAds {
   ads {
@@ -1418,6 +1527,12 @@ export const GetLastSegmentsDocument = `
 const injectedRtkApi = api.injectEndpoints({
   overrideExisting: true,
   endpoints: (build) => ({
+    GetAllAdmins: build.query<GetAllAdminsQuery, GetAllAdminsQueryVariables | void>({
+      query: (variables) => ({ document: GetAllAdminsDocument, variables })
+    }),
+    GetAdmin: build.query<GetAdminQuery, GetAdminQueryVariables>({
+      query: (variables) => ({ document: GetAdminDocument, variables })
+    }),
     GetAllAds: build.query<GetAllAdsQuery, GetAllAdsQueryVariables | void>({
       query: (variables) => ({ document: GetAllAdsDocument, variables })
     }),
@@ -1464,5 +1579,5 @@ const injectedRtkApi = api.injectEndpoints({
 });
 
 export { injectedRtkApi as api };
-export const { useGetAllAdsQuery, useLazyGetAllAdsQuery, useGetAdToShowQuery, useLazyGetAdToShowQuery, useGetAdQuery, useLazyGetAdQuery, useGetLastAdsQuery, useLazyGetLastAdsQuery, useGetAllAdvertisersQuery, useLazyGetAllAdvertisersQuery, useGetAdvertiserQuery, useLazyGetAdvertiserQuery, useGetAllAudiencesQuery, useLazyGetAllAudiencesQuery, useGetAudienceQuery, useLazyGetAudienceQuery, useGetLastAudiencesQuery, useLazyGetLastAudiencesQuery, useGetAllPublishersQuery, useLazyGetAllPublishersQuery, useGetPublisherQuery, useLazyGetPublisherQuery, useGetAllSegmentsQuery, useLazyGetAllSegmentsQuery, useGetSegmentQuery, useLazyGetSegmentQuery, useGetLastSegmentsQuery, useLazyGetLastSegmentsQuery } = injectedRtkApi;
+export const { useGetAllAdminsQuery, useLazyGetAllAdminsQuery, useGetAdminQuery, useLazyGetAdminQuery, useGetAllAdsQuery, useLazyGetAllAdsQuery, useGetAdToShowQuery, useLazyGetAdToShowQuery, useGetAdQuery, useLazyGetAdQuery, useGetLastAdsQuery, useLazyGetLastAdsQuery, useGetAllAdvertisersQuery, useLazyGetAllAdvertisersQuery, useGetAdvertiserQuery, useLazyGetAdvertiserQuery, useGetAllAudiencesQuery, useLazyGetAllAudiencesQuery, useGetAudienceQuery, useLazyGetAudienceQuery, useGetLastAudiencesQuery, useLazyGetLastAudiencesQuery, useGetAllPublishersQuery, useLazyGetAllPublishersQuery, useGetPublisherQuery, useLazyGetPublisherQuery, useGetAllSegmentsQuery, useLazyGetAllSegmentsQuery, useGetSegmentQuery, useLazyGetSegmentQuery, useGetLastSegmentsQuery, useLazyGetLastSegmentsQuery } = injectedRtkApi;
 

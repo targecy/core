@@ -75,3 +75,7 @@ type Publisher @entity {
   clicks: BigInt! # uint256
   conversions: BigInt! # uint256
 }
+
+type Admin @entity {
+  id: String! # address
+}

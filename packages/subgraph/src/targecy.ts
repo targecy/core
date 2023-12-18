@@ -13,8 +13,10 @@ import {
   AdUnpaused as AdUnpausedEvent,
   PausePublisher as PausePublisherEvent,
   UnpausePublisher as UnpausePublisherEvent,
+  AdminSet as AdminSetEvent,
+  AdminRemoved as AdminRemovedEvent,
 } from '../generated/Targecy/Targecy';
-import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay, Issuer } from '../generated/schema';
+import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay, Issuer, Admin } from '../generated/schema';
 import { BigInt, Bytes, store, log } from '@graphprotocol/graph-ts';
 
 function createAdvertiser(id: string): Advertiser {
@@ -35,6 +37,15 @@ function createAdvertiser(id: string): Advertiser {
   log.info('New Advertiser created with id: {}', [id]);
 
   return entity;
+}
+
+export function handleAdminSet(event: AdminSetEvent): void {
+  let entity = new Admin(event.params.admin.toHexString());
+  entity.save();
+}
+
+export function handleAdminRemoved(event: AdminRemovedEvent): void {
+  store.remove('Admin', event.params.admin.toHexString());
 }
 
 export function handleAdCreated(event: AdCreatedEvent): void {
