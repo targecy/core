@@ -20,7 +20,7 @@
     "setup": "yarn deploy-contracts && yarn deploy-subgraph && yarn migrate-backend",
     "seed": "yarn workspace @scaffold-eth/solidity seed && yarn workspace @targecy/backend prisma:seed",
     "seed:contracts:localhost:force": "yarn workspace @scaffold-eth/solidity seed:force",
-    "seed:contracts:mumbai:force": "yarn workspace @scaffold-eth/solidity seed:force",
+    "seed:contracts:mumbai:force": "yarn workspace @scaffold-eth/solidity seed:mumbai:force",
     "restart-services": "yarn workspace @scaffold-eth/services restart-all",
     "reset-services": "yarn workspace @scaffold-eth/services reset-all",
     "deploy-contracts": "rm -rf ./packages/solidity-ts/generated && yarn workspace @scaffold-eth/solidity deploy && yarn workspace @scaffold-eth/solidity deploy:post",
