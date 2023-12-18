@@ -1,4 +1,4 @@
-import { TargecyContextType } from '~/components/misc';
+import { TargecyContextType } from '../components/misc';
 import { useCredentials } from './useCredentials';
 
 export const useCredentialsStatistics = (context: TargecyContextType) => {
