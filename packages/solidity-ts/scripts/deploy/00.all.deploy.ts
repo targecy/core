@@ -18,7 +18,6 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     admin: `0x${string}`;
     multisig?: `0x${string}`;
     validator?: `0x${string}`;
-    defaultImpressionPrice: number;
   };
 
   switch (network.name) {
@@ -27,7 +26,6 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
         defaultIssuer: 22382985665935745230331508376293136780434330883292739172972565885070348801n,
         admin: '0xc8e4fcff013b61bea893d54427f1a72691ffe7a2',
         vault: '0x8d78d554cba781b0744bf24dd84f23d7767f11a3',
-        defaultImpressionPrice: 10000000,
       };
       break;
     case 'mumbai':
@@ -37,7 +35,6 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
         vault: '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
         multisig: '0x8fe74Ce445F70b9a46F254dcc02c0857974F96eb',
         validator: '0xF2D4Eeb4d455fb673104902282Ce68B9ce4Ac450',
-        defaultImpressionPrice: 10000000,
       };
       break;
     case 'matic':
@@ -61,7 +58,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   const factory = await ethers.getContractFactory('Targecy');
   const deploymentResult = await upgrades.deployProxy(
     factory,
-    [config.validator, config.vault, config.defaultImpressionPrice, config.admin, config.defaultIssuer],
+    [config.validator, config.vault, config.admin, config.defaultIssuer],
     {
       verifySourceCode: true,
     }

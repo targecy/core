@@ -66,11 +66,6 @@
   },
   {
     "inputs": [],
-    "name": "PublisherPercentageTooBig",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "SignatureExpired",
     "type": "error"
   },
@@ -109,6 +104,11 @@
             "internalType": "enum DataTypes.Attribution",
             "name": "attribution",
             "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -167,10 +167,42 @@
         "type": "tuple"
       },
       {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "userRewardsPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpi",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpc",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpa",
+            "type": "uint256"
+          }
+        ],
         "indexed": false,
-        "internalType": "address",
+        "internalType": "struct DataTypes.PublisherSettings",
         "name": "publisher",
-        "type": "address"
+        "type": "tuple"
       },
       {
         "indexed": false,
@@ -208,6 +240,11 @@
             "internalType": "enum DataTypes.Attribution",
             "name": "attribution",
             "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -299,6 +336,11 @@
             "type": "uint8"
           },
           {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
             "internalType": "uint256",
             "name": "startingTimestamp",
             "type": "uint256"
@@ -356,6 +398,32 @@
       }
     ],
     "name": "AdEdited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdPaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdUnpaused",
     "type": "event"
   },
   {
@@ -464,6 +532,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "PausePublisher",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "address",
         "name": "account",
@@ -492,8 +573,46 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "publisher",
+        "name": "vault",
         "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "userRewardsPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpi",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpc",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpa",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.PublisherSettings",
+        "name": "publisher",
+        "type": "tuple"
       }
     ],
     "name": "PublisherWhitelisted",
@@ -713,6 +832,19 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "UnpausePublisher",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "address",
         "name": "account",
@@ -798,6 +930,11 @@
         "internalType": "enum DataTypes.Attribution",
         "name": "attribution",
         "type": "uint8"
+      },
+      {
+        "internalType": "bool",
+        "name": "active",
+        "type": "bool"
       },
       {
         "internalType": "uint256",
@@ -894,21 +1031,9 @@
         "type": "uint64"
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "percentage",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "publisherVault",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct DataTypes.PublisherRewards",
+        "internalType": "address",
         "name": "publisher",
-        "type": "tuple"
+        "type": "address"
       },
       {
         "components": [
@@ -988,21 +1113,9 @@
         "type": "uint64"
       },
       {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "percentage",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "publisherVault",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct DataTypes.PublisherRewards",
+        "internalType": "address",
         "name": "publisher",
-        "type": "tuple"
+        "type": "address"
       },
       {
         "components": [
@@ -1074,6 +1187,11 @@
             "internalType": "enum DataTypes.Attribution",
             "name": "attribution",
             "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -1253,6 +1371,11 @@
             "internalType": "enum DataTypes.Attribution",
             "name": "attribution",
             "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
           },
           {
             "internalType": "uint256",
@@ -1502,11 +1625,6 @@
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "_defaultImpressionPrice",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "targecyAdmin",
         "type": "address"
@@ -1525,6 +1643,32 @@
   {
     "inputs": [],
     "name": "pause",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "pauseAd",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "pausePublisher",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1877,6 +2021,32 @@
     "inputs": [
       {
         "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "unpauseAd",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "unpausePublisher",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
@@ -1934,9 +2104,41 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "userRewardsPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpi",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpc",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpa",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DataTypes.PublisherSettings",
         "name": "publisher",
-        "type": "address"
+        "type": "tuple"
       }
     ],
     "name": "whitelistPublisher",
@@ -1955,9 +2157,34 @@
     "name": "whitelistedPublishers",
     "outputs": [
       {
+        "internalType": "uint256",
+        "name": "userRewardsPercentage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      },
+      {
         "internalType": "bool",
-        "name": "",
+        "name": "active",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cpi",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cpc",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cpa",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

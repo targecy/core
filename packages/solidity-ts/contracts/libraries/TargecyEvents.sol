@@ -12,6 +12,10 @@ interface TargecyEvents {
 
   event AdDeleted(uint256 indexed adId);
 
+  event AdPaused(uint256 indexed adId);
+
+  event AdUnpaused(uint256 indexed adId);
+
   event AudienceCreated(uint256 indexed audienceId, string metadataURI, uint256[] segmentIds);
 
   event AudienceEdited(uint256 indexed audienceId, string metadataURI, uint256[] segmentIds);
@@ -24,11 +28,15 @@ interface TargecyEvents {
 
   event SegmentDeleted(uint256 indexed segmentId);
 
-  event AdConsumed(uint256 indexed adId, DataTypes.Ad ad, address publisher, uint256 consumptionPrice);
+  event AdConsumed(uint256 indexed adId, DataTypes.Ad ad, DataTypes.PublisherSettings publisher, uint256 consumptionPrice);
 
-  event PublisherWhitelisted(address indexed publisher);
+  event PublisherWhitelisted(address indexed vault, DataTypes.PublisherSettings publisher);
 
   event PublisherRemovedFromWhitelist(address indexed publisher);
+
+  event PausePublisher(address indexed publisher);
+
+  event UnpausePublisher(address indexed publisher);
 
   event AdminSet(address indexed admin);
 

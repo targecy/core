@@ -8,6 +8,7 @@ export const Ads = gql`
     }
     metadataURI
     attribution
+    active
     startingTimestamp
     endingTimestamp
     audiences {

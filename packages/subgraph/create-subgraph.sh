@@ -54,13 +54,13 @@ dataSources:
         - name: Targecy
           file: ./abis/Targecy.json
       eventHandlers:
-        - event: AdConsumed(indexed uint256,(address,string,uint8,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),address,uint256)
+        - event: AdConsumed(indexed uint256,(address,string,uint8,bool,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),(uint256,address,bool,uint256,uint256,uint256),uint256)
           handler: handleAdConsumed
-        - event: AdCreated(indexed uint256,indexed address,(string,uint8,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256))
+        - event: AdCreated(indexed uint256,indexed address,(string,uint8,bool,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256))
           handler: handleAdCreated
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted
-        - event: AdEdited(indexed uint256,(address,string,uint8,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
+        - event: AdEdited(indexed uint256,(address,string,uint8,bool,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
           handler: handleAdEdited
         - event: AudienceCreated(indexed uint256,string,uint256[])
           handler: handleAudienceCreated
@@ -70,10 +70,14 @@ dataSources:
           handler: handleAudienceEdited
         - event: SegmentCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string,uint256)
           handler: handleSegmentCreated
-        - event: PublisherWhitelisted(indexed address)
+        - event: PublisherWhitelisted(indexed address,(uint256,address,bool,uint256,uint256,uint256))
           handler: handlePublisherWhitelisted
         - event: PublisherRemovedFromWhitelist(indexed address)
           handler: handlePublisherRemovedFromWhitelist
+        - event: PausePublisher(indexed address)
+          handler: handlePausePublisher
+        - event: UnpausePublisher(indexed address)
+          handler: handleUnpausePublisher
       file: ./src/targecy.ts
 EOL
 

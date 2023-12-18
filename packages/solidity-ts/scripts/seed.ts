@@ -167,6 +167,7 @@ export async function seed(network: string, force = false): Promise<void> {
       {
         metadataURI: ad.metadataURI ?? '',
         attribution: ad.attribution,
+        active: true,
         startingTimestamp: ad.startingTimestamp,
         endingTimestamp: ad.endingTimestamp,
         audienceIds: ad.audiencesIds,

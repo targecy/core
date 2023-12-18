@@ -12,7 +12,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAdQuery, useGetAllAudiencesQuery } from '~~/generated/graphql.types';
+import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { fetchMetadata } from '~~/utils/metadata';
 import { backendTrpcClient } from '~~/utils/trpc';
@@ -20,9 +20,32 @@ import { backendTrpcClient } from '~~/utils/trpc';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
+const attributionOptions = [
+  { value: 0, label: 'Impression' },
+  { value: 1, label: 'Click' },
+  { value: 2, label: 'Conversion' },
+];
+
+const activeOptions = [
+  { value: true, label: 'Active' },
+  { value: false, label: 'Inactive' },
+];
+
+const weekdaysOptions = [
+  { value: 0, label: 'Monday' },
+  { value: 1, label: 'Tuesday' },
+  { value: 2, label: 'Wednesday' },
+  { value: 3, label: 'Thursday' },
+  { value: 4, label: 'Friday' },
+  { value: 5, label: 'Saturday' },
+  { value: 6, label: 'Sunday' },
+];
+
 export const AdEditorComponent = (id?: string) => {
   const editingMode = !!id;
   const { data: audiences } = useGetAllAudiencesQuery();
+  const { data: publishers } = useGetAllPublishersQuery();
+
   const [procesingAd, setProcesingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
@@ -71,21 +94,26 @@ export const AdEditorComponent = (id?: string) => {
 
     try {
       let hash;
+      const newAdArgs = {
+        // @todo (Martin): Type this based on function's args
+        metadataURI,
+        attribution: data.attribution,
+        active: data.active,
+        startingTimestamp: data.startingTimestamp,
+        endingTimestamp: data.endingTimestamp,
+        audienceIds: data.audienceIds,
+        blacklistedPublishers: data.blacklistedPublishers,
+        blacklistedWeekdays: data.blacklistedWeekdays,
+        budget: data.budget,
+        maxPricePerConsumption: data.maxPricePerConsumption,
+        maxConsumptionsPerDay: data.maxConsumptionsPerDay,
+      };
+
       if (id) {
         // Edit Ad
         hash = (
           await editAdAsync({
-            args: [
-              id,
-              {
-                metadataURI,
-                budget: data.budget,
-                maxPricePerConsumption: data.maxPricePerConsumption,
-                startingTimestamp: data.startingTimestamp,
-                endingTimestamp: data.endingTimestamp,
-                audienceIds: data.audienceIds,
-              },
-            ],
+            args: [id, newAdArgs],
             value: BigInt(data.budget),
           })
         ).hash;
@@ -93,16 +121,7 @@ export const AdEditorComponent = (id?: string) => {
         // Create Ad
         hash = (
           await createAdAsync({
-            args: [
-              {
-                metadataURI,
-                budget: data.budget,
-                maxPricePerConsumption: data.maxPricePerConsumption,
-                startingTimestamp: data.startingTimestamp,
-                endingTimestamp: data.endingTimestamp,
-                audienceIds: data.audienceIds,
-              },
-            ],
+            args: [newAdArgs],
             value: BigInt(data.budget),
           })
         ).hash;
@@ -140,8 +159,13 @@ export const AdEditorComponent = (id?: string) => {
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
     image: z.string().describe('Please provide an image URL'),
+    attribution: z.number().describe('Please provide an attribution'),
+    active: z.boolean().describe('Please provide an active'),
+    blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
+    blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
     budget: z.number().describe('Please choose a budget'),
     maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
+    maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
     startingTimestamp: z.number().describe('Please provide a starting timestamp'),
     endingTimestamp: z.number().describe('Please provide a ending timestamp'),
     audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
@@ -186,6 +210,18 @@ export const AdEditorComponent = (id?: string) => {
     };
   });
 
+  const publisherOptions = publishers?.publishers.map((p) => {
+    return {
+      value: p.id,
+      label: p.id,
+    };
+  });
+
+  const [currentAttribution, setCurrentAttribution] = useState<number | undefined>(undefined);
+  const [currentActive, setCurrentActive] = useState<boolean | undefined>(undefined);
+  const [currentBlacklistedPublishers, setCurrentBlacklistedPublishers] = useState<string[] | undefined>(undefined);
+  const [currentBlacklistedWeekdays, setCurrentBlacklistedWeekdays] = useState<number[] | undefined>(undefined);
+
   const [currentMetadata, setCurrentMetadata] = useState<
     { title?: string; description?: string; image?: string } | undefined
   >(undefined);
@@ -197,6 +233,21 @@ export const AdEditorComponent = (id?: string) => {
       if ((!currentAudiences || !currentAudiences.length) && initialAudiences.length) {
         setCurrentAudiences(initialAudiences);
       }
+
+      if (currentAttribution === undefined && ad.attribution !== undefined) setCurrentAttribution(ad.attribution);
+      if (currentActive === undefined && ad.active !== undefined) setCurrentActive(ad.active);
+      if (
+        currentBlacklistedPublishers === undefined &&
+        ad.blacklistedPublishers !== undefined &&
+        ad.blacklistedPublishers.length
+      )
+        setCurrentBlacklistedPublishers(ad.blacklistedPublishers.map((p) => p.id));
+      if (
+        currentBlacklistedWeekdays === undefined &&
+        ad.blacklistedWeekdays !== undefined &&
+        ad.blacklistedWeekdays.length
+      )
+        setCurrentBlacklistedWeekdays(ad.blacklistedWeekdays);
 
       const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
       const json = await newMetadata.json();
@@ -239,8 +290,14 @@ export const AdEditorComponent = (id?: string) => {
                 image: currentMetadata?.image ?? '',
                 budget: Number(ad?.remainingBudget),
                 maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
+                maxConsumptionsPerDay: Number(ad?.maxConsumptionsPerDay),
                 startingTimestamp: Number(ad?.startingTimestamp),
                 endingTimestamp: Number(ad?.endingTimestamp),
+                attribution: Number(ad?.attribution),
+                active: Boolean(ad?.active),
+                blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
+                blacklistedWeekdays: ad?.blacklistedWeekdays ?? [],
+
                 audienceIds: [] as number[],
               }}
               validationSchema={toFormikValidationSchema(schema)}
@@ -347,6 +404,79 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingTimestamp">Attribution</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="attribution"
+                        options={attributionOptions}
+                        name="attribution"
+                        value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? []}
+                        onChange={(value) => {
+                          setCurrentAttribution(Number(value?.value) ?? 0);
+                          values.attribution = Number(value?.value) ?? 0;
+                        }}
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.attribution ? (
+                          <div className="mt-1 text-danger">{errors.attribution.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.active ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="active">Active</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="active"
+                        options={activeOptions}
+                        name="active"
+                        value={activeOptions?.filter((a) => currentActive === a.value) ?? true}
+                        onChange={(value) => {
+                          setCurrentActive(value?.value ?? true);
+                          values.active = value?.value ?? true;
+                        }}
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.active ? (
+                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.startingTimestamp ? 'has-error' : 'has-success') : ''}>
                       <label htmlFor="startingTimestamp">Starting Timestamp</label>
                       <Field
@@ -394,13 +524,110 @@ export const AdEditorComponent = (id?: string) => {
                         name="maxPricePerConsumption"
                         type="number"
                         id="maxPricePerConsumption"
-                        placeholder="Enter maxPricePerConsumption"
+                        placeholder="Enter max impression price"
                         className="form-input"
                       />
 
                       {submitCount ? (
                         errors.maxPricePerConsumption ? (
                           <div className="mt-1 text-danger">{errors.maxPricePerConsumption.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={submitCount ? (errors.maxConsumptionsPerDay ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="maxPricePerConsumption">Max Consumptions per day</label>
+                      <Field
+                        name="maxConsumptionsPerDay"
+                        type="number"
+                        id="maxConsumptionsPerDay"
+                        placeholder="Enter max consumptions per day"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.maxConsumptionsPerDay ? (
+                          <div className="mt-1 text-danger">{errors.maxConsumptionsPerDay.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingTimestamp">Blacklisted Publishers</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="blacklistedPublishers"
+                        options={publisherOptions}
+                        name="blacklistedPublishers"
+                        isMulti
+                        value={publisherOptions?.filter((a) => currentBlacklistedPublishers?.includes(a.value)) ?? []}
+                        onChange={(value) => {
+                          setCurrentBlacklistedPublishers(value.map((v) => v.value));
+                          values.blacklistedPublishers = value.map((v) => v.value) ?? [];
+                        }}
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.blacklistedPublishers ? (
+                          <div className="mt-1 text-danger">{errors.blacklistedPublishers.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.blacklistedWeekdays ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="active">Blacklisted Weekdays</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="blacklistedWeekdays"
+                        options={weekdaysOptions}
+                        name="blacklistedWeekdays"
+                        value={
+                          weekdaysOptions?.filter((a) => currentBlacklistedWeekdays?.includes(Number(a.value))) ?? []
+                        }
+                        onChange={(value) => {
+                          setCurrentBlacklistedWeekdays(value?.map((v) => Number(v.value)) ?? []);
+                          values.blacklistedWeekdays = value?.map((v) => Number(v.value)) ?? [];
+                        }}
+                        isMulti
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.active ? (
+                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )

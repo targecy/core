@@ -26,18 +26,17 @@ interface ITargecy {
 
   function createAd(DataTypes.NewAd calldata ad) external payable;
 
+  function pauseAd(uint256 adId) external;
+
+  function unpauseAd(uint256 adId) external;
+
   function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable;
 
   function deleteAd(uint256 adId) external;
 
-  function consumeAd(
-    uint64 adId,
-    DataTypes.PublisherRewards calldata publisher,
-    DataTypes.ZKProofs calldata zkProofs,
-    DataTypes.EIP712Signature calldata targecySig
-  ) external;
+  function consumeAd(uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, DataTypes.EIP712Signature calldata targecySig) external;
 
-  function consumeAdViaRelayer(address viewer, uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) external;
+  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external;
 
   function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external;
 
@@ -49,9 +48,15 @@ interface ITargecy {
 
   function getAdAudiences(uint256 audienceId) external view returns (uint256[] memory);
 
-  function whitelistPublisher(address publisher) external;
+  function setPublisher(DataTypes.PublisherSettings memory publisher) external;
 
-  function removePublisherFromWhitelist(address publisher) external;
+  function removePublisher(address publisher) external;
+
+  function changePublisherAddress(address oldAddress, address newAddress) external;
+
+  function pausePublisher(address publisher) external;
+
+  function unpausePublisher(address publisher) external;
 
   function setAdmin(address targecyAdmin) external;
 

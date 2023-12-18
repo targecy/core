@@ -31,6 +31,7 @@ library DataTypes {
     // Properties
     string metadataURI;
     Attribution attribution; // 0: impression, 1: click, 2: conversion
+    bool active;
     // Conditions
     uint256 startingTimestamp;
     uint256 endingTimestamp;
@@ -48,6 +49,7 @@ library DataTypes {
     address advertiser;
     string metadataURI;
     Attribution attribution; // 0: impression, 1: click, 2: conversion
+    bool active;
     // Conditions
     uint256 startingTimestamp;
     uint256 endingTimestamp;
@@ -82,8 +84,12 @@ library DataTypes {
     uint256[2][] c;
   }
 
-  struct PublisherRewards {
-    uint256 percentage; // presicion: 10000
-    address publisherVault;
+  struct PublisherSettings {
+    uint256 userRewardsPercentage; // presicion: 10000
+    address vault;
+    bool active;
+    uint256 cpi;
+    uint256 cpc;
+    uint256 cpa;
   }
 }

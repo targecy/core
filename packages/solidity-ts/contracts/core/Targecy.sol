@@ -17,22 +17,17 @@ import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
-  function initialize(
-    address _zkProofsValidator,
-    address _protocolVault,
-    uint256 _defaultImpressionPrice,
-    address targecyAdmin,
-    uint256 _defaultIssuer
-  ) external initializer {
+  function initialize(address _zkProofsValidator, address _protocolVault, address targecyAdmin, uint256 _defaultIssuer) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
     zkProofsValidator = _zkProofsValidator;
     protocolVault = _protocolVault;
-    defaultImpressionPrice = _defaultImpressionPrice;
-    defaultClickPrice = 2 * _defaultImpressionPrice;
-    defaultConversionPrice = 3 * _defaultImpressionPrice;
     defaultIssuer = _defaultIssuer;
+
+    defaultImpressionPrice = 10000;
+    defaultClickPrice = 100000;
+    defaultConversionPrice = 1000000;
 
     _adId = 1;
     _segmentId = 1;
@@ -129,6 +124,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       _msgSender(),
       ad.metadataURI,
       ad.attribution,
+      ad.active,
       // Conditions
       ad.startingTimestamp,
       ad.endingTimestamp,
@@ -146,6 +142,30 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     emit AdCreated(_adId, _msgSender(), ad);
     _adId += 1;
+  }
+
+  function pauseAd(uint256 adId) external override whenNotPaused {
+    DataTypes.Ad storage adStorage = ads[adId];
+
+    if (adStorage.advertiser != _msgSender()) {
+      revert Errors.NotAdvertiser();
+    }
+
+    adStorage.active = false;
+
+    emit AdPaused(adId);
+  }
+
+  function unpauseAd(uint256 adId) external override whenNotPaused {
+    DataTypes.Ad storage adStorage = ads[adId];
+
+    if (adStorage.advertiser != _msgSender()) {
+      revert Errors.NotAdvertiser();
+    }
+
+    adStorage.active = true;
+
+    emit AdUnpaused(adId);
   }
 
   function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable override whenNotPaused {
@@ -261,17 +281,32 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     return true;
   }
 
-  function distributeRewards(uint256 adId, address user, DataTypes.Ad storage ad, DataTypes.PublisherRewards calldata publisher) internal {
-    uint256 consumptionPrice;
-    if (ad.attribution == DataTypes.Attribution.Impression) {
-      consumptionPrice = defaultImpressionPrice;
-    } else if (ad.attribution == DataTypes.Attribution.Click) {
-      consumptionPrice = defaultClickPrice;
-    } else if (ad.attribution == DataTypes.Attribution.Conversion) {
-      consumptionPrice = defaultConversionPrice;
+  function getConsumptionPrice(
+    DataTypes.Attribution attribution,
+    DataTypes.PublisherSettings memory publisher
+  ) internal view returns (uint256 consumptionPrice) {
+    if (attribution == DataTypes.Attribution.Impression) {
+      consumptionPrice = publisher.cpi;
+      if (consumptionPrice == 0) {
+        consumptionPrice = defaultImpressionPrice;
+      }
+    } else if (attribution == DataTypes.Attribution.Click) {
+      consumptionPrice = publisher.cpc;
+      if (consumptionPrice == 0) {
+        consumptionPrice = defaultClickPrice;
+      }
+    } else if (attribution == DataTypes.Attribution.Conversion) {
+      consumptionPrice = publisher.cpa;
+      if (consumptionPrice == 0) {
+        consumptionPrice = defaultConversionPrice;
+      }
     } else {
       revert Errors.InvalidAttribution();
     }
+  }
+
+  function distributeRewards(uint256 adId, address user, DataTypes.Ad storage ad, DataTypes.PublisherSettings memory publisher) internal {
+    uint256 consumptionPrice = getConsumptionPrice(ad.attribution, publisher);
 
     if (consumptionPrice > ad.maxPricePerConsumption) {
       revert Errors.ConsumptionPriceTooHigh();
@@ -288,21 +323,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256 protocolFee = calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
     payable(protocolVault).transfer(protocolFee);
 
-    // Publisher Fee
-    uint256 publisherFee;
-    if (publisher.percentage > 0) {
-      if (publisher.percentage > (Constants.PERCENTAGES_PRECISION - Constants.PROTOCOL_FEE_PERCENTAGE)) {
-        revert Errors.PublisherPercentageTooBig();
-      }
-      publisherFee = calculatePercentage(consumptionPrice, publisher.percentage);
-      payable(publisher.publisherVault).transfer(publisherFee);
-    }
-
     // User Rewards
-    uint256 userRewards = consumptionPrice - protocolFee - publisherFee;
+    uint256 userRewards = publisher.userRewardsPercentage > 0 ? calculatePercentage(consumptionPrice, publisher.userRewardsPercentage) : 0;
     payable(user).transfer(userRewards);
 
-    emit AdConsumed(adId, ad, publisher.publisherVault, consumptionPrice);
+    // User Rewards
+    uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
+    payable(publisher.vault).transfer(publisherFee);
+
+    emit AdConsumed(adId, ad, publisher, consumptionPrice);
   }
 
   /// @notice Sets the pause state to true in case of emergency, triggered by an authorized account.
@@ -315,7 +344,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _unpause();
   }
 
-  function _consumeAd(address viewer, uint64 adId, DataTypes.PublisherRewards calldata publisher, DataTypes.ZKProofs calldata zkProofs) internal {
+  function _consumeAd(address viewer, uint64 adId, address publisherVault, DataTypes.ZKProofs calldata zkProofs) internal {
     DataTypes.Ad storage ad = ads[adId];
 
     if (ad.remainingBudget == 0) {
@@ -326,14 +355,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.AdNotAvailable();
     }
 
+    DataTypes.PublisherSettings memory publisher = whitelistedPublishers[publisherVault];
+
     for (uint256 i = 0; i < ad.blacklistedPublishers.length; i++) {
-      if (ad.blacklistedPublishers[i] == publisher.publisherVault) {
+      if (ad.blacklistedPublishers[i] == publisher.vault) {
         revert Errors.PublisherBlacklistedInAd();
       }
     }
 
-    if (publisher.percentage > 0 && publisher.publisherVault != address(0) && whitelistedPublishers[publisher.publisherVault] == false) {
-      // The call should come from an whitelisted publisher
+    if (publisher.vault == address(0) || publisher.active == false) {
       revert Errors.PublisherNotWhitelisted();
     }
 
@@ -389,12 +419,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    * @param publisher   The publisher that has shown the ad.
    * @param zkProofs    The zk proofs.
    */
-  function consumeAdViaRelayer(
-    address viewer,
-    uint64 adId,
-    DataTypes.PublisherRewards calldata publisher,
-    DataTypes.ZKProofs calldata zkProofs
-  ) external override whenNotPaused {
+  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external override whenNotPaused {
     require(msg.sender == relayerAddress, "Targecy: Only relayer can call this function");
 
     _consumeAd(viewer, adId, publisher, zkProofs);
@@ -410,7 +435,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    */
   function consumeAd(
     uint64 adId,
-    DataTypes.PublisherRewards calldata publisher,
+    address publisher,
     DataTypes.ZKProofs calldata zkProofs,
     DataTypes.EIP712Signature calldata targecySig
   ) external override whenNotPaused {
@@ -428,16 +453,34 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _consumeAd(msg.sender, adId, publisher, zkProofs);
   }
 
-  function whitelistPublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher] = true;
+  function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    whitelistedPublishers[publisher.vault] = publisher;
 
-    emit PublisherWhitelisted(publisher);
+    emit PublisherWhitelisted(publisher.vault, publisher);
   }
 
-  function removePublisherFromWhitelist(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher] = false;
+  function removePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    delete whitelistedPublishers[publisher];
 
     emit PublisherRemovedFromWhitelist(publisher);
+  }
+
+  function changePublisherAddress(address oldAddress, address newAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    DataTypes.PublisherSettings memory publisher = whitelistedPublishers[oldAddress];
+    delete whitelistedPublishers[oldAddress];
+    whitelistedPublishers[newAddress] = publisher;
+  }
+
+  function pausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    whitelistedPublishers[publisher].active = false;
+
+    emit PausePublisher(publisher);
+  }
+
+  function unpausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    whitelistedPublishers[publisher].active = true;
+
+    emit UnpausePublisher(publisher);
   }
 
   function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {

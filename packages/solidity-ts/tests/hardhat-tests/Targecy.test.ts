@@ -20,7 +20,6 @@ import * as evm from '../utils/evm';
 import { DataTypes } from '~generated/contract-types/contracts/core/Targecy';
 import { createIssuerIdentity, createUserIdentity, getCircuitStorage, initProofService, initializeStorages } from '~tests/utils/zk.utils';
 
-const defaultImpressionPrice = 10000;
 const defaultIssuer = 1313424234234234234n;
 
 function decodeEvents(receipt: Receipt): EventFragment[] {
@@ -124,7 +123,7 @@ describe('Targecy', function () {
 
     const factory = await getContractFactory('Targecy', deployer);
     targecy = (await factory.deploy()).connect(targecyAdmin) as Targecy;
-    await targecy.initialize(validator.getAddress(), vaultSigner.address, defaultImpressionPrice, targecyAdmin.address, defaultIssuer);
+    await targecy.initialize(validator.getAddress(), vaultSigner.address, targecyAdmin.address, defaultIssuer);
 
     user = userSigner;
     publisher = publisherSigner;

@@ -1,4 +1,4 @@
-import { DeleteOutlined } from '@ant-design/icons';
+import { CaretRightOutlined, DeleteOutlined, PauseOutlined } from '@ant-design/icons';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -16,19 +16,28 @@ const PublishersList = () => {
   const { data, isLoading } = useGetAllPublishersQuery();
   const publishers = data?.publishers;
 
-  const { writeAsync: whitelistPublisherAsync } = useContractWrite({
+  const { writeAsync: pausePublisherAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'whitelistPublisher',
+    functionName: 'pausePublisher',
+  });
+  const { writeAsync: unpausePublisherAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi,
+    functionName: 'unpausePublisher',
   });
   const { writeAsync: removePublisherFromWhitelistAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
-    functionName: 'removePublisherFromWhitelist',
+    functionName: 'removePublisher',
   });
 
-  const whitelistPublisher = async (address: `0x${string}`) => {
-    await whitelistPublisherAsync({ args: [address] });
+  const pausePublisher = async (address: `0x${string}`) => {
+    await pausePublisherAsync({ args: [address] });
+    return undefined;
+  };
+  const unpausePublisher = async (address: `0x${string}`) => {
+    await unpausePublisherAsync({ args: [address] });
     return undefined;
   };
   const removePublisherFromWhitelist = async (address: `0x${string}`) => {
@@ -48,11 +57,80 @@ const PublishersList = () => {
       textAlignment: 'right',
       render: (item) => (
         <div className="flex justify-between">
+          {item.active ? (
+            <Link href="#">
+              <PauseOutlined
+                rev={undefined}
+                onClick={() => {
+                  pausePublisher(item.id as `0x${string}`)
+                    .then(async () => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'success',
+                        title: 'Publisher paused successfully',
+                        padding: '10px 20px',
+                      });
+                    })
+                    .catch(async (error) => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'error',
+                        title: 'Could not pause publisher.',
+                        padding: '10px 20px',
+                      });
+                      console.log(error);
+                    });
+                }}
+                className="align-middle text-warning transition-all hover:text-secondary"></PauseOutlined>
+            </Link>
+          ) : (
+            <Link href="#">
+              <CaretRightOutlined
+                rev={undefined}
+                onClick={() => {
+                  unpausePublisher(item.id as `0x${string}`)
+                    .then(async () => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'success',
+                        title: 'Publisher unpaused successfully',
+                        padding: '10px 20px',
+                      });
+                    })
+                    .catch(async (error) => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'error',
+                        title: 'Could not unpause publisher.',
+                        padding: '10px 20px',
+                      });
+                      console.log(error);
+                    });
+                }}
+                className="align-middle text-warning transition-all hover:text-secondary"></CaretRightOutlined>
+            </Link>
+          )}
           <Link href="#">
             <DeleteOutlined
               rev={undefined}
               onClick={() => {
-                removePublisherFromWhitelist(item.adsQuantity as `0x${string}`)
+                removePublisherFromWhitelist(item.id as `0x${string}`)
                   .then(async () => {
                     await Swal.mixin({
                       toast: true,
@@ -79,7 +157,7 @@ const PublishersList = () => {
                     console.log(error);
                   });
               }}
-              className="align-middle text-danger hover:text-secondary transition-all"></DeleteOutlined>
+              className="align-middle text-danger transition-all hover:text-secondary"></DeleteOutlined>
           </Link>
         </div>
       ),

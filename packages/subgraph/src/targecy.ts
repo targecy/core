@@ -9,6 +9,10 @@ import {
   AudienceDeleted as AudienceDeletedEvent,
   AudienceEdited as AudienceEditedEvent,
   SegmentCreated as SegmentCreatedEvent,
+  AdPaused as AdPausedEvent,
+  AdUnpaused as AdUnpausedEvent,
+  PausePublisher as PausePublisherEvent,
+  UnpausePublisher as UnpausePublisherEvent,
 } from '../generated/Targecy/Targecy';
 import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay, Issuer } from '../generated/schema';
 import { BigInt, Bytes, store, log } from '@graphprotocol/graph-ts';
@@ -46,6 +50,7 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   entity.advertiser = createAdvertiser(event.params.advertiser.toHexString()).id;
   entity.metadataURI = event.params.ad.metadataURI;
   entity.attribution = event.params.ad.attribution;
+  entity.active = event.params.ad.active;
 
   // Conditions
   entity.startingTimestamp = event.params.ad.startingTimestamp;
@@ -86,6 +91,28 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   advertiser.remainingBudget = advertiser.remainingBudget.plus(entity.remainingBudget);
   advertiser.adsQuantity = advertiser.adsQuantity.plus(BigInt.fromI32(1));
   advertiser.save();
+}
+
+function handleAdPaused(event: AdPausedEvent): void {
+  let entity = Ad.load(event.params.adId.toString());
+
+  if (entity == null) {
+    throw new Error('Ad not found. Cannot pause.');
+  }
+
+  entity.active = false;
+  entity.save();
+}
+
+function handleAdUnpaused(event: AdUnpausedEvent): void {
+  let entity = Ad.load(event.params.adId.toString());
+
+  if (entity == null) {
+    throw new Error('Ad not found. Cannot unpause.');
+  }
+
+  entity.active = true;
+  entity.save();
 }
 
 function timestampToDay(timestamp: BigInt): BigInt {
@@ -219,6 +246,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
   entity.attribution = event.params.ad.attribution;
+  entity.active = event.params.ad.active;
 
   entity.save();
 }
@@ -281,9 +309,45 @@ export function handleSegmentCreated(event: SegmentCreatedEvent): void {
 
 export function handlePublisherWhitelisted(event: PublisherWhitelisted): void {
   let entity = new Publisher(event.params.publisher.toString());
+
+  entity.active = true;
+  entity.cpi = event.params.publisher.cpi;
+  entity.cpc = event.params.publisher.cpc;
+  entity.cpa = event.params.publisher.cpa;
+  entity.usersRewardsPercentage = event.params.publisher.userRewardsPercentage;
+
+  entity.adsQuantity = BigInt.fromI32(0);
+  entity.impressions = BigInt.fromI32(0);
+  entity.clicks = BigInt.fromI32(0);
+  entity.conversions = BigInt.fromI32(0);
+
   entity.save();
 }
 
 export function handlePublisherRemovedFromWhitelist(event: PublisherRemovedFromWhitelist): void {
   store.remove('Publisher', event.params.publisher.toString());
+}
+
+export function handlePausePublisher(event: PausePublisherEvent): void {
+  let entity = Publisher.load(event.params.publisher.toString());
+
+  if (entity == null) {
+    throw new Error('Publisher not found. Cannot pause.');
+  }
+
+  entity.active = false;
+
+  entity.save();
+}
+
+export function handleUnpausePublisher(event: UnpausePublisherEvent): void {
+  let entity = Publisher.load(event.params.publisher.toString());
+
+  if (entity == null) {
+    throw new Error('Publisher not found. Cannot unpause.');
+  }
+
+  entity.active = true;
+
+  entity.save();
 }

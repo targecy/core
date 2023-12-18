@@ -250,6 +250,13 @@ const Sidebar = () => {
           </PerfectScrollbar>
           <div className="flex justify-center p-3">
             <span className="hover:color-primary flex align-middle">
+              Find help
+              <Link href="mailto:help@targecy.xyz" target="_blank" className="group flex pl-1 hover:text-primary">
+                <div className="flex items-center">here</div>
+              </Link>
+              {'. '}
+            </span>
+            <span className="hover:color-primary flex pl-1 align-middle">
               Follow us on
               <Link
                 href="https://twitter.com/targecy_ads"

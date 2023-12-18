@@ -1,4 +1,4 @@
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -64,6 +64,28 @@ const AdsList = () => {
     return undefined;
   };
 
+  const { writeAsync: pauseAdAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi,
+    functionName: 'pauseAd',
+  });
+
+  const pauseAd = async (id: number) => {
+    await pauseAdAsync({ args: [id] });
+    return undefined;
+  };
+
+  const { writeAsync: unpauseAdAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi,
+    functionName: 'unpauseAd',
+  });
+
+  const unpauseAd = async (id: number) => {
+    await unpauseAdAsync({ args: [id] });
+    return undefined;
+  };
+
   const columns: DataTableColumn<GetAllAdsQuery['ads'][number]>[] = [
     { title: 'Id', accessor: 'id' },
     {
@@ -103,6 +125,77 @@ const AdsList = () => {
       textAlignment: 'right',
       render: (item) => (
         <div className="flex justify-between">
+          {item.active ? (
+            <Link href="#">
+              <PauseOutlined
+                rev={undefined}
+                onClick={() => {
+                  pauseAd(Number(item.id))
+                    .then(async () => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'success',
+                        title: 'Ad paused successfully',
+                        padding: '10px 20px',
+                      });
+                    })
+                    .catch(async (error) => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'error',
+                        title: 'Could not pause ad.',
+                        padding: '10px 20px',
+                      });
+                      console.log(error);
+                    });
+                }}
+                className="ml-2 align-middle text-warning transition-all hover:text-secondary"
+              />
+            </Link>
+          ) : (
+            <Link href="#">
+              <CaretRightOutlined
+                rev={undefined}
+                onClick={() => {
+                  unpauseAd(Number(item.id))
+                    .then(async () => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'success',
+                        title: 'Ad unpaused successfully',
+                        padding: '10px 20px',
+                      });
+                    })
+                    .catch(async (error) => {
+                      await Swal.mixin({
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                      }).fire({
+                        icon: 'error',
+                        title: 'Could not unpause ad.',
+                        padding: '10px 20px',
+                      });
+                      console.log(error);
+                    });
+                }}
+                className="ml-2 align-middle text-warning transition-all hover:text-secondary"
+              />
+            </Link>
+          )}
           <Link href={`/ads/edit/${item.id}`}>
             <EditOutlined
               rev={undefined}
@@ -140,7 +233,8 @@ const AdsList = () => {
                     console.log(error);
                   });
               }}
-              className="ml-2 align-middle text-danger transition-all hover:text-secondary"></DeleteOutlined>
+              className="ml-2 align-middle text-danger transition-all hover:text-secondary"
+            />
           </Link>
         </div>
       ),

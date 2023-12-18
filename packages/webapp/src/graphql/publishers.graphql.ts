@@ -3,6 +3,11 @@ import { gql } from 'graphql-request';
 export const Publisher = gql`
   fragment PublisherFragment on Publisher {
     id
+    active
+    cpi
+    cpc
+    cpa
+    usersRewardsPercentage
     adsQuantity
     impressions
     clicks
