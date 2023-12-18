@@ -1,15 +1,17 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
-import * as deployedAddresses from './generated/config/config.json' assert { type: 'json' };
+import deployedAddresses from './generated/config/config.json' assert { type: 'json' };
 
-const deployedAddressName = (env) => {
+const deployedAddressByEnv = (env) => {
   switch (env) {
+    case 'development':
+      return deployedAddresses['localhost_targecyProxy'];
     case 'preview':
-      return 'mumbai_TargecyProxy';
+      return deployedAddresses['mumbai_targecyProxy'];
     case 'production':
-      return 'matic_TargecyProxy';
+      return deployedAddresses['matic_targecyProxy'];
     default:
-      return 'localhost_TargecyProxy';
+      throw new Error(`Unknown env ${env}`);
   }
 };
 
@@ -35,7 +37,9 @@ export const env = createEnv({
     NEXT_PUBLIC_FAUCET_ALLOWED: z.boolean(),
     NEXT_PUBLIC_BURNER_FALLBACK_ALLOWED: z.boolean(),
     NEXT_PUBLIC_CONNECT_TO_BURNER_AUTOMATICALLY: z.boolean(),
-    NEXT_PUBLIC_VERCEL_ENV: z.union([z.literal('production'), z.literal('preview'), z.literal('development')]).default('development'),
+    NEXT_PUBLIC_VERCEL_ENV: z
+      .union([z.literal('production'), z.literal('preview'), z.literal('development')])
+      .default('development'),
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: z.string().url(),
@@ -63,7 +67,8 @@ export const env = createEnv({
 
     // Custom
     NEXT_PUBLIC_SUBGRAPH_URL: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
-    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: deployedAddressName(process.env.NEXT_PUBLIC_VERCEL_ENV),
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS:
+      deployedAddressByEnv(process.env.NEXT_PUBLIC_VERCEL_ENV || 'development') || 'asdasdasdas',
 
     CIRCUITS_PATH: process.env.CIRCUITS_PATH,
     NFT_STORAGE_TOKEN: process.env.NFT_STORAGE_TOKEN,

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -8,25 +8,37 @@ import { DataTypes } from "../libraries/DataTypes.sol";
 interface TargecyEvents {
   event AdCreated(uint256 indexed adId, address indexed advertiser, DataTypes.NewAd ad);
 
-  event AdEdited(uint256 indexed adId, string metadataURI, uint256 budget, uint256[] targetGroupIds);
+  event AdEdited(uint256 indexed adId, DataTypes.Ad ad);
 
   event AdDeleted(uint256 indexed adId);
 
-  event TargetGroupCreated(uint256 indexed targetGroupId, string metadataURI, uint256[] zkRequestIds);
+  event AdPaused(uint256 indexed adId);
 
-  event TargetGroupEdited(uint256 indexed targetGroupId, string metadataURI, uint256[] zkRequestIds);
+  event AdUnpaused(uint256 indexed adId);
 
-  event TargetGroupDeleted(uint256 indexed targetGroupId);
+  event AudienceCreated(uint256 indexed audienceId, string metadataURI, uint256[] segmentIds);
 
-  event ZKPRequestCreated(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI, uint256 issuer);
+  event AudienceEdited(uint256 indexed audienceId, string metadataURI, uint256[] segmentIds);
 
-  event ZKPRequestEdited(uint256 indexed zkRequestId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
+  event AudienceDeleted(uint256 indexed audienceId);
 
-  event ZKPRequestDeleted(uint256 indexed zkRequestId);
+  event SegmentCreated(uint256 indexed segmentId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI, uint256 issuer);
 
-  event AdConsumed(uint256 indexed adId, address indexed user, address indexed publisher);
+  event SegmentEdited(uint256 indexed segmentId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
 
-  event PublisherWhitelisted(address indexed publisher);
+  event SegmentDeleted(uint256 indexed segmentId);
+
+  event AdConsumed(uint256 indexed adId, DataTypes.Ad ad, DataTypes.PublisherSettings publisher, uint256 consumptionPrice);
+
+  event PublisherWhitelisted(address indexed vault, DataTypes.PublisherSettings publisher);
 
   event PublisherRemovedFromWhitelist(address indexed publisher);
+
+  event PausePublisher(address indexed publisher);
+
+  event UnpausePublisher(address indexed publisher);
+
+  event AdminSet(address indexed admin);
+
+  event AdminRemoved(address indexed admin);
 }

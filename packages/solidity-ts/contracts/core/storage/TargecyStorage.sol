@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 
 pragma solidity 0.8.10;
 
@@ -10,19 +10,21 @@ abstract contract TargecyStorage {
   address public protocolVault;
   address public relayerAddress;
 
-  uint256 public _zkRequestId;
+  uint256 public _segmentId;
   uint256 public _adId;
-  uint256 public _targetGroupId;
-  uint256 public totalImpressions;
+  uint256 public _audienceId;
+  uint256 public totalconsumptions;
 
   uint256 public defaultImpressionPrice;
+  uint256 public defaultClickPrice;
+  uint256 public defaultConversionPrice;
   uint256 public defaultIssuer;
-    
-  mapping(uint256 => bool) public usedSigNonces;
 
-  mapping(address => bool) public whitelistedPublishers;
-  mapping(address => uint256) public customImpressionPrices;
+  mapping(uint256 => bool) public usedSigNonces;
+  mapping(uint256 => mapping(uint256 => uint256)) public consumptionsPerDay;
+
+  mapping(address => DataTypes.PublisherSettings) public whitelistedPublishers;
   mapping(uint256 => DataTypes.Ad) public ads;
-  mapping(uint256 => DataTypes.TargetGroup) public targetGroups;
-  mapping(uint256 => DataTypes.ZKPRequest) public requestQueries;
+  mapping(uint256 => DataTypes.Audience) public audiences;
+  mapping(uint256 => DataTypes.Segment) public requestQueries;
 }

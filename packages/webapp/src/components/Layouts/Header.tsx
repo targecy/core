@@ -132,7 +132,7 @@ const Header = () => {
       <div className="shadow-sm">
         <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
           <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
-            <Link href="/" className="main-logo flex shrink-0 items-center">
+            <Link href="https://targecy.xyz" target="_blank" className="main-logo flex shrink-0 items-center">
               <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/images/logo.svg" alt="logo" />
               <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
                 TARGECY
@@ -448,7 +448,7 @@ const Header = () => {
         </div>
 
         {/* horizontal menu */}
-        <ul className="horizontal-menu hidden border-t border-[#ebedf2] bg-white py-1.5 px-6 font-semibold text-black rtl:space-x-reverse dark:border-[#191e3a] dark:bg-black dark:text-white-dark lg:space-x-1.5 xl:space-x-8">
+        <ul className="horizontal-menu hidden border-t border-[#ebedf2] bg-white px-6 py-1.5 font-semibold text-black rtl:space-x-reverse dark:border-[#191e3a] dark:bg-black dark:text-white-dark lg:space-x-1.5 xl:space-x-8">
           <li className="nav-item menu relative">
             <button type="button" className="nav-link">
               <div className="flex items-center">

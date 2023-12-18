@@ -1,0 +1,283 @@
+import { Field, Form, Formik } from 'formik';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { useContractWrite } from 'wagmi';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+
+import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~~/constants/contracts.constants';
+import { useGetPublisherQuery } from '~~/generated/graphql.types';
+import { useWallet } from '~~/hooks';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const abi = require('../../generated/abis/Targecy.json');
+
+export const PublisherEditorComponent = (id?: string) => {
+  const editingMode = !!id;
+
+  const [processingPublisher, setProcessingPublisher] = useState(false);
+  const { writeAsync: setPublisherAsync } = useContractWrite({
+    address: targecyContractAddress,
+    abi,
+    functionName: 'setPublisher',
+  });
+
+  const router = useRouter();
+
+  const { isConnected } = useWallet();
+
+  const submitForm = async (data: FormValues) => {
+    setProcessingPublisher(true);
+
+    try {
+      const hash = await setPublisherAsync({
+        args: [
+          {
+            publisher: {
+              vault: data.address,
+              userRewardPercentage: data.usersRewardsPercentage,
+              cpi: data.cpi,
+              cpc: data.cpc,
+              cpa: data.cpa,
+              active: true,
+            },
+          },
+        ],
+      });
+
+      // await Swal.mixin({
+      //   toast: true,
+      //   position: 'top',
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      // }).fire({
+      //   icon: 'success',
+      //   address: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
+      //   padding: '10px 20px',
+      // });
+
+      await router.push('/publishers');
+    } catch (e) {
+      // await Swal.mixin({
+      //   toast: true,
+      //   position: 'top',
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      // }).fire({
+      //   icon: 'error',
+      //   address: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
+      //   padding: '10px 20px',
+      // });
+
+      setProcessingPublisher(false);
+    }
+  };
+
+  const schema = z.object({
+    address: z.string().min(1).max(50).describe('Please fill the address'),
+    usersRewardsPercentage: z.number().min(1).max(99999999999).describe('Please fill the usersRewardsPercentage'),
+    cpi: z.number().min(1).max(99999999999).describe('Please fill the value'),
+    cpc: z.number().min(1).max(99999999999).describe('Please fill the value'),
+    cpa: z.number().min(1).max(99999999999).describe('Please fill the value'),
+  });
+
+  const { data: publisherData } = useGetPublisherQuery({ id: id ?? '' });
+  const publisher = publisherData?.publisher;
+
+  type FormValues = z.infer<typeof schema>;
+
+  const [currentParams, setCurrentParams] = useState<
+    { operator?: number; value?: any; slotIndex?: number; schema?: string } | undefined
+  >(undefined);
+
+  return (
+    <div>
+      <ul className="flex space-x-2 rtl:space-x-reverse">
+        <li>
+          <Link href="/publishers" className="text-primary hover:underline">
+            Publishers
+          </Link>
+        </li>
+        <li className="before:content-['/'] ltr:before:mr-2 rtl:before:ml-2">
+          {id ? <span>Edit</span> : <span>New</span>}
+        </li>
+      </ul>
+
+      <div className="space-y-8 pt-5">
+        <div className="panel items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
+          <label className="mb-3 text-2xl text-primary">
+            {' '}
+            {editingMode ? <span>Edit </span> : <span>New </span>}
+            {editingMode ? `'${publisher?.id}'` : 'Publisher'}
+          </label>
+          <div className="grid grid-cols-3">
+            <Formik
+              enableReinitialize={true}
+              initialValues={{
+                address: publisher?.id,
+                cpi: Number(publisher?.cpi),
+                cpc: Number(publisher?.cpc),
+                cpa: Number(publisher?.cpa),
+                usersRewardsPercentage: Number(publisher?.usersRewardsPercentage),
+              }}
+              validationSchema={toFormikValidationSchema(schema)}
+              onSubmit={() => {}}>
+              {({ errors, submitCount, touched, values, handleChange }) => (
+                <Form className="col-span-2 space-y-5 text-secondary">
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="address">Address </label>
+                      <Field
+                        name="address"
+                        type="text"
+                        id="address"
+                        placeholder="Enter Address"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.address ? (
+                          <div className="mt-1 text-danger">{errors.address.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.usersRewardsPercentage ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
+                      <Field
+                        name="usersRewardsPercentage"
+                        type="number"
+                        id="usersRewardsPercentage"
+                        placeholder="Enter users rewards percentage"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.usersRewardsPercentage ? (
+                          <div className="mt-1 text-danger">{errors.usersRewardsPercentage}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                    <div className={`${submitCount ? (errors.cpi ? 'has-error' : 'has-success') : ''} col-span-1`}>
+                      <label htmlFor="value">CPI</label>
+                      <Field
+                        name="cpi"
+                        type="number"
+                        id="cpi"
+                        placeholder="Enter cpi"
+                        onChange={(e: any) => {
+                          setCurrentParams((prevState) => ({ ...prevState, cpi: e.target.value }));
+                          handleChange(e);
+                        }}
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.cpi ? (
+                          <div className="mt-1 text-danger">{errors.cpi.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={`${submitCount ? (errors.cpc ? 'has-error' : 'has-success') : ''} col-span-1`}>
+                      <label htmlFor="value">CPC</label>
+                      <Field
+                        name="cpc"
+                        type="number"
+                        id="cpc"
+                        placeholder="Enter cpc"
+                        onChange={(e: any) => {
+                          setCurrentParams((prevState) => ({ ...prevState, cpc: e.target.value }));
+                          handleChange(e);
+                        }}
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.cpc ? (
+                          <div className="mt-1 text-danger">{errors.cpc.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={`${submitCount ? (errors.cpa ? 'has-error' : 'has-success') : ''} col-span-1`}>
+                      <label htmlFor="value">CPA</label>
+                      <Field
+                        name="cpa"
+                        type="number"
+                        id="cpa"
+                        placeholder="Enter cpa"
+                        onChange={(e: any) => {
+                          setCurrentParams((prevState) => ({ ...prevState, cpa: e.target.value }));
+                          handleChange(e);
+                        }}
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.cpa ? (
+                          <div className="mt-1 text-danger">{errors.cpa.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
+                  {isConnected ? (
+                    <button
+                      type="submit"
+                      disabled={processingPublisher || Object.keys(touched).length === 0}
+                      className="btn btn-primary !mt-6"
+                      onClick={() => {
+                        if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
+                          const parsed = schema.safeParse(values);
+                          if (parsed.success) {
+                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                            submitForm(parsed.data);
+                          } else {
+                            console.error(parsed.error);
+                          }
+                        } else {
+                          console.error(errors);
+                        }
+                      }}>
+                      {editingMode && processingPublisher && 'Editing Publisher...'}
+                      {editingMode && !processingPublisher && 'Edit'}
+                      {!editingMode && processingPublisher && 'Creating Publisher...'}
+                      {!editingMode && !processingPublisher && 'Create'}
+                    </button>
+                  ) : (
+                    <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
+                  )}
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const NewPublisherPage = () => PublisherEditorComponent();
+
+export default NewPublisherPage;

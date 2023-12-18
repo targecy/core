@@ -19,9 +19,9 @@ echo "Subgraph: $subgraph"
 key=${2:-$TEST_SUBGRAPH_KEY}
 echo "Key: $key"
 
-version=${3:-1.0.5}
+version=${3:-1.1.0}
 echo "Version: $version"
 
-yarn dlx @graphprotocol/graph-cli deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml
+yarn dlx @graphprotocol/graph-cli@0.62.0 deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml
 
 # This is a workaround for a bug that happens when running directly yarn graph deploy

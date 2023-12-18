@@ -23,7 +23,7 @@ const stringToBigIntArray = async (str: string, padding: number): Promise<bigint
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const initializeData = async () => {
-  const zkpRequests: Array<{
+  const segments: Array<{
     metadata: {
       title: string;
       description: string;
@@ -189,13 +189,13 @@ export const initializeData = async () => {
     // },
   ];
 
-  const targetGroups: Array<{
+  const audiences: Array<{
     metadata: {
       title: string;
       description: string;
     };
     metadataURI?: string;
-    zkpRequestIds: number[];
+    segmentIds: number[];
   }> = [
     // Active On Chain
     {
@@ -203,14 +203,14 @@ export const initializeData = async () => {
         title: 'Active on ethereum',
         description: 'Users that have executed a tx on ethereum some time ago.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has executed a tx on ethereum') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has executed a tx on ethereum') + 1],
     },
     {
       metadata: {
         title: 'Active on polygon',
         description: 'Users that have executed a tx on polygon some time ago.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has executed a tx on polygon') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has executed a tx on polygon') + 1],
     },
 
     // Token Holders
@@ -219,28 +219,28 @@ export const initializeData = async () => {
         title: 'USDC Holder',
         description: 'Users that hold USDC.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of USDC') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has balance of USDC') + 1],
     },
     {
       metadata: {
         title: 'LINK Holder',
         description: 'Users that hold LINK.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of LINK') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has balance of LINK') + 1],
     },
     {
       metadata: {
         title: 'wBTC Holder',
         description: 'Users that hold wBTC.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of wBTC') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has balance of wBTC') + 1],
     },
     {
       metadata: {
         title: 'AXS Holder',
         description: 'Users that hold AXS (Axie Infinity Token).',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has balance of AXS') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has balance of AXS') + 1],
     },
 
     // Protocol Users
@@ -249,36 +249,36 @@ export const initializeData = async () => {
         title: 'Interacted with Aave',
         description: 'Users that have interacted with Aave.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Aave') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Aave') + 1],
     },
     {
       metadata: {
         title: 'Interacted with Compound',
         description: 'Users that have interacted with Compound.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Compound') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Compound') + 1],
     },
     {
       metadata: {
         title: 'Interacted with Uniswap',
         description: 'Users that have interacted with Uniswap.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Uniswap') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Uniswap') + 1],
     },
     {
       metadata: {
         title: 'Interacted with Curve',
         description: 'Users that have interacted with Curve.',
       },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Curve') + 1],
+      segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Curve') + 1],
     },
-    {
-      metadata: {
-        title: 'Interacted with Lido',
-        description: 'Users that have interacted with Lido.',
-      },
-      zkpRequestIds: [zkpRequests.findIndex((request) => request.metadata.title === 'Has interacted with Lido') + 1],
-    },
+    // {
+    //   metadata: {
+    //     title: 'Interacted with Lido',
+    //     description: 'Users that have interacted with Lido.',
+    //   },
+    //   segmentIds: [segments.findIndex((request) => request.metadata.title === 'Has interacted with Lido') + 1],
+    // },
   ];
 
   const ads: Array<{
@@ -288,11 +288,15 @@ export const initializeData = async () => {
       imageUrl: string;
     };
     metadataURI?: string;
-    targetGroupsIds: number[];
+    attribution: number;
+    startingTimestamp: number;
+    endingTimestamp: number;
+    audiencesIds: number[];
+    blacklistedPublishers: string[];
+    blacklistedWeekdays: number[];
     budget: bigint;
-    minBlock: number;
-    maxBlock: number;
-    maxImpressionPrice: bigint;
+    maxPricePerConsumption: bigint;
+    maxConsumptionsPerDay: number;
   }> = [
     {
       metadata: {
@@ -301,17 +305,21 @@ export const initializeData = async () => {
         imageUrl:
           'https://statics.ambcrypto.com/wp-content/uploads/2023/08/ambcrypto_Prompt_Enter_the_Crypto_Skies_Ethereum_Soars_Above_Si_014291ef-850a-4bce-ad0c-67624525fbca.jpg',
       },
-      targetGroupsIds: [targetGroups.findIndex((group) => group.metadata.title === 'Active on ethereum') + 1],
+      audiencesIds: [audiences.findIndex((group) => group.metadata.title === 'Active on ethereum') + 1],
       budget: 1000000n,
-      minBlock: 0,
-      maxBlock: 99999999999,
-      maxImpressionPrice: 10000n,
+      startingTimestamp: 0,
+      endingTimestamp: 99999999999,
+      maxPricePerConsumption: 10000n,
+      maxConsumptionsPerDay: 1000000,
+      attribution: 0,
+      blacklistedPublishers: [],
+      blacklistedWeekdays: [],
     },
   ];
 
   return {
-    zkpRequests,
-    targetGroups,
+    segments,
+    audiences,
     ads,
   };
 };

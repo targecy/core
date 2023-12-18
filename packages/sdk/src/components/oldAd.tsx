@@ -70,16 +70,16 @@
 //       ad: {
 //         advertiser: {
 //           id: ethers.ZeroAddress,
-//           impressions: 0,
+//           consumptions: 0,
 //         },
 //         id: '0',
-//         impressions: 0,
-//         maxBlock: 0,
-//         maxImpressionPrice: 0,
+//         consumptions: 0,
+//         endingTimestamp: 0,
+//         maxPricePerConsumption: 0,
 //         metadataURI: '',
-//         minBlock: 0,
+//         startingTimestamp: 0,
 //         remainingBudget: 0,
-//         targetGroups: [],
+//         audiences: [],
 //         totalBudget: 0,
 //       },
 //       metadata: {
@@ -104,7 +104,7 @@
 //             )} */}
 //       </div>
 //     );
-    
+
 //   return (
 //     <div>
 //       <div className="card w-96 bg-white shadow-xl dark:bg-black" key={ad.ad.id}>

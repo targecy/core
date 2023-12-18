@@ -6,7 +6,10 @@ import { SiweMessage } from 'siwe';
 import { isVercelDevelopment } from '~~/constants/app.constants';
 import { env } from '~~/env.mjs';
 
-const WHITELISTED_ADDRESSES = ['0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a'];
+const WHITELISTED_ADDRESSES = [
+  '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
+  '0xc8e4fcff013b61bea893d54427f1a72691ffe7a2',
+];
 const isBetaUser = (address: string) => WHITELISTED_ADDRESSES.includes(address) || isVercelDevelopment;
 
 // For more information on each option (and a full list of options) go to
