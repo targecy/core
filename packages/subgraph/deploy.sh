@@ -19,7 +19,7 @@ echo "Subgraph: $subgraph"
 key=${2:-$TEST_SUBGRAPH_KEY}
 echo "Key: $key"
 
-version=${3:-1.0.5}
+version=${3:-1.1.0}
 echo "Version: $version"
 
 yarn dlx @graphprotocol/graph-cli@0.62.0 deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml

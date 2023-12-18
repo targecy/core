@@ -1026,6 +1026,24 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "oldAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newAddress",
+        "type": "address"
+      }
+    ],
+    "name": "changePublisherAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint64",
         "name": "adId",
         "type": "uint64"
@@ -1733,7 +1751,7 @@
         "type": "address"
       }
     ],
-    "name": "removePublisherFromWhitelist",
+    "name": "removePublisher",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1904,6 +1922,51 @@
       }
     ],
     "name": "setProtocolVault",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "userRewardsPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpi",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpc",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpa",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DataTypes.PublisherSettings",
+        "name": "publisher",
+        "type": "tuple"
+      }
+    ],
+    "name": "setPublisher",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -2099,51 +2162,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "userRewardsPercentage",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "vault",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "cpi",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "cpc",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "cpa",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct DataTypes.PublisherSettings",
-        "name": "publisher",
-        "type": "tuple"
-      }
-    ],
-    "name": "whitelistPublisher",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
