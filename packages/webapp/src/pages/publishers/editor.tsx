@@ -2,7 +2,6 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -48,29 +47,29 @@ export const PublisherEditorComponent = (id?: string) => {
         ],
       });
 
-      await Swal.mixin({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-      }).fire({
-        icon: 'success',
-        address: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
-        padding: '10px 20px',
-      });
+      // await Swal.mixin({
+      //   toast: true,
+      //   position: 'top',
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      // }).fire({
+      //   icon: 'success',
+      //   address: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
+      //   padding: '10px 20px',
+      // });
 
       await router.push('/publishers');
     } catch (e) {
-      await Swal.mixin({
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-      }).fire({
-        icon: 'error',
-        address: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
-        padding: '10px 20px',
-      });
+      // await Swal.mixin({
+      //   toast: true,
+      //   position: 'top',
+      //   showConfirmButton: false,
+      //   timer: 3000,
+      // }).fire({
+      //   icon: 'error',
+      //   address: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
+      //   padding: '10px 20px',
+      // });
 
       setProcessingPublisher(false);
     }
