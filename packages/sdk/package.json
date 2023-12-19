@@ -1,6 +1,6 @@
 {
   "name": "@targecy/sdk",
-  "version": "0.0.1",
+  "version": "0.2.1",
   "description": "The SDK that allows you to interact with the Targecy protocol",
   "keywords": [
     "targecy",
@@ -13,9 +13,9 @@
   ],
   "author": "Targecy",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "files": [
     "dist"
   ],
@@ -23,7 +23,7 @@
     "build": "tsup",
     "test": "echo \"Error: no test specified\" && exit 1",
     "link": "npm link",
-    "publish": "npm publish --access public",
+    "publish:public": "npm publish --access public",
     "graphql-codegen-watch": "gql-gen --config codegen.ts  --watch",
     "graphql-codegen": "gql-gen --config codegen.ts",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src",
