@@ -63,7 +63,7 @@
     "@reduxjs/toolkit": "1.9.3",
     "@scaffold-eth/common": "0.0.0",
     "@t3-oss/env-nextjs": "^0.6.1",
-    "@targecy/sdk": "workspace:^",
+    "@targecy/sdk": "0.0.1",
     "@tippyjs/react": "^4.2.6",
     "@trpc/client": "10.40.0",
     "@trpc/react-query": "10.40.0",

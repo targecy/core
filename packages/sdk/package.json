@@ -1,7 +1,29 @@
 {
   "name": "@targecy/sdk",
   "version": "0.0.1",
+  "description": "The SDK that allows you to interact with the Targecy protocol",
+  "keywords": [
+    "targecy",
+    "advertising",
+    "privacy",
+    "targeting",
+    "web3",
+    "sdk",
+    "zk"
+  ],
+  "author": "Targecy",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "link": "npm link",
+    "publish": "npm publish --access public",
     "graphql-codegen-watch": "gql-gen --config codegen.ts  --watch",
     "graphql-codegen": "gql-gen --config codegen.ts",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src",
@@ -55,6 +77,9 @@
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "eslint": "^8.23.1",
-    "eslint-plugin-unused-imports": "^2.0.0"
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
   }
 }
