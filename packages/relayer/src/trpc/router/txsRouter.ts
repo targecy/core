@@ -1,5 +1,5 @@
 import { router, publicProcedure } from '..';
-import { sendTx } from '../../trpc/services/relayer.service';
+import { consumeAd } from '../../trpc/services/relayer.service';
 import { z } from 'zod';
 import { recoverMessageAddress } from 'viem';
 import { TRPCError } from '@trpc/server';
@@ -24,11 +24,14 @@ export const txsRouter = router({
       if (!txs.length) throw new TRPCError({ code: 'NOT_FOUND', message: 'Transactions not found' });
       return txs;
     }),
-  send: publicProcedure
+  consumeAd: publicProcedure
     .input(
       z.object({
         data: z.string(),
         signature: z.string(),
+        adId: z.string(),
+        publisher: z.string(),
+        zkProofs: z.any(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -36,7 +39,7 @@ export const txsRouter = router({
         message: input.data,
         signature: input.signature as `0x{string}`,
       });
-      const result = await sendTx(input);
+      const result = await consumeAd([wallet, input.adId, input.publisher, input.zkProofs]);
       const saved = await ctx.prisma.tx.create({
         data: {
           hash: result,

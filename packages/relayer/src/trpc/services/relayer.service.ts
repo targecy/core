@@ -1,14 +1,13 @@
-import { walletClient } from '../../utils/signer';
+import { getContract } from 'utils';
+import { Targecy } from '~generated/contract-types';
 
-type TxParameters = {
-  data: any;
-};
+type ConsumeAdParams = Parameters<Targecy['consumeAdViaRelayer']>;
+export async function consumeAd(params: ConsumeAdParams) {
+  const contract = getContract();
 
-export async function sendTx(txParams: TxParameters) {
-  const result = await walletClient.sendTransaction({
-    to: process.env.CONTRACT_ADDRESS as `0x${string}`,
-    data: txParams.data,
-  });
+  const receipt = await contract.consumeAdViaRelayer(...params);
 
-  return result;
+  // @todo (Martin): append hash to a queue and verify it later
+
+  return receipt.hash;
 }
