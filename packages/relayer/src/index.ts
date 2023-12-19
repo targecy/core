@@ -2,7 +2,7 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import cors from 'cors';
 import express from 'express';
 
-import { homePage } from 'utils';
+import { homePage } from './utils';
 
 import { createContext } from './trpc';
 import { appRouter } from './trpc/router';

@@ -1,5 +1,5 @@
 {
-  "name": "@targecy/relayer-api",
+  "name": "@targecy/relayer",
   "version": "0.0.1",
   "main": "./trpc-api-export/dist/index.js",
   "types": "./trpc-api-export/dist/index.d.ts",
@@ -25,7 +25,7 @@
     "semantic-release": "semantic-release --branches main"
   },
   "dependencies": {
-    "@prisma/client": "5.3.1",
+    "@prisma/client": "4.9.0",
     "@trpc/server": "10.40.0",
     "cors": "2.8.5",
     "express": "4.18.2",
@@ -49,7 +49,7 @@
     "husky": "8.0.3",
     "lint-staged": "14.0.1",
     "prettier": "3.0.2",
-    "prisma": "^5.3.1",
+    "prisma": "4.9.0",
     "semantic-release": "21.1.0",
     "shx": "0.3.4",
     "ts-node": "10.9.1",
