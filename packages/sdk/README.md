@@ -36,4 +36,6 @@ import { useCredentials } from '@targecy/sdk';
 
 You can also customize styling. Please refer to our [wizard](https://app.targecy.xyz/wizard) to generate the code.
 
+Please see our [Demo Publisher](https://demo.publisher.targecy.xyz/) for a complete example.
+
 For help please contact us at [help@targecy.xyz](mailto:help@targecy.xyz).
