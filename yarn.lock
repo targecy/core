@@ -7474,7 +7474,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@targecy/sdk@npm:0.0.1, @targecy/sdk@workspace:packages/sdk":
+"@targecy/sdk@workspace:^, @targecy/sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
   resolution: "@targecy/sdk@workspace:packages/sdk"
   dependencies:
@@ -7585,7 +7585,7 @@ __metadata:
     "@tailwindcss/forms": "npm:^0.5.3"
     "@tailwindcss/line-clamp": "npm:^0.4.2"
     "@tailwindcss/typography": "npm:^0.5.7"
-    "@targecy/sdk": "npm:0.0.1"
+    "@targecy/sdk": "workspace:^"
     "@tippyjs/react": "npm:^4.2.6"
     "@trpc/client": "npm:10.40.0"
     "@trpc/react-query": "npm:10.40.0"

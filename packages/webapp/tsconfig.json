@@ -21,7 +21,8 @@
     "jsxImportSource": "@emotion/react",
     "paths": {
       "~~/*": ["./src/*"],
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@targecy/sdk": ["../sdk/src"]
     }
   },
   "include": ["src", "codegen.ts", "apollo.config.js"],
