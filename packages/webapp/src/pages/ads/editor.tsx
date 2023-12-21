@@ -405,7 +405,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Attribution</label>
+                      <label htmlFor="startingTimestamp">Bidding Strategy</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -441,7 +441,7 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
 
                     <div className={submitCount ? (errors.active ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="active">Active</label>
+                      <label htmlFor="active">Campaign Status</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -561,7 +561,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Blacklisted Publishers</label>
+                      <label htmlFor="startingTimestamp">Placement Exclusion</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',

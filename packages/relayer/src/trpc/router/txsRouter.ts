@@ -35,15 +35,15 @@ export const txsRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const wallet = await recoverMessageAddress({
+      const viewer = await recoverMessageAddress({
         message: input.data,
         signature: input.signature as `0x{string}`,
       });
-      const result = await consumeAd([wallet, input.adId, input.publisher, input.zkProofs]);
+      const result = await consumeAd([viewer, input.adId, input.publisher, input.zkProofs]);
       const saved = await ctx.prisma.tx.create({
         data: {
           hash: result,
-          wallet,
+          wallet: viewer,
           status: 'sent',
         },
       });
