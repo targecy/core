@@ -140,7 +140,7 @@ const Sidebar = () => {
                       <div className="flex items-center">
                         <HomeOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Home')}
+                          {t('Insights Hub')}
                         </span>
                       </div>
                     </Link>

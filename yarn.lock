@@ -5681,20 +5681,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:5.3.1":
-  version: 5.3.1
-  resolution: "@prisma/client@npm:5.3.1"
-  dependencies:
-    "@prisma/engines-version": "npm:5.3.1-2.61e140623197a131c2a6189271ffee05a7aa9a59"
-  peerDependencies:
-    prisma: "*"
-  peerDependenciesMeta:
-    prisma:
-      optional: true
-  checksum: 152b3389cc8b40f904f22d1d3682f828e2805f7328020d38cc57336a60e09d463efac931bd9ed72f053fd667085275bde4ec11559dffd51c1b7cc2a8cfacdd42
-  languageName: node
-  linkType: hard
-
 "@prisma/engines-version@npm:4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5":
   version: 4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5
   resolution: "@prisma/engines-version@npm:4.9.0-42.ceb5c99003b99c9ee2c1d2e618e359c14aef2ea5"
@@ -5702,24 +5688,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/engines-version@npm:5.3.1-2.61e140623197a131c2a6189271ffee05a7aa9a59":
-  version: 5.3.1-2.61e140623197a131c2a6189271ffee05a7aa9a59
-  resolution: "@prisma/engines-version@npm:5.3.1-2.61e140623197a131c2a6189271ffee05a7aa9a59"
-  checksum: 436d50082fe08bc105d0d604af464a3c4391eea656c222e6741515eae0eee2bdb10eca19c26572d9d77dd121a22fe13ae70bb966a0648ff16cdf33f674d716da
-  languageName: node
-  linkType: hard
-
 "@prisma/engines@npm:4.9.0":
   version: 4.9.0
   resolution: "@prisma/engines@npm:4.9.0"
   checksum: 58e47af196e0fb15f6598385440d0b82157c26774e4e9833ec4bc877e24f536222ab69b8465e9dc73855b3414290a8b67c557941df7aa6966ec3b974fa818357
-  languageName: node
-  linkType: hard
-
-"@prisma/engines@npm:5.6.0":
-  version: 5.6.0
-  resolution: "@prisma/engines@npm:5.6.0"
-  checksum: 01ce51dd6ceec68097b8f15e5f9895649ba4080eb7fc1ec1476131a3d2898d47dfe594255244dd021de4b26af8c91cdbd6c1600efdb3a242867061fbea1f2027
   languageName: node
   linkType: hard
 
@@ -7437,13 +7409,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@targecy/relayer-api@workspace:packages/relayer":
+"@targecy/relayer@workspace:packages/relayer":
   version: 0.0.0-use.local
-  resolution: "@targecy/relayer-api@workspace:packages/relayer"
+  resolution: "@targecy/relayer@workspace:packages/relayer"
   dependencies:
     "@commitlint/cli": "npm:17.7.1"
     "@commitlint/config-conventional": "npm:17.7.0"
-    "@prisma/client": "npm:5.3.1"
+    "@prisma/client": "npm:4.9.0"
     "@trpc/server": "npm:10.40.0"
     "@types/cors": "npm:2.8.13"
     "@types/express": "npm:4.17.17"
@@ -7456,11 +7428,12 @@ __metadata:
     eslint-plugin-import: "npm:2.28.1"
     eslint-plugin-prettier: "npm:5.0.0"
     eslint-plugin-unused-imports: "npm:^2.0.0"
+    ethers: "npm:^6.9.0"
     express: "npm:4.18.2"
     husky: "npm:8.0.3"
     lint-staged: "npm:14.0.1"
     prettier: "npm:3.0.2"
-    prisma: "npm:^5.3.1"
+    prisma: "npm:4.9.0"
     semantic-release: "npm:21.1.0"
     shx: "npm:0.3.4"
     superjson: "npm:1.13.1"
@@ -17395,6 +17368,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ethers@npm:^6.9.0":
+  version: 6.9.0
+  resolution: "ethers@npm:6.9.0"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:1.10.0"
+    "@noble/curves": "npm:1.2.0"
+    "@noble/hashes": "npm:1.3.2"
+    "@types/node": "npm:18.15.13"
+    aes-js: "npm:4.0.0-beta.5"
+    tslib: "npm:2.4.0"
+    ws: "npm:8.5.0"
+  checksum: a48f268aa934900d90e34fd6b607db3d774ce58c73d249697f68398afa673b483fda19c6fa91eb91784fdfbaa07eb4c753b245c2123c5d2072f8dc1897cd556d
+  languageName: node
+  linkType: hard
+
 "ethjs-unit@npm:0.1.6":
   version: 0.1.6
   resolution: "ethjs-unit@npm:0.1.6"
@@ -27180,17 +27168,6 @@ __metadata:
     prisma: build/index.js
     prisma2: build/index.js
   checksum: 972a9ac47710c3cde11dab4a7ecc14b8a3a2bf3a651bbb7e466a13b436a82662e54a9e1880ce52b1931f383a59deb131dfa419a21424b79cc38e2112985f341f
-  languageName: node
-  linkType: hard
-
-"prisma@npm:^5.3.1":
-  version: 5.6.0
-  resolution: "prisma@npm:5.6.0"
-  dependencies:
-    "@prisma/engines": "npm:5.6.0"
-  bin:
-    prisma: build/index.js
-  checksum: e6484ffd697f0591fe9e7fd0f55c366eeee5c909b8e061071308834e3f1145922f953277e03a43bec187bc7bcbeab61a722b8a9c5300e91380ca2ad3b0e6a842
   languageName: node
   linkType: hard
 
