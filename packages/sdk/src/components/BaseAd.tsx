@@ -56,7 +56,7 @@ export const BaseAd = ({ id, title, description, image, isLoading, styling, env 
 
           backendTrpcClient(env)
             .credentials.getPublicCredentials.query({ message: signMessage, signature, did, wallet: account })
-            .then((credentials) => {
+            .then((credentials: any) => {
               setCredentials(credentials.map(cloneCredential));
               setFetchingCredentials(false);
               setCredentialsFetched(true);

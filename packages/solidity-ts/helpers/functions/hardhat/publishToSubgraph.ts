@@ -10,6 +10,7 @@ export const contractsDir = './generated';
 export const graphDir = '../subgraph';
 export const webappDir = '../webapp/src/generated';
 export const sdkDir = '../sdk/src/generated';
+export const relayerDir = '../relayer/src/generated';
 
 const publishContract = (dir: string, contractName: string): boolean => {
   try {

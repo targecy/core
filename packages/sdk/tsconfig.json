@@ -11,19 +11,19 @@
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "incremental": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "rootDirs": [".", "../common/src"],
+    "rootDirs": ["."],
     "baseUrl": ".",
-    "jsx": "preserve",
-    "jsxImportSource": "@emotion/react",
+    "jsx": "react-jsx",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@backend/*": ["../backend/src/*"],
+      "@relayer/*": ["../relayer/src/*"]
     }
   },
-  "include": ["src", "../common/src", "codegen.ts", "apollo.config.js"],
+  "include": ["src", "codegen.ts", "apollo.config.js"],
   "exclude": [
     "**/node_modules",
     "**/node_modules/**/*",
