@@ -1,4 +1,4 @@
-import { Targecy, Targecy__factory } from '~generated/contract-types';
+import { Targecy, Targecy__factory } from '../generated/contract-types';
 import { localhost_targecyProxy, mumbai_targecyProxy } from '../generated/config/config.json';
 import { ethers } from 'ethers';
 
