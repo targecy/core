@@ -15,6 +15,7 @@ import '../styles/tailwind.css';
 import { NextPage } from 'next';
 import { compose } from '@reduxjs/toolkit';
 import { datadogRum } from '@datadog/browser-rum';
+import { datadogLogs } from '@datadog/browser-logs';
 
 import { env } from '~~/env.mjs';
 import { withProviders } from '~~/lib/withProviders';
@@ -40,6 +41,16 @@ datadogRum.init({
   trackResources: true,
   trackLongTasks: true,
   defaultPrivacyLevel: 'mask-user-input',
+});
+
+datadogLogs.init({
+  clientToken: 'pub8b1d36983b7012cb76a1af361bcb75cc',
+  site: 'datadoghq.com',
+  service: 'dapp',
+  env: env.NEXT_PUBLIC_VERCEL_ENV,
+  version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+  forwardErrorsToLogs: true,
+  sessionSampleRate: 100,
 });
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
