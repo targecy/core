@@ -44,7 +44,7 @@ datadogRum.init({
 });
 
 datadogLogs.init({
-  clientToken: 'pub8b1d36983b7012cb76a1af361bcb75cc',
+  clientToken: 'puba07a9f47cba40760139fec60df972df9',
   site: 'datadoghq.com',
   service: 'dapp',
   env: env.NEXT_PUBLIC_VERCEL_ENV,
