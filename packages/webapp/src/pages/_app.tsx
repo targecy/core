@@ -14,7 +14,9 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import '../styles/tailwind.css';
 import { NextPage } from 'next';
 import { compose } from '@reduxjs/toolkit';
+import { datadogRum } from '@datadog/browser-rum';
 
+import { env } from '~~/env.mjs';
 import { withProviders } from '~~/lib/withProviders';
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
@@ -24,6 +26,21 @@ export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
+
+datadogRum.init({
+  applicationId: 'c67b2bb4-e954-4ec8-b652-2faeb725d198',
+  clientToken: 'pub8b1d36983b7012cb76a1af361bcb75cc',
+  site: 'datadoghq.com',
+  service: 'dapp',
+  env: env.NEXT_PUBLIC_VERCEL_ENV,
+  version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 0,
+  trackUserInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: 'mask-user-input',
+});
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
