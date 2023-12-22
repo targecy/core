@@ -1257,6 +1257,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@datadog/browser-core@npm:5.6.0":
+  version: 5.6.0
+  resolution: "@datadog/browser-core@npm:5.6.0"
+  checksum: df04079a158a0f4e0e31e17dac881b8be4c6df0a1349f774b0e187714474dfb438854f0e6f69d23dc7caeaea73be22df1925baf129130fbe199a0b40d58a4836
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-rum-core@npm:5.6.0":
+  version: 5.6.0
+  resolution: "@datadog/browser-rum-core@npm:5.6.0"
+  dependencies:
+    "@datadog/browser-core": "npm:5.6.0"
+  checksum: 11c808bbd7cc9a99af595d8ea38dc7b06eb4d931ed4e192ded7e66242e94ac055abf2991c18abfbcef8fa289bc2371a82ce653d00cd2d0a193fb48459835d3ab
+  languageName: node
+  linkType: hard
+
+"@datadog/browser-rum@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "@datadog/browser-rum@npm:5.6.0"
+  dependencies:
+    "@datadog/browser-core": "npm:5.6.0"
+    "@datadog/browser-rum-core": "npm:5.6.0"
+  peerDependencies:
+    "@datadog/browser-logs": 5.6.0
+  peerDependenciesMeta:
+    "@datadog/browser-logs":
+      optional: true
+  checksum: 0cacc614ac6fcb6584b757dadd335f5926f42c1ed706bc01b85d4c293683bb43e19763939ecf94b798c6ceacf3cea86b7da81a1ed04e4eb80dea3fad267bb672
+  languageName: node
+  linkType: hard
+
 "@defi-wonderland/smock@npm:^2.3.0":
   version: 2.3.5
   resolution: "@defi-wonderland/smock@npm:2.3.5"
@@ -7512,6 +7543,7 @@ __metadata:
     "@0xpolygonid/js-sdk": "npm:^1.0.3"
     "@ant-design/icons": "npm:^5.2.5"
     "@babel/runtime": "npm:^7.19.0"
+    "@datadog/browser-rum": "npm:^5.6.0"
     "@emotion/cache": "npm:^11.10.3"
     "@emotion/core": "npm:^11.0.0"
     "@emotion/react": "npm:^11.10.4"
