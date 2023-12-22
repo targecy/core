@@ -1,4 +1,4 @@
-import { getContract } from 'utils';
+import { getContract } from '../../utils';
 import { Targecy } from '../../generated/contract-types';
 
 type ConsumeAdParams = Parameters<Targecy['consumeAdViaRelayer']>;
