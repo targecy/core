@@ -1,5 +1,5 @@
 import { getContract } from 'utils';
-import { Targecy } from '~generated/contract-types';
+import { Targecy } from '../../generated/contract-types';
 
 type ConsumeAdParams = Parameters<Targecy['consumeAdViaRelayer']>;
 export async function consumeAd(params: ConsumeAdParams) {

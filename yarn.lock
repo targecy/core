@@ -1264,6 +1264,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@datadog/browser-logs@npm:^5.6.0":
+  version: 5.6.0
+  resolution: "@datadog/browser-logs@npm:5.6.0"
+  dependencies:
+    "@datadog/browser-core": "npm:5.6.0"
+  peerDependencies:
+    "@datadog/browser-rum": 5.6.0
+  peerDependenciesMeta:
+    "@datadog/browser-rum":
+      optional: true
+  checksum: c65c1160555dbae3a4b0cda1fc395e2555ad6881e9e230faca286e00bfbc64e743e8510a5554a4eba451679f1d8554432f2471139317b215d92bec5a58f81ea8
+  languageName: node
+  linkType: hard
+
 "@datadog/browser-rum-core@npm:5.6.0":
   version: 5.6.0
   resolution: "@datadog/browser-rum-core@npm:5.6.0"
@@ -7543,6 +7557,7 @@ __metadata:
     "@0xpolygonid/js-sdk": "npm:^1.0.3"
     "@ant-design/icons": "npm:^5.2.5"
     "@babel/runtime": "npm:^7.19.0"
+    "@datadog/browser-logs": "npm:^5.6.0"
     "@datadog/browser-rum": "npm:^5.6.0"
     "@emotion/cache": "npm:^11.10.3"
     "@emotion/core": "npm:^11.0.0"
