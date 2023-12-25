@@ -7,7 +7,7 @@ export async function consumeAd(params: ConsumeAdParams) {
 
   const receipt = await contract.consumeAdViaRelayer(...params);
 
-  // @todo (Martin): append hash to a queue and verify it later
+  // @todo (Martin): append hash to a queue and verify if it was mined
 
   return receipt.hash;
 }

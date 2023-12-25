@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { TargecyContextType } from '../components/misc/Context';
-import { Ad, AdFragmentFragmentDoc, useGetAllAdsQuery } from '../generated/graphql.types';
+import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
 import { getValidCredentialByProofRequest, useCredentials } from '..';
 
 export type AdMetadata = {
@@ -20,8 +20,12 @@ export const useAds = (context: TargecyContextType) => {
   const credentials = useCredentials(context);
 
   const validAds =
-    data?.ads.filter((ad) =>
-      ad?.audiences.some((a) => a.segments.every((zk) => getValidCredentialByProofRequest(credentials.credentials, zk)))
+    data?.ads.filter(
+      (ad) =>
+        ad?.audiences.length === 0 ||
+        ad?.audiences.some((a) =>
+          a.segments.every((zk) => getValidCredentialByProofRequest(credentials.credentials, zk))
+        )
     ) || [];
 
   const [completeAds, setCompleteAds] = useState<
@@ -41,14 +45,15 @@ export const useAds = (context: TargecyContextType) => {
       for (const ad of validAds) {
         const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
         const json = await newMetadata.json();
-        finalAds.push({
-          ad,
-          metadata: {
-            title: json.title,
-            description: json.description,
-            image: json.image,
-          },
-        });
+        if (json.image.startsWith('ipfs://') || json.image.startsWith('http://') || json.image.startsWith('https://'))
+          finalAds.push({
+            ad,
+            metadata: {
+              title: json.title,
+              description: json.description,
+              image: json.image,
+            },
+          });
       }
 
       setCompleteAds(finalAds);

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { Ad } from '@targecy/sdk';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,7 +12,7 @@ import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
+import { addressZero, targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
 import { useWallet } from '~~/hooks';
 import { fetchMetadata } from '~~/utils/metadata';
@@ -702,23 +703,22 @@ export const AdEditorComponent = (id?: string) => {
             </Formik>
             <div className="flex flex-col ">
               {/* Preview  */}
-              <label className="ml-8 mr-8 mt-8 text-2xl text-secondary">Preview </label>
-              <div className="mb-4 ml-8 mr-8 mt-4">
-                <div className="card flex flex-row items-center rounded border border-white-light bg-white p-2 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                  <div className="h-40 w-40 overflow-hidden rounded">
-                    <img
-                      className="h-full w-full object-scale-down"
-                      src={
-                        previewValues.image || 'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
-                      }
-                    />
-                  </div>
-                  <div className="card-body m-2">
-                    <h1 className="card-title">{previewValues.title || 'Title'}</h1>
-                    <p>{previewValues.description || 'Description'}</p>
-                  </div>
-                </div>
+              <div className="flex justify-center">
+                <Ad
+                  styling={{
+                    borderRadius: '10px',
+                    width: '400px',
+                    height: '400px',
+                  }}
+                  publisher={addressZero}
+                  demo={{
+                    title: previewValues.title || 'Title',
+                    description: previewValues.description || 'Description',
+                    image:
+                      previewValues.image || 'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg',
+                  }}></Ad>
               </div>
+
               <div
                 hidden={potentialReach === undefined}
                 className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">

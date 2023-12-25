@@ -19,6 +19,7 @@ export type Scalars = {
 
 export type Ad = {
   __typename?: 'Ad';
+  active: Scalars['Boolean'];
   advertiser: Advertiser;
   attribution: Scalars['Int8'];
   audiences: Array<Audience>;
@@ -27,7 +28,7 @@ export type Ad = {
   consumptions: Scalars['BigInt'];
   consumptionsPerDay: Array<ConsumptionsPerDay>;
   endingTimestamp: Scalars['BigInt'];
-  id: Scalars['Bytes'];
+  id: Scalars['ID'];
   maxConsumptionsPerDay: Scalars['BigInt'];
   maxPricePerConsumption: Scalars['BigInt'];
   metadataURI: Scalars['String'];
@@ -66,6 +67,10 @@ export type AdConsumptionsPerDayArgs = {
 export type Ad_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  active_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  active_not?: InputMaybe<Scalars['Boolean']>;
+  active_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   advertiser?: InputMaybe<Scalars['String']>;
   advertiser_?: InputMaybe<Advertiser_Filter>;
   advertiser_contains?: InputMaybe<Scalars['String']>;
@@ -139,16 +144,14 @@ export type Ad_Filter = {
   endingTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   endingTimestamp_not?: InputMaybe<Scalars['BigInt']>;
   endingTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  id?: InputMaybe<Scalars['Bytes']>;
-  id_contains?: InputMaybe<Scalars['Bytes']>;
-  id_gt?: InputMaybe<Scalars['Bytes']>;
-  id_gte?: InputMaybe<Scalars['Bytes']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']>;
-  id_lte?: InputMaybe<Scalars['Bytes']>;
-  id_not?: InputMaybe<Scalars['Bytes']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
   maxConsumptionsPerDay?: InputMaybe<Scalars['BigInt']>;
   maxConsumptionsPerDay_gt?: InputMaybe<Scalars['BigInt']>;
   maxConsumptionsPerDay_gte?: InputMaybe<Scalars['BigInt']>;
@@ -213,6 +216,7 @@ export type Ad_Filter = {
 };
 
 export enum Ad_OrderBy {
+  Active = 'active',
   Advertiser = 'advertiser',
   AdvertiserAdsQuantity = 'advertiser__adsQuantity',
   AdvertiserClicks = 'advertiser__clicks',
@@ -235,6 +239,42 @@ export enum Ad_OrderBy {
   RemainingBudget = 'remainingBudget',
   StartingTimestamp = 'startingTimestamp',
   TotalBudget = 'totalBudget'
+}
+
+export type Admin = {
+  __typename?: 'Admin';
+  id: Scalars['String'];
+};
+
+export type Admin_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Admin_Filter>>>;
+  id?: InputMaybe<Scalars['String']>;
+  id_contains?: InputMaybe<Scalars['String']>;
+  id_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_ends_with?: InputMaybe<Scalars['String']>;
+  id_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_gt?: InputMaybe<Scalars['String']>;
+  id_gte?: InputMaybe<Scalars['String']>;
+  id_in?: InputMaybe<Array<Scalars['String']>>;
+  id_lt?: InputMaybe<Scalars['String']>;
+  id_lte?: InputMaybe<Scalars['String']>;
+  id_not?: InputMaybe<Scalars['String']>;
+  id_not_contains?: InputMaybe<Scalars['String']>;
+  id_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_not_ends_with?: InputMaybe<Scalars['String']>;
+  id_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_not_in?: InputMaybe<Array<Scalars['String']>>;
+  id_not_starts_with?: InputMaybe<Scalars['String']>;
+  id_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id_starts_with?: InputMaybe<Scalars['String']>;
+  id_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  or?: InputMaybe<Array<InputMaybe<Admin_Filter>>>;
+};
+
+export enum Admin_OrderBy {
+  Id = 'id'
 }
 
 export type Advertiser = {
@@ -336,7 +376,7 @@ export enum Advertiser_OrderBy {
 export type Audience = {
   __typename?: 'Audience';
   consumptions: Scalars['BigInt'];
-  id: Scalars['Bytes'];
+  id: Scalars['ID'];
   metadataURI: Scalars['String'];
   segments: Array<Segment>;
 };
@@ -362,16 +402,14 @@ export type Audience_Filter = {
   consumptions_lte?: InputMaybe<Scalars['BigInt']>;
   consumptions_not?: InputMaybe<Scalars['BigInt']>;
   consumptions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  id?: InputMaybe<Scalars['Bytes']>;
-  id_contains?: InputMaybe<Scalars['Bytes']>;
-  id_gt?: InputMaybe<Scalars['Bytes']>;
-  id_gte?: InputMaybe<Scalars['Bytes']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']>;
-  id_lte?: InputMaybe<Scalars['Bytes']>;
-  id_not?: InputMaybe<Scalars['Bytes']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
   metadataURI?: InputMaybe<Scalars['String']>;
   metadataURI_contains?: InputMaybe<Scalars['String']>;
   metadataURI_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -421,7 +459,7 @@ export type Block_Height = {
 
 export type ConsumptionsPerDay = {
   __typename?: 'ConsumptionsPerDay';
-  adId: Scalars['Bytes'];
+  adId: Scalars['ID'];
   consumptions: Scalars['BigInt'];
   day: Scalars['BigInt'];
   id: Scalars['String'];
@@ -430,16 +468,14 @@ export type ConsumptionsPerDay = {
 export type ConsumptionsPerDay_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  adId?: InputMaybe<Scalars['Bytes']>;
-  adId_contains?: InputMaybe<Scalars['Bytes']>;
-  adId_gt?: InputMaybe<Scalars['Bytes']>;
-  adId_gte?: InputMaybe<Scalars['Bytes']>;
-  adId_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  adId_lt?: InputMaybe<Scalars['Bytes']>;
-  adId_lte?: InputMaybe<Scalars['Bytes']>;
-  adId_not?: InputMaybe<Scalars['Bytes']>;
-  adId_not_contains?: InputMaybe<Scalars['Bytes']>;
-  adId_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  adId?: InputMaybe<Scalars['ID']>;
+  adId_gt?: InputMaybe<Scalars['ID']>;
+  adId_gte?: InputMaybe<Scalars['ID']>;
+  adId_in?: InputMaybe<Array<Scalars['ID']>>;
+  adId_lt?: InputMaybe<Scalars['ID']>;
+  adId_lte?: InputMaybe<Scalars['ID']>;
+  adId_not?: InputMaybe<Scalars['ID']>;
+  adId_not_in?: InputMaybe<Array<Scalars['ID']>>;
   and?: InputMaybe<Array<InputMaybe<ConsumptionsPerDay_Filter>>>;
   consumptions?: InputMaybe<Scalars['BigInt']>;
   consumptions_gt?: InputMaybe<Scalars['BigInt']>;
@@ -531,16 +567,25 @@ export enum OrderDirection {
 
 export type Publisher = {
   __typename?: 'Publisher';
+  active: Scalars['Boolean'];
   adsQuantity: Scalars['BigInt'];
   clicks: Scalars['BigInt'];
   conversions: Scalars['BigInt'];
+  cpa: Scalars['BigInt'];
+  cpc: Scalars['BigInt'];
+  cpi: Scalars['BigInt'];
   id: Scalars['String'];
   impressions: Scalars['BigInt'];
+  usersRewardsPercentage: Scalars['BigInt'];
 };
 
 export type Publisher_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  active_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  active_not?: InputMaybe<Scalars['Boolean']>;
+  active_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   adsQuantity?: InputMaybe<Scalars['BigInt']>;
   adsQuantity_gt?: InputMaybe<Scalars['BigInt']>;
   adsQuantity_gte?: InputMaybe<Scalars['BigInt']>;
@@ -566,6 +611,30 @@ export type Publisher_Filter = {
   conversions_lte?: InputMaybe<Scalars['BigInt']>;
   conversions_not?: InputMaybe<Scalars['BigInt']>;
   conversions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpa?: InputMaybe<Scalars['BigInt']>;
+  cpa_gt?: InputMaybe<Scalars['BigInt']>;
+  cpa_gte?: InputMaybe<Scalars['BigInt']>;
+  cpa_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpa_lt?: InputMaybe<Scalars['BigInt']>;
+  cpa_lte?: InputMaybe<Scalars['BigInt']>;
+  cpa_not?: InputMaybe<Scalars['BigInt']>;
+  cpa_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpc?: InputMaybe<Scalars['BigInt']>;
+  cpc_gt?: InputMaybe<Scalars['BigInt']>;
+  cpc_gte?: InputMaybe<Scalars['BigInt']>;
+  cpc_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpc_lt?: InputMaybe<Scalars['BigInt']>;
+  cpc_lte?: InputMaybe<Scalars['BigInt']>;
+  cpc_not?: InputMaybe<Scalars['BigInt']>;
+  cpc_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpi?: InputMaybe<Scalars['BigInt']>;
+  cpi_gt?: InputMaybe<Scalars['BigInt']>;
+  cpi_gte?: InputMaybe<Scalars['BigInt']>;
+  cpi_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpi_lt?: InputMaybe<Scalars['BigInt']>;
+  cpi_lte?: InputMaybe<Scalars['BigInt']>;
+  cpi_not?: InputMaybe<Scalars['BigInt']>;
+  cpi_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   id?: InputMaybe<Scalars['String']>;
   id_contains?: InputMaybe<Scalars['String']>;
   id_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -595,14 +664,27 @@ export type Publisher_Filter = {
   impressions_not?: InputMaybe<Scalars['BigInt']>;
   impressions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   or?: InputMaybe<Array<InputMaybe<Publisher_Filter>>>;
+  usersRewardsPercentage?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_gt?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_gte?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  usersRewardsPercentage_lt?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_lte?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_not?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export enum Publisher_OrderBy {
+  Active = 'active',
   AdsQuantity = 'adsQuantity',
   Clicks = 'clicks',
   Conversions = 'conversions',
+  Cpa = 'cpa',
+  Cpc = 'cpc',
+  Cpi = 'cpi',
   Id = 'id',
-  Impressions = 'impressions'
+  Impressions = 'impressions',
+  UsersRewardsPercentage = 'usersRewardsPercentage'
 }
 
 export type Query = {
@@ -610,6 +692,8 @@ export type Query = {
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   ad?: Maybe<Ad>;
+  admin?: Maybe<Admin>;
+  admins: Array<Admin>;
   ads: Array<Ad>;
   advertiser?: Maybe<Advertiser>;
   advertisers: Array<Advertiser>;
@@ -635,6 +719,24 @@ export type QueryAdArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryAdminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryAdminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Admin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Admin_Filter>;
 };
 
 
@@ -758,7 +860,7 @@ export type QuerySegmentsArgs = {
 
 export type Segment = {
   __typename?: 'Segment';
-  id: Scalars['Bytes'];
+  id: Scalars['ID'];
   issuer: Issuer;
   metadataURI: Scalars['String'];
   queryCircuitId: Scalars['String'];
@@ -766,23 +868,21 @@ export type Segment = {
   querySchema: Scalars['BigInt'];
   querySlotIndex: Scalars['BigInt'];
   queryValue: Array<Scalars['BigInt']>;
-  validator: Scalars['Bytes'];
+  validator: Scalars['String'];
 };
 
 export type Segment_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   and?: InputMaybe<Array<InputMaybe<Segment_Filter>>>;
-  id?: InputMaybe<Scalars['Bytes']>;
-  id_contains?: InputMaybe<Scalars['Bytes']>;
-  id_gt?: InputMaybe<Scalars['Bytes']>;
-  id_gte?: InputMaybe<Scalars['Bytes']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  id_lt?: InputMaybe<Scalars['Bytes']>;
-  id_lte?: InputMaybe<Scalars['Bytes']>;
-  id_not?: InputMaybe<Scalars['Bytes']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  id?: InputMaybe<Scalars['ID']>;
+  id_gt?: InputMaybe<Scalars['ID']>;
+  id_gte?: InputMaybe<Scalars['ID']>;
+  id_in?: InputMaybe<Array<Scalars['ID']>>;
+  id_lt?: InputMaybe<Scalars['ID']>;
+  id_lte?: InputMaybe<Scalars['ID']>;
+  id_not?: InputMaybe<Scalars['ID']>;
+  id_not_in?: InputMaybe<Array<Scalars['ID']>>;
   issuer?: InputMaybe<Scalars['String']>;
   issuer_?: InputMaybe<Issuer_Filter>;
   issuer_contains?: InputMaybe<Scalars['String']>;
@@ -875,16 +975,26 @@ export type Segment_Filter = {
   queryValue_not?: InputMaybe<Array<Scalars['BigInt']>>;
   queryValue_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
   queryValue_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
-  validator?: InputMaybe<Scalars['Bytes']>;
-  validator_contains?: InputMaybe<Scalars['Bytes']>;
-  validator_gt?: InputMaybe<Scalars['Bytes']>;
-  validator_gte?: InputMaybe<Scalars['Bytes']>;
-  validator_in?: InputMaybe<Array<Scalars['Bytes']>>;
-  validator_lt?: InputMaybe<Scalars['Bytes']>;
-  validator_lte?: InputMaybe<Scalars['Bytes']>;
-  validator_not?: InputMaybe<Scalars['Bytes']>;
-  validator_not_contains?: InputMaybe<Scalars['Bytes']>;
-  validator_not_in?: InputMaybe<Array<Scalars['Bytes']>>;
+  validator?: InputMaybe<Scalars['String']>;
+  validator_contains?: InputMaybe<Scalars['String']>;
+  validator_contains_nocase?: InputMaybe<Scalars['String']>;
+  validator_ends_with?: InputMaybe<Scalars['String']>;
+  validator_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  validator_gt?: InputMaybe<Scalars['String']>;
+  validator_gte?: InputMaybe<Scalars['String']>;
+  validator_in?: InputMaybe<Array<Scalars['String']>>;
+  validator_lt?: InputMaybe<Scalars['String']>;
+  validator_lte?: InputMaybe<Scalars['String']>;
+  validator_not?: InputMaybe<Scalars['String']>;
+  validator_not_contains?: InputMaybe<Scalars['String']>;
+  validator_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  validator_not_ends_with?: InputMaybe<Scalars['String']>;
+  validator_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  validator_not_in?: InputMaybe<Array<Scalars['String']>>;
+  validator_not_starts_with?: InputMaybe<Scalars['String']>;
+  validator_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  validator_starts_with?: InputMaybe<Scalars['String']>;
+  validator_starts_with_nocase?: InputMaybe<Scalars['String']>;
 };
 
 export enum Segment_OrderBy {
@@ -905,6 +1015,8 @@ export type Subscription = {
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   ad?: Maybe<Ad>;
+  admin?: Maybe<Admin>;
+  admins: Array<Admin>;
   ads: Array<Ad>;
   advertiser?: Maybe<Advertiser>;
   advertisers: Array<Advertiser>;
@@ -930,6 +1042,24 @@ export type SubscriptionAdArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionAdminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionAdminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Admin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Admin_Filter>;
 };
 
 
@@ -1085,68 +1215,146 @@ export enum _SubgraphErrorPolicy_ {
   Deny = 'deny'
 }
 
-export type AdvertiserFragmentFragment = { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, remainingBudget: any, totalBudget: any };
+export type AdminFragmentFragment = { __typename?: 'Admin', id: string };
 
-export type ConsumptionsPerDayFragmentFragment = { __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: any, consumptions: any };
+export type GetAllAdminsQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type AdFragmentFragment = { __typename?: 'Ad', id: any, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, remainingBudget: any, totalBudget: any }, audiences: Array<{ __typename?: 'Audience', id: any, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: any, consumptions: any }> };
+
+export type GetAllAdminsQuery = { __typename?: 'Query', admins: Array<{ __typename?: 'Admin', id: string }> };
+
+export type GetAdminQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetAdminQuery = { __typename?: 'Query', admin?: { __typename?: 'Admin', id: string } | null };
+
+export type AdFragmentFragment = { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> };
 
 export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: any, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, remainingBudget: any, totalBudget: any }, audiences: Array<{ __typename?: 'Audience', id: any, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: any, consumptions: any }> }> };
+export type GetAllAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
 export type GetAdToShowQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAdToShowQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: any, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, remainingBudget: any, totalBudget: any }, audiences: Array<{ __typename?: 'Audience', id: any, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: any, consumptions: any }> }> };
+export type GetAdToShowQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
-export type GetAdByIdQueryVariables = Exact<{
-  id?: InputMaybe<Scalars['Bytes']>;
+export type GetAdQueryVariables = Exact<{
+  id: Scalars['ID'];
 }>;
 
 
-export type GetAdByIdQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: any, metadataURI: string, attribution: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, remainingBudget: any, totalBudget: any }, audiences: Array<{ __typename?: 'Audience', id: any, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: any, consumptions: any }> }> };
+export type GetAdQuery = { __typename?: 'Query', ad?: { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> } | null };
 
-export type AudienceFragmentFragment = { __typename?: 'Audience', id: any, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
+export type GetLastAdsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetLastAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+
+export type GetAdsByAdvertiserQueryVariables = Exact<{
+  advertiserId: Scalars['String'];
+}>;
+
+
+export type GetAdsByAdvertiserQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+
+export type AdvertiserFragmentFragment = { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any };
+
+export type GetAllAdvertisersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllAdvertisersQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, totalBudget: any, remainingBudget: any, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+
+export type GetAdvertiserQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetAdvertiserQuery = { __typename?: 'Query', advertiser?: { __typename?: 'Advertiser', id: string, totalBudget: any, remainingBudget: any, adsQuantity: any, impressions: any, clicks: any, conversions: any } | null };
+
+export type AudienceFragmentFragment = { __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
 export type GetAllAudiencesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAudiencesQuery = { __typename?: 'Query', audiences: Array<{ __typename?: 'Audience', id: any, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }> };
+export type GetAllAudiencesQuery = { __typename?: 'Query', audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }> };
 
-export type PublisherFragmentFragment = { __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any };
+export type GetAudienceQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetAudienceQuery = { __typename?: 'Query', audience?: { __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> } | null };
+
+export type GetLastAudiencesQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetLastAudiencesQuery = { __typename?: 'Query', audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> }> };
+
+export type PublisherFragmentFragment = { __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any };
 
 export type GetAllPublishersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllPublishersQuery = { __typename?: 'Query', publishers: Array<{ __typename?: 'Publisher', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any }> };
+export type GetAllPublishersQuery = { __typename?: 'Query', publishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }> };
 
-export type SegmentFragmentFragment = { __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } };
+export type GetPublisherQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetPublisherQuery = { __typename?: 'Query', publisher?: { __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any } | null };
+
+export type SegmentFragmentFragment = { __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } };
 
 export type GetAllSegmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', id: any, metadataURI: string, validator: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
+export type GetAllSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
 
+export type GetSegmentQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetSegmentQuery = { __typename?: 'Query', segment?: { __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } } | null };
+
+export type GetLastSegmentsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+}>;
+
+
+export type GetLastSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, validator: string, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string, issuer: { __typename?: 'Issuer', id: string } }> };
+
+export const AdminFragmentFragmentDoc = `
+    fragment AdminFragment on Admin {
+  id
+}
+    `;
 export const AdvertiserFragmentFragmentDoc = `
     fragment AdvertiserFragment on Advertiser {
   id
+  totalBudget
+  remainingBudget
   adsQuantity
   impressions
   clicks
   conversions
-  remainingBudget
-  totalBudget
 }
     `;
 export const SegmentFragmentFragmentDoc = `
     fragment SegmentFragment on Segment {
   id
+  metadataURI
   issuer {
     id
   }
-  metadataURI
   validator
   querySchema
   querySlotIndex
@@ -1168,18 +1376,15 @@ export const AudienceFragmentFragmentDoc = `
 export const PublisherFragmentFragmentDoc = `
     fragment PublisherFragment on Publisher {
   id
+  active
+  cpi
+  cpc
+  cpa
+  usersRewardsPercentage
   adsQuantity
   impressions
   clicks
   conversions
-}
-    `;
-export const ConsumptionsPerDayFragmentFragmentDoc = `
-    fragment ConsumptionsPerDayFragment on ConsumptionsPerDay {
-  id
-  day
-  adId
-  consumptions
 }
     `;
 export const AdFragmentFragmentDoc = `
@@ -1190,6 +1395,7 @@ export const AdFragmentFragmentDoc = `
   }
   metadataURI
   attribution
+  active
   startingTimestamp
   endingTimestamp
   audiences {
@@ -1205,13 +1411,29 @@ export const AdFragmentFragmentDoc = `
   maxPricePerConsumption
   consumptions
   consumptionsPerDay {
-    ...ConsumptionsPerDayFragment
+    id
+    day
+    adId
+    consumptions
   }
 }
     ${AdvertiserFragmentFragmentDoc}
 ${AudienceFragmentFragmentDoc}
-${PublisherFragmentFragmentDoc}
-${ConsumptionsPerDayFragmentFragmentDoc}`;
+${PublisherFragmentFragmentDoc}`;
+export const GetAllAdminsDocument = `
+    query GetAllAdmins {
+  admins {
+    ...AdminFragment
+  }
+}
+    ${AdminFragmentFragmentDoc}`;
+export const GetAdminDocument = `
+    query GetAdmin($id: ID!) {
+  admin(id: $id) {
+    ...AdminFragment
+  }
+}
+    ${AdminFragmentFragmentDoc}`;
 export const GetAllAdsDocument = `
     query GetAllAds {
   ads {
@@ -1221,21 +1443,63 @@ export const GetAllAdsDocument = `
     ${AdFragmentFragmentDoc}`;
 export const GetAdToShowDocument = `
     query GetAdToShow {
-  ads(where: {audiences_not: []}, orderBy: id, orderDirection: desc) {
+  ads(where: {audiences_not: []}, orderBy: remainingBudget, orderDirection: desc) {
     ...AdFragment
   }
 }
     ${AdFragmentFragmentDoc}`;
-export const GetAdByIdDocument = `
-    query GetAdById($id: Bytes) {
-  ads(where: {id: $id}) {
+export const GetAdDocument = `
+    query GetAd($id: ID!) {
+  ad(id: $id) {
     ...AdFragment
   }
 }
     ${AdFragmentFragmentDoc}`;
+export const GetLastAdsDocument = `
+    query GetLastAds($limit: Int!) {
+  ads(first: $limit) {
+    ...AdFragment
+  }
+}
+    ${AdFragmentFragmentDoc}`;
+export const GetAdsByAdvertiserDocument = `
+    query GetAdsByAdvertiser($advertiserId: String!) {
+  ads(where: {advertiser: $advertiserId}) {
+    ...AdFragment
+  }
+}
+    ${AdFragmentFragmentDoc}`;
+export const GetAllAdvertisersDocument = `
+    query GetAllAdvertisers {
+  ads {
+    ...AdFragment
+  }
+}
+    ${AdFragmentFragmentDoc}`;
+export const GetAdvertiserDocument = `
+    query GetAdvertiser($id: ID!) {
+  advertiser(id: $id) {
+    ...AdvertiserFragment
+  }
+}
+    ${AdvertiserFragmentFragmentDoc}`;
 export const GetAllAudiencesDocument = `
     query GetAllAudiences {
   audiences {
+    ...AudienceFragment
+  }
+}
+    ${AudienceFragmentFragmentDoc}`;
+export const GetAudienceDocument = `
+    query GetAudience($id: ID!) {
+  audience(id: $id) {
+    ...AudienceFragment
+  }
+}
+    ${AudienceFragmentFragmentDoc}`;
+export const GetLastAudiencesDocument = `
+    query GetLastAudiences($limit: Int!) {
+  audiences(first: $limit) {
     ...AudienceFragment
   }
 }
@@ -1247,9 +1511,30 @@ export const GetAllPublishersDocument = `
   }
 }
     ${PublisherFragmentFragmentDoc}`;
+export const GetPublisherDocument = `
+    query GetPublisher($id: ID!) {
+  publisher(id: $id) {
+    ...PublisherFragment
+  }
+}
+    ${PublisherFragmentFragmentDoc}`;
 export const GetAllSegmentsDocument = `
     query GetAllSegments {
   segments {
+    ...SegmentFragment
+  }
+}
+    ${SegmentFragmentFragmentDoc}`;
+export const GetSegmentDocument = `
+    query GetSegment($id: ID!) {
+  segment(id: $id) {
+    ...SegmentFragment
+  }
+}
+    ${SegmentFragmentFragmentDoc}`;
+export const GetLastSegmentsDocument = `
+    query GetLastSegments($limit: Int!) {
+  segments(first: $limit) {
     ...SegmentFragment
   }
 }
@@ -1258,27 +1543,60 @@ export const GetAllSegmentsDocument = `
 const injectedRtkApi = api.injectEndpoints({
   overrideExisting: true,
   endpoints: (build) => ({
+    GetAllAdmins: build.query<GetAllAdminsQuery, GetAllAdminsQueryVariables | void>({
+      query: (variables) => ({ document: GetAllAdminsDocument, variables })
+    }),
+    GetAdmin: build.query<GetAdminQuery, GetAdminQueryVariables>({
+      query: (variables) => ({ document: GetAdminDocument, variables })
+    }),
     GetAllAds: build.query<GetAllAdsQuery, GetAllAdsQueryVariables | void>({
       query: (variables) => ({ document: GetAllAdsDocument, variables })
     }),
     GetAdToShow: build.query<GetAdToShowQuery, GetAdToShowQueryVariables | void>({
       query: (variables) => ({ document: GetAdToShowDocument, variables })
     }),
-    GetAdById: build.query<GetAdByIdQuery, GetAdByIdQueryVariables | void>({
-      query: (variables) => ({ document: GetAdByIdDocument, variables })
+    GetAd: build.query<GetAdQuery, GetAdQueryVariables>({
+      query: (variables) => ({ document: GetAdDocument, variables })
+    }),
+    GetLastAds: build.query<GetLastAdsQuery, GetLastAdsQueryVariables>({
+      query: (variables) => ({ document: GetLastAdsDocument, variables })
+    }),
+    GetAdsByAdvertiser: build.query<GetAdsByAdvertiserQuery, GetAdsByAdvertiserQueryVariables>({
+      query: (variables) => ({ document: GetAdsByAdvertiserDocument, variables })
+    }),
+    GetAllAdvertisers: build.query<GetAllAdvertisersQuery, GetAllAdvertisersQueryVariables | void>({
+      query: (variables) => ({ document: GetAllAdvertisersDocument, variables })
+    }),
+    GetAdvertiser: build.query<GetAdvertiserQuery, GetAdvertiserQueryVariables>({
+      query: (variables) => ({ document: GetAdvertiserDocument, variables })
     }),
     GetAllAudiences: build.query<GetAllAudiencesQuery, GetAllAudiencesQueryVariables | void>({
       query: (variables) => ({ document: GetAllAudiencesDocument, variables })
     }),
+    GetAudience: build.query<GetAudienceQuery, GetAudienceQueryVariables>({
+      query: (variables) => ({ document: GetAudienceDocument, variables })
+    }),
+    GetLastAudiences: build.query<GetLastAudiencesQuery, GetLastAudiencesQueryVariables>({
+      query: (variables) => ({ document: GetLastAudiencesDocument, variables })
+    }),
     GetAllPublishers: build.query<GetAllPublishersQuery, GetAllPublishersQueryVariables | void>({
       query: (variables) => ({ document: GetAllPublishersDocument, variables })
     }),
+    GetPublisher: build.query<GetPublisherQuery, GetPublisherQueryVariables>({
+      query: (variables) => ({ document: GetPublisherDocument, variables })
+    }),
     GetAllSegments: build.query<GetAllSegmentsQuery, GetAllSegmentsQueryVariables | void>({
       query: (variables) => ({ document: GetAllSegmentsDocument, variables })
+    }),
+    GetSegment: build.query<GetSegmentQuery, GetSegmentQueryVariables>({
+      query: (variables) => ({ document: GetSegmentDocument, variables })
+    }),
+    GetLastSegments: build.query<GetLastSegmentsQuery, GetLastSegmentsQueryVariables>({
+      query: (variables) => ({ document: GetLastSegmentsDocument, variables })
     }),
   }),
 });
 
 export { injectedRtkApi as api };
-export const { useGetAllAdsQuery, useLazyGetAllAdsQuery, useGetAdToShowQuery, useLazyGetAdToShowQuery, useGetAdByIdQuery, useLazyGetAdByIdQuery, useGetAllAudiencesQuery, useLazyGetAllAudiencesQuery, useGetAllPublishersQuery, useLazyGetAllPublishersQuery, useGetAllSegmentsQuery, useLazyGetAllSegmentsQuery } = injectedRtkApi;
+export const { useGetAllAdminsQuery, useLazyGetAllAdminsQuery, useGetAdminQuery, useLazyGetAdminQuery, useGetAllAdsQuery, useLazyGetAllAdsQuery, useGetAdToShowQuery, useLazyGetAdToShowQuery, useGetAdQuery, useLazyGetAdQuery, useGetLastAdsQuery, useLazyGetLastAdsQuery, useGetAdsByAdvertiserQuery, useLazyGetAdsByAdvertiserQuery, useGetAllAdvertisersQuery, useLazyGetAllAdvertisersQuery, useGetAdvertiserQuery, useLazyGetAdvertiserQuery, useGetAllAudiencesQuery, useLazyGetAllAudiencesQuery, useGetAudienceQuery, useLazyGetAudienceQuery, useGetLastAudiencesQuery, useLazyGetLastAudiencesQuery, useGetAllPublishersQuery, useLazyGetAllPublishersQuery, useGetPublisherQuery, useLazyGetPublisherQuery, useGetAllSegmentsQuery, useLazyGetAllSegmentsQuery, useGetSegmentQuery, useLazyGetSegmentQuery, useGetLastSegmentsQuery, useLazyGetLastSegmentsQuery } = injectedRtkApi;
 

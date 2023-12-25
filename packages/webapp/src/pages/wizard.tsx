@@ -17,6 +17,8 @@ const schema = z.object({
   titleColor: z.string().describe('Please fill the title color'),
   subtitleColor: z.string().describe('Please fill the subtitle color'),
   borderRadius: z.string().describe('Please fill the border radius'),
+  boxShadow: z.string().describe('Please fill the box shadow'),
+  border: z.string().describe('Please fill the border'),
   publisher: z.string(),
 });
 
@@ -57,6 +59,8 @@ const Demo = () => {
                 titleColor: params.styling?.titleColor,
                 subtitleColor: params.styling?.subtitleColor,
                 borderRadius: params.styling?.borderRadius,
+                boxShadow: params.styling?.boxShadow,
+                border: params.styling?.border,
                 publisher: ethers.constants.AddressZero,
               }}
               validationSchema={toFormikValidationSchema(schema)}
@@ -240,6 +244,66 @@ const Demo = () => {
                       )}
                     </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-10">
+                    <div className={submitCount ? (errors.boxShadow ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="titleColor">Box Shadow</label>
+                      <Field
+                        validate={validateField}
+                        name="boxShadow"
+                        type="text"
+                        id="boxShadow"
+                        placeholder="Enter Box Shadow"
+                        className="form-input"
+                        onChange={(e: any) => {
+                          const current = params;
+                          if (!current.styling) current.styling = {};
+                          current.styling.boxShadow = e.target.value;
+                          setParams(current);
+                          handleChange(e);
+                          setCode(getCode(params));
+                        }}
+                      />
+
+                      {submitCount ? (
+                        errors.boxShadow ? (
+                          <div className="mt-1 text-danger">{errors.boxShadow}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={submitCount ? (errors.border ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="border">Border</label>
+                      <Field
+                        validate={validateField}
+                        name="border"
+                        type="text"
+                        id="border"
+                        placeholder="Enter Border"
+                        className="form-input"
+                        onChange={(e: any) => {
+                          const current = params;
+                          if (!current.styling) current.styling = {};
+                          current.styling.border = e.target.value;
+                          setParams(current);
+                          handleChange(e);
+                          setCode(getCode(params));
+                        }}
+                      />
+
+                      {submitCount ? (
+                        errors.border ? (
+                          <div className="mt-1 text-danger">{errors.border}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
                   <div className={submitCount ? (errors.publisher ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="publisher">Publisher Address </label>
                     <Field
@@ -278,7 +342,7 @@ const Demo = () => {
                 <code>{''}</code>
               </pre>
               <CopyOutlined
-                className="float-right mr-5 active:hidden"
+                className="float-right mr-5 active:opacity-50"
                 onClick={() => copyToClipboard(code)}></CopyOutlined>
               <pre data-prefix="3. " className="max-w-full break-words  pl-3">
                 <code>{code}</code>
@@ -286,7 +350,17 @@ const Demo = () => {
             </div>
           </div>
           <div className="flex place-items-center  justify-center">
-            <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={params.publisher} styling={params.styling} />{' '}
+            <Ad
+              // demo={{
+              //   title: 'This is a demo title',
+              //   description: 'This is an engaging demo description!',
+              //   image:
+              //     'https://www.coindesk.com/resizer/hcfZgL-G2lLBytu1w2FQPfGIxNY=/975x548/filters:quality(80):format(jpg)/cloudfront-us-east-1.images.arcpublishing.com/coindesk/J6PYAX7JBZGQLCBW2Y6FWQXEKU.jpg',
+              // }}
+              env={env.NEXT_PUBLIC_VERCEL_ENV}
+              publisher={params.publisher}
+              styling={params.styling}
+            />{' '}
           </div>
         </div>
       </div>

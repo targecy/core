@@ -6,7 +6,7 @@ import { useAsync } from 'react-use';
 import { useContractRead } from 'wagmi';
 
 import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
-import * as abi from '../generated/abis/Targecy.json';
+import abi from '../generated/abis/Targecy.json';
 
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { env } from '~~/env.mjs';
@@ -32,7 +32,7 @@ export const Home = () => {
     functionName: '_adId',
   });
   const adsQuantity = adsQuantityData?.toString() ?? 0;
-
+  
   const { data: audiencesQuantityData } = useContractRead({
     address: targecyContractAddress,
     abi,
@@ -50,7 +50,7 @@ export const Home = () => {
   const { data: totalConsumptionsData } = useContractRead({
     address: targecyContractAddress,
     abi,
-    functionName: 'totalConsumptions',
+    functionName: 'totalconsumptions',
   });
   const totalConsumptions = totalConsumptionsData?.toString() ?? 0;
 

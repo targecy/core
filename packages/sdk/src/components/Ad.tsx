@@ -1,23 +1,32 @@
 import { BaseAd, BaseAdStyling } from './BaseAd';
-import { Address, Config } from 'wagmi';
+import { Address } from 'wagmi';
 import { useAd } from '../hooks/useAd';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { TargecyComponent, TargecyServicesContext } from './misc';
 import { ethers } from 'ethers';
 import { Skeleton } from 'antd';
 import { environment } from '../utils/context';
+import { relayerTrpcClient } from '..';
+import { useDispatch } from 'react-redux';
+import { setEnvironment } from '../utils/environent.state';
 
 const defaultStyling: BaseAdStyling = {
   width: '500px',
-  height: '400px',
+  height: '300px',
   backgroundColor: '#212121',
   titleColor: '#ffffff',
   subtitleColor: '#ffffff',
-  borderRadius: '0px',
+  borderRadius: '15px',
+  boxShadow: 'gray 0px 5px 15px',
+  border: '1px solid #212121',
 };
 
 type SharedAdParams = {
-  isDemo?: boolean;
+  demo?: {
+    title: string;
+    description: string;
+    image: string;
+  };
   publisher: Address;
   env?: environment;
 };
@@ -25,6 +34,41 @@ type SharedAdParams = {
 type BaseAdParams = {
   styling?: BaseAdStyling;
 } & SharedAdParams;
+
+const demoAd = {
+  ad: {
+    active: true,
+    advertiser: {
+      id: ethers.ZeroAddress,
+      impressions: 0,
+      clicks: 0,
+      conversions: 0,
+      totalBudget: 0,
+      remainingBudget: 0,
+      adsQuantity: 0,
+    },
+    id: '0',
+    attribution: 0,
+    blacklistedPublishers: [],
+    blacklistedWeekdays: [],
+    consumptions: 0,
+    consumptionsPerDay: [],
+    maxConsumptionsPerDay: 9999,
+    endingTimestamp: 0,
+    maxPricePerConsumption: 0,
+    metadataURI: '',
+    startingTimestamp: 0,
+    remainingBudget: 0,
+    audiences: [],
+    totalBudget: 0,
+  },
+  metadata: {
+    title: 'Are you looking for the best yield!',
+    description: 'Protocol is the best yield aggregator in the world.',
+    image:
+      'https://cdn.dribbble.com/users/1925451/screenshots/4224926/media/3fec19dcc072afde5c91df61e49cc14e.jpg?resize=400x0',
+  },
+};
 
 export type AdParams = BaseAdParams;
 
@@ -50,66 +94,93 @@ const isValidStyling = (styling?: BaseAdStyling): boolean =>
   (!styling?.width || validateMinWidth(styling.width)) && (!styling?.height || validateMinHeight(styling.height));
 
 export const AdComponent = (params: AdParams) => {
-  const context = useContext(TargecyServicesContext);
-  let { ad, isLoading } = useAd(context);
+  // const dispatch = useDispatch();
+  // dispatch(setEnvironment(params.env));
 
-  if (params.isDemo) {
-    ad = {
-      ad: {
-        advertiser: {
-          id: ethers.ZeroAddress,
-          impressions: 0,
-          clicks: 0,
-          conversions: 0,
-          totalBudget: 0,
-          remainingBudget: 0,
-          adsQuantity: 0,
-        },
-        id: '0',
-        attribution: 0,
-        blacklistedPublishers: [],
-        blacklistedWeekdays: [],
-        consumptions: 0,
-        consumptionsPerDay: [],
-        maxConsumptionsPerDay: 9999,
-        endingTimestamp: 0,
-        maxPricePerConsumption: 0,
-        metadataURI: '',
-        startingTimestamp: 0,
-        remainingBudget: 0,
-        audiences: [],
-        totalBudget: 0,
-      },
-      metadata: {
-        title: 'Are you looking for the best yield!',
-        description: 'Protocol is the best yield aggregator in the world.',
-        image:
-          'https://cdn.dribbble.com/users/1925451/screenshots/4224926/media/3fec19dcc072afde5c91df61e49cc14e.jpg?resize=400x0',
-      },
-    };
-    isLoading = false;
-  }
+  const context = useContext(TargecyServicesContext);
+  const [ad, setAd] = useState<ReturnType<typeof useAd>['ad']>();
+  const [isLoading, setIsLoading] = useState<ReturnType<typeof useAd>['isLoading']>(true);
+  const { ad: adFromNetwork, isLoading: isLoadingFromNetwork } = useAd(context);
+
+  useEffect(() => {
+    if (params.demo) {
+      const aux = demoAd;
+      aux.metadata = params.demo;
+      setAd(aux);
+      setIsLoading(false);
+    } else {
+      setAd(adFromNetwork);
+      setIsLoading(isLoadingFromNetwork);
+    }
+  }, [params.demo, adFromNetwork, isLoadingFromNetwork]);
+
+  const consumeAd = () => {
+    if (!ad?.ad) return undefined;
+
+    relayerTrpcClient(params.env ?? 'development')
+      .txs.consumeAd.mutate({
+        adId: ad.ad.id,
+        publisher: params.publisher,
+        data: '',
+        signature: '',
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .then((res) => {
+        console.log('Ad Consumed: ', res);
+      });
+  };
+
+  useEffect(() => {
+    if (ad?.ad?.attribution === 0 && !params.demo) {
+      // Impression attribution
+      consumeAd();
+    }
+  }, []); // Execute once, on mount
 
   if (isLoading) return <Skeleton style={{ width: params.styling?.width, height: params.styling?.height }}></Skeleton>;
 
-  if (!ad) return undefined;
+  if (!ad) return <p>No ads were found for you. Try again later.</p>;
 
-  return BaseAd({
-    id: ad.ad.id,
-    title: ad.metadata.title,
-    description: ad.metadata.description,
-    image: ad.metadata.image,
-    isLoading,
-    env: params.env || 'production',
-    styling: params.styling,
-  });
+  if (Number(ad.ad.attribution) === 0 || params.demo)
+    return (
+      <BaseAd
+        {...{
+          id: ad.ad.id,
+          title: ad.metadata.title,
+          description: ad.metadata.description,
+          image: ad.metadata.image,
+          isLoading,
+          env: params.env ?? 'production',
+          styling: params.styling,
+        }}></BaseAd>
+    );
+
+  if (Number(ad.ad.attribution) === 1)
+    return (
+      <div onClick={consumeAd}>
+        <BaseAd
+          {...{
+            id: ad.ad.id,
+            title: ad.metadata.title,
+            description: ad.metadata.description,
+            image: ad.metadata.image,
+            isLoading,
+            env: params.env ?? 'production',
+            styling: params.styling,
+          }}></BaseAd>
+      </div>
+    );
+
+  if (Number(ad.ad.attribution) === 2) return <p>Conversion attribution not developed yet.</p>;
 };
 
 export const Ad = (params: AdParams) => {
   if (!isValidStyling(params.styling)) {
     console.error('Invalid styling. Please review requirements.');
 
-    return <label>Invalid Configuration</label>;
+    return <p>Invalid Configuration</p>;
   }
 
   const style = { ...defaultStyling };
@@ -125,8 +196,10 @@ export const Ad = (params: AdParams) => {
           overflow: 'hidden',
           backgroundColor: style?.backgroundColor,
           borderRadius: style?.borderRadius,
+          boxShadow: style?.boxShadow,
+          border: style?.border,
         }}>
-        <AdComponent env={params.env} publisher={params.publisher} isDemo={params.isDemo} styling={style} />
+        <AdComponent env={params.env} publisher={params.publisher} demo={params.demo} styling={style} />
       </div>
     </TargecyComponent>
   );

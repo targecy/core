@@ -1,12 +1,12 @@
 import { gql } from 'graphql-request';
 
-export const GetAllSegments = gql`
+export const Segments = gql`
   fragment SegmentFragment on Segment {
     id
+    metadataURI
     issuer {
       id
     }
-    metadataURI
     validator
     querySchema
     querySlotIndex
@@ -17,6 +17,18 @@ export const GetAllSegments = gql`
 
   query GetAllSegments {
     segments {
+      ...SegmentFragment
+    }
+  }
+
+  query GetSegment($id: ID!) {
+    segment(id: $id) {
+      ...SegmentFragment
+    }
+  }
+
+  query GetLastSegments($limit: Int!) {
+    segments(first: $limit) {
       ...SegmentFragment
     }
   }

@@ -1,10 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { api, relayerApi } from '../services';
+import environmentReducer from './environent.state';
 
 export const rootReducer = combineReducers({
   baseApi: api.reducer,
   relayerApi: relayerApi.reducer,
-  // backendApi: backendApi.reducer,
+  environment: environmentReducer,
 });
 
 export const store = configureStore({

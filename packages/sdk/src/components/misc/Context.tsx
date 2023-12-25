@@ -1,12 +1,12 @@
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { ReactNode, createContext, useState } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { useAsync } from 'react-use';
 import { Config, WagmiConfig, createConfig, configureChains, mainnet, createStorage } from 'wagmi';
 
 import { UserIdentityType, createUserIdentity } from '../..';
-import { ZkServicesType, initServices } from '../../utils/context';
+import { ZkServicesType, environment, initServices } from '../../utils/context';
 import { store } from '../../utils/store';
 
 export type TargecyContextType = {
@@ -45,24 +45,9 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
     }
   }, []);
 
-  // const { chains, publicClient } = configureChains([mainnet], [publicProvider()]);
-
-  // const { connectors } = getDefaultWallets({
-  //   appName: 'Targecy',
-  //   projectId: 'f9753e832046896b8250567dc3231c56',
-  //   chains,
-  // });
-  // const config = createConfig({
-  //   autoConnect: true,
-  //   connectors,
-  //   publicClient,
-  // });
-
   return (
-    // <WagmiConfig config={config}>
-      <Provider store={store}>
-        <TargecyServicesContext.Provider value={context}>{children}</TargecyServicesContext.Provider>
-      </Provider>
-    // </WagmiConfig>
+    <Provider store={store}>
+      <TargecyServicesContext.Provider value={context}>{children}</TargecyServicesContext.Provider>
+    </Provider>
   );
 };

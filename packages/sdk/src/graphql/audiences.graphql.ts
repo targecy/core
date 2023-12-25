@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request';
 
-export const GetAllAudiences = gql`
+export const Audiences = gql`
   fragment AudienceFragment on Audience {
     id
     metadataURI
@@ -12,6 +12,18 @@ export const GetAllAudiences = gql`
 
   query GetAllAudiences {
     audiences {
+      ...AudienceFragment
+    }
+  }
+
+  query GetAudience($id: ID!) {
+    audience(id: $id) {
+      ...AudienceFragment
+    }
+  }
+
+  query GetLastAudiences($limit: Int!) {
+    audiences(first: $limit) {
       ...AudienceFragment
     }
   }

@@ -54,4 +54,10 @@ export const Ads = gql`
       ...AdFragment
     }
   }
+
+  query GetAdsByAdvertiser($advertiserId: String!) {
+    ads(where: { advertiser: $advertiserId }) {
+      ...AdFragment
+    }
+  }
 `;

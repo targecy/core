@@ -29,6 +29,7 @@ services:
       - ./accounts:/app/accounts
       - ./data:/var/lib/data
     mem_limit: 1024m
+    restart: always
     ports:
       - '8545:8545' # Expose the Ethereum RPC port
     command: >

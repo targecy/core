@@ -1,6 +1,5 @@
 import { getBackendUrl } from '@targecy/sdk';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-// import type { AppRouter as relayerAppRouter } from '../../../relayer/src/trpc/router/index';
 import superjson from 'superjson';
 
 import type { AppRouter as backendAppRouter } from '../../../backend/src/trpc/router/index';

@@ -25,7 +25,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   switch (network.name) {
     case 'localhost':
       config = {
-        defaultIssuer: 22382985665935745230331508376293136780434330883292739172972565885070348801n,
+        defaultIssuer: 22382985665935745230331508376293136780434330883292739172972565885070348801n, // This value is generated from issuer's DID and printed on backend startup
         admin: '0xc8e4fcff013b61bea893d54427f1a72691ffe7a2',
         vault: '0x8d78d554cba781b0744bf24dd84f23d7767f11a3',
       };

@@ -1,38 +1,8 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
+
 import { environment } from './context';
-
-export const relayerTrpcClient: any = (env: environment) =>
-  createTRPCProxyClient({
-    links: [
-      httpBatchLink({
-        url: getRelayerUrl(env),
-        fetch(url, options) {
-          return fetch(url, {
-            ...options,
-            mode: 'cors',
-          });
-        },
-      }),
-    ],
-    transformer: superjson as any,
-  });
-
-export const backendTrpcClient: any = (env: environment) =>
-  createTRPCProxyClient({
-    links: [
-      httpBatchLink({
-        url: getBackendUrl(env),
-        fetch(url, options) {
-          return fetch(url, {
-            ...options,
-            mode: 'cors',
-          });
-        },
-      }),
-    ],
-    transformer: superjson as any,
-  });
+import { appRouter } from '~/generated/types/relayer/router';
 
 export const getBackendUrl = (env: environment) => {
   switch (env) {
@@ -59,3 +29,21 @@ export const getRelayerUrl = (env: environment) => {
       throw new Error('Invalid environment');
   }
 };
+
+type RelayerAppRouter = typeof appRouter;
+
+export const relayerTrpcClient = (env: environment) =>
+  createTRPCProxyClient<RelayerAppRouter>({
+    links: [
+      httpBatchLink({
+        url: getBackendUrl(env),
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            mode: 'cors',
+          });
+        },
+      }),
+    ],
+    transformer: superjson as any,
+  });

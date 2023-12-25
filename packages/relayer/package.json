@@ -1,16 +1,10 @@
 {
   "name": "@targecy/relayer",
   "version": "0.0.1",
-  "main": "./trpc-api-export/dist/index.js",
-  "types": "./trpc-api-export/dist/index.d.ts",
-  "files": [
-    "trpc-api-export/dist",
-    "README.md"
-  ],
   "scripts": {
-    "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
-    "build": "shx rm -rf build && tsc -p tsconfig.json",
-    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
+    "build": "shx rm -rf build && tsc -p tsconfig.json && yarn export-types",
+    "dev": "concurrently \"ts-node-dev -r tsconfig-paths/register src/index.ts\" \"nodemon\"",
+    "export-types": "rm -rf types && rm -rf ../sdk/src/generated/types/relayer && npx tsc --declaration --outDir types && cp -r types/src/trpc ../sdk/src/generated/types/relayer && rm -rf types",
     "start": "node build/src/index.js",
     "lint": "eslint --max-warnings 0 .",
     "lint-fix": "eslint --fix .",
@@ -42,6 +36,7 @@
     "@types/express": "4.17.17",
     "@typescript-eslint/eslint-plugin": "6.4.1",
     "@typescript-eslint/parser": "6.4.1",
+    "concurrently": "^8.2.2",
     "eslint": "8.47.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-import-resolver-typescript": "3.6.0",
@@ -50,6 +45,7 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "8.0.3",
     "lint-staged": "14.0.1",
+    "nodemon": "^3.0.2",
     "prettier": "3.0.2",
     "prisma": "4.9.0",
     "semantic-release": "21.1.0",
