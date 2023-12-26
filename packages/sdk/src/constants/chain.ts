@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
 import deployedAddresses from '../generated/config/config.json' assert { type: 'json' };
-import { environment } from '~/utils/context';
+import { environment } from '../utils/context';
 import { Address } from 'viem';
 
 export const targecyContractAddress = (env: environment): Address => {

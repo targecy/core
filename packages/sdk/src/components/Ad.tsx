@@ -94,8 +94,12 @@ const isValidStyling = (styling?: BaseAdStyling): boolean =>
   (!styling?.width || validateMinWidth(styling.width)) && (!styling?.height || validateMinHeight(styling.height));
 
 export const AdComponent = (params: AdParams) => {
-  // const dispatch = useDispatch();
-  // dispatch(setEnvironment(params.env));
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setEnvironment(params.env));
+  }, [params.env, dispatch]);
+
 
   const context = useContext(TargecyServicesContext);
   const [ad, setAd] = useState<ReturnType<typeof useAd>['ad']>();
@@ -114,8 +118,12 @@ export const AdComponent = (params: AdParams) => {
     }
   }, [params.demo, adFromNetwork, isLoadingFromNetwork]);
 
+  const [isConsumed, setIsConsumed] = useState(false); // Consume only once.
   const consumeAd = () => {
     if (!ad?.ad) return undefined;
+    
+    setIsConsumed(true);
+    console.log('Consuming Ad');
 
     relayerTrpcClient(params.env ?? 'development')
       .txs.consumeAd.mutate({
@@ -133,11 +141,11 @@ export const AdComponent = (params: AdParams) => {
   };
 
   useEffect(() => {
-    if (ad?.ad?.attribution === 0 && !params.demo) {
+    if (Number(ad?.ad?.attribution) === 0 && !params.demo && !isConsumed) {
       // Impression attribution
       consumeAd();
     }
-  }, []); // Execute once, on mount
+  }, [ad?.ad?.attribution, params.demo]); // Execute once, on mount
 
   if (isLoading) return <Skeleton style={{ width: params.styling?.width, height: params.styling?.height }}></Skeleton>;
 

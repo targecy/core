@@ -4,7 +4,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
     ctx: {
         req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
         res: import("express").Response<any, Record<string, any>>;
-        prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+        prisma: import(".prisma/client").PrismaClient<{
+            log: {
+                emit: "event";
+                level: "query";
+            }[];
+        }, "query", false>;
     };
     meta: object;
     errorShape: import("@trpc/server").DefaultErrorShape;
@@ -15,7 +20,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
             ctx: {
                 req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
                 res: import("express").Response<any, Record<string, any>>;
-                prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+                prisma: import(".prisma/client").PrismaClient<{
+                    log: {
+                        emit: "event";
+                        level: "query";
+                    }[];
+                }, "query", false>;
             };
             meta: object;
             errorShape: import("@trpc/server").DefaultErrorShape;
@@ -23,7 +33,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
         }>;
         _meta: object;
         _ctx_out: {
-            prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+            prisma: import(".prisma/client").PrismaClient<{
+                log: {
+                    emit: "event";
+                    level: "query";
+                }[];
+            }, "query", false>;
             req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
             res: import("express").Response<any, Record<string, any>>;
         };
@@ -41,7 +56,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
             ctx: {
                 req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
                 res: import("express").Response<any, Record<string, any>>;
-                prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+                prisma: import(".prisma/client").PrismaClient<{
+                    log: {
+                        emit: "event";
+                        level: "query";
+                    }[];
+                }, "query", false>;
             };
             meta: object;
             errorShape: import("@trpc/server").DefaultErrorShape;
@@ -49,7 +69,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
         }>;
         _meta: object;
         _ctx_out: {
-            prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+            prisma: import(".prisma/client").PrismaClient<{
+                log: {
+                    emit: "event";
+                    level: "query";
+                }[];
+            }, "query", false>;
             req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
             res: import("express").Response<any, Record<string, any>>;
         };
@@ -75,7 +100,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
             ctx: {
                 req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
                 res: import("express").Response<any, Record<string, any>>;
-                prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+                prisma: import(".prisma/client").PrismaClient<{
+                    log: {
+                        emit: "event";
+                        level: "query";
+                    }[];
+                }, "query", false>;
             };
             meta: object;
             errorShape: import("@trpc/server").DefaultErrorShape;
@@ -83,7 +113,12 @@ export declare const txsRouter: import("@trpc/server").CreateRouterInner<import(
         }>;
         _meta: object;
         _ctx_out: {
-            prisma: import(".prisma/client").PrismaClient<import(".prisma/client").Prisma.PrismaClientOptions, never, import(".prisma/client").Prisma.RejectOnNotFound | import(".prisma/client").Prisma.RejectPerOperation | undefined>;
+            prisma: import(".prisma/client").PrismaClient<{
+                log: {
+                    emit: "event";
+                    level: "query";
+                }[];
+            }, "query", false>;
             req: import("express").Request<import("express-serve-static-core").ParamsDictionary, any, any, import("qs").ParsedQs, Record<string, any>>;
             res: import("express").Response<any, Record<string, any>>;
         };

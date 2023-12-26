@@ -2,7 +2,7 @@ import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 
 import { environment } from './context';
-import { appRouter } from '~/generated/types/relayer/router';
+import { appRouter } from '../generated/types/relayer/router';
 
 export const getBackendUrl = (env: environment) => {
   switch (env) {
@@ -36,7 +36,7 @@ export const relayerTrpcClient = (env: environment) =>
   createTRPCProxyClient<RelayerAppRouter>({
     links: [
       httpBatchLink({
-        url: getBackendUrl(env),
+        url: getRelayerUrl(env),
         fetch(url, options) {
           return fetch(url, {
             ...options,

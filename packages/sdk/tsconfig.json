@@ -18,7 +18,6 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "paths": {
-      "~/*": ["./src/*"],
       "@backend/*": ["../backend/src/*"],
       "@relayer/*": ["../relayer/src/*"]
     }

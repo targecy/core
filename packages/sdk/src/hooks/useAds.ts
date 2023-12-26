@@ -16,7 +16,7 @@ export type AdWithMetadata = {
 };
 
 export const useAds = (context: TargecyContextType) => {
-  const { data, isLoading } = useGetAllAdsQuery();
+  const { data, isLoading } = useGetAllAdsQuery({});
   const credentials = useCredentials(context);
 
   const validAds =

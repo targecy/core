@@ -1,10 +1,7 @@
-import { BaseQueryFn } from '@reduxjs/toolkit/dist/query';
-import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
-import { HYDRATE } from 'next-redux-wrapper';
 import { environment } from '../utils/context';
-import { getEnvironmentFromState } from '../utils/environent.state';
+import { GetAllAdsDocument } from '../generated/graphql.types';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
@@ -22,18 +19,16 @@ const getGraphQLUrl = (env: environment) => {
   }
 };
 
-export const graphqlBaseQuery = (): BaseQueryFn => async (args) => {
-  console.log('graphqlBaseQuery args:', args);
+export const graphqlBaseQuery: BaseQueryFn = async (args, api) => {
   const { document, variables } = args;
-
-  const env = 'development';
-
-  // @todo @martin: URGENT, select correct environment.
-
-  // const env = getEnvironmentFromState(api.getState()) ?? 'development';
-
-  // console.log('state', api.getState());
-  console.log('env', env);
+  const state:
+    | {
+        environment: {
+          environment: environment;
+        };
+      }
+    | undefined = api.getState() as any;
+  const env = state?.environment.environment ?? 'development';
 
   const baseUrl = getGraphQLUrl(env);
 
@@ -45,10 +40,10 @@ export const graphqlBaseQuery = (): BaseQueryFn => async (args) => {
 };
 
 export const api = createApi({
-  baseQuery: graphqlBaseQuery(), // @todo (Martin): Check
+  baseQuery: graphqlBaseQuery,
   reducerPath: baseApiReducerPath,
   tagTypes: baseApiTagTypes,
   endpoints: (build) => ({}),
 });
 
-export const {  } = api;
+export const {} = api;

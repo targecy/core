@@ -6,16 +6,33 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.publicProcedure = exports.router = exports.middleware = exports.createContext = exports.createBaseContext = void 0;
 const server_1 = require("@trpc/server");
 const superjson_1 = __importDefault(require("superjson"));
-const db_1 = require("../db");
+const client_1 = require("@prisma/client");
 /**
  * Creates a context without req/res, useful for testing
  */
-const createBaseContext = async () => ({
-    prisma: db_1.prisma,
-});
+const createBaseContext = () => {
+    const prisma = new client_1.PrismaClient({
+        log: [
+            {
+                emit: 'event',
+                level: 'query',
+            },
+        ],
+    });
+    if (process.env.NODE_ENV === 'development') {
+        prisma.$on('query', (e) => {
+            console.log('Query: ' + e.query);
+            console.log('Params: ' + e.params);
+            console.log('Duration: ' + e.duration + 'ms');
+        });
+    }
+    return {
+        prisma,
+    };
+};
 exports.createBaseContext = createBaseContext;
 const createContext = async ({ req, res }) => {
-    const baseContext = await (0, exports.createBaseContext)();
+    const baseContext = (0, exports.createBaseContext)();
     return {
         ...baseContext,
         req,
@@ -31,15 +48,14 @@ const t = server_1.initTRPC.context().create({
 });
 exports.middleware = t.middleware;
 exports.router = t.router;
-const logger = t.middleware(async ({ path, type, next }) => {
+const logger = t.middleware(async ({ path, type, rawInput, next }) => {
     const result = await next();
     if (result.ok) {
-        console.info(`Ok: ${JSON.stringify({ path, type })}`);
+        console.info(`Ok: ${JSON.stringify({ path })}`);
     }
     else {
-        console.error(`Error: ${JSON.stringify({ path, type })}`);
+        console.error(`Error`, { path, rawInput, type, error: result.error });
     }
     return result;
 });
 exports.publicProcedure = t.procedure.use(logger);
-// export const publicProcedure = t.procedure;
