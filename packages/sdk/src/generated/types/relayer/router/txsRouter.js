@@ -6,6 +6,7 @@ const relayer_service_1 = require("../../trpc/services/relayer.service");
 const zod_1 = require("zod");
 const viem_1 = require("viem");
 const server_1 = require("@trpc/server");
+const ethers_1 = require("ethers");
 exports.txsRouter = (0, __1.router)({
     list: __1.publicProcedure
         .input(zod_1.z.object({
@@ -28,16 +29,24 @@ exports.txsRouter = (0, __1.router)({
     consumeAd: __1.publicProcedure
         .input(zod_1.z.object({
         data: zod_1.z.string(),
-        signature: zod_1.z.string(),
         adId: zod_1.z.string(),
         publisher: zod_1.z.string(),
-        zkProofs: zod_1.z.any(),
+        zkProofs: zod_1.z
+            .object({
+            inputs: zod_1.z.array(zod_1.z.array(zod_1.z.any())),
+            a: zod_1.z.array(zod_1.z.tuple([zod_1.z.any(), zod_1.z.any()])),
+            b: zod_1.z.array(zod_1.z.tuple([zod_1.z.tuple([zod_1.z.any(), zod_1.z.any()]), zod_1.z.tuple([zod_1.z.any(), zod_1.z.any()])])),
+            c: zod_1.z.array(zod_1.z.tuple([zod_1.z.any(), zod_1.z.any()])),
+        })
+            .default({
+            inputs: [],
+            a: [],
+            b: [],
+            c: [],
+        }),
     }))
         .mutation(async ({ ctx, input }) => {
-        const viewer = await (0, viem_1.recoverMessageAddress)({
-            message: input.data,
-            signature: input.signature,
-        });
+        const viewer = ethers_1.ZeroAddress; // To be changed in attribution v1.
         const result = await (0, relayer_service_1.consumeAd)([viewer, input.adId, input.publisher, input.zkProofs]);
         const saved = await ctx.prisma.tx.create({
             data: {

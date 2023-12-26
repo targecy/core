@@ -17,13 +17,20 @@ import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
-  function initialize(address _zkProofsValidator, address _protocolVault, address targecyAdmin, uint256 _defaultIssuer) external initializer {
+  function initialize(
+    address _zkProofsValidator,
+    address _protocolVault,
+    address targecyAdmin,
+    uint256 _defaultIssuer,
+    address _relayerAddress
+  ) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
     zkProofsValidator = _zkProofsValidator;
     protocolVault = _protocolVault;
     defaultIssuer = _defaultIssuer;
+    relayerAddress = _relayerAddress;
 
     defaultImpressionPrice = 10000;
     defaultClickPrice = 100000;
@@ -64,6 +71,10 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
   function setDefaultClickPrice(uint256 _defaultClickPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     defaultClickPrice = _defaultClickPrice;
+  }
+
+  function setRelayerAddress(address _relayerAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    relayerAddress = _relayerAddress;
   }
 
   function setDefaultConversionPrice(uint256 _defaultConversionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {

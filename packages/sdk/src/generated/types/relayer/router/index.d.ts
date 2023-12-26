@@ -97,15 +97,23 @@ export declare const appRouter: import("@trpc/server").CreateRouterInner<import(
                 data: string;
                 adId: string;
                 publisher: string;
-                signature: string;
-                zkProofs?: any;
+                zkProofs?: {
+                    inputs: any[][];
+                    a: [any, any][];
+                    b: [[any, any], [any, any]][];
+                    c: [any, any][];
+                } | undefined;
             };
             _input_out: {
                 data: string;
                 adId: string;
                 publisher: string;
-                signature: string;
-                zkProofs?: any;
+                zkProofs: {
+                    inputs: any[][];
+                    a: [any, any][];
+                    b: [[any, any], [any, any]][];
+                    c: [any, any][];
+                };
             };
             _output_in: typeof import("@trpc/server").unsetMarker;
             _output_out: typeof import("@trpc/server").unsetMarker;

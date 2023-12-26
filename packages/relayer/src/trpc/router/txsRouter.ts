@@ -3,6 +3,7 @@ import { consumeAd } from '../../trpc/services/relayer.service';
 import { z } from 'zod';
 import { recoverMessageAddress } from 'viem';
 import { TRPCError } from '@trpc/server';
+import { ZeroAddress } from 'ethers';
 
 export const txsRouter = router({
   list: publicProcedure
@@ -28,17 +29,25 @@ export const txsRouter = router({
     .input(
       z.object({
         data: z.string(),
-        signature: z.string(),
         adId: z.string(),
         publisher: z.string(),
-        zkProofs: z.any(),
+        zkProofs: z
+          .object({
+            inputs: z.array(z.array(z.any())),
+            a: z.array(z.tuple([z.any(), z.any()])),
+            b: z.array(z.tuple([z.tuple([z.any(), z.any()]), z.tuple([z.any(), z.any()])])),
+            c: z.array(z.tuple([z.any(), z.any()])),
+          })
+          .default({
+            inputs: [],
+            a: [],
+            b: [],
+            c: [],
+          }),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const viewer = await recoverMessageAddress({
-        message: input.data,
-        signature: input.signature as `0x{string}`,
-      });
+      const viewer = ZeroAddress; // To be changed in attribution v1.
       const result = await consumeAd([viewer, input.adId, input.publisher, input.zkProofs]);
       const saved = await ctx.prisma.tx.create({
         data: {

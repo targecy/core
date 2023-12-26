@@ -24,6 +24,8 @@ interface ITargecy {
 
   function setDefaultIssuer(uint256 _defaultIssuer) external;
 
+  function setRelayerAddress(address _relayerAddress) external;
+
   function createAd(DataTypes.NewAd calldata ad) external payable;
 
   function pauseAd(uint256 adId) external;

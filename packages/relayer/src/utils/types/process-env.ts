@@ -7,7 +7,7 @@ import { z } from 'zod';
 const envVariables = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('staging'), z.literal('production')]),
   PORT: z.string().optional(),
-  WALLET_PRIVATE_KEY: z.string().startsWith('0x'),
+  PRIVATE_KEY: z.string().startsWith('0x'),
   CONTRACT_ADDRESS: z.string().startsWith('0x'),
 });
 

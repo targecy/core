@@ -8,7 +8,7 @@ import { hostname } from 'os';
 import * as abi from '../generated/abis/Targecy.json';
 
 export const getSettings = () => {
-  const env = process.env.NODE_ENV;
+  const env = process.env.NODE_ENV ?? 'staging';
 
   switch (env) {
     case 'development':
@@ -34,9 +34,8 @@ export const getSettings = () => {
 
 export const getContract = () => {
   const { address, provider, network } = getSettings();
-  if (!process.env.WALLET_PRIVATE_KEY) throw new Error('Set up wallet private key');
-  console.log('Wallet private key: ', process.env);
-  const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY, provider);
+  if (!process.env.PRIVATE_KEY) throw new Error('Set up wallet private key');
+  const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
   const targecy = new Targecy__factory(signer).attach(address) as Targecy;
   console.debug(
     `Targecy's address: ${address} | Wallet's address: ${signer.address} | Provider ready: ${provider.ready} | Network: ${network}`
