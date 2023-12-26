@@ -136,7 +136,7 @@ export const AdComponent = (params: AdParams) => {
         console.error(error);
       })
       .then((res) => {
-        console.log('Ad Consumed: ', res);
+        console.debug('Ad Consumed: ', res);
       });
   };
 
