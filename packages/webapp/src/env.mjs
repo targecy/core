@@ -1,19 +1,23 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
-import deployedAddresses from './generated/config/config.json' assert { type: 'json' };
+import localhostConfig from './generated/config/localhost.json' assert { type: 'json' };
+import mumbaiConfig from './generated/config/mumbai.json' assert { type: 'json' };
+import maticConfig from './generated/config/matic.json' assert { type: 'json' };
 
 const deployedAddressByEnv = (env) => {
   switch (env) {
     case 'development':
-      return deployedAddresses['localhost_targecyProxy'];
+      return localhostConfig.address;
     case 'preview':
-      return deployedAddresses['mumbai_targecyProxy'];
+      return mumbaiConfig.address;
     case 'production':
-      return deployedAddresses['matic_targecyProxy'];
+      return maticConfig.address;
     default:
       throw new Error(`Unknown env ${env}`);
   }
 };
+
+console.log();
 
 export const env = createEnv({
   server: {

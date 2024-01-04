@@ -1,4 +1,3 @@
-import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { Prisma } from '@prisma/client';
 
 import { getRandomInt, makeCredential } from './seed.helpers';
@@ -9,7 +8,7 @@ export const issuerData: Prisma.IssuerCreateInput = {
   profileNonce: 0,
 };
 
-export const credentials = (): W3CCredential[] => {
+export const credentials = () => {
   return [
     makeCredential({
       protocol: 'Compound',

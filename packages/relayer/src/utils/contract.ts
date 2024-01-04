@@ -1,6 +1,8 @@
 import { Targecy, Targecy__factory } from '../generated/contract-types';
-import { localhost_targecyProxy, mumbai_targecyProxy } from '../generated/config/config.json';
 import { ethers } from 'ethers';
+import localhostConfig from '../generated/config/localhost.json';
+import mumbaiConfig from '../generated/config/mumbai.json';
+import maticConfig from '../generated/config/matic.json';
 
 import * as abi from '../generated/abis/Targecy.json';
 
@@ -10,14 +12,14 @@ export const getSettings = () => {
   switch (env) {
     case 'development':
       return {
-        address: localhost_targecyProxy,
+        address: localhostConfig.address,
         provider: new ethers.JsonRpcProvider('http://localhost:8545'),
         network: 'localhost',
       };
     case 'staging':
       return {
         network: 'mumbai',
-        address: mumbai_targecyProxy,
+        address: mumbaiConfig.address,
         provider: new ethers.JsonRpcProvider(
           'https://rpc-mumbai.maticvigil.com/v1/0e5b8e0c0b3f6e0c5b4f4c0e8f6e0c5b4f4c0e8f/'
         ),

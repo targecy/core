@@ -56,13 +56,9 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
 
   console.log("Deploying Targecy's proxy...");
   const factory = await ethers.getContractFactory('Targecy');
-  const deploymentResult = await upgrades.deployProxy(
-    factory,
-    [config.validator, config.vault, config.admin, config.defaultIssuer],
-    {
-      verifySourceCode: true,
-    }
-  );
+  const deploymentResult = await upgrades.deployProxy(factory, [config.validator, config.vault, config.admin, config.defaultIssuer], {
+    verifySourceCode: true,
+  });
   const address = await deploymentResult.getAddress();
   console.log("Targecy's address: ", address);
 
@@ -81,16 +77,16 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   let current;
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    current = JSON.parse(getStringFromFile('../generated/config/config.json'));
+    current = JSON.parse(getStringFromFile(`../generated/config/${network.name}.json`));
   } catch (e) {
     current = {};
     console.log('No config file found, creating new one.');
   }
 
-  current = { ...current, ...{ [`${network.name}_targecyProxy`]: address } };
+  current = { ...current, ...{ [`address`]: address } };
   console.log(current);
 
-  saveStringToFile(JSON.stringify(current), '../generated/config/config.json', true);
+  saveStringToFile(JSON.stringify(current), `../generated/config/${network.name}.json`, true);
 };
 export default func;
 func.tags = ['MockValidator', 'Targecy'];

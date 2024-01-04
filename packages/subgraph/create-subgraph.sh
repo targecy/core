@@ -14,8 +14,9 @@ echo "Network: $network"
 
 cd $script_dir
 
-# Extract the address from config.json relative to the script location
-address=$(jq -r ".${network}_targecyProxy" "../solidity-ts/generated/config/config.json")
+# Extract the address from config relative to the script location
+# If network is localhost, use localhost.json, if mumbai, use mumbai.json, etc.
+address=$(jq -r ".address" "../solidity-ts/generated/config/${network}.json")
 
 echo "address: $address"
 

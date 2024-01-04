@@ -6,7 +6,7 @@ import { getCredentialIdentifier } from '../src/utils/credentials/credentials.ut
 import { credentials } from './data';
 
 export const credentialsData = (issuer: Issuer): Prisma.CredentialCreateManyInput[] =>
-  credentials().map((c: W3CCredential) => {
+  credentials().map((c: PartialCredential) => {
     return {
       did: c.id,
       type: c.type.toLocaleString(),
@@ -21,7 +21,20 @@ export function getRandomInt(max: number = 10000000000000000, min: number = 1000
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const makeCredential = (credentialSubject: any) => {
+type PartialCredential = Pick<
+  W3CCredential,
+  | 'id'
+  | 'type'
+  | 'issuer'
+  | 'issuanceDate'
+  | 'expirationDate'
+  | 'credentialSubject'
+  | 'credentialSchema'
+  | 'credentialStatus'
+  | '@context'
+>;
+
+export const makeCredential = (credentialSubject: any): PartialCredential => {
   return {
     id: 'did:' + getRandomInt(),
     type: ['ProtocolUsedTargecySchema'],
@@ -42,22 +55,6 @@ export const makeCredential = (credentialSubject: any) => {
     credentialStatus: {
       id: 'did:1',
       type: CredentialStatusType.Iden3commRevocationStatusV1,
-    },
-    merklize: () => {
-      const ret: any = '';
-      return ret;
-    },
-    getCoreClaimFromProof: () => {
-      const ret: any = '';
-      return ret;
-    },
-    getBJJSignature2021Proof: () => {
-      const ret: any = '';
-      return ret;
-    },
-    getIden3SparseMerkleTreeProof: () => {
-      const ret: any = '';
-      return ret;
     },
   };
 };

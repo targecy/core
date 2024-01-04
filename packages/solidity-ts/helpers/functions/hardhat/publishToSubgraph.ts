@@ -32,18 +32,25 @@ const publishContract = (dir: string, contractName: string): boolean => {
 export const hardhatPublishToOtherPackage = (dir: string): void => {
   console.log(chalk.white('Running Post Deploy: publish contracts to ' + dir + '...'));
 
-  // Copy config/config.json
+  // Copy addresses
   if (dir.includes('generated') && dir != contractsDir) {
-    console.log('Copying config/config.json to ' + dir + '...');
-    const configPath = `${contractsDir}/config/config.json`;
-    const configContent = JSON.parse(fs.readFileSync(configPath).toString() as string);
-    const folderPath = `${dir}/config`;
-    const destinyPath = `${dir}/config/config.json`;
-    if (!Boolean(fs.existsSync(folderPath))) {
-      fs.mkdirSync(folderPath);
+    for (const network of ['localhost', 'mumbai', 'matic'] as const) {
+      try {
+        console.log(`Copying config/${network}.json to ${dir}...`);
+        const configPath = `${contractsDir}/config/${network}.json`;
+        const configContent = JSON.parse(fs.readFileSync(configPath).toString() as string);
+        const folderPath = `${dir}/config`;
+        const destinyPath = `${dir}/config/${network}.json`;
+        if (!Boolean(fs.existsSync(folderPath))) {
+          fs.mkdirSync(folderPath);
+        }
+        fs.writeFileSync(destinyPath, JSON.stringify(configContent, null, 2));
+        console.log(chalk.green(` ✔️ Copied config/${network}.json to ${dir}!`));
+      } catch (e) {
+        console.log(chalk.red(`Failed to copy config/${network}.json to ${dir}. Error: ${e}`));
+        console.log(e);
+      }
     }
-    fs.writeFileSync(destinyPath, JSON.stringify(configContent, null, 2));
-    console.log(chalk.green(' ✔️ Copied config/config.json to ' + dir + '!'));
   }
 
   const deploymentSubdirs = fs.readdirSync(hardhatArtifactsDir + '/contracts/core/Targecy.sol');

@@ -7,7 +7,9 @@ require('dotenv').config();
 
 import { ethers } from 'hardhat';
 
-import * as deployedAddresses from '../generated/config/config.json';
+import localhostConfig from '../generated/config/localhost.json';
+import maticConfig from '../generated/config/matic.json';
+import mumbaiConfig from '../generated/config/mumbai.json';
 
 import { initializeData } from './seed/data';
 import { uploadMetadata } from './seed/utils';
@@ -45,8 +47,6 @@ const stringifySupportingBigInts = (obj: any) =>
 export async function seed(network: string, force = false): Promise<void> {
   console.log('Seeding contract... network:' + network + ' force: ' + force.toString());
 
-  const addresses: any = deployedAddresses;
-
   // Connect to the Ethereum network
   let provider, address;
   switch (network) {
@@ -55,15 +55,15 @@ export async function seed(network: string, force = false): Promise<void> {
         chainId: 1337,
         name: 'localhost',
       });
-      address = addresses.localhost_targecyProxy;
+      address = localhostConfig.address;
       break;
     case 'mumbai':
       provider = new ethers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com');
-      address = addresses.mumbai_targecyProxy;
+      address = mumbaiConfig.address;
       break;
     case 'matic':
       provider = new ethers.JsonRpcProvider('https://rpc-mainnet.maticvigil.com');
-      address = addresses.matic_targecyProxy;
+      address = maticConfig.address;
       break;
     default:
       console.log('Network not supported');

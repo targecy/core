@@ -4,6 +4,4 @@
 .openzeppelin
 scripts/addresses
 
-!generated/config/config.json
-
 deployments/localhost
