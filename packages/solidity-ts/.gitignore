@@ -1,6 +1,7 @@
 
 !generated/.gitignore
 /generated/**/*
+!generated/config
 .openzeppelin
 scripts/addresses
 
