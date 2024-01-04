@@ -5,7 +5,7 @@
 # Addresses
 
 **/config/config.json
-# **/config/localhost.json
+**/config/localhost.json
 
 #build
 *.tsbuildinfo
