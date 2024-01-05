@@ -13,10 +13,20 @@ network=${1:-localhost}
 echo "Network: $network"
 
 cd $script_dir
+hostname=$(hostname)
+echo "hostname: $hostname"
+
+echo "File:"
+cat "../solidity-ts/generated/config/${network}.json"
 
 # Extract the address from config relative to the script location
-# If network is localhost, use localhost.json, if mumbai, use mumbai.json, etc.
-address=$(jq -r ".address" "../solidity-ts/generated/config/${network}.json")
+# If network is localhost, use localhost.json, and fetch hostname  if mumbai, use mumbai.json, etc.
+
+if [ $network == "localhost" ]; then
+  address=$(jq -r ".[\"$hostname\"]" "../solidity-ts/generated/config/${network}.json")
+else
+  address=$(jq -r ".address" "../solidity-ts/generated/config/${network}.json")
+fi
 
 echo "address: $address"
 

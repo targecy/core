@@ -7,6 +7,8 @@ require('dotenv').config();
 
 import { ethers } from 'hardhat';
 
+import { hostname } from 'os';
+
 import localhostConfig from '../generated/config/localhost.json';
 import maticConfig from '../generated/config/matic.json';
 import mumbaiConfig from '../generated/config/mumbai.json';
@@ -55,7 +57,7 @@ export async function seed(network: string, force = false): Promise<void> {
         chainId: 1337,
         name: 'localhost',
       });
-      address = localhostConfig.address;
+      address = localhostConfig[hostname() as keyof typeof localhostConfig];
       break;
     case 'mumbai':
       provider = new ethers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com');

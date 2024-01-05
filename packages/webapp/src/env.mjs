@@ -3,11 +3,12 @@ import { z } from 'zod';
 import localhostConfig from './generated/config/localhost.json' assert { type: 'json' };
 import mumbaiConfig from './generated/config/mumbai.json' assert { type: 'json' };
 import maticConfig from './generated/config/matic.json' assert { type: 'json' };
+import { hostname } from 'os';
 
 const deployedAddressByEnv = (env) => {
   switch (env) {
     case 'development':
-      return localhostConfig.address;
+      return localhostConfig[hostname()];
     case 'preview':
       return mumbaiConfig.address;
     case 'production':

@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import localhostConfig from '../generated/config/localhost.json';
 import mumbaiConfig from '../generated/config/mumbai.json';
 import maticConfig from '../generated/config/matic.json';
+import { hostname } from 'os';
 
 import * as abi from '../generated/abis/Targecy.json';
 
@@ -12,7 +13,7 @@ export const getSettings = () => {
   switch (env) {
     case 'development':
       return {
-        address: localhostConfig.address,
+        address: localhostConfig[hostname() as keyof typeof localhostConfig],
         provider: new ethers.JsonRpcProvider('http://localhost:8545'),
         network: 'localhost',
       };

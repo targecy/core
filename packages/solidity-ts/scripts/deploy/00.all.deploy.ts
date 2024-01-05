@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require('dotenv').config();
 
+import { hostname } from 'os';
+
 import { ethers } from 'hardhat';
 import { DeployFunction } from 'hardhat-deploy/types';
 
@@ -83,7 +85,12 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     console.log('No config file found, creating new one.');
   }
 
-  current = { ...current, ...{ [`address`]: address } };
+  if (network.name === 'localhost') {
+    current = { ...current, ...{ [hostname()]: address } };
+  } else {
+    current = { ...current, ...{ [`address`]: address } };
+  }
+
   console.log(current);
 
   saveStringToFile(JSON.stringify(current), `../generated/config/${network.name}.json`, true);
