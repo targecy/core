@@ -4393,18 +4393,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-block@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@nomicfoundation/ethereumjs-block@npm:5.0.1"
+"@nomicfoundation/ethereumjs-block@npm:5.0.2":
+  version: 5.0.2
+  resolution: "@nomicfoundation/ethereumjs-block@npm:5.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-trie": "npm:6.0.1"
-    "@nomicfoundation/ethereumjs-tx": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-trie": "npm:6.0.2"
+    "@nomicfoundation/ethereumjs-tx": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     ethereum-cryptography: "npm:0.1.3"
     ethers: "npm:^5.7.1"
-  checksum: a7e646326d661fc87f064713f63e92ddf0e5ab9a916a1c38015ac94ce3d0794e97f9d669fa9159acfc8d1fce29f1371043211af3b09bdcc81cc3fdd77520aa99
+  checksum: e3d7c24aa10306ae26389ce464f71e36fe8d331706e942a626594afdd097451d3bda210238b1da843e582b347f4349115b53432076b0f9b37ba36e31818b12cb
   languageName: node
   linkType: hard
 
@@ -4428,24 +4428,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-blockchain@npm:7.0.1":
-  version: 7.0.1
-  resolution: "@nomicfoundation/ethereumjs-blockchain@npm:7.0.1"
+"@nomicfoundation/ethereumjs-blockchain@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@nomicfoundation/ethereumjs-blockchain@npm:7.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-block": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-ethash": "npm:3.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-trie": "npm:6.0.1"
-    "@nomicfoundation/ethereumjs-tx": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-block": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-ethash": "npm:3.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-trie": "npm:6.0.2"
+    "@nomicfoundation/ethereumjs-tx": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     abstract-level: "npm:^1.0.3"
     debug: "npm:^4.3.3"
     ethereum-cryptography: "npm:0.1.3"
     level: "npm:^8.0.0"
     lru-cache: "npm:^5.1.1"
     memory-level: "npm:^1.0.0"
-  checksum: ba148ed3b7223e555b41dc73fff15ddf5ce8141746c78f06d07be29045770de19b3cfd06acdd785331a775e8fd129639017e17843c32b10a1069dee8893245f7
+  checksum: 4cc27cf1d39175f93ec02b4627f0320258685fc19541c0cb2b9208204e65a924f3fbeb69c23840d7100a75c6d88b7a0c65f552cb44bf1e06b530a39ac6f04e17
   languageName: node
   linkType: hard
 
@@ -4459,13 +4459,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-common@npm:4.0.1":
-  version: 4.0.1
-  resolution: "@nomicfoundation/ethereumjs-common@npm:4.0.1"
+"@nomicfoundation/ethereumjs-common@npm:4.0.2":
+  version: 4.0.2
+  resolution: "@nomicfoundation/ethereumjs-common@npm:4.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     crc-32: "npm:^1.2.0"
-  checksum: d4b842527145078d82b2b7140f97fad31644ae3e42ebd461f4b2c44d20924dbb47179f174e7dca28390b4bb8f28588ead5279c1facea8bb2047810a29bbbf1ed
+  checksum: ea0199240a9cfc932450421b00ba390a9d357092fdbb6ceee2b09ee6a8bc7820fb1df076ead94e0b6748158620ec655099e401816d47ad24eb603694f3a787d1
   languageName: node
   linkType: hard
 
@@ -4483,17 +4483,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-ethash@npm:3.0.1":
-  version: 3.0.1
-  resolution: "@nomicfoundation/ethereumjs-ethash@npm:3.0.1"
+"@nomicfoundation/ethereumjs-ethash@npm:3.0.2":
+  version: 3.0.2
+  resolution: "@nomicfoundation/ethereumjs-ethash@npm:3.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-block": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-block": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     abstract-level: "npm:^1.0.3"
     bigint-crypto-utils: "npm:^3.0.23"
     ethereum-cryptography: "npm:0.1.3"
-  checksum: 2791b40797f7afc05419a5d6a7448d3e3b6511bac073381ae96368eb6d9b8b6ca24632b03bdc273729fb87434e2c19fb873eb9372774f3cc731ff0279d07655a
+  checksum: c7d963a6806e70cb96ff290a9bc461fb6ad4f74144d9f38eb5f190b228d9b0961aa67d398f80da4b59efb8c57957c936b32faab26c17cf07a6145efe0a6d16e9
   languageName: node
   linkType: hard
 
@@ -4513,19 +4513,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-evm@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@nomicfoundation/ethereumjs-evm@npm:2.0.1"
+"@nomicfoundation/ethereumjs-evm@npm:2.0.2":
+  version: 2.0.2
+  resolution: "@nomicfoundation/ethereumjs-evm@npm:2.0.2"
   dependencies:
     "@ethersproject/providers": "npm:^5.7.1"
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-tx": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-tx": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     debug: "npm:^4.3.3"
     ethereum-cryptography: "npm:0.1.3"
     mcl-wasm: "npm:^0.7.1"
     rustbn.js: "npm:~0.2.0"
-  checksum: 40b2a6a03eae247761f856ee636d15dc91f5ab54f82fcb642d11e7cf73262eef7c7b658e95fcd4f9348586334979329068641fe21ca53e688bdac8063f53dd4f
+  checksum: abcc280500d776a214b282d5a66093fdf3b91582e9f69d6f35e0c7000f58af57060cd384acda7d147193f962f17a8c4ed55e5f2453b2d5b43d694d6588306ef9
   languageName: node
   linkType: hard
 
@@ -4538,12 +4538,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-rlp@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@nomicfoundation/ethereumjs-rlp@npm:5.0.1"
+"@nomicfoundation/ethereumjs-rlp@npm:5.0.2":
+  version: 5.0.2
+  resolution: "@nomicfoundation/ethereumjs-rlp@npm:5.0.2"
   bin:
     rlp: bin/rlp
-  checksum: 2e2835997cfb617eb639f78cdf333a6a5e36e7c682ef25d5e6de8521870bd78916811eac8ce6d48dd552d01757eed631232d35d375d83747d518ac0f8011f2fe
+  checksum: ceb820296624f45fa8f7cd3e2cfa4d229722953e91631e6fb3fbca9d1ebe8eea21a8ef4917fa15295f05bed369db06eb81f44e74382b1bca4ece2bb000c6e6d4
   languageName: node
   linkType: hard
 
@@ -4562,17 +4562,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-statemanager@npm:2.0.1":
-  version: 2.0.1
-  resolution: "@nomicfoundation/ethereumjs-statemanager@npm:2.0.1"
+"@nomicfoundation/ethereumjs-statemanager@npm:2.0.2":
+  version: 2.0.2
+  resolution: "@nomicfoundation/ethereumjs-statemanager@npm:2.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
     debug: "npm:^4.3.3"
     ethereum-cryptography: "npm:0.1.3"
     ethers: "npm:^5.7.1"
     js-sdsl: "npm:^4.1.4"
-  checksum: 37254bb3abcd0592c4b6202de86862134d0ecbe1501792cfef65639615fdae867020826dcc2e60faf6dbf979e58cd2a519ac345b8f3361ecffb6a2d2d24014c1
+  checksum: 0eb939c75aa63517ec8832330c02a71c060fd8424ebe608a072c563a0a9d16621dca9a9c851fa98971316aed80dd9174a0d72ae09633a9698367a3316d773389
   languageName: node
   linkType: hard
 
@@ -4588,16 +4588,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-trie@npm:6.0.1":
-  version: 6.0.1
-  resolution: "@nomicfoundation/ethereumjs-trie@npm:6.0.1"
+"@nomicfoundation/ethereumjs-trie@npm:6.0.2":
+  version: 6.0.2
+  resolution: "@nomicfoundation/ethereumjs-trie@npm:6.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     "@types/readable-stream": "npm:^2.3.13"
     ethereum-cryptography: "npm:0.1.3"
     readable-stream: "npm:^3.6.0"
-  checksum: cd34c9f785dffb08cc8d422ef5a68e2deba239558c2a68d00f84826dbb011aa944df3c22945ebf5e39be57505eb58f59693cd52e62f32c8252e66271e59d6688
+  checksum: f70b89e7f089a90647ea96babc23427cf4db3bdc027667b93be38a0ff03f3222c5130529778fb210ffa56eb2a53cb1657cafdfe828c6a41825bb7e2b74614060
   languageName: node
   linkType: hard
 
@@ -4613,17 +4613,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-tx@npm:5.0.1":
-  version: 5.0.1
-  resolution: "@nomicfoundation/ethereumjs-tx@npm:5.0.1"
+"@nomicfoundation/ethereumjs-tx@npm:5.0.2":
+  version: 5.0.2
+  resolution: "@nomicfoundation/ethereumjs-tx@npm:5.0.2"
   dependencies:
     "@chainsafe/ssz": "npm:^0.9.2"
     "@ethersproject/providers": "npm:^5.7.2"
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     ethereum-cryptography: "npm:0.1.3"
-  checksum: 5b9f117136ad4756089d06061f407a1b48603ace61584716e2bbee53889d6ad45b4b3da6eeaf1b111ca5b94b8f6865a11614266caff1a67141fbca5f06534a91
+  checksum: 0feb40b602d3b525359f57ad76d64542e192a6f8bb714477b9044b5ba13ab7007a3b5a8a2b2df50e3fdcc9da0c04d07daa3797bc5cc6aad5d29d5633c5616251
   languageName: node
   linkType: hard
 
@@ -4637,35 +4637,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-util@npm:9.0.1":
-  version: 9.0.1
-  resolution: "@nomicfoundation/ethereumjs-util@npm:9.0.1"
+"@nomicfoundation/ethereumjs-util@npm:9.0.2":
+  version: 9.0.2
+  resolution: "@nomicfoundation/ethereumjs-util@npm:9.0.2"
   dependencies:
     "@chainsafe/ssz": "npm:^0.10.0"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
     ethereum-cryptography: "npm:0.1.3"
-  checksum: 71eae07fd091dcd655d9ad04b6d5cdeb89c7aa3862857e6073146134d65a46e1d3dec1befcc9d8dda02c675fe2eef944fecc870439cd907ffb00b0319d843db5
+  checksum: ec687ecd964bf624e82b5f0cbbffd0896dfdcff6e7b3eb216d18b79cdb6735f2c8a516d04c5a2b0e36a906bd8f35174a4653634151f35e615a7d24d901a35905
   languageName: node
   linkType: hard
 
-"@nomicfoundation/ethereumjs-vm@npm:7.0.1":
-  version: 7.0.1
-  resolution: "@nomicfoundation/ethereumjs-vm@npm:7.0.1"
+"@nomicfoundation/ethereumjs-vm@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@nomicfoundation/ethereumjs-vm@npm:7.0.2"
   dependencies:
-    "@nomicfoundation/ethereumjs-block": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-blockchain": "npm:7.0.1"
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-evm": "npm:2.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-statemanager": "npm:2.0.1"
-    "@nomicfoundation/ethereumjs-trie": "npm:6.0.1"
-    "@nomicfoundation/ethereumjs-tx": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
+    "@nomicfoundation/ethereumjs-block": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-blockchain": "npm:7.0.2"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-evm": "npm:2.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-statemanager": "npm:2.0.2"
+    "@nomicfoundation/ethereumjs-trie": "npm:6.0.2"
+    "@nomicfoundation/ethereumjs-tx": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
     debug: "npm:^4.3.3"
     ethereum-cryptography: "npm:0.1.3"
     mcl-wasm: "npm:^0.7.1"
     rustbn.js: "npm:~0.2.0"
-  checksum: 7180c9c860f8b42e7dab80482b8ea346ff0dad64cec19fa50feaebef08c646c689c4176906ce49208a55d831309f96e91e7741623432aeacb686231470d32380
+  checksum: 7ad391bc68e8e755ed0b88012e8857390590b5ba8b11bdb4995b04ba7afed5570a4259b85fff329affb643e87be12972ca44d269e14e5f840a82c315011d0d7a
   languageName: node
   linkType: hard
 
@@ -6508,10 +6508,10 @@ __metadata:
     eslint-plugin-unused-imports: "npm:^2.0.0"
     ethereumjs-util: "npm:^7.1.5"
     ethereumjs-wallet: "npm:^1.0.2"
-    ethers: "npm:6.8.1"
+    ethers: "npm:6.9.2"
     fs: "npm:^0.0.1-security"
     glob: "npm:^8.0.3"
-    hardhat: "npm:2.15.0"
+    hardhat: "npm:2.19.4"
     hardhat-deploy: "npm:^0.11.37"
     hardhat-gas-reporter: "npm:^1.0.9"
     hardhat-preprocessor: "npm:^0.1.5"
@@ -17390,9 +17390,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:6.8.1, ethers@npm:^6.8.1":
-  version: 6.8.1
-  resolution: "ethers@npm:6.8.1"
+"ethers@npm:6.9.2":
+  version: 6.9.2
+  resolution: "ethers@npm:6.9.2"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.10.0"
     "@noble/curves": "npm:1.2.0"
@@ -17401,7 +17401,7 @@ __metadata:
     aes-js: "npm:4.0.0-beta.5"
     tslib: "npm:2.4.0"
     ws: "npm:8.5.0"
-  checksum: 22d17fb038fd48aa23d4c43f4b0a8c20aa1c74676724adb94b52f363f42044b7d14dfa086dd2f881f172f79fcb7108ff161e672e323dcebef9d9ed4d373f072f
+  checksum: c5346ce1b903adc6ac22b95aaaa3980c6652f1fa56dfd50e95d00115bcba48c30d43be7c30f80fa6d84b8feb5e49902e114b1692ccc24413dead36c32843f6c2
   languageName: node
   linkType: hard
 
@@ -17457,6 +17457,21 @@ __metadata:
     "@ethersproject/web": "npm:5.7.1"
     "@ethersproject/wordlists": "npm:5.7.0"
   checksum: 227dfa88a2547c799c0c3c9e92e5e246dd11342f4b495198b3ae7c942d5bf81d3970fcef3fbac974a9125d62939b2d94f3c0458464e702209b839a8e6e615028
+  languageName: node
+  linkType: hard
+
+"ethers@npm:^6.8.1":
+  version: 6.8.1
+  resolution: "ethers@npm:6.8.1"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:1.10.0"
+    "@noble/curves": "npm:1.2.0"
+    "@noble/hashes": "npm:1.3.2"
+    "@types/node": "npm:18.15.13"
+    aes-js: "npm:4.0.0-beta.5"
+    tslib: "npm:2.4.0"
+    ws: "npm:8.5.0"
+  checksum: 22d17fb038fd48aa23d4c43f4b0a8c20aa1c74676724adb94b52f363f42044b7d14dfa086dd2f881f172f79fcb7108ff161e672e323dcebef9d9ed4d373f072f
   languageName: node
   linkType: hard
 
@@ -19682,27 +19697,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat@npm:2.15.0":
-  version: 2.15.0
-  resolution: "hardhat@npm:2.15.0"
+"hardhat@npm:2.19.4":
+  version: 2.19.4
+  resolution: "hardhat@npm:2.19.4"
   dependencies:
     "@ethersproject/abi": "npm:^5.1.2"
     "@metamask/eth-sig-util": "npm:^4.0.0"
-    "@nomicfoundation/ethereumjs-block": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-blockchain": "npm:7.0.1"
-    "@nomicfoundation/ethereumjs-common": "npm:4.0.1"
-    "@nomicfoundation/ethereumjs-evm": "npm:2.0.1"
-    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-statemanager": "npm:2.0.1"
-    "@nomicfoundation/ethereumjs-trie": "npm:6.0.1"
-    "@nomicfoundation/ethereumjs-tx": "npm:5.0.1"
-    "@nomicfoundation/ethereumjs-util": "npm:9.0.1"
-    "@nomicfoundation/ethereumjs-vm": "npm:7.0.1"
+    "@nomicfoundation/ethereumjs-block": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-blockchain": "npm:7.0.2"
+    "@nomicfoundation/ethereumjs-common": "npm:4.0.2"
+    "@nomicfoundation/ethereumjs-evm": "npm:2.0.2"
+    "@nomicfoundation/ethereumjs-rlp": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-statemanager": "npm:2.0.2"
+    "@nomicfoundation/ethereumjs-trie": "npm:6.0.2"
+    "@nomicfoundation/ethereumjs-tx": "npm:5.0.2"
+    "@nomicfoundation/ethereumjs-util": "npm:9.0.2"
+    "@nomicfoundation/ethereumjs-vm": "npm:7.0.2"
     "@nomicfoundation/solidity-analyzer": "npm:^0.1.0"
     "@sentry/node": "npm:^5.18.1"
     "@types/bn.js": "npm:^5.1.0"
     "@types/lru-cache": "npm:^5.1.0"
-    abort-controller: "npm:^3.0.0"
     adm-zip: "npm:^0.4.16"
     aggregate-error: "npm:^3.0.0"
     ansi-escapes: "npm:^4.3.0"
@@ -19725,7 +19739,6 @@ __metadata:
     mnemonist: "npm:^0.38.0"
     mocha: "npm:^10.0.0"
     p-map: "npm:^4.0.0"
-    qs: "npm:^6.7.0"
     raw-body: "npm:^2.4.1"
     resolve: "npm:1.17.0"
     semver: "npm:^6.3.0"
@@ -19746,7 +19759,7 @@ __metadata:
       optional: true
   bin:
     hardhat: internal/cli/bootstrap.js
-  checksum: f620dc392783520757d885bd19e07776c13de82c49fa0629ff89e613d6a8e0cc0d48454dde4fb86ed561a1f30428fd86c0b9cfac2888b48bffc143b29818e25b
+  checksum: f8548a32c6d81af40a0377d4e7cfffbdae22c1c5ac1d8f106ec14d98d219ce8c8d67799abbd609f69e9593a43820c98c4fc8bc1273d995d43692f272b54da58c
   languageName: node
   linkType: hard
 
@@ -27676,7 +27689,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.10.3, qs@npm:^6.4.0, qs@npm:^6.7.0, qs@npm:^6.9.4":
+"qs@npm:^6.10.3, qs@npm:^6.4.0, qs@npm:^6.9.4":
   version: 6.11.2
   resolution: "qs@npm:6.11.2"
   dependencies:

@@ -26,6 +26,10 @@ interface ITargecy {
 
   function setRelayerAddress(address _relayerAddress) external;
 
+  function fundAdvertiserBudget(address advertiser) external payable;
+
+  function withdrawAdvertiserBudget(uint256 amount) external;
+
   function createAd(DataTypes.NewAd calldata ad) external payable;
 
   function pauseAd(uint256 adId) external;
@@ -36,9 +40,9 @@ interface ITargecy {
 
   function deleteAd(uint256 adId) external;
 
-  function consumeAd(uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, DataTypes.EIP712Signature calldata targecySig) external;
+  function consumeAd(uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams, DataTypes.EIP712Signature calldata targecySig) external;
 
-  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external;
+  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external;
 
   function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external;
 

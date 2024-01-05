@@ -4,6 +4,7 @@ pragma solidity 0.8.10;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
@@ -16,7 +17,7 @@ import { Helpers } from "../libraries/Helpers.sol";
 import { Errors } from "../libraries/Errors.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
-contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
+contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TargecyStorage, ITargecy {
   function initialize(
     address _zkProofsValidator,
     address _protocolVault,
@@ -42,19 +43,19 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     totalconsumptions = 0;
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
-    emit AdminSet(targecyAdmin);
+    emit TargecyEvents.AdminSet(targecyAdmin);
   }
 
   function setAdmin(address targecyAdmin) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     _setupRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
 
-    emit AdminSet(targecyAdmin);
+    emit TargecyEvents.AdminSet(targecyAdmin);
   }
 
   function removeAdmin(address targecyAdmin) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     revokeRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
 
-    emit AdminRemoved(targecyAdmin);
+    emit TargecyEvents.AdminRemoved(targecyAdmin);
   }
 
   function setZKProofsValidator(address _zkProofsValidator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -101,8 +102,32 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       requestQueries[_segmentId].issuer = _segment.issuer;
     }
 
-    emit SegmentCreated(_segmentId, address(zkProofsValidator), _segment.query, _segment.metadataURI, _segment.issuer);
+    emit TargecyEvents.SegmentCreated(_segmentId, address(zkProofsValidator), _segment.query, _segment.metadataURI, _segment.issuer);
     _segmentId += 1;
+  }
+
+  function fundAdvertiserBudget(address advertiser) external payable override {
+    DataTypes.Budget storage budget = budgets[advertiser];
+
+    budget.totalBudget = budget.totalBudget + msg.value;
+    budget.remainingBudget = budget.remainingBudget + msg.value;
+
+    emit TargecyEvents.AdvertiserBudgetFunded(advertiser, msg.value);
+  }
+
+  function withdrawAdvertiserBudget(uint256 amount) external override {
+    DataTypes.Budget storage budget = budgets[_msgSender()];
+
+    if (budget.remainingBudget < amount) {
+      revert Errors.InsufficientFunds();
+    }
+
+    budget.remainingBudget = budget.remainingBudget - amount;
+    budget.totalBudget = budget.totalBudget - amount;
+
+    payable(budget.advertiser).transfer(amount);
+
+    emit TargecyEvents.AdvertiserBudgetWithdrawn(budget.advertiser, amount);
   }
 
   function editSegment(uint256 id, DataTypes.Segment calldata _segment) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -114,13 +139,13 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     requestQueries[id].query.circuitId = _segment.query.circuitId;
 
-    emit SegmentEdited(id, address(zkProofsValidator), _segment.query, _segment.metadataURI);
+    emit TargecyEvents.SegmentEdited(id, address(zkProofsValidator), _segment.query, _segment.metadataURI);
   }
 
   function deleteSegment(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete requestQueries[id];
 
-    emit SegmentDeleted(id);
+    emit TargecyEvents.SegmentDeleted(id);
   }
 
   function createAd(DataTypes.NewAd calldata ad) external payable override {
@@ -136,6 +161,9 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       ad.metadataURI,
       ad.attribution,
       ad.active,
+      // Action
+      ad.abi,
+      ad.target,
       // Conditions
       ad.startingTimestamp,
       ad.endingTimestamp,
@@ -144,14 +172,14 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       ad.blacklistedWeekdays,
       // Budget
       ad.budget,
-      ad.budget,
+      0,
       ad.maxConsumptionsPerDay,
       ad.maxPricePerConsumption,
       // Stats
       0
     );
 
-    emit AdCreated(_adId, _msgSender(), ad);
+    emit TargecyEvents.AdCreated(_adId, _msgSender(), ad);
     _adId += 1;
   }
 
@@ -164,7 +192,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     adStorage.active = false;
 
-    emit AdPaused(adId);
+    emit TargecyEvents.AdPaused(adId);
   }
 
   function unpauseAd(uint256 adId) external override whenNotPaused {
@@ -176,7 +204,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     adStorage.active = true;
 
-    emit AdUnpaused(adId);
+    emit TargecyEvents.AdUnpaused(adId);
   }
 
   function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable override whenNotPaused {
@@ -187,22 +215,12 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
 
     if (ad.budget > 0) {
-      if (ad.budget < (adStorage.totalBudget - adStorage.remainingBudget)) {
+      if (ad.budget <= adStorage.currentBudget) {
         // Already spent
         revert Errors.InvalidNewBudget();
-      } else if (ad.budget < adStorage.totalBudget) {
-        // Lowering budget
-        payable(_msgSender()).transfer(adStorage.totalBudget - ad.budget);
-      } else if (ad.budget > adStorage.totalBudget) {
-        // Increasing budget
-        if (msg.value != (adStorage.totalBudget - ad.budget)) {
-          revert Errors.InsufficientFunds();
-        }
       }
 
-      uint256 alreadyConsumed = adStorage.totalBudget - adStorage.remainingBudget;
-      adStorage.remainingBudget = ad.budget - alreadyConsumed;
-      adStorage.totalBudget = ad.budget;
+      adStorage.maxBudget = ad.budget;
     }
 
     adStorage.metadataURI = ad.metadataURI;
@@ -216,7 +234,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     adStorage.maxPricePerConsumption = ad.maxPricePerConsumption;
     adStorage.attribution = ad.attribution;
 
-    emit AdEdited(adId, adStorage);
+    emit TargecyEvents.AdEdited(adId, adStorage);
   }
 
   function deleteAd(uint256 adId) external override whenNotPaused {
@@ -226,17 +244,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.NotAdvertiser();
     }
 
-    payable(_msgSender()).transfer(adStorage.remainingBudget);
-
     delete ads[adId];
 
-    emit AdDeleted(adId);
+    emit TargecyEvents.AdDeleted(adId);
   }
 
   function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     audiences[_audienceId] = DataTypes.Audience(metadataURI, audienceIds, 0);
 
-    emit AudienceCreated(_audienceId, metadataURI, audienceIds);
+    emit TargecyEvents.AudienceCreated(_audienceId, metadataURI, audienceIds);
     _audienceId += 1;
   }
 
@@ -250,13 +266,13 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     audienceStorage.metadataURI = metadataURI;
     audienceStorage.segmentIds = segmentIds;
 
-    emit AudienceEdited(audienceId, metadataURI, segmentIds);
+    emit TargecyEvents.AudienceEdited(audienceId, metadataURI, segmentIds);
   }
 
   function deleteAudience(uint256 audienceId) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete audiences[audienceId];
 
-    emit AudienceDeleted(audienceId);
+    emit TargecyEvents.AudienceDeleted(audienceId);
   }
 
   function verifyZKProof(
@@ -323,12 +339,18 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.ConsumptionPriceTooHigh();
     }
 
-    if (consumptionPrice > ad.remainingBudget) {
+    uint256 remainingBudget = ad.maxBudget - ad.currentBudget;
+
+    if (consumptionPrice > remainingBudget) {
       revert Errors.InsufficientFunds();
     }
 
-    ad.remainingBudget = ad.remainingBudget - consumptionPrice;
+    ad.currentBudget = ad.currentBudget + consumptionPrice;
     ad.consumptions = ad.consumptions + 1;
+
+    // Remaining Budget
+    DataTypes.Budget storage budget = budgets[ad.advertiser];
+    budget.remainingBudget = budget.remainingBudget - consumptionPrice;
 
     // Protocol Fee
     uint256 protocolFee = calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
@@ -342,7 +364,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
     payable(publisher.vault).transfer(publisherFee);
 
-    emit AdConsumed(adId, ad, publisher, consumptionPrice);
+    emit TargecyEvents.AdConsumed(adId, ad, publisher, consumptionPrice);
   }
 
   /// @notice Sets the pause state to true in case of emergency, triggered by an authorized account.
@@ -355,11 +377,22 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _unpause();
   }
 
-  function _consumeAd(address viewer, uint64 adId, address publisherVault, DataTypes.ZKProofs calldata zkProofs) internal {
+  function _consumeAd(
+    address viewer,
+    uint64 adId,
+    address publisherVault,
+    DataTypes.ZKProofs calldata zkProofs,
+    bytes[] calldata actionParams
+  ) internal nonReentrant {
     DataTypes.Ad storage ad = ads[adId];
 
-    if (ad.remainingBudget == 0) {
+    if (ad.currentBudget == ad.maxBudget) {
       revert Errors.AdConsumed();
+    }
+
+    DataTypes.Budget storage budget = budgets[ad.advertiser];
+    if (budget.remainingBudget < ad.maxPricePerConsumption) {
+      revert Errors.InsufficientFunds();
     }
 
     if (ad.startingTimestamp > block.timestamp || ad.endingTimestamp < block.timestamp) {
@@ -411,16 +444,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.InvalidZKProofsInput();
     }
 
-    // TODO: Missing security validations:
-    // Avoid spoofing (limit ads per wallet per block range?)
-    // Avoid reutilization of proofs (wallet signature?)
-    // Accept user's signature (for gasless txs)
-    // TODO: Validate publisher's signature to avoid calls from code.
-
     totalconsumptions += 1;
 
     // Proofs verified, distribute rewards
     distributeRewards(adId, viewer, ad, publisher);
+
+    if (ad.attribution == DataTypes.Attribution.Conversion) {
+      (bool success, ) = ad.target.delegatecall(abi.encodeWithSignature(ad.abi, actionParams));
+      require(success, "Conversion action failed.");
+    }
   }
 
   /**
@@ -430,10 +462,16 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    * @param publisher   The publisher that has shown the ad.
    * @param zkProofs    The zk proofs.
    */
-  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external override whenNotPaused {
+  function consumeAdViaRelayer(
+    address viewer,
+    uint64 adId,
+    address publisher,
+    DataTypes.ZKProofs calldata zkProofs,
+    bytes[] calldata actionParams
+  ) external override whenNotPaused {
     require(msg.sender == relayerAddress, "Targecy: Only relayer can call this function");
 
-    _consumeAd(viewer, adId, publisher, zkProofs);
+    _consumeAd(viewer, adId, publisher, zkProofs, actionParams);
   }
 
   /**
@@ -448,6 +486,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint64 adId,
     address publisher,
     DataTypes.ZKProofs calldata zkProofs,
+    bytes[] calldata actionParams,
     DataTypes.EIP712Signature calldata targecySig
   ) external override whenNotPaused {
     // Validates Targecy's signature
@@ -461,19 +500,26 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
     usedSigNonces[targecySig.nonce] = true;
 
-    _consumeAd(msg.sender, adId, publisher, zkProofs);
+    DataTypes.Ad storage ad = ads[adId];
+
+    if (ad.attribution != DataTypes.Attribution.Conversion) {
+      // Only conversions can be consumed directly by the user until we can ensure that the user is not spoofing the call.
+      revert Errors.ImpressionOrClickOnlyAvailableThroughRelayer();
+    }
+
+    _consumeAd(msg.sender, adId, publisher, zkProofs, actionParams);
   }
 
   function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     whitelistedPublishers[publisher.vault] = publisher;
 
-    emit PublisherWhitelisted(publisher.vault, publisher);
+    emit TargecyEvents.PublisherWhitelisted(publisher.vault, publisher);
   }
 
   function removePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete whitelistedPublishers[publisher];
 
-    emit PublisherRemovedFromWhitelist(publisher);
+    emit TargecyEvents.PublisherRemovedFromWhitelist(publisher);
   }
 
   function changePublisherAddress(address oldAddress, address newAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -485,13 +531,13 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   function pausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     whitelistedPublishers[publisher].active = false;
 
-    emit PausePublisher(publisher);
+    emit TargecyEvents.PausePublisher(publisher);
   }
 
   function unpausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     whitelistedPublishers[publisher].active = true;
 
-    emit UnpausePublisher(publisher);
+    emit TargecyEvents.UnpausePublisher(publisher);
   }
 
   function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {

@@ -58,6 +58,12 @@ If you want to seed Targecy with some data, run:
  yarn seed
 ```
 
+Help: If you want to see the available commands, in root or in any package, run:
+
+```bash
+$ yarn run
+```
+
 ## Running the Dapp
 
 Check that the services are running, and then execute the following in different terminals:

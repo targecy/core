@@ -22,6 +22,7 @@ abstract contract TargecyStorage {
 
   mapping(uint256 => bool) public usedSigNonces;
   mapping(uint256 => mapping(uint256 => uint256)) public consumptionsPerDay;
+  mapping(address => DataTypes.Budget) public budgets;
 
   mapping(address => DataTypes.PublisherSettings) public whitelistedPublishers;
   mapping(uint256 => DataTypes.Ad) public ads;

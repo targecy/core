@@ -32,6 +32,9 @@ library DataTypes {
     string metadataURI;
     Attribution attribution; // 0: impression, 1: click, 2: conversion
     bool active;
+    // Action
+    string abi;
+    address target;
     // Conditions
     uint256 startingTimestamp;
     uint256 endingTimestamp;
@@ -50,6 +53,9 @@ library DataTypes {
     string metadataURI;
     Attribution attribution; // 0: impression, 1: click, 2: conversion
     bool active;
+    // Action
+    string abi;
+    address target;
     // Conditions
     uint256 startingTimestamp;
     uint256 endingTimestamp;
@@ -57,12 +63,18 @@ library DataTypes {
     address[] blacklistedPublishers;
     uint8[] blacklistedWeekdays;
     // Budget
-    uint256 totalBudget;
-    uint256 remainingBudget;
+    uint256 maxBudget;
+    uint256 currentBudget;
     uint256 maxConsumptionsPerDay;
     uint256 maxPricePerConsumption;
     // Stats
     uint256 consumptions;
+  }
+
+  struct Budget {
+    address advertiser;
+    uint256 totalBudget;
+    uint256 remainingBudget;
   }
 
   struct Segment {

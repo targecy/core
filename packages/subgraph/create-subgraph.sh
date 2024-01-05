@@ -93,6 +93,10 @@ dataSources:
           handler: handleAdminSet
         - event: AdminRemoved(indexed address)
           handler: handleAdminRemoved
+        - event AdvertiserBudgetFunded(indexed address,uint256,uint256)
+          handler: handleAdvertiserBudgetFunded
+        - event AdvertiserBudgetWithdrawn(indexed address,uint256,uint256)
+          handler: handleAdvertiserBudgetWithdrawn
       file: ./src/targecy.ts
 EOL
 

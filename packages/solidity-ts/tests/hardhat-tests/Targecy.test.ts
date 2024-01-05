@@ -7,13 +7,11 @@ import '~tests/utils/chai-imports';
 import { CircuitId, CredentialRequest, CredentialStatusType, ZeroKnowledgeProofResponse } from '@0xpolygonid/js-sdk';
 import { EventFragment, Interface } from '@ethersproject/abi';
 import { BigNumber } from '@ethersproject/bignumber';
-import { SignerWithAddress } from '@nomicfoundation/hardhat-ethers/signers';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
+import { ContractTransactionReceipt, EventLog } from 'ethers';
 import { Targecy, MockValidator, TargecyEvents__factory } from 'generated/contract-types';
 import { ethers } from 'hardhat';
-import { Log, Receipt } from 'hardhat-deploy/types';
-
-const { getContractFactory } = ethers;
 
 import * as evm from '../utils/evm';
 
@@ -22,12 +20,12 @@ import { createIssuerIdentity, createUserIdentity, getCircuitStorage, initProofS
 
 const defaultIssuer = 1313424234234234234n;
 
-function decodeEvents(receipt: Receipt): EventFragment[] {
-  if (receipt.logs == null) return [];
+function decodeEvents(receipt?: ContractTransactionReceipt | null): EventFragment[] {
+  if (receipt?.logs == null) return [];
 
   const iface = new Interface(TargecyEvents__factory.abi);
 
-  return receipt.logs?.map((log: Log) => iface.parseLog(log).eventFragment);
+  return receipt.logs?.map((log: EventLog) => iface.parseLog(log).eventFragment);
 }
 
 function getTestAudience(): DataTypes.SegmentStruct {
@@ -113,17 +111,26 @@ describe('Targecy', function () {
   let defaultSegment: DataTypes.SegmentStruct;
   let snapshotId: string;
 
-  before(async () => {
+  before(async (args) => {
     await evm.reset();
+    console.log('Args passed to before: ', args);
 
-    const [deployer, targecyAdmin, vaultSigner, userSigner, publisherSigner] = await ethers.getSigners();
+    ethers.signer
 
-    const validatorFactory = await getContractFactory('MockValidator', deployer);
-    validator = (await validatorFactory.deploy()).connect(targecyAdmin) as unknown as MockValidator;
+    const [, targecyAdmin, vaultSigner, userSigner, publisherSigner] = await ethers.getSigners();
 
-    const factory = await getContractFactory('Targecy', deployer);
-    targecy = (await factory.deploy()).connect(targecyAdmin) as Targecy;
-    await targecy.initialize(validator.getAddress(), vaultSigner.address, targecyAdmin.address, defaultIssuer);
+    const provider = ethers.getDefaultProvider('localhost');
+
+    const validatorFactory = await ethers.getContractFactory('MockValidator');
+    validator = (await validatorFactory.deploy()).connect(provider) as unknown as MockValidator;
+
+    // const factory = await getContractFactory('Targecy', deployer);
+    // targecy = (await factory.deploy()).connect(targecyAdmin) as Targecy;
+    const factory = await ethers.getContractFactory('Targecy');
+    const targecy = (await factory.deploy()).connect(provider) as Targecy;
+    const address = await targecy.getAddress();
+    await targecy.initialize(await validator.getAddress(), vaultSigner.address, targecyAdmin.address, defaultIssuer, '');
+    console.log("Targecy's address: ", address);
 
     user = userSigner;
     publisher = publisherSigner;
@@ -169,7 +176,7 @@ describe('Targecy', function () {
     });
   });
 
-  describe('Audiences', () => {
+  describe('Segments', () => {
     let segmentId: bigint;
 
     before(async () => {
@@ -261,13 +268,19 @@ describe('Targecy', function () {
       await targecy.createAudience('metadata', [1]);
       await targecy.connect(user).createAd(
         {
+          active: true,
+          attribution: 1,
+          abi: '',
+          target: '',
           metadataURI: 'metadata',
+          maxConsumptionsPerDay: 100,
           budget: 1000000000,
           maxPricePerConsumption: 20000,
           startingTimestamp: 0,
           endingTimestamp: ethers.MaxUint256,
           audienceIds: [1],
           blacklistedPublishers: [],
+          blacklistedWeekdays: [],
         },
         { value: 1000000000 }
       );
@@ -292,25 +305,30 @@ describe('Targecy', function () {
       const vaultPastBalance = await vault.provider.getBalance(vault.address);
       const pastRemainingBudget = (await targecy.ads(1)).remainingBudget;
 
-      await targecy.whitelistPublisher(publisher.address);
+      await targecy.setPublisher({ vault: publisher.address, userRewardsPercentage: 0, active: true, cpi: 0, cpa: 0, cpc: 0 });
 
       const tx = await targecy.connect(user).consumeAd(
         1,
-        {
-          publisherVault: publisher.address,
-          percentage: 5000, // 5% on 10000 precision
-        },
+        publisher.address,
         {
           inputs: [proof.pub_signals],
           a: [proof.proof.pi_a.map((x) => BigNumber.from(x)) as any],
           b: [proof.proof.pi_b.map((x) => x.map((y) => BigNumber.from(y))) as any],
           c: [proof.proof.pi_c.map((x) => BigNumber.from(x)) as any],
+        },
+        [],
+        {
+          v: '',
+          r: '',
+          s: '',
+          deadline: 0,
+          nonce: 0,
         }
       );
       const receipt = await tx.wait();
 
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
-      expect(publisherPastBalance).to.be.lt(await publisher.provider.getBalance(publisher.address));
+      expect(publisherPastBalance).to.be.lt(await publisher..getBalance(publisher.address));
       expect(vaultPastBalance).to.be.lt(await vault.provider.getBalance(vault.address));
       expect(pastRemainingBudget).to.be.gt((await targecy.ads(1)).remainingBudget);
     });

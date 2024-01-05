@@ -24,4 +24,5 @@ library Errors {
   error InvalidZKProof();
   error InvalidZKProofsInput();
   error UseConsumeAdMethodInstead();
+  error ImpressionOrClickOnlyAvailableThroughRelayer();
 }

@@ -16,7 +16,17 @@ import {
   AdminSet as AdminSetEvent,
   AdminRemoved as AdminRemovedEvent,
 } from '../generated/Targecy/Targecy';
-import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay, Issuer, Admin } from '../generated/schema';
+import {
+  Ad,
+  Publisher,
+  Audience,
+  Segment,
+  Advertiser,
+  ConsumptionsPerDay,
+  Issuer,
+  Admin,
+  Budget,
+} from '../generated/schema';
 import { BigInt, Bytes, store, log } from '@graphprotocol/graph-ts';
 
 function createAdvertiser(id: string): Advertiser {
@@ -26,8 +36,13 @@ function createAdvertiser(id: string): Advertiser {
     throw new Error('Could not create advertiser.');
   }
 
-  entity.totalBudget = BigInt.fromI32(0);
-  entity.remainingBudget = BigInt.fromI32(0);
+  let budget = new Budget(id);
+  budget.totalBudget = BigInt.fromI32(0);
+  budget.remainingBudget = BigInt.fromI32(0);
+  budget.save();
+
+  entity.budget = budget.id;
+
   entity.adsQuantity = BigInt.fromI32(0);
   entity.impressions = BigInt.fromI32(0);
   entity.clicks = BigInt.fromI32(0);
@@ -84,8 +99,8 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
 
   // Budget
-  entity.totalBudget = event.params.ad.budget;
-  entity.remainingBudget = event.params.ad.budget;
+  entity.maxBudget = event.params.ad.budget;
+  entity.currentBudget = BigInt.fromI32(0);
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
 
@@ -98,8 +113,7 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   if (advertiser == null) {
     throw new Error('Could not find advertiser.');
   }
-  advertiser.totalBudget = advertiser.totalBudget.plus(entity.totalBudget);
-  advertiser.remainingBudget = advertiser.remainingBudget.plus(entity.remainingBudget);
+
   advertiser.adsQuantity = advertiser.adsQuantity.plus(BigInt.fromI32(1));
   advertiser.save();
 }
@@ -179,7 +193,12 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
   }
 
   adEntity.consumptions = adEntity.consumptions.plus(BigInt.fromI32(1));
-  adEntity.remainingBudget = event.params.ad.remainingBudget;
+
+  const budget = Budget.load(adEntity.advertiser);
+  if (budget == null) {
+    throw new Error('Could not find budget.');
+  }
+  budget.remainingBudget = budget.remainingBudget.minus(event.params.consumptionPrice);
 
   const day = timestampToDay(event.block.timestamp);
 
@@ -207,7 +226,7 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
   if (advertiser == null) {
     throw new Error('Could not find advertiser.');
   }
-  advertiser.remainingBudget = advertiser.remainingBudget.minus(event.params.consumptionPrice);
+
   if (adEntity.attribution == 0) {
     advertiser.impressions = advertiser.impressions.plus(BigInt.fromI32(1));
   } else if (adEntity.attribution == 1) {
@@ -230,8 +249,6 @@ export function handleAdDeleted(event: AdDeletedEvent): void {
   if (advertiser == null) {
     throw new Error('Could not find advertiser.');
   }
-  advertiser.totalBudget = advertiser.totalBudget.minus(entity.totalBudget);
-  advertiser.remainingBudget = advertiser.remainingBudget.minus(entity.remainingBudget);
   advertiser.adsQuantity = advertiser.adsQuantity.minus(BigInt.fromI32(1));
 
   advertiser.save();
@@ -249,8 +266,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
   }
 
   entity.metadataURI = event.params.ad.metadataURI;
-  entity.totalBudget = event.params.ad.totalBudget;
-  entity.remainingBudget = event.params.ad.remainingBudget;
+  entity.maxBudget = event.params.ad.totalBudget;
   entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
   entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
