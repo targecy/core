@@ -6503,6 +6503,7 @@ __metadata:
     mocha-junit-reporter: "npm:^2.0.2"
     nft.storage: "npm:^7.1.1"
     node-watch: "npm:^0.7.3"
+    os: "npm:^0.1.2"
     path: "npm:^0.12.7"
     prettier: "npm:^2.7.1"
     prettier-plugin-solidity: "npm:^1.0.0-dev.23"
@@ -7477,6 +7478,7 @@ __metadata:
     express: "npm:4.18.2"
     husky: "npm:8.0.3"
     lint-staged: "npm:14.0.1"
+    os: "npm:^0.1.2"
     prettier: "npm:3.0.2"
     prisma: "npm:4.9.0"
     semantic-release: "npm:21.1.0"
@@ -7678,6 +7680,7 @@ __metadata:
     next-redux-wrapper: "npm:8.0.0"
     nft.storage: "npm:^7.1.1"
     ni18n: "npm:^1.0.5"
+    os: "npm:^0.1.2"
     pino-pretty: "npm:^10.2.0"
     postcss: "npm:^8.4.16"
     prettier: "npm:^2.7.1"
@@ -26071,6 +26074,13 @@ __metadata:
   version: 1.0.2
   resolution: "os-tmpdir@npm:1.0.2"
   checksum: 5666560f7b9f10182548bf7013883265be33620b1c1b4a4d405c25be2636f970c5488ff3e6c48de75b55d02bde037249fe5dbfbb4c0fb7714953d56aed062e6d
+  languageName: node
+  linkType: hard
+
+"os@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "os@npm:0.1.2"
+  checksum: dc2d99759eef13f5dc47ddb12c67b9760a7196fd83a35a7aec2d75b82f91163ca1d4e8872238f8c2a35f4cddd5adf5ce6638a234c0563c748d3cd1d69a9f7153
   languageName: node
   linkType: hard
 
