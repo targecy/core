@@ -78,9 +78,12 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
 
   let current;
   try {
+    console.log('Parsing config file...', getStringFromFile(`../generated/config/${network.name}.json`));
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     current = JSON.parse(getStringFromFile(`../generated/config/${network.name}.json`));
+    console.debug('Current config file: ', current);
   } catch (e) {
+    console.log('Error parsing config file: ', e);
     current = {};
     console.log('No config file found, creating new one.');
   }
@@ -91,7 +94,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     current = { ...current, ...{ [`address`]: address } };
   }
 
-  console.log(current);
+  console.log('Saving config file...', current);
 
   saveStringToFile(JSON.stringify(current), `../generated/config/${network.name}.json`, true);
 };

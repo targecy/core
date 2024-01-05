@@ -47,8 +47,7 @@ export const hardhatPublishToOtherPackage = (dir: string): void => {
         fs.writeFileSync(destinyPath, JSON.stringify(configContent, null, 2));
         console.log(chalk.green(` ✔️ Copied config/${network}.json to ${dir}!`));
       } catch (e) {
-        console.log(chalk.red(`Failed to copy config/${network}.json to ${dir}. Error: ${e}`));
-        console.log(e);
+        console.log(chalk.yellow(`Failed to copy config/${network}.json to ${dir}. Error: ${e}`));
       }
     }
   }
