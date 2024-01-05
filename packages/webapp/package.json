@@ -105,6 +105,7 @@
     "next-redux-wrapper": "8.0.0",
     "nft.storage": "^7.1.1",
     "ni18n": "^1.0.5",
+    "os": "^0.1.2",
     "pino-pretty": "^10.2.0",
     "pretty-time": "^1.1.0",
     "process": "^0.11.10",
