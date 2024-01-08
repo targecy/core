@@ -76,3 +76,6 @@ yarn-error.log*
 .DS_Store
 *.pem
 packages/webapp/src/config/hostname.mjs
+
+# node
+.nvmrc
