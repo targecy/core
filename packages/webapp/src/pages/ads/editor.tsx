@@ -46,7 +46,7 @@ export const AdEditorComponent = (id?: string) => {
   const { data: audiences } = useGetAllAudiencesQuery();
   const { data: publishers } = useGetAllPublishersQuery();
 
-  const [procesingAd, setProcesingAd] = useState(false);
+  const [processingAd, setProcessingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
@@ -62,21 +62,21 @@ export const AdEditorComponent = (id?: string) => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    setProcesingAd(true);
+    setProcessingAd(true);
 
-    const adMetadata = {
-      title: data.title,
-      description: data.description,
-      image: data.image,
-    };
+    const adMetadataFormData = new FormData();
+
+    adMetadataFormData.append('title', data.title);
+    adMetadataFormData.append('description', data.description);
+    adMetadataFormData.append('image', data.imageFile);
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
-      body: JSON.stringify({ json: adMetadata }),
+      body: adMetadataFormData,
     });
 
     if (!metadataUploadResponse.ok) {
-      const toast = Swal.mixin({
+      Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
@@ -86,7 +86,8 @@ export const AdEditorComponent = (id?: string) => {
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setProcesingAd(false);
+
+      setProcessingAd(false);
       return;
     }
 
@@ -151,7 +152,7 @@ export const AdEditorComponent = (id?: string) => {
         padding: '10px 20px',
       });
 
-      setProcesingAd(false);
+      setProcessingAd(false);
     }
   };
 
@@ -159,6 +160,7 @@ export const AdEditorComponent = (id?: string) => {
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
     image: z.string().describe('Please provide an image URL'),
+    imageFile: z.any().describe('Please provide an image'),
     attribution: z.number().describe('Please provide an attribution'),
     active: z.boolean().describe('Please provide an active'),
     blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
@@ -302,7 +304,7 @@ export const AdEditorComponent = (id?: string) => {
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
-              {({ errors, submitCount, touched, values, handleChange }) => (
+              {({ errors, submitCount, touched, values, handleChange, setFieldValue }) => (
                 <Form className="space-y-5 text-secondary">
                   <div className={submitCount ? (errors.title ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="title">Title </label>
@@ -357,12 +359,20 @@ export const AdEditorComponent = (id?: string) => {
                       <label htmlFor="fullName">Image URL </label>
                       <Field
                         name="image"
-                        type="text"
+                        type="file"
                         id="image"
-                        placeholder="Enter Image URL"
                         className="form-input"
                         onChange={(e: any) => {
-                          setPreviewValues((prevState) => ({ ...prevState, image: e.target.value }));
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setPreviewValues((prevState) => ({ ...prevState, image: reader.result as string }));
+                            };
+                            reader.readAsDataURL(file);
+
+                            setFieldValue('imageFile', file);
+                          }
                           handleChange(e);
                         }}
                       />
@@ -675,7 +685,7 @@ export const AdEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={procesingAd || Object.keys(touched).length === 0}
+                      disabled={processingAd || Object.keys(touched).length === 0}
                       className={`btn btn-primary !mt-6 `}
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -689,10 +699,10 @@ export const AdEditorComponent = (id?: string) => {
                           console.error(errors);
                         }
                       }}>
-                      {editingMode && procesingAd && 'Editing Ad...'}
-                      {editingMode && !procesingAd && 'Edit'}
-                      {!editingMode && procesingAd && 'Creating Ad...'}
-                      {!editingMode && !procesingAd && 'Create'}
+                      {editingMode && processingAd && 'Editing Ad...'}
+                      {editingMode && !processingAd && 'Edit'}
+                      {!editingMode && processingAd && 'Creating Ad...'}
+                      {!editingMode && !processingAd && 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>

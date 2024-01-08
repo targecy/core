@@ -7614,6 +7614,7 @@ __metadata:
     "@trpc/client": "npm:10.40.0"
     "@trpc/react-query": "npm:10.40.0"
     "@trpc/server": "npm:10.40.0"
+    "@types/formidable": "npm:^3"
     "@types/lodash": "npm:^4.14.191"
     "@types/node": "npm:^16.11.59"
     "@types/pretty-time": "npm:^1.1.2"
@@ -7661,6 +7662,7 @@ __metadata:
     ethereum-cryptography: "npm:^1.1.2"
     ethers: "npm:^5.7.1"
     events: "npm:^3.3.0"
+    formidable: "npm:^3.5.1"
     formik: "npm:^2.2.9"
     graphql: "npm:^16.8.0"
     graphql-codegen-typescript-common: "npm:0.18.2"
@@ -8137,6 +8139,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: f0c7437e9dd7b348cf7de772bf9c5ad810ecaec767b9199cfc600f4929d600212b52d1acd5a1c674e1ceec5e063cb4d9ce96c8e479aea8dacd56371e04aab836
+  languageName: node
+  linkType: hard
+
+"@types/formidable@npm:^3":
+  version: 3.4.5
+  resolution: "@types/formidable@npm:3.4.5"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 4ef1039eb250071fc5a2d6195d6c7cfccce52b69e80ede496409bfbdb2a60bac3f17cef5f84bac0347f69a83e884e3036dadf08450f3cf25dfa24fd372cc6850
   languageName: node
   linkType: hard
 
@@ -11161,7 +11172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"asap@npm:~2.0.3, asap@npm:~2.0.6":
+"asap@npm:^2.0.0, asap@npm:~2.0.3, asap@npm:~2.0.6":
   version: 2.0.6
   resolution: "asap@npm:2.0.6"
   checksum: b244c0458c571945e4b3be0b14eb001bea5596f9868cc50cc711dc03d58a7e953517d3f0dad81ccde3ff37d1f074701fa76a6f07d41aaa992d7204a37b915dda
@@ -14879,6 +14890,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dezalgo@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "dezalgo@npm:1.0.4"
+  dependencies:
+    asap: "npm:^2.0.0"
+    wrappy: "npm:1"
+  checksum: 895389c6aead740d2ab5da4d3466d20fa30f738010a4d3f4dcccc9fc645ca31c9d10b7e1804ae489b1eb02c7986f9f1f34ba132d409b043082a86d9a4e745624
+  languageName: node
+  linkType: hard
+
 "diagnostics@npm:^1.1.1":
   version: 1.1.1
   resolution: "diagnostics@npm:1.1.1"
@@ -18329,6 +18350,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"formidable@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "formidable@npm:3.5.1"
+  dependencies:
+    dezalgo: "npm:^1.0.4"
+    hexoid: "npm:^1.0.0"
+    once: "npm:^1.4.0"
+  checksum: c9a7bbbd4ca8142893da88b51cf7797adee022344ea180cf157a108bf999bed5ad8bc07a10a28d8a39fcbfaa02e8cba07f4ba336fbeb330deb23907336ba1fc2
+  languageName: node
+  linkType: hard
+
 "formik@npm:^2.2.9":
   version: 2.4.5
   resolution: "formik@npm:2.4.5"
@@ -19873,6 +19905,13 @@ __metadata:
   version: 4.3.0
   resolution: "hex-rgb@npm:4.3.0"
   checksum: c0d59346b6e7c4523ef606154979b173d0e58be266e3a218d10d3298c1aa21bba124110604c8e4f9e9f76dac0196ced2bed04390879ba504d5ae412492f590cf
+  languageName: node
+  linkType: hard
+
+"hexoid@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "hexoid@npm:1.0.0"
+  checksum: f2271b8b6b0e13fb5a1eccf740f53ce8bae689c80b9498b854c447f9dc94f75f44e0de064c0e4660ecdbfa8942bb2b69973fdcb080187b45bbb409a3c71f19d4
   languageName: node
   linkType: hard
 
