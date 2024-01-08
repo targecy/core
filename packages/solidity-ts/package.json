@@ -22,7 +22,7 @@
     "seed:force": "yarn ts-node scripts/seed.ts localhost force",
     "seed:mumbai:force": "yarn ts-node scripts/seed.ts mumbai force",
     "clean": "yarn cross-env BUILDING=true hardhat clean && rm -rf ./generated/*",
-    "clean:deployments": "rm -rf ./deployments/* ./generated/abis/* ./generated/contract-types/* ./generated/hardhat/* ./.openzeppelin/* 2> /dev/null || true",
+    "clean:deployments": "rm -rf ./deployments/* ./generated/deployments/* ./generated/abis/* ./generated/contract-types/* ./generated/hardhat/* ./.openzeppelin/* 2> /dev/null || true",
     "accounts:hardhat": "hardhat accounts",
     "generate": "hardhat generate",
     "account": "hardhat account",
