@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { defaultStyling } from '@targecy/sdk/src/components/Ad';
+import AdLayout from '@targecy/sdk/src/components/AdLayout';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -161,7 +163,7 @@ export const AdEditorComponent = (id?: string) => {
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
     image: z.string().describe('Please provide an image URL'),
-    imageFile: z.any().describe('Please provide an image'),
+    imageFile: z.custom<File>().describe('Please provide an image'),
     attribution: z.number().describe('Please provide an attribution'),
     active: z.boolean().describe('Please provide an active'),
     blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
@@ -180,6 +182,7 @@ export const AdEditorComponent = (id?: string) => {
 
   const [currentAudiences, setCurrentAudiences] = useState<number[] | undefined>(undefined);
   const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
+
   useEffect(() => {
     if (!currentAudiences || currentAudiences.length === 0) return;
 
@@ -187,7 +190,7 @@ export const AdEditorComponent = (id?: string) => {
       .query({
         ids: currentAudiences.map((id) => id.toString()),
       })
-      .then((response) => setPotentialReach(response.count))
+      .then((response) => setPotentialReach(10 || response.count))
       .catch((error) => console.error(error));
   }, [currentAudiences]);
 
@@ -711,30 +714,29 @@ export const AdEditorComponent = (id?: string) => {
                 </Form>
               )}
             </Formik>
-            <div className="flex flex-col ">
-              {/* Preview  */}
-              <label className="ml-8 mr-8 mt-8 text-2xl text-secondary">Preview </label>
-              <div className="mb-4 ml-8 mr-8 mt-4">
-                <div className="card flex flex-row items-center rounded border border-white-light bg-white p-2 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                  <div className="h-40 w-40 overflow-hidden rounded">
-                    <img
-                      className="h-full w-full object-scale-down"
-                      src={
+
+            <div className="flex flex-col items-center">
+              <div className="flex w-full justify-center">
+                <div className="flex w-full max-w-lg flex-col items-start">
+                  <label className="text-2xl text-secondary">Preview</label>
+                  <div className="card" style={{ ...defaultStyling, width: '100%' }}>
+                    <AdLayout
+                      title={previewValues.title || 'Title'}
+                      description={previewValues.description || 'Description'}
+                      image={
                         previewValues.image || 'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
                       }
                     />
                   </div>
-                  <div className="card-body m-2">
-                    <h1 className="card-title">{previewValues.title || 'Title'}</h1>
-                    <p>{previewValues.description || 'Description'}</p>
-                  </div>
                 </div>
               </div>
               <div
-                hidden={potentialReach === undefined}
-                className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
-                <label className="float-right m-5 text-2xl text-primary">{potentialReach}</label>
+                // hidden={potentialReach === undefined}
+                className="mb-8 mt-4 flex w-full max-w-lg justify-center">
+                <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                  <label className="text-2xl text-secondary">Potential Reach</label>
+                  <label className="text-2xl text-primary">{potentialReach || 10}</label>
+                </div>
               </div>
             </div>
           </div>
