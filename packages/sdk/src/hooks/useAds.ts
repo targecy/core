@@ -40,6 +40,7 @@ export const useAds = (context: TargecyContextType) => {
         };
       }[] = [];
       for (const ad of validAds) {
+        // @todo(kevin): this is being repeated in the webapp, we should move it to a common place
         const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
         const json = await newMetadata.json();
         finalAds.push({

@@ -78,6 +78,7 @@
     "@types/snarkjs": "^0",
     "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
+    "esbuild-plugin-alias": "^0.2.1",
     "eslint": "^8.23.1",
     "eslint-plugin-unused-imports": "^2.0.0",
     "ts-node": "^10.9.2",

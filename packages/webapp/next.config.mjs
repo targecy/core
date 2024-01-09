@@ -29,6 +29,7 @@ const nextConfig = {
       react: resolve(__dirname, './node_modules/react'),
       'react-dom': resolve(__dirname, './node_modules/react-dom'),
       // -------------------------------------------
+      '@common': resolve(__dirname, '../common/src'),
     };
 
     config.experiments = {

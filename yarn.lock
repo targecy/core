@@ -7523,6 +7523,7 @@ __metadata:
     "@wagmi/core": "npm:^1.3.9"
     antd: "npm:^5.11.3"
     buffer-browserify: "npm:^0.2.5"
+    esbuild-plugin-alias: "npm:^0.2.1"
     eslint: "npm:^8.23.1"
     eslint-plugin-unused-imports: "npm:^2.0.0"
     ethers: "npm:^6.8.1"
@@ -15731,6 +15732,13 @@ __metadata:
     d: "npm:^1.0.1"
     ext: "npm:^1.1.2"
   checksum: b404e5ecae1a076058aa2ba2568d87e2cb4490cb1130784b84e7b4c09c570b487d4f58ed685a08db8d350bd4916500dd3d623b26e6b3520841d30d2ebb152f8d
+  languageName: node
+  linkType: hard
+
+"esbuild-plugin-alias@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "esbuild-plugin-alias@npm:0.2.1"
+  checksum: afe2d2c8b5f09d5321cb8d9c0825e8a9f6e03c2d50df92f953a291d4620cc29eddb3da9e33b238f6d8f77738e0277bdcb831f127399449fecf78fb84c04e5da9
   languageName: node
   linkType: hard
 
