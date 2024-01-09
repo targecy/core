@@ -8,6 +8,7 @@ import { useContractRead } from 'wagmi';
 import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
 import * as abi from '../generated/abis/Targecy.json';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { env } from '~~/env.mjs';
 import {
@@ -67,7 +68,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastAds.ads.map(async (ad) => {
-              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
               const json = await newMetadata.json();
               return { id: ad.id, metadata: { title: json.title, description: json.description } };
             })
@@ -90,7 +91,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastAudiences.audiences.map(async (audience) => {
-              const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
               const json = await newMetadata.json();
               return { id: audience.id, metadata: { title: json.title, description: json.description } };
             })
@@ -113,7 +114,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastSegments.segments.map(async (segment) => {
-              const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
               const json = await newMetadata.json();
               return { id: segment.id, metadata: { title: json.title, description: json.description } };
             })

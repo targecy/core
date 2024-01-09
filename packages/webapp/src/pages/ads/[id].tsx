@@ -5,6 +5,7 @@ import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAdQuery } from '~~/generated/graphql.types';
 import { weekdayToNumber } from '~~/utils';
@@ -21,7 +22,7 @@ const AdDetailPage = () => {
   const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }>({});
   useAsync(async () => {
     if (ad) {
-      const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
       setMetadata({ title: json.title, description: json.description, image: json.imageUrl });
     }
@@ -45,7 +46,7 @@ const AdDetailPage = () => {
       const newAudiencesMetadata = (
         await Promise.all(
           ad.audiences.map(async (s) => {
-            const newMetadata = await fetch(`https://${s.metadataURI}.ipfs.nftstorage.link`);
+            const newMetadata = await fetch(getIPFSStorageUrl(s.metadataURI));
             const json = await newMetadata.json();
             return { id: s.id, metadata: { title: json.title, description: json.description } };
           })

@@ -10,6 +10,7 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
@@ -251,7 +252,7 @@ export const AdEditorComponent = (id?: string) => {
       )
         setCurrentBlacklistedWeekdays(ad.blacklistedWeekdays);
 
-      const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
       setCurrentMetadata({ title: json.title, description: json.description, image: json.imageUrl });
 

@@ -5,6 +5,7 @@ import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAudienceQuery } from '~~/generated/graphql.types';
 
@@ -20,7 +21,7 @@ const AudienceDetailPage = () => {
   const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }>({});
   useAsync(async () => {
     if (audience) {
-      const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
       const json = await newMetadata.json();
       setMetadata({ title: json.title, description: json.description });
     }
@@ -34,7 +35,7 @@ const AudienceDetailPage = () => {
       const newSegmentsMetadata = (
         await Promise.all(
           audience.segments.map(async (s) => {
-            const newMetadata = await fetch(`https://${s.metadataURI}.ipfs.nftstorage.link`);
+            const newMetadata = await fetch(getIPFSStorageUrl(s.metadataURI));
             const json = await newMetadata.json();
             return { id: s.id, metadata: { title: json.title, description: json.description } };
           })
@@ -82,11 +83,11 @@ const AudienceDetailPage = () => {
             </div>
 
             <div className="flex w-full justify-end">
-              <Link href={`/audiences/edit/${id}`} className="btn btn-outline-warning m-2 w-fit">
+              <Link href={`/audiences/edit/${id}`} className="btn-outline-warning btn m-2 w-fit">
                 Edit
               </Link>
               <button
-                className="btn btn-outline-danger m-2 w-fit"
+                className="btn-outline-danger btn m-2 w-fit"
                 onClick={() => {
                   deleteAudience(Number(id))
                     .then(async () => {

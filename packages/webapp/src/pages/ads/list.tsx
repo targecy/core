@@ -7,6 +7,7 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractRead, useContractWrite } from 'wagmi';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllAdsQuery, useGetAllAdsQuery } from '~~/generated/graphql.types';
 
@@ -37,7 +38,7 @@ const AdsList = () => {
         (
           await Promise.all(
             ads.map(async (ad) => {
-              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
               const json = await newMetadata.json();
               return {
                 id: ad.id,

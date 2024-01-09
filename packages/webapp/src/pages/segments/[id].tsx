@@ -5,6 +5,7 @@ import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetSegmentQuery } from '~~/generated/graphql.types';
 import { shortString } from '~~/utils';
@@ -21,7 +22,7 @@ const SegmentDetailPage = () => {
   const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }>({});
   useAsync(async () => {
     if (segment) {
-      const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
       const json = await newMetadata.json();
       setMetadata({ title: json.title, description: json.description });
     }

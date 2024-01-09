@@ -1,5 +1,7 @@
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
+
 export const fetchMetadata = async (metadataURI: string) => {
-  const newMetadata = await fetch(`https://${metadataURI}.ipfs.nftstorage.link`);
+  const newMetadata = await fetch(getIPFSStorageUrl(metadataURI));
   const json = await newMetadata.json();
 
   return {

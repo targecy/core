@@ -5,6 +5,7 @@ import { IncomingForm } from 'formidable';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { env } from '~~/env.mjs';
 
 export const config = {
@@ -43,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
         const fileBlob = new Blob([fileData], { type: file.mimetype || undefined });
         const fileURI = await client.storeBlob(fileBlob);
         console.log('fileURI', fileURI);
-        metadata[key] = `https://${fileURI}.ipfs.nftstorage.link`;
+        metadata[key] = getIPFSStorageUrl(fileURI);
       }
     }
 

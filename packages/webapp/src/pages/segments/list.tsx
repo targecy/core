@@ -11,6 +11,7 @@ import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.consta
 
 import { operatorOptions } from './editor';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~~/generated/graphql.types';
 import { shortString } from '~~/utils';
@@ -36,7 +37,7 @@ const SegmentsList = () => {
         (
           await Promise.all(
             segments.map(async (zkpr) => {
-              const newMetadata = await fetch(`https://${zkpr.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(zkpr.metadataURI));
               const json = await newMetadata.json();
               return { id: zkpr.id, metadata: { title: json.title, description: json.description } };
             })
