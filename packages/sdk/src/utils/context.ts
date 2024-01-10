@@ -1,8 +1,7 @@
+import { ZkServicesType } from '~/components/misc/Context.types';
 import { getCircuitStorage, initProofService, initializeStorages } from './zk';
 
-export type ZkServicesType = Awaited<ReturnType<typeof initServices>>;
-
-export const initServices = async () => {
+export const initServices = async (): Promise<ZkServicesType> => {
   const storages = initializeStorages();
   const circuitStorage = await getCircuitStorage('client');
   const proofService = initProofService(

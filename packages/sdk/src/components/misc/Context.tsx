@@ -5,27 +5,15 @@ import { Provider } from 'react-redux';
 import { useAsync } from 'react-use';
 import { Config, WagmiConfig, createConfig, configureChains, mainnet, createStorage } from 'wagmi';
 
-import { UserIdentityType, createUserIdentity } from '../..';
-import { ZkServicesType, initServices } from '../../utils/context';
+import { createUserIdentity } from '../..';
+import { initServices } from '../../utils/context';
 import { store } from '../../utils/store';
-
-export type TargecyContextType = {
-  zkServices?: ZkServicesType;
-  userIdentity?: UserIdentityType;
-};
+import { TargecyContextType, TargecyComponentProps, TargecyBaseProps } from './Context.types';
 
 export const TargecyServicesContext = createContext<TargecyContextType>({
   zkServices: undefined,
   userIdentity: undefined,
 });
-
-export interface TargecyComponentProps {
-  children?: ReactNode;
-}
-
-export interface TargecyBaseProps {
-  wagmiConfig?: Config;
-}
 
 export const TargecyComponent = ({ children, ...props }: TargecyComponentProps & TargecyBaseProps) => {
   const [initialized, setInitialized] = useState(false);
@@ -60,9 +48,9 @@ export const TargecyComponent = ({ children, ...props }: TargecyComponentProps &
 
   return (
     // <WagmiConfig config={config}>
-      <Provider store={store}>
-        <TargecyServicesContext.Provider value={context}>{children}</TargecyServicesContext.Provider>
-      </Provider>
+    <Provider store={store}>
+      <TargecyServicesContext.Provider value={context}>{children}</TargecyServicesContext.Provider>
+    </Provider>
     // </WagmiConfig>
   );
 };

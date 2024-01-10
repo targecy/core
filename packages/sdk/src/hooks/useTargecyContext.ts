@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { W3CCredential } from '@0xpolygonid/js-sdk';
-import { TargecyContextType } from '../components/misc/Context';
 import { createUserIdentity, getSavedCredentials, saveCredentials } from '../utils';
 import { initServices } from '../utils/context';
+import { TargecyContextType } from '~/components/misc/Context.types';
 
 export const useTargecyContext = () => {
   const [initialized, setInitialized] = useState(false);

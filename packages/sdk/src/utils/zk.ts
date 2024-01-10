@@ -42,25 +42,12 @@ const userSeed = 'userseedseedseedseedseedseedseed';
 
 import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
 
-import { TargecyContextType } from '../components/misc/Context';
+import { TargecyContextType, UserIdentityType, ZkServicesType } from '../components/misc/Context.types';
 import { addressZero, BigNumberZero } from '../constants/chain';
 import { Ad, Segment } from '../generated/graphql.types';
 
-import { ZkServicesType } from './context';
 import { getSeed, saveSeed } from './sharedStorage';
 import { base64StringToUint8Array, uint8ArrayToBase64String } from './string';
-
-export function cloneCredential(credential: W3CCredential) {
-  const cloned = new W3CCredential();
-
-  const keys = Object.keys(credential) as (keyof W3CCredential)[];
-  for (const key of keys) {
-    if (credential[key]) {
-      cloned[key] = credential[key] as any;
-    }
-  }
-  return cloned;
-}
 
 const operatorKeyByNumber: Record<number, string> = {
   1: '$eq',
@@ -147,9 +134,7 @@ export function initializeStorages() {
   return { credWallet, identityWallet, dataStorage };
 }
 
-export type UserIdentityType = Awaited<ReturnType<typeof createUserIdentity>>;
-
-export async function createUserIdentity(identityWallet: IdentityWallet) {
+export async function createUserIdentity(identityWallet: IdentityWallet): Promise<UserIdentityType> {
   const savedSeed = await getSeed();
   let seed: Uint8Array;
 
