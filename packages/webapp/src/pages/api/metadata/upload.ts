@@ -34,7 +34,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
 
   try {
     const [fields, files] = await form.parse(req);
-    const metadata: Metadata = { ...fields };
+    const metadata: Metadata = Object.entries(fields).reduce((acc, [key, value]) => {
+      acc[key] = Array.isArray(value) ? value[0] : value;
+      return acc;
+    }, {} as Metadata);
 
     for (const key in files) {
       const fileArray = files[key];
@@ -43,7 +46,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
         const fileData = fs.readFileSync(file.filepath);
         const fileBlob = new Blob([fileData], { type: file.mimetype || undefined });
         const fileURI = await client.storeBlob(fileBlob);
-        console.log('fileURI', fileURI);
         metadata[key] = getIPFSStorageUrl(fileURI);
       }
     }

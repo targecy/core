@@ -13,6 +13,7 @@ import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
+import DatePicker from '~~/components/DatePicker';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
@@ -103,8 +104,8 @@ export const AdEditorComponent = (id?: string) => {
         metadataURI,
         attribution: data.attribution,
         active: data.active,
-        startingTimestamp: data.startingTimestamp,
-        endingTimestamp: data.endingTimestamp,
+        startingTimestamp: data.startingDate.getTime(),
+        endingTimestamp: data.endingDate.getTime(),
         audienceIds: data.audienceIds,
         blacklistedPublishers: data.blacklistedPublishers,
         blacklistedWeekdays: data.blacklistedWeekdays,
@@ -171,8 +172,8 @@ export const AdEditorComponent = (id?: string) => {
     budget: z.number().describe('Please choose a budget'),
     maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
     maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
-    startingTimestamp: z.number().describe('Please provide a starting timestamp'),
-    endingTimestamp: z.number().describe('Please provide a ending timestamp'),
+    startingDate: z.date().describe('Please provide a starting date'),
+    endingDate: z.date().describe('Please provide an ending date'),
     audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
   });
 
@@ -190,7 +191,7 @@ export const AdEditorComponent = (id?: string) => {
       .query({
         ids: currentAudiences.map((id) => id.toString()),
       })
-      .then((response) => setPotentialReach(10 || response.count))
+      .then((response) => setPotentialReach(response.count))
       .catch((error) => console.error(error));
   }, [currentAudiences]);
 
@@ -297,8 +298,8 @@ export const AdEditorComponent = (id?: string) => {
                 budget: Number(ad?.remainingBudget),
                 maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
                 maxConsumptionsPerDay: Number(ad?.maxConsumptionsPerDay),
-                startingTimestamp: Number(ad?.startingTimestamp),
-                endingTimestamp: Number(ad?.endingTimestamp),
+                startingDate: ad ? new Date(Number(ad?.startingTimestamp)) : null,
+                endingDate: ad ? new Date(Number(ad?.endingTimestamp)) : null,
                 attribution: Number(ad?.attribution),
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
@@ -382,7 +383,7 @@ export const AdEditorComponent = (id?: string) => {
                       />
 
                       {submitCount ? (
-                        errors.description ? (
+                        errors.image ? (
                           <div className="mt-1 text-danger">{errors.description}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
@@ -419,7 +420,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Bidding Strategy</label>
+                      <label htmlFor="attribution">Bidding Strategy</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -491,18 +492,18 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.startingTimestamp ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Starting Timestamp</label>
-                      <Field
-                        name="startingTimestamp"
-                        type="number"
-                        id="startingTimestamp"
-                        placeholder="Enter min timestamp"
+                    <div className={submitCount ? (errors.startingDate ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingDate">Starting Date</label>
+                      <DatePicker
+                        name="startingDate"
+                        id="startingDate"
+                        placeholderText="Enter starting Date"
                         className="form-input"
+                        todayButton="Today"
                       />
                       {submitCount ? (
-                        errors.startingTimestamp ? (
-                          <div className="mt-1 text-danger">{errors.startingTimestamp.toString()}</div>
+                        errors.startingDate ? (
+                          <div className="mt-1 text-danger">{errors.startingDate.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -511,18 +512,18 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
 
-                    <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="endingTimestamp">Ending Timestamp</label>
-                      <Field
-                        name="endingTimestamp"
-                        type="number"
-                        id="endingTimestamp"
-                        placeholder="Enter max timestamp"
+                    <div className={submitCount ? (errors.endingDate ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="endingDate">Ending Date</label>
+                      <DatePicker
+                        name="endingDate"
+                        id="endingDate"
+                        placeholderText="Enter ending Date"
                         className="form-input"
+                        todayButton="Today"
                       />
                       {submitCount ? (
-                        errors.endingTimestamp ? (
-                          <div className="mt-1 text-danger">{errors.endingTimestamp.toString()}</div>
+                        errors.endingDate ? (
+                          <div className="mt-1 text-danger">{errors.endingDate.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -575,7 +576,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Placement Exclusion</label>
+                      <label htmlFor="blacklistedPublishers">Placement Exclusion</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -640,8 +641,8 @@ export const AdEditorComponent = (id?: string) => {
                         isSearchable={true}
                       />
                       {submitCount ? (
-                        errors.active ? (
-                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
+                        errors.blacklistedWeekdays ? (
+                          <div className="mt-1 text-danger">{errors.blacklistedWeekdays.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -650,7 +651,7 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
-                  <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
+                  <div className={submitCount ? (errors.audienceIds ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="audienceIds">Audiences</label>
                     <Select
                       classNames={{
@@ -730,12 +731,10 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                 </div>
               </div>
-              <div
-                // hidden={potentialReach === undefined}
-                className="mb-8 mt-4 flex w-full max-w-lg justify-center">
+              <div hidden={potentialReach === undefined} className="mb-8 mt-4 flex w-full max-w-lg justify-center">
                 <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                   <label className="text-2xl text-secondary">Potential Reach</label>
-                  <label className="text-2xl text-primary">{potentialReach || 10}</label>
+                  <label className="text-2xl text-primary">{potentialReach}</label>
                 </div>
               </div>
             </div>
