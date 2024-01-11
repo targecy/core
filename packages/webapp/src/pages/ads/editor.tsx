@@ -500,6 +500,7 @@ export const AdEditorComponent = (id?: string) => {
                         placeholderText="Enter starting Date"
                         className="form-input"
                         todayButton="Today"
+                        showTimeSelect
                       />
                       {submitCount ? (
                         errors.startingDate ? (
@@ -520,6 +521,7 @@ export const AdEditorComponent = (id?: string) => {
                         placeholderText="Enter ending Date"
                         className="form-input"
                         todayButton="Today"
+                        showTimeSelect
                       />
                       {submitCount ? (
                         errors.endingDate ? (
