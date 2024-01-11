@@ -1,14 +1,5 @@
 # Project Naming Conventions
 
-## Table of Contents
-
-- [Project Naming Conventions](#project-naming-conventions)
-  - [Table of Contents](#table-of-contents)
-  - [Branch Naming Conventions](#branch-naming-conventions)
-  - [Commit Message Guidelines](#commit-message-guidelines)
-    - [Example](#example)
-  - [Version Tagging](#version-tagging)
-
 ## Branch Naming Conventions
 
 Branch names should be descriptive, concise, and follow a consistent pattern to make them easily identifiable. Here’s our standard format:
