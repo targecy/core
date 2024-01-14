@@ -21,6 +21,7 @@ export type Scalars = {
 
 export type Ad = {
   __typename?: 'Ad';
+  active: Scalars['Boolean'];
   advertiser: Advertiser;
   attribution: Scalars['Int8'];
   audiences: Array<Audience>;
@@ -68,6 +69,10 @@ export type AdConsumptionsPerDayArgs = {
 export type Ad_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  active_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  active_not?: InputMaybe<Scalars['Boolean']>;
+  active_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   advertiser?: InputMaybe<Scalars['String']>;
   advertiser_?: InputMaybe<Advertiser_Filter>;
   advertiser_contains?: InputMaybe<Scalars['String']>;
@@ -213,6 +218,7 @@ export type Ad_Filter = {
 };
 
 export type Ad_OrderBy =
+  | 'active'
   | 'advertiser'
   | 'advertiser__adsQuantity'
   | 'advertiser__clicks'
@@ -235,6 +241,41 @@ export type Ad_OrderBy =
   | 'remainingBudget'
   | 'startingTimestamp'
   | 'totalBudget';
+
+export type Admin = {
+  __typename?: 'Admin';
+  id: Scalars['String'];
+};
+
+export type Admin_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Admin_Filter>>>;
+  id?: InputMaybe<Scalars['String']>;
+  id_contains?: InputMaybe<Scalars['String']>;
+  id_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_ends_with?: InputMaybe<Scalars['String']>;
+  id_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_gt?: InputMaybe<Scalars['String']>;
+  id_gte?: InputMaybe<Scalars['String']>;
+  id_in?: InputMaybe<Array<Scalars['String']>>;
+  id_lt?: InputMaybe<Scalars['String']>;
+  id_lte?: InputMaybe<Scalars['String']>;
+  id_not?: InputMaybe<Scalars['String']>;
+  id_not_contains?: InputMaybe<Scalars['String']>;
+  id_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_not_ends_with?: InputMaybe<Scalars['String']>;
+  id_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_not_in?: InputMaybe<Array<Scalars['String']>>;
+  id_not_starts_with?: InputMaybe<Scalars['String']>;
+  id_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id_starts_with?: InputMaybe<Scalars['String']>;
+  id_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  or?: InputMaybe<Array<InputMaybe<Admin_Filter>>>;
+};
+
+export type Admin_OrderBy =
+  | 'id';
 
 export type Advertiser = {
   __typename?: 'Advertiser';
@@ -521,16 +562,25 @@ export type OrderDirection =
 
 export type Publisher = {
   __typename?: 'Publisher';
+  active: Scalars['Boolean'];
   adsQuantity: Scalars['BigInt'];
   clicks: Scalars['BigInt'];
   conversions: Scalars['BigInt'];
+  cpa: Scalars['BigInt'];
+  cpc: Scalars['BigInt'];
+  cpi: Scalars['BigInt'];
   id: Scalars['String'];
   impressions: Scalars['BigInt'];
+  usersRewardsPercentage: Scalars['BigInt'];
 };
 
 export type Publisher_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  active?: InputMaybe<Scalars['Boolean']>;
+  active_in?: InputMaybe<Array<Scalars['Boolean']>>;
+  active_not?: InputMaybe<Scalars['Boolean']>;
+  active_not_in?: InputMaybe<Array<Scalars['Boolean']>>;
   adsQuantity?: InputMaybe<Scalars['BigInt']>;
   adsQuantity_gt?: InputMaybe<Scalars['BigInt']>;
   adsQuantity_gte?: InputMaybe<Scalars['BigInt']>;
@@ -556,6 +606,30 @@ export type Publisher_Filter = {
   conversions_lte?: InputMaybe<Scalars['BigInt']>;
   conversions_not?: InputMaybe<Scalars['BigInt']>;
   conversions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpa?: InputMaybe<Scalars['BigInt']>;
+  cpa_gt?: InputMaybe<Scalars['BigInt']>;
+  cpa_gte?: InputMaybe<Scalars['BigInt']>;
+  cpa_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpa_lt?: InputMaybe<Scalars['BigInt']>;
+  cpa_lte?: InputMaybe<Scalars['BigInt']>;
+  cpa_not?: InputMaybe<Scalars['BigInt']>;
+  cpa_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpc?: InputMaybe<Scalars['BigInt']>;
+  cpc_gt?: InputMaybe<Scalars['BigInt']>;
+  cpc_gte?: InputMaybe<Scalars['BigInt']>;
+  cpc_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpc_lt?: InputMaybe<Scalars['BigInt']>;
+  cpc_lte?: InputMaybe<Scalars['BigInt']>;
+  cpc_not?: InputMaybe<Scalars['BigInt']>;
+  cpc_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpi?: InputMaybe<Scalars['BigInt']>;
+  cpi_gt?: InputMaybe<Scalars['BigInt']>;
+  cpi_gte?: InputMaybe<Scalars['BigInt']>;
+  cpi_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  cpi_lt?: InputMaybe<Scalars['BigInt']>;
+  cpi_lte?: InputMaybe<Scalars['BigInt']>;
+  cpi_not?: InputMaybe<Scalars['BigInt']>;
+  cpi_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   id?: InputMaybe<Scalars['String']>;
   id_contains?: InputMaybe<Scalars['String']>;
   id_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -585,20 +659,35 @@ export type Publisher_Filter = {
   impressions_not?: InputMaybe<Scalars['BigInt']>;
   impressions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   or?: InputMaybe<Array<InputMaybe<Publisher_Filter>>>;
+  usersRewardsPercentage?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_gt?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_gte?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  usersRewardsPercentage_lt?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_lte?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_not?: InputMaybe<Scalars['BigInt']>;
+  usersRewardsPercentage_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export type Publisher_OrderBy =
+  | 'active'
   | 'adsQuantity'
   | 'clicks'
   | 'conversions'
+  | 'cpa'
+  | 'cpc'
+  | 'cpi'
   | 'id'
-  | 'impressions';
+  | 'impressions'
+  | 'usersRewardsPercentage';
 
 export type Query = {
   __typename?: 'Query';
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   ad?: Maybe<Ad>;
+  admin?: Maybe<Admin>;
+  admins: Array<Admin>;
   ads: Array<Ad>;
   advertiser?: Maybe<Advertiser>;
   advertisers: Array<Advertiser>;
@@ -624,6 +713,24 @@ export type QueryAdArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryAdminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryAdminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Admin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Admin_Filter>;
 };
 
 
@@ -901,6 +1008,8 @@ export type Subscription = {
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
   ad?: Maybe<Ad>;
+  admin?: Maybe<Admin>;
+  admins: Array<Admin>;
   ads: Array<Ad>;
   advertiser?: Maybe<Advertiser>;
   advertisers: Array<Advertiser>;
@@ -926,6 +1035,24 @@ export type SubscriptionAdArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
   subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionAdminArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionAdminsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Admin_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Admin_Filter>;
 };
 
 
