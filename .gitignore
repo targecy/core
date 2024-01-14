@@ -75,3 +75,4 @@ yarn-error.log*
 # misc
 .DS_Store
 *.pem
+packages/webapp/src/config/hostname.mjs
