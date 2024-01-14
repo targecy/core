@@ -23,6 +23,7 @@
     "seed:contracts:mumbai:force": "yarn workspace @scaffold-eth/solidity seed:mumbai:force",
     "restart-services": "yarn workspace @scaffold-eth/services restart-all",
     "reset-services": "yarn workspace @scaffold-eth/services reset-all",
+    "reset": "echo 'RESETING ALL, kill it if you do not want to lose data. You have 10 seconds.' && sleep 10 && yarn reset-services && yarn setup",
     "deploy-contracts": "yarn workspace @scaffold-eth/solidity clean:deployments && yarn workspace @scaffold-eth/solidity deploy && yarn workspace @scaffold-eth/solidity deploy:post",
     "deploy-subgraph": "yarn workspace @scaffold-eth/subgraph setup-local",
     "deploy-subgraph:stg": "yarn workspace @scaffold-eth/subgraph setup-test",

@@ -4,9 +4,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "yarn graphql-codegen && next dev -p 3090",
-    "dev": "yarn graphql-codegen && concurrently \"next dev -p 3090\" \"yarn graphql-codegen-watch\"",
-    "build": "tsc --noEmit && yarn graphql-codegen && yarn build:anttheme && next build",
+    "start": "yarn set:config && yarn graphql-codegen && next dev -p 3090",
+    "dev": "yarn set:config &&yarn graphql-codegen && concurrently \"next dev -p 3090\" \"yarn graphql-codegen-watch\"",
+    "build": "yarn set:config && tsc --noEmit && yarn graphql-codegen && yarn build:anttheme && next build",
     "serve": "next start",
     "lint:next": "next lint",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src",
@@ -20,7 +20,9 @@
     "dev:link:hooks": "yalc link eth-hooks",
     "dev:unlink": "yalc remove eth-hooks && yalc remove eth-components",
     "graphql-codegen-watch": "gql-gen --config codegen.ts  --watch",
-    "graphql-codegen": "gql-gen --config codegen.ts"
+    "graphql-codegen": "gql-gen --config codegen.ts",
+    "set:config": "yarn generate:config:hostname",
+    "generate:config:hostname": "./setHostname.sh"
   },
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.3",
@@ -105,7 +107,6 @@
     "next-redux-wrapper": "8.0.0",
     "nft.storage": "^7.1.1",
     "ni18n": "^1.0.5",
-    "os": "^0.1.2",
     "pino-pretty": "^10.2.0",
     "pretty-time": "^1.1.0",
     "process": "^0.11.10",

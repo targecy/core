@@ -7680,7 +7680,6 @@ __metadata:
     next-redux-wrapper: "npm:8.0.0"
     nft.storage: "npm:^7.1.1"
     ni18n: "npm:^1.0.5"
-    os: "npm:^0.1.2"
     pino-pretty: "npm:^10.2.0"
     postcss: "npm:^8.4.16"
     prettier: "npm:^2.7.1"
