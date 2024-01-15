@@ -298,8 +298,8 @@ export const AdEditorComponent = (id?: string) => {
                 budget: Number(ad?.remainingBudget),
                 maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
                 maxConsumptionsPerDay: Number(ad?.maxConsumptionsPerDay),
-                startingDate: ad ? new Date(Number(ad?.startingTimestamp)) : null,
-                endingDate: ad ? new Date(Number(ad?.endingTimestamp)) : null,
+                startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : null,
+                endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : null,
                 attribution: Number(ad?.attribution),
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
@@ -500,6 +500,7 @@ export const AdEditorComponent = (id?: string) => {
                         placeholderText="Enter starting Date"
                         className="form-input"
                         todayButton="Today"
+                        dateFormat="MMMM d, yyyy h:mm aa"
                         showTimeSelect
                       />
                       {submitCount ? (
@@ -521,6 +522,7 @@ export const AdEditorComponent = (id?: string) => {
                         placeholderText="Enter ending Date"
                         className="form-input"
                         todayButton="Today"
+                        dateFormat="MMMM d, yyyy h:mm aa"
                         showTimeSelect
                       />
                       {submitCount ? (
