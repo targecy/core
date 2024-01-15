@@ -124,4 +124,4 @@ Some comments:
 
 ## Contact
 
-In case you have any questions, please contact us [here](mailto:martin@targecy.xyz)
+In case you have any questions, please contact us [here](mailto:martin@targecy.xyz).
