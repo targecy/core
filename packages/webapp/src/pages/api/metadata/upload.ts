@@ -21,7 +21,7 @@ export type UploadMetadataResponse = {
 type Metadata = any;
 
 // See https://nft.storage/docs/client/js/
-const NFT_STORAGE_TOKEN = env.NFT_STORAGE_TOKEN || '';
+const NFT_STORAGE_TOKEN = env.NFT_STORAGE_TOKEN;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataResponse | Error>) => {
@@ -57,25 +57,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
   } catch (error: any) {
     res.status(500).json(error);
   }
-
-  /* let json;
-  try {
-    const parsed = inputSchema.parse(JSON.parse(req.body));
-    json = parsed.json;
-  } catch (error) {
-    res.status(400).json(error as any);
-    return;
-  }
-
-  if (!json) {
-    res.status(400).json(new Error('No JSON provided'));
-    return;
-  }
-
-  const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
-  const URI = await client.storeBlob(blob);
-
-  res.status(200).json({ uri: URI }); */
 };
 
 export default handler;
