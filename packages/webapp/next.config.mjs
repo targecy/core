@@ -37,6 +37,9 @@ const nextConfig = {
       layers: true,
     };
 
+    // @todo(kevin) remove after knowing that most of dependencies has the last version of node-gyp-build
+    config.module.unknownContextCritical = false;
+
     return config;
   },
 };
