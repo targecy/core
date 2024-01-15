@@ -31,7 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
     return;
   }
 
-  const form = new IncomingForm();
+  const form = new IncomingForm({
+    filter: ({ mimetype }) => !!mimetype && mimetype.includes('image'),
+  });
 
   try {
     const [fields, files] = await form.parse(req);
@@ -40,9 +42,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
     for (const key in files) {
       const fileArray = files[key];
       if (fileArray && fileArray.length > 0) {
-        const file = fileArray[0];
+        const file = fileArray[0]; // This is an array because HTML allows selecting multiple files in one input. We only allow the user to upload one image.
         const fileData = fs.readFileSync(file.filepath);
-        const fileBlob = new Blob([fileData], { type: file.mimetype || undefined });
+        const fileBlob = new Blob([fileData], { type: file.mimetype || undefined }); // The filter option above should ensure that mimetype is defined.
         const fileURI = await client.storeBlob(fileBlob);
         metadata[key] = getIPFSStorageUrl(fileURI);
       }
