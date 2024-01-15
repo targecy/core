@@ -2,6 +2,7 @@
 import fs from 'fs';
 
 import { IncomingForm } from 'formidable';
+import { firstValues } from 'formidable/src/helpers/firstValues.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
 
@@ -34,10 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
 
   try {
     const [fields, files] = await form.parse(req);
-    const metadata: Metadata = Object.entries(fields).reduce((acc, [key, value]) => {
-      acc[key] = Array.isArray(value) ? value[0] : value;
-      return acc;
-    }, {} as Metadata);
+    const metadata: Metadata = firstValues(form, fields);
 
     for (const key in files) {
       const fileArray = files[key];
