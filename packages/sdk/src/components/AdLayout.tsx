@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type AdLayoutStyling = {
+export type AdStyling = {
   width?: string; // in pixels
   height?: string; // in pixels
   backgroundColor?: string;
@@ -16,7 +16,7 @@ export type AdLayoutProps = {
   description: string;
   image: string;
 
-  styling?: AdLayoutStyling;
+  styling?: AdStyling;
 
   children?: React.ReactNode;
 };

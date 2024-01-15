@@ -1,14 +1,16 @@
-import { BaseAd } from './BaseAd';
-import { AdLayoutStyling } from './AdLayout';
-import { Address, Config } from 'wagmi';
-import { useAd } from '../hooks/useAd';
-import { useContext } from 'react';
-import { TargecyComponent, TargecyServicesContext } from './misc';
-import { ethers } from 'ethers';
 import { Skeleton } from 'antd';
+import { ethers } from 'ethers';
+import { useContext } from 'react';
+import { Address } from 'wagmi';
+
+import { useAd } from '../hooks/useAd';
 import { environment } from '../utils/context';
 
-export const defaultStyling: AdLayoutStyling = {
+import { AdStyling } from './AdLayout';
+import { BaseAd } from './BaseAd';
+import { TargecyComponent, TargecyServicesContext } from './misc';
+
+export const defaultStyling: AdStyling = {
   width: '500px',
   height: '400px',
   backgroundColor: '#212121',
@@ -23,11 +25,9 @@ type SharedAdProps = {
   env?: environment;
 };
 
-type BaseAdProps = {
-  styling?: AdLayoutStyling;
+export type AdProps = {
+  styling?: AdStyling;
 } & SharedAdProps;
-
-export type AdProps = BaseAdProps;
 
 const validateMinWidth = (width: string) => {
   if (width.includes('px')) {
@@ -47,7 +47,7 @@ const validateMinHeight = (height: string) => {
   return false;
 };
 
-const isValidStyling = (styling?: AdLayoutStyling): boolean =>
+const isValidStyling = (styling?: AdStyling): boolean =>
   (!styling?.width || validateMinWidth(styling.width)) && (!styling?.height || validateMinHeight(styling.height));
 
 export const AdComponent = (props: AdProps) => {
