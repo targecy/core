@@ -1,11 +1,12 @@
+import React, { useCallback, useState } from 'react';
 import { createWalletClient, custom } from 'viem';
 import { polygonMumbai } from 'viem/chains';
 
-import { backendTrpcClient, cloneCredential } from '../utils';
-import React, { useCallback, useState } from 'react';
 import { useCredentials, useTargecyContext } from '../hooks';
+import { backendTrpcClient, cloneCredential } from '../utils';
+import { environment } from '../utils/context';
+
 import AdLayout, { type AdLayoutProps } from './AdLayout';
-import { environment } from '~/utils/context';
 
 const signMessage = 'Sign this message to verify your wallet and start earning rewards.'; // @todo (Martin): Should add a nonce?
 

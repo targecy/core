@@ -1,4 +1,5 @@
-import { ZkServicesType } from '~/components/misc/Context.types';
+import { ZkServicesType } from '../components/misc/Context.types';
+
 import { getCircuitStorage, initProofService, initializeStorages } from './zk';
 
 export const initServices = async (): Promise<ZkServicesType> => {

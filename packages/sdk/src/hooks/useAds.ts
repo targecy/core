@@ -1,9 +1,10 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useState } from 'react';
 import { useAsync } from 'react-use';
+
+import { getValidCredentialByProofRequest, useCredentials } from '..';
 import { TargecyContextType } from '../components/misc/Context.types';
 import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
-import { getValidCredentialByProofRequest, useCredentials } from '..';
-import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 
 export type AdMetadata = {
   title: string;
