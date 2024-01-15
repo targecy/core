@@ -7548,7 +7548,6 @@ __metadata:
     pino-pretty: "npm:^10.2.0"
     prettier: "npm:^3.2.2"
     rdf-canonize: "npm:4.0.1"
-    rdf-canonize-native: "npm:^1.1.2"
     react: "npm:^18.2.0"
     react-query: "npm:^3.39.2"
     react-redux: "npm:8.0.2"
@@ -24929,7 +24928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.11.1, nan@npm:^2.14.0, nan@npm:^2.2.1":
+"nan@npm:^2.14.0, nan@npm:^2.2.1":
   version: 2.18.0
   resolution: "nan@npm:2.18.0"
   dependencies:
@@ -28999,17 +28998,6 @@ __metadata:
   bin:
     rc: ./cli.js
   checksum: 5c4d72ae7eec44357171585938c85ce066da8ca79146b5635baf3d55d74584c92575fa4e2c9eac03efbed3b46a0b2e7c30634c012b4b4fa40d654353d3c163eb
-  languageName: node
-  linkType: hard
-
-"rdf-canonize-native@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "rdf-canonize-native@npm:1.1.2"
-  dependencies:
-    bindings: "npm:^1.3.0"
-    nan: "npm:^2.11.1"
-    node-gyp: "npm:latest"
-  checksum: bb389aae258c28e0767503e23ca9da412b9279b04da163bbf28dd498bff20b04b898afa3b3a2b1c300b9c458f689d9baa7631355f401fa28724cdd2540fd9d5c
   languageName: node
   linkType: hard
 
