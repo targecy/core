@@ -4,9 +4,9 @@
   "license": "MIT",
   "scripts": {
     "chain:hardhat": "cross-env BUILDING=true hardhat node --network hardhat",
-    "test:hardhat": "yarn hardhat coverage --network hardhat",
-    "test:watch:hardhat": "yarn hardhat watch test --network hardhat",
-    "compile:hardhat": "cross-env BUILDING=true hardhat compile",
+    "test": "yarn hardhat test --network hardhat",
+    "test:watch:hardhat": "yarn hardhat watch test --show-stack-traces --network hardhat",
+    "compile": "hardhat compile",
     "compile:watch:hardhat": "cross-env BUILDING=true hardhat watch compile",
     "contracts:build": "yarn workspace @scaffold-eth/common contracts:build",
     "watch:hardhat": "cross-env BUILDING=true yarn hardhat watch compile",

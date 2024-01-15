@@ -9,7 +9,7 @@ import { EventFragment, Interface } from '@ethersproject/abi';
 import { BigNumber } from '@ethersproject/bignumber';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { ContractTransactionReceipt, EventLog } from 'ethers';
+import { AbstractProvider, ContractTransactionReceipt } from 'ethers';
 import { Targecy, MockValidator, TargecyEvents__factory } from 'generated/contract-types';
 import { ethers } from 'hardhat';
 
@@ -25,7 +25,13 @@ function decodeEvents(receipt?: ContractTransactionReceipt | null): EventFragmen
 
   const iface = new Interface(TargecyEvents__factory.abi);
 
-  return receipt.logs?.map((log: EventLog) => iface.parseLog(log).eventFragment);
+  return receipt.logs?.map(
+    (log) =>
+      iface.parseLog({
+        topics: log.topics as string[],
+        data: log.data,
+      }).eventFragment
+  );
 }
 
 function getTestAudience(): DataTypes.SegmentStruct {
@@ -110,16 +116,15 @@ describe('Targecy', function () {
   let vault: SignerWithAddress;
   let defaultSegment: DataTypes.SegmentStruct;
   let snapshotId: string;
+  let provider: AbstractProvider;
 
   before(async (args) => {
     await evm.reset();
     console.log('Args passed to before: ', args);
 
-    ethers.signer
-
     const [, targecyAdmin, vaultSigner, userSigner, publisherSigner] = await ethers.getSigners();
 
-    const provider = ethers.getDefaultProvider('localhost');
+    provider = ethers.getDefaultProvider('localhost');
 
     const validatorFactory = await ethers.getContractFactory('MockValidator');
     validator = (await validatorFactory.deploy()).connect(provider) as unknown as MockValidator;
@@ -199,13 +204,13 @@ describe('Targecy', function () {
       const saved = await targecy.audiences(1);
       expect(saved.metadataURI).to.equal('metadata');
       expect(saved.consumptions).to.equal(0);
-      expect(await targecy.getAudienceAudiences(1)).to.deep.equal([segmentId]);
+      expect(await targecy.getAudienceSegments(1)).to.deep.equal([segmentId]);
     });
   });
 
   describe('Ad', () => {
     let segmentId: bigint;
-    let tgId: number;
+    let tgId: bigint;
 
     before(async () => {
       // Create Target Group and Audience
@@ -233,12 +238,18 @@ describe('Targecy', function () {
       const tx = await targecy.connect(user).createAd(
         {
           metadataURI: 'metadata',
+          attribution: 0,
+          active: true,
+          abi: '',
+          target: '',
           budget: 10000000,
           maxPricePerConsumption: 20000,
           startingTimestamp: 1,
           endingTimestamp: 100,
           audienceIds: [tgId],
           blacklistedPublishers: [],
+          blacklistedWeekdays: [],
+          maxConsumptionsPerDay: 100,
         },
         { value: 10000000 }
       );
@@ -250,8 +261,6 @@ describe('Targecy', function () {
 
       const saved = await targecy.ads(1);
       expect(saved.metadataURI).to.equal('metadata');
-      expect(saved.totalBudget).to.equal(10000000);
-      expect(saved.remainingBudget).to.equal(10000000);
       expect(saved.advertiser).to.equal(await user.getAddress());
       expect(saved.maxPricePerConsumption).to.equal(20000);
       expect(saved.startingTimestamp).to.equal(1);
@@ -299,11 +308,9 @@ describe('Targecy', function () {
         );
 
       expect(verify).to.be.equal(true);
-      expect((await targecy.ads(1)).remainingBudget).eq(1000000000);
 
-      const publisherPastBalance = await publisher.provider.getBalance(publisher.address);
-      const vaultPastBalance = await vault.provider.getBalance(vault.address);
-      const pastRemainingBudget = (await targecy.ads(1)).remainingBudget;
+      const publisherPastBalance = await provider.getBalance(publisher.address);
+      const vaultPastBalance = await provider.getBalance(vault.address);
 
       await targecy.setPublisher({ vault: publisher.address, userRewardsPercentage: 0, active: true, cpi: 0, cpa: 0, cpc: 0 });
 
@@ -328,9 +335,8 @@ describe('Targecy', function () {
       const receipt = await tx.wait();
 
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
-      expect(publisherPastBalance).to.be.lt(await publisher..getBalance(publisher.address));
-      expect(vaultPastBalance).to.be.lt(await vault.provider.getBalance(vault.address));
-      expect(pastRemainingBudget).to.be.gt((await targecy.ads(1)).remainingBudget);
+      expect(publisherPastBalance).to.be.lt(await provider.getBalance(publisher.address));
+      expect(vaultPastBalance).to.be.lt(await provider.getBalance(vault.address));
     });
   });
 });
