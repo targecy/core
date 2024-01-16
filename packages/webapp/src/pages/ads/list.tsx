@@ -91,11 +91,11 @@ const AdsList = () => {
     { title: 'Id', accessor: 'id' },
     {
       title: 'Image',
-      accessor: 'id',
+      accessor: 'image',
       render: (ad) => <img src={metadata[ad.id]?.image} className="h-[75px] w-[75px] object-contain"></img>,
     },
-    { title: 'Title', accessor: 'id', render: (ad) => metadata[ad.id]?.title },
-    { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
+    { title: 'Title', accessor: 'title', render: (ad) => metadata[ad.id]?.title },
+    { title: 'Description', accessor: 'description', render: (ad) => metadata[ad.id]?.description },
     {
       title: 'Attribution',
       accessor: 'attribution',
@@ -259,7 +259,9 @@ const AdsList = () => {
           }}
           highlightOnHover={true}
           minHeight={100}
-          columns={columns}></DataTable>
+          columns={columns}
+          idAccessor="id"
+        />
       </div>
     </div>
   );
