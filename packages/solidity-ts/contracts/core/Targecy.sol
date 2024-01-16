@@ -15,7 +15,6 @@ import { DataTypes } from "../libraries/DataTypes.sol";
 import { Constants } from "../libraries/Constants.sol";
 import { Helpers } from "../libraries/Helpers.sol";
 import { Errors } from "../libraries/Errors.sol";
-import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TargecyStorage, ITargecy {
   function initialize(
@@ -275,65 +274,8 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     emit TargecyEvents.AudienceDeleted(audienceId);
   }
 
-  function verifyZKProof(
-    uint256 requestId,
-    uint256[] memory inputs,
-    uint256[2] memory a,
-    uint256[2][2] memory b,
-    uint256[2] memory c
-  ) public view returns (bool) {
-    // sig circuit has 8th public signal as issuer id
-    require(inputs.length > 7 && inputs[7] == requestQueries[requestId].issuer, "ZKProofs has an invalid issuer.");
-
-    return ICircuitValidator(zkProofsValidator).verify(inputs, a, b, c, requestQueries[requestId].query);
-  }
-
-  function _bulkVerifyZKProofs(
-    uint256[] memory audienceIds,
-    uint256[][] memory inputs,
-    uint256[2][] memory a,
-    uint256[2][2][] memory b,
-    uint256[2][] memory c
-  ) internal view returns (bool) {
-    if (audienceIds.length != inputs.length || audienceIds.length != a.length || audienceIds.length != b.length || audienceIds.length != c.length) {
-      return false;
-    }
-
-    for (uint256 i = 0; i < audienceIds.length; i++) {
-      if (!verifyZKProof(audienceIds[i], inputs[i], a[i], b[i], c[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function getConsumptionPrice(
-    DataTypes.Attribution attribution,
-    DataTypes.PublisherSettings memory publisher
-  ) internal view returns (uint256 consumptionPrice) {
-    if (attribution == DataTypes.Attribution.Impression) {
-      consumptionPrice = publisher.cpi;
-      if (consumptionPrice == 0) {
-        consumptionPrice = defaultImpressionPrice;
-      }
-    } else if (attribution == DataTypes.Attribution.Click) {
-      consumptionPrice = publisher.cpc;
-      if (consumptionPrice == 0) {
-        consumptionPrice = defaultClickPrice;
-      }
-    } else if (attribution == DataTypes.Attribution.Conversion) {
-      consumptionPrice = publisher.cpa;
-      if (consumptionPrice == 0) {
-        consumptionPrice = defaultConversionPrice;
-      }
-    } else {
-      revert Errors.InvalidAttribution();
-    }
-  }
-
   function distributeRewards(uint256 adId, address user, DataTypes.Ad storage ad, DataTypes.PublisherSettings memory publisher) internal {
-    uint256 consumptionPrice = getConsumptionPrice(ad.attribution, publisher);
+    uint256 consumptionPrice = Helpers.getConsumptionPrice(ad.attribution, publisher, defaultImpressionPrice, defaultClickPrice, defaultConversionPrice);
 
     if (consumptionPrice > ad.maxPricePerConsumption) {
       revert Errors.ConsumptionPriceTooHigh();
@@ -353,11 +295,11 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     budget.remainingBudget = budget.remainingBudget - consumptionPrice;
 
     // Protocol Fee
-    uint256 protocolFee = calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
+    uint256 protocolFee = Helpers.calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
     payable(protocolVault).transfer(protocolFee);
 
     // User Rewards
-    uint256 userRewards = publisher.userRewardsPercentage > 0 ? calculatePercentage(consumptionPrice, publisher.userRewardsPercentage) : 0;
+    uint256 userRewards = publisher.userRewardsPercentage > 0 ? Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage) : 0;
     payable(user).transfer(userRewards);
 
     // User Rewards
@@ -375,6 +317,46 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   /// @notice Sets the pause state to false when threat is gone, triggered by an authorized account.
   function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) {
     _unpause();
+  }
+
+  function bulkVerifyZKProofs(
+    address validator,
+    uint256[] memory issuer,
+    uint256[][] memory inputs,
+    uint256[2][] memory a,
+    uint256[2][2][] memory b,
+    uint256[2][] memory c,
+    uint256[] memory segmentsIds
+  ) public view returns (bool) {
+    require(a.length == b.length && b.length == c.length && c.length == segmentsIds.length, "Invalid input lengths.");
+
+    for (uint256 i = 0; i < segmentsIds.length; i++) {
+      DataTypes.Segment memory segment = requestQueries[segmentsIds[i]];
+
+      if (!Helpers.verifyZKProof(validator, issuer[i], inputs[i], a[i], b[i], c[i], segment)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function verifyAudiences(DataTypes.Ad memory ad, DataTypes.ZKProofs calldata zkProofs) internal view returns (bool) {
+    for (uint256 i = 0; i < ad.audienceIds.length; i++) {
+      DataTypes.Audience memory audience = audiences[ad.audienceIds[i]];
+
+      if (audience.segmentIds.length == 0) {
+        // Audience does not exists.
+        continue;
+      }
+
+      if (bulkVerifyZKProofs(zkProofsValidator, audience.segmentIds, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c, audience.segmentIds)) {
+        audience.consumptions = audience.consumptions + 1;
+        return true;
+      }
+    }
+
+    return false;
   }
 
   function _consumeAd(
@@ -424,25 +406,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
     consumptionsPerDay[adId][dayFromEpoch] = consumptionsPerDay[adId][dayFromEpoch] + 1;
 
-    // Verify ZKProofs - At least one Audience must be valid
-    bool audienceValidated;
-    for (uint256 i = 0; i < ad.audienceIds.length; i++) {
-      DataTypes.Audience memory audience = audiences[ad.audienceIds[i]];
-
-      if (audience.segmentIds.length == 0) {
-        // Audience does not exists.
-        continue;
-      }
-
-      if (_bulkVerifyZKProofs(audience.segmentIds, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c)) {
-        audienceValidated = true;
-        audience.consumptions = audience.consumptions + 1;
-        break;
-      }
-    }
-    if (!audienceValidated) {
-      revert Errors.InvalidZKProofsInput();
-    }
+    if (!verifyAudiences(ad, zkProofs)) revert Errors.InvalidZKProofsInput();
 
     totalconsumptions += 1;
 
@@ -538,13 +502,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     whitelistedPublishers[publisher].active = true;
 
     emit TargecyEvents.UnpausePublisher(publisher);
-  }
-
-  function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {
-    // if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
-    if (percentage > Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTooBig();
-
-    return (total * percentage) / Constants.PERCENTAGES_PRECISION;
   }
 
   function getAudienceSegments(uint256 audienceId) external view override returns (uint256[] memory) {

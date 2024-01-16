@@ -6,6 +6,8 @@ import { DataTypes } from "./DataTypes.sol";
 import { Errors } from "./Errors.sol";
 import { Constants } from "./Constants.sol";
 
+import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
+
 library Helpers {
   function getDayFromEpoch(uint256 timestamp) internal pure returns (uint256) {
     return timestamp / 86400;
@@ -13,6 +15,57 @@ library Helpers {
 
   function getWeekDayFromTimestamp(uint256 timestamp) internal pure returns (uint256) {
     return (timestamp / 86400 + 4) % 7;
+  }
+
+  function getConsumptionPrice(
+    DataTypes.Attribution attribution,
+    DataTypes.PublisherSettings memory publisher,
+    uint256 defaultImpressionPrice,
+    uint256 defaultClickPrice,
+    uint256 defaultConversionPrice
+  ) public view returns (uint256 consumptionPrice) {
+    if (attribution == DataTypes.Attribution.Impression) {
+      consumptionPrice = publisher.cpi;
+      if (consumptionPrice == 0) {
+        consumptionPrice = defaultImpressionPrice;
+      }
+    } else if (attribution == DataTypes.Attribution.Click) {
+      consumptionPrice = publisher.cpc;
+      if (consumptionPrice == 0) {
+        consumptionPrice = defaultClickPrice;
+      }
+    } else if (attribution == DataTypes.Attribution.Conversion) {
+      consumptionPrice = publisher.cpa;
+      if (consumptionPrice == 0) {
+        consumptionPrice = defaultConversionPrice;
+      }
+    } else {
+      revert Errors.InvalidAttribution();
+    }
+  }
+
+  function verifyZKProof(
+    address validator,
+    uint256 issuer,
+    uint256[] memory inputs,
+    uint256[2] memory a,
+    uint256[2][2] memory b,
+    uint256[2] memory c,
+    DataTypes.Segment memory segment
+  ) public view returns (bool) {
+    // sig circuit has 8th public signal as issuer id
+    require(inputs.length > 7 && inputs[7] == issuer, "ZKProofs has an invalid issuer.");
+
+    return ICircuitValidator(validator).verify(inputs, a, b, c, segment.query);
+  }
+
+  
+
+  function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {
+    // if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
+    if (percentage > Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTooBig();
+
+    return (total * percentage) / Constants.PERCENTAGES_PRECISION;
   }
 
   /**

@@ -118,13 +118,15 @@ describe('Targecy', function () {
   let snapshotId: string;
   let provider: AbstractProvider;
 
-  before(async (args) => {
+  before(async () => {
     await evm.reset();
-    console.log('Args passed to before: ', args);
 
     const [, targecyAdmin, vaultSigner, userSigner, publisherSigner] = await ethers.getSigners();
 
-    provider = ethers.getDefaultProvider('localhost');
+    provider = new ethers.JsonRpcProvider('http://localhost:8545', {
+      chainId: 1337,
+      name: 'localhost',
+    });
 
     const validatorFactory = await ethers.getContractFactory('MockValidator');
     validator = (await validatorFactory.deploy()).connect(provider) as unknown as MockValidator;
