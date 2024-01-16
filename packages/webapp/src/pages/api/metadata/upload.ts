@@ -43,8 +43,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
       const fileArray = files[key];
       if (fileArray && fileArray.length > 0) {
         const file = fileArray[0]; // This is an array because HTML allows selecting multiple files in one input. We only allow the user to upload one image.
+
+        if (!file.mimetype) {
+          res.status(400).json(new Error('File mimetype is not defined'));
+          return;
+        }
+
         const fileData = fs.readFileSync(file.filepath);
-        const fileBlob = new Blob([fileData], { type: file.mimetype || undefined }); // The filter option above should ensure that mimetype is defined.
+        const fileBlob = new Blob([fileData], { type: file.mimetype }); // The filter option above should ensure that mimetype is defined.
         const fileURI = await client.storeBlob(fileBlob);
         metadata[key] = getIPFSStorageUrl(fileURI);
       }
