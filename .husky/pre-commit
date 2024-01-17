@@ -4,4 +4,4 @@
 yarn lint-staged -p 2
 
 # Prevent localhost.json from being committed
-git update-index --assume-unchanged packages/webapp/src/generated/config/localhost.json packages/sdk/src/generated/config/localhost.json packages/relayer/src/generated/config/localhost.json
+git update-index --skip-worktree packages/webapp/src/generated/config/localhost.json packages/sdk/src/generated/config/localhost.json packages/relayer/src/generated/config/localhost.json
