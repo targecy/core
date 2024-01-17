@@ -4,7 +4,7 @@ import '@typechain/hardhat';
 
 import '@nomicfoundation/hardhat-toolbox';
 
-// import '@nomicfoundation/hardhat-ethers';
+import '@nomicfoundation/hardhat-ethers';
 
 import '@nomiclabs/hardhat-solhint';
 import 'hardhat-deploy';

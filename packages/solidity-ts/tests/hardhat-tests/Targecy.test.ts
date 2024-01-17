@@ -7,9 +7,8 @@ import '~tests/utils/chai-imports';
 import { CircuitId, CredentialRequest, CredentialStatusType, ZeroKnowledgeProofResponse } from '@0xpolygonid/js-sdk';
 import { EventFragment, Interface } from '@ethersproject/abi';
 import { BigNumber } from '@ethersproject/bignumber';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { AbstractProvider, ContractTransactionReceipt } from 'ethers';
+import { AddressLike, BigNumberish, ContractTransactionReceipt, JsonRpcProvider, JsonRpcSigner } from 'ethers';
 import { Targecy, MockValidator, TargecyEvents__factory } from 'generated/contract-types';
 import { ethers } from 'hardhat';
 
@@ -19,6 +18,7 @@ import { DataTypes } from '~generated/contract-types/contracts/core/Targecy';
 import { createIssuerIdentity, createUserIdentity, getCircuitStorage, initProofService, initializeStorages } from '~tests/utils/zk.utils';
 
 const defaultIssuer = 1313424234234234234n;
+const relayerAddress = '0x3bBF2d68CBb8C813Cbc4b4237abFeeE7023279ae';
 
 function decodeEvents(receipt?: ContractTransactionReceipt | null): EventFragment[] {
   if (receipt?.logs == null) return [];
@@ -106,42 +106,85 @@ async function getTestProof(audienceId: number): Promise<ZeroKnowledgeProofRespo
 }
 
 // @todo add 100% coverage, separate in different files and add proper testing for zk proofs. Test that all events needed in subgraph are being thrown.
-describe('Targecy', function () {
+describe('>>> Targecy Tests <<<', function () {
   this.timeout(0);
 
   let targecy: Targecy;
   let validator: MockValidator;
-  let user: SignerWithAddress;
-  let publisher: SignerWithAddress;
-  let vault: SignerWithAddress;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
+  let deployerWithProvider: JsonRpcSigner;
+  let adminWithProvider: JsonRpcSigner;
+  let vaultWithProvider: JsonRpcSigner;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
+  let userWithProvider: JsonRpcSigner;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
+  let publisherWithProvider: JsonRpcSigner;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
+  let advertiserWithProvider: JsonRpcSigner;
+
   let defaultSegment: DataTypes.SegmentStruct;
   let snapshotId: string;
-  let provider: AbstractProvider;
+  let provider: JsonRpcProvider;
 
   before(async () => {
     await evm.reset();
 
-    const [, targecyAdmin, vaultSigner, userSigner, publisherSigner] = await ethers.getSigners();
+    provider = new ethers.JsonRpcProvider(
+      'http://localhost:8545',
+      {
+        chainId: 1337,
+        name: 'localhost',
+      },
+      {
+        polling: true,
+      }
+    );
 
-    provider = new ethers.JsonRpcProvider('http://localhost:8545', {
-      chainId: 1337,
-      name: 'localhost',
-    });
+    deployerWithProvider = await provider.getSigner(0);
+    adminWithProvider = await provider.getSigner(1);
+    vaultWithProvider = await provider.getSigner(2);
+    userWithProvider = await provider.getSigner(3);
+    publisherWithProvider = await provider.getSigner(4);
+    advertiserWithProvider = await provider.getSigner(5);
 
-    const validatorFactory = await ethers.getContractFactory('MockValidator');
-    validator = (await validatorFactory.deploy()).connect(provider) as unknown as MockValidator;
+    console.log(
+      `Signers \n | Deployer: ${deployerWithProvider.address} \n | Admin: ${adminWithProvider.address} \n | Vault: ${vaultWithProvider.address} \n | User: ${userWithProvider.address} \n | Publisher: ${publisherWithProvider.address} \n | Advertiser: ${advertiserWithProvider.address} \n`
+    );
 
-    // const factory = await getContractFactory('Targecy', deployer);
-    // targecy = (await factory.deploy()).connect(targecyAdmin) as Targecy;
-    const factory = await ethers.getContractFactory('Targecy');
-    const targecy = (await factory.deploy()).connect(provider) as Targecy;
+    console.log('Deploying MockValidator...');
+    const validatorFactory = (await ethers.getContractFactory('MockValidator')).connect(deployerWithProvider);
+    validator = (await validatorFactory.deploy()).connect(adminWithProvider) as unknown as MockValidator;
+    const validatorAddress = await validator.getAddress();
+    console.log(" | MockValidator's address: ", validatorAddress);
+    console.log(" | MockValidator's mock example: ", await validator.connect(adminWithProvider).getCircuitId());
+
+    console.log('\nDeploying Targecy...');
+    const targecyArgs: [
+      _zkProofsValidator: AddressLike,
+      _protocolVault: AddressLike,
+      targecyAdmin: AddressLike,
+      _defaultIssuer: BigNumberish,
+      _relayerAddress: AddressLike
+    ] = [await validator.getAddress(), vaultWithProvider.address, adminWithProvider.address, defaultIssuer.toString(), relayerAddress];
+    const factory = (await ethers.getContractFactory('Targecy')).connect(deployerWithProvider);
+    const targecyDeployed = (await factory.deploy()) as Targecy;
+    await targecyDeployed.initialize(...targecyArgs);
+    targecy = targecyDeployed.connect(adminWithProvider);
+
     const address = await targecy.getAddress();
-    await targecy.initialize(await validator.getAddress(), vaultSigner.address, targecyAdmin.address, defaultIssuer, '');
-    console.log("Targecy's address: ", address);
+    console.log(" | Targecy's address: ", address);
+    console.log(" | Connected's address: ", (targecy.runner as JsonRpcSigner).address);
+    console.log(" | Targecy's provider", targecy.runner?.provider);
+    console.log(' | Initialized values > Validator', await targecy.zkProofsValidator());
+    console.log(' | Initialized values > Vault', await targecy.protocolVault());
+    console.log(' | Initialized values > Relayer Address', await targecy.relayerAddress());
+    console.log(' | Initialized values > Ad Id', await targecy._adId());
 
-    user = userSigner;
-    publisher = publisherSigner;
-    vault = vaultSigner;
+    // console.log('A', await contract._adId());
+    // console.log('AAA', await contract.connect(adminWithProvider).getFunction('_adId')());
+    // console.log('B', await (contract.connect(adminWithProvider) as unknown as Targecy).pause());
+    // console.log('C', await (contract.connect(adminWithProvider) as unknown as Contract)._adId());
+    // console.log("Ad ID's: ", (await targecy._adId()).toString());
 
     defaultSegment = {
       metadataURI: '',
@@ -166,7 +209,7 @@ describe('Targecy', function () {
     it('Should be able to create a audience', async () => {
       expect(await targecy._audienceId()).to.equal(BigNumber.from(1));
 
-      const tx = await targecy.setSegment(defaultSegment);
+      const tx = await targecy.setSegment(0, defaultSegment);
       const receipt = await tx.wait();
 
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'SegmentCreated').length).to.equal(1);
@@ -187,7 +230,7 @@ describe('Targecy', function () {
     let segmentId: bigint;
 
     before(async () => {
-      const tx = await targecy.setSegment(defaultSegment);
+      const tx = await targecy.setSegment(0, defaultSegment);
       const receipt = await tx.wait();
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'SegmentCreated').length).to.equal(1);
 
@@ -197,7 +240,7 @@ describe('Targecy', function () {
     it('Should be able to create a target group', async () => {
       expect(await targecy._audienceId()).to.equal(BigNumber.from(1));
 
-      const tx = await targecy.createAudience('metadata', [segmentId]);
+      const tx = await targecy.setAudience(0, 'metadata', [segmentId]);
       const receipt = await tx.wait();
 
       expect(await targecy._audienceId()).to.equal(BigNumber.from(2));
@@ -217,13 +260,13 @@ describe('Targecy', function () {
     before(async () => {
       // Create Target Group and Audience
 
-      const zkTx = await targecy.setSegment(defaultSegment);
+      const zkTx = await targecy.setSegment(0, defaultSegment);
       const zkReceipt = await zkTx.wait();
       expect(decodeEvents(zkReceipt)?.filter((e) => e.name === 'SegmentCreated').length).to.equal(1);
 
       segmentId = (await targecy._audienceId()) - 1n;
 
-      const aTx = await targecy.createAudience('metadata', [segmentId]);
+      const aTx = await targecy.setAudience(0, 'metadata', [segmentId]);
       const aReceipt = await aTx.wait();
 
       expect(decodeEvents(aReceipt)?.filter((e) => e.name === 'AudienceCreated').length).to.equal(1);
@@ -232,12 +275,13 @@ describe('Targecy', function () {
     });
 
     it('Should be able to create an ad', async () => {
-      await targecy.setSegment(defaultSegment);
-      await targecy.createAudience('metadata', [segmentId]);
+      await targecy.setSegment(0, defaultSegment);
+      await targecy.setAudience(0, 'metadata', [segmentId]);
 
       expect(await targecy._adId()).to.equal(BigNumber.from(1));
 
-      const tx = await targecy.connect(user).createAd(
+      const tx = await targecy.setAd(
+        0,
         {
           metadataURI: 'metadata',
           attribution: 0,
@@ -263,7 +307,7 @@ describe('Targecy', function () {
 
       const saved = await targecy.ads(1);
       expect(saved.metadataURI).to.equal('metadata');
-      expect(saved.advertiser).to.equal(await user.getAddress());
+      expect(saved.advertiser).to.equal(await userWithProvider.getAddress());
       expect(saved.maxPricePerConsumption).to.equal(20000);
       expect(saved.startingTimestamp).to.equal(1);
       expect(saved.endingTimestamp).to.equal(100);
@@ -275,9 +319,10 @@ describe('Targecy', function () {
     it('Should be able to consume an ad', async () => {
       this.timeout(100000);
 
-      await targecy.setSegment(getTestAudience());
-      await targecy.createAudience('metadata', [1]);
-      await targecy.connect(user).createAd(
+      await targecy.setSegment(0, getTestAudience());
+      await targecy.setAudience(0, 'metadata', [1]);
+      await targecy.setAd(
+        0,
         {
           active: true,
           attribution: 1,
@@ -299,26 +344,14 @@ describe('Targecy', function () {
       console.log('    > Generating proof, this may take +30s');
       const proof = await getTestProof(1);
 
-      const verify = await targecy
-        .connect(user)
-        .verifyZKProof(
-          1,
-          proof.pub_signals,
-          proof.proof.pi_a.map((x) => BigNumber.from(x)) as any,
-          proof.proof.pi_b.map((x) => x.map((y) => BigNumber.from(y))) as any,
-          proof.proof.pi_c.map((x) => BigNumber.from(x)) as any
-        );
+      const publisherPastBalance = await provider.getBalance(publisherWithProvider.address);
+      const vaultPastBalance = await provider.getBalance(vaultWithProvider.address);
 
-      expect(verify).to.be.equal(true);
+      await targecy.setPublisher({ vault: publisherWithProvider.address, userRewardsPercentage: 0, active: true, cpi: 0, cpa: 0, cpc: 0 });
 
-      const publisherPastBalance = await provider.getBalance(publisher.address);
-      const vaultPastBalance = await provider.getBalance(vault.address);
-
-      await targecy.setPublisher({ vault: publisher.address, userRewardsPercentage: 0, active: true, cpi: 0, cpa: 0, cpc: 0 });
-
-      const tx = await targecy.connect(user).consumeAd(
+      const tx = await targecy.consumeAd(
         1,
-        publisher.address,
+        publisherWithProvider.address,
         {
           inputs: [proof.pub_signals],
           a: [proof.proof.pi_a.map((x) => BigNumber.from(x)) as any],
@@ -337,8 +370,8 @@ describe('Targecy', function () {
       const receipt = await tx.wait();
 
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
-      expect(publisherPastBalance).to.be.lt(await provider.getBalance(publisher.address));
-      expect(vaultPastBalance).to.be.lt(await provider.getBalance(vault.address));
+      expect(publisherPastBalance).to.be.lt(await provider.getBalance(publisherWithProvider.address));
+      expect(vaultPastBalance).to.be.lt(await provider.getBalance(vaultWithProvider.address));
     });
   });
 });

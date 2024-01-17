@@ -17,13 +17,59 @@ library Helpers {
     return (timestamp / 86400 + 4) % 7;
   }
 
+  function verifyAudience(
+    address validator,
+    uint256[][] memory inputs,
+    uint256[2][] memory a,
+    uint256[2][2][] memory b,
+    uint256[2][] memory c,
+    uint256[] memory segmentsIds,
+    mapping(uint256 => DataTypes.Segment) storage requestQueries
+  ) internal view returns (bool) {
+    require(a.length == b.length && b.length == c.length && c.length == segmentsIds.length, "Invalid input lengths.");
+
+    for (uint256 i = 0; i < segmentsIds.length; i++) {
+      DataTypes.Segment memory segment = requestQueries[segmentsIds[i]];
+
+      if (!Helpers.verifyZKProof(validator, inputs[i], a[i], b[i], c[i], segment)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function verifyAudiences(
+    DataTypes.Ad memory ad,
+    DataTypes.ZKProofs calldata zkProofs,
+    mapping(uint256 => DataTypes.Audience) storage audiences,
+    mapping(uint256 => DataTypes.Segment) storage requestQueries,
+    address validator
+  ) internal view returns (bool) {
+    for (uint256 i = 0; i < ad.audienceIds.length; i++) {
+      DataTypes.Audience memory audience = audiences[ad.audienceIds[i]];
+
+      if (audience.segmentIds.length == 0) {
+        // Audience does not exists.
+        continue;
+      }
+
+      if (verifyAudience(validator, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c, audience.segmentIds, requestQueries)) {
+        audience.consumptions = audience.consumptions + 1;
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   function getConsumptionPrice(
     DataTypes.Attribution attribution,
     DataTypes.PublisherSettings memory publisher,
     uint256 defaultImpressionPrice,
     uint256 defaultClickPrice,
     uint256 defaultConversionPrice
-  ) public view returns (uint256 consumptionPrice) {
+  ) internal pure returns (uint256 consumptionPrice) {
     if (attribution == DataTypes.Attribution.Impression) {
       consumptionPrice = publisher.cpi;
       if (consumptionPrice == 0) {
@@ -46,22 +92,19 @@ library Helpers {
 
   function verifyZKProof(
     address validator,
-    uint256 issuer,
     uint256[] memory inputs,
     uint256[2] memory a,
     uint256[2][2] memory b,
     uint256[2] memory c,
     DataTypes.Segment memory segment
-  ) public view returns (bool) {
+  ) internal view returns (bool) {
     // sig circuit has 8th public signal as issuer id
-    require(inputs.length > 7 && inputs[7] == issuer, "ZKProofs has an invalid issuer.");
+    require(inputs.length > 7 && inputs[7] == segment.issuer, "ZKProofs has an invalid issuer.");
 
     return ICircuitValidator(validator).verify(inputs, a, b, c, segment.query);
   }
 
-  
-
-  function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {
+  function calculatePercentage(uint256 total, uint256 percentage) internal pure returns (uint256) {
     // if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
     if (percentage > Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTooBig();
 

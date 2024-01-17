@@ -10,9 +10,7 @@ interface ITargecy {
 
   function setProtocolVault(address _protocolVault) external;
 
-  function setSegment(DataTypes.Segment memory _segment) external;
-
-  function editSegment(uint256 audienceId, DataTypes.Segment memory _segment) external;
+  function setSegment(uint256 audienceIdReceived, DataTypes.Segment memory _segment) external;
 
   function deleteSegment(uint256 audienceId) external;
 
@@ -30,23 +28,25 @@ interface ITargecy {
 
   function withdrawAdvertiserBudget(uint256 amount) external;
 
-  function createAd(DataTypes.NewAd calldata ad) external payable;
-
   function pauseAd(uint256 adId) external;
 
   function unpauseAd(uint256 adId) external;
 
-  function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable;
+  function setAd(uint256 adIdReceived, DataTypes.NewAd calldata ad) external payable;
 
   function deleteAd(uint256 adId) external;
 
-  function consumeAd(uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams, DataTypes.EIP712Signature calldata targecySig) external;
+  function consumeAd(
+    uint64 adId,
+    address publisher,
+    DataTypes.ZKProofs calldata zkProofs,
+    bytes[] calldata actionParams,
+    DataTypes.EIP712Signature calldata targecySig
+  ) external;
 
   function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external;
 
-  function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external;
-
-  function editAudience(uint256 audienceId, string calldata metadataURI, uint256[] calldata audienceIds) external;
+  function setAudience(uint256 audienceIdReceived, string calldata metadataURI, uint256[] calldata audienceIds) external;
 
   function deleteAudience(uint256 audienceId) external;
 

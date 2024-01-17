@@ -23,6 +23,7 @@ library Errors {
   error InvalidProofs();
   error InvalidZKProof();
   error InvalidZKProofsInput();
+  error AudiencesMustHaveAtLeastOneSegment();
   error UseConsumeAdMethodInstead();
   error ImpressionOrClickOnlyAvailableThroughRelayer();
 }
