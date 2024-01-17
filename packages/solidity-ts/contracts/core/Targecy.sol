@@ -40,7 +40,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _segmentId = 1;
     _audienceId = 1;
     totalconsumptions = 0;
-    
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
     emit TargecyEvents.AdminSet(targecyAdmin);
