@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "start": "yarn set:config && yarn graphql-codegen && next dev -p 3090",
-    "dev": "yarn set:config &&yarn graphql-codegen && concurrently \"next dev -p 3090\" \"yarn graphql-codegen-watch\"",
+    "dev": "yarn set:config && yarn graphql-codegen && concurrently \"next dev -p 3090\" \"yarn graphql-codegen-watch\"",
     "build": "yarn set:config && tsc --noEmit && yarn graphql-codegen && yarn build:anttheme && next build",
     "serve": "next start",
     "lint:next": "next lint",
