@@ -19,12 +19,14 @@ const AdDetailPage = () => {
   const { data, isLoading } = useGetAdQuery({ id });
   const ad = data?.ad;
 
-  const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }>({});
+  const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string; imageUrl?: string }>(
+    {}
+  );
   useAsync(async () => {
     if (ad) {
       const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
-      const json = await newMetadata.json();
-      setMetadata({ title: json.title, description: json.description, image: json.image });
+      const { title, description, image, imageUrl } = await newMetadata.json();
+      setMetadata({ title, description, image: image || imageUrl });
     }
   }, [ad]);
   const { writeAsync: deleteAdAsync } = useContractWrite({

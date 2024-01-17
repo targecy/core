@@ -72,7 +72,7 @@ export const AdEditorComponent = (id?: string) => {
 
     adMetadataFormData.append('title', data.title);
     adMetadataFormData.append('description', data.description);
-    adMetadataFormData.append('image', data.imageFile);
+    adMetadataFormData.append('image', data.imageFile || data.imageUrl); // To avoid removing the image when editing
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
@@ -163,7 +163,7 @@ export const AdEditorComponent = (id?: string) => {
   const schema = z.object({
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
-    image: z.string().describe('Please provide an image URL'),
+    imageUrl: z.string().describe('Please provide an image URL'),
     imageFile: z.custom<File>().describe('Please provide an image'),
     attribution: z.number().describe('Please provide an attribution'),
     active: z.boolean().describe('Please provide an active'),
@@ -234,6 +234,7 @@ export const AdEditorComponent = (id?: string) => {
   >(undefined);
   const { data: adData } = useGetAdQuery({ id: id ?? '' });
   const ad = adData?.ad;
+
   useAsync(async () => {
     if (ad) {
       const initialAudiences = ad?.audiences.map((a) => Number(a.id)) ?? [];
@@ -258,12 +259,17 @@ export const AdEditorComponent = (id?: string) => {
 
       const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
-      setCurrentMetadata({ title: json.title, description: json.description, image: json.image });
+
+      if (!json) return;
+
+      const { title, description, image, imageUrl } = json;
+
+      setCurrentMetadata({ title, description, image: image || imageUrl });
 
       setPreviewValues({
-        title: json?.title,
-        description: json?.description,
-        image: json?.image,
+        title: title,
+        description: description,
+        imageUrl: image || imageUrl,
       });
     }
   }, [ad]);
@@ -294,13 +300,14 @@ export const AdEditorComponent = (id?: string) => {
               initialValues={{
                 title: currentMetadata?.title ?? '',
                 description: currentMetadata?.description ?? '',
-                image: currentMetadata?.image ?? '',
-                budget: Number(ad?.remainingBudget),
-                maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
-                maxConsumptionsPerDay: Number(ad?.maxConsumptionsPerDay),
+                image: null,
+                imageUrl: currentMetadata?.image ?? '',
+                budget: ad?.remainingBudget ? Number(ad.remainingBudget) : undefined,
+                maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
+                maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
                 startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : null,
                 endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : null,
-                attribution: Number(ad?.attribution),
+                attribution: ad?.attribution ? Number(ad.attribution) : undefined,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
                 blacklistedWeekdays: ad?.blacklistedWeekdays ?? [],
@@ -367,12 +374,14 @@ export const AdEditorComponent = (id?: string) => {
                         type="file"
                         id="image"
                         className="form-input"
-                        onChange={(e: any) => {
-                          const file = e.target.files[0];
+                        accept="image/*"
+                        placeholder="Enter Image URL"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const file = e.target.files?.[0];
                           if (file) {
                             const reader = new FileReader();
                             reader.onloadend = () => {
-                              setPreviewValues((prevState) => ({ ...prevState, image: reader.result as string }));
+                              setPreviewValues((prevState) => ({ ...prevState, imageUrl: reader.result as string }));
                             };
                             reader.readAsDataURL(file);
 
@@ -729,7 +738,8 @@ export const AdEditorComponent = (id?: string) => {
                       title={previewValues.title || 'Title'}
                       description={previewValues.description || 'Description'}
                       image={
-                        previewValues.image || 'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
+                        previewValues.imageUrl ||
+                        'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
                       }
                     />
                   </div>

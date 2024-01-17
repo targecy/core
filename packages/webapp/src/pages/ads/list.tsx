@@ -39,10 +39,10 @@ const AdsList = () => {
           await Promise.all(
             ads.map(async (ad) => {
               const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
-              const json = await newMetadata.json();
+              const { title, description, image, imageUrl } = await newMetadata.json();
               return {
                 id: ad.id,
-                metadata: { title: json.title, description: json.description, image: json.image },
+                metadata: { title, description, image: image || imageUrl },
               };
             })
           )
