@@ -1,0 +1,27 @@
+name: Solidity-TS Test
+
+on:
+  push:
+    paths:
+      - 'package/solidity-ts/**'
+  pull_request:
+    paths:
+      - 'package/solidity-ts/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # or the version you need
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests in package/solidity-ts
+        run: cd package/solidity-ts && yarn test
