@@ -5,7 +5,7 @@
 # Addresses
 
 **/config/config.json
-**/config/localhost.json
+**/generated/config/localhost.json
 
 #build
 *.tsbuildinfo
@@ -23,7 +23,6 @@ packages/common/src/generated
 cache
 artifacts
 tenderly.yaml
-
 
 # secrets / env
 **/.env
@@ -76,3 +75,6 @@ yarn-error.log*
 .DS_Store
 *.pem
 packages/webapp/src/config/hostname.mjs
+
+# node
+.nvmrc

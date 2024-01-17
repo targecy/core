@@ -1,4 +1,4 @@
-import { TargecyContextType } from '../components/misc/Context';
+import { TargecyContextType } from '../components/misc/Context.types';
 import { useAds } from './useAds';
 
 export const useAd = (context: TargecyContextType) => {

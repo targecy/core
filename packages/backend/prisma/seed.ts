@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-import { issuerData } from './data';
-import { credentialsData } from './seed.helpers';
+import { issuerData, credentialsData } from './data';
 
 const prisma = new PrismaClient();
 

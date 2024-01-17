@@ -1,8 +1,10 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useState } from 'react';
 import { useAsync } from 'react-use';
-import { TargecyContextType } from '../components/misc/Context';
-import { Ad, AdFragmentFragmentDoc, useGetAllAdsQuery } from '../generated/graphql.types';
+
 import { getValidCredentialByProofRequest, useCredentials } from '..';
+import { TargecyContextType } from '../components/misc/Context.types';
+import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
 
 export type AdMetadata = {
   title: string;
@@ -39,7 +41,8 @@ export const useAds = (context: TargecyContextType) => {
         };
       }[] = [];
       for (const ad of validAds) {
-        const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+        // @todo(kevin): this is being repeated in the webapp, we should move it to a common place
+        const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
         const json = await newMetadata.json();
         finalAds.push({
           ad,

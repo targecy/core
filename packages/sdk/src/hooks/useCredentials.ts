@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { W3CCredential } from '@0xpolygonid/js-sdk';
-import { TargecyContextType } from '../components/misc/Context';
+import { TargecyContextType } from '../components/misc/Context.types';
 import { getSavedCredentials, saveCredentials } from '../utils';
 
 export const useCredentials = (context: TargecyContextType) => {

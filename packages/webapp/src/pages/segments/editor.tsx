@@ -11,6 +11,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.constant';
 
+import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
 import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~~/constants/contracts.constants';
 import { useGetSegmentQuery } from '~~/generated/graphql.types';
@@ -216,7 +217,7 @@ export const SegmentEditorComponent = (id?: string) => {
   const segment = segmentData?.segment;
   useAsync(async () => {
     if (segment) {
-      const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
       const json = await newMetadata.json();
       setCurrentMetadata({ title: json.title, description: json.description });
     }

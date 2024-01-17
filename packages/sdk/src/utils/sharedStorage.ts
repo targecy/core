@@ -1,5 +1,5 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
-import { cloneCredential } from './zk';
+import { cloneCredential } from './credential';
 
 /**
  * This is a workaround for the fact that the browser doesn't allow us to
