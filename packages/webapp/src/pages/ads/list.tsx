@@ -42,7 +42,7 @@ const AdsList = () => {
               const json = await newMetadata.json();
               return {
                 id: ad.id,
-                metadata: { title: json.title, description: json.description, image: json.imageUrl },
+                metadata: { title: json.title, description: json.description, image: json.image },
               };
             })
           )

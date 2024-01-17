@@ -258,12 +258,12 @@ export const AdEditorComponent = (id?: string) => {
 
       const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
-      setCurrentMetadata({ title: json.title, description: json.description, image: json.imageUrl });
+      setCurrentMetadata({ title: json.title, description: json.description, image: json.image });
 
       setPreviewValues({
         title: json?.title,
         description: json?.description,
-        image: json?.imageUrl,
+        image: json?.image,
       });
     }
   }, [ad]);

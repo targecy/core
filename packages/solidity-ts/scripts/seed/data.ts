@@ -285,7 +285,7 @@ export const initializeData = async () => {
     metadata: {
       title: string;
       description: string;
-      imageUrl: string;
+      image: string;
     };
     metadataURI?: string;
     attribution: number;
@@ -302,7 +302,7 @@ export const initializeData = async () => {
       metadata: {
         title: 'Explore Ethereum Ecosystem',
         description: 'Ethereum is the most actively used blockchain.',
-        imageUrl:
+        image:
           'https://statics.ambcrypto.com/wp-content/uploads/2023/08/ambcrypto_Prompt_Enter_the_Crypto_Skies_Ethereum_Soars_Above_Si_014291ef-850a-4bce-ad0c-67624525fbca.jpg',
       },
       audiencesIds: [audiences.findIndex((group) => group.metadata.title === 'Active on ethereum') + 1],
