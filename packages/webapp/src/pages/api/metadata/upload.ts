@@ -1,13 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import fs from 'fs';
 
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { IncomingForm } from 'formidable';
 import { firstValues } from 'formidable/src/helpers/firstValues.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import { env } from '~~/env.mjs';
+import { env } from '~/env.mjs';
 
 export const config = {
   api: {

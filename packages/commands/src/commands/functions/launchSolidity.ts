@@ -5,8 +5,8 @@ import shell from 'shelljs';
 
 import { processUnknownArgs } from './processUnknownArgs';
 
-import { printError } from '~~/commands/functions/printError';
-import { load, printConfig } from '~~/helpers/configManager';
+import { printError } from '~/commands/functions/printError';
+import { load, printConfig } from '~/helpers/configManager';
 
 const createCommonGeneratedFolder = (): void => {
   const commonGeneratedPath = '../common/src/generated';

@@ -1,4 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -7,10 +8,9 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllAudiencesQuery, useGetAllAudiencesQuery } from '~~/generated/graphql.types';
-import { fetchMetadata } from '~~/utils/metadata';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { GetAllAudiencesQuery, useGetAllAudiencesQuery } from '~/generated/graphql.types';
+import { fetchMetadata } from '~/utils/metadata';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');

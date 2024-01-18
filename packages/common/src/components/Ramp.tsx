@@ -3,7 +3,7 @@ import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk';
 import { Button, Divider, Modal } from 'antd';
 import React, { useState, FC } from 'react';
 
-import { TNetworkDefinition } from '~common/constants';
+import { TNetworkDefinition } from '~/constants';
 
 interface IRampProps {
   price: number;

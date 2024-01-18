@@ -1,4 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,11 +12,10 @@ import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.consta
 
 import { operatorOptions } from './editor';
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~~/generated/graphql.types';
-import { shortString } from '~~/utils';
-import { backendTrpcClient } from '~~/utils/trpc';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~/generated/graphql.types';
+import { shortString } from '~/utils';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');

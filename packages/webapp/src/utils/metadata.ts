@@ -1,4 +1,4 @@
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 
 export const fetchMetadata = async (metadataURI: string) => {
   const newMetadata = await fetch(getIPFSStorageUrl(metadataURI));

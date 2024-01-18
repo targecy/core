@@ -11,7 +11,7 @@
 // } from 'eth-hooks/context';
 // import React, { FC, ReactElement, ReactNode, useCallback, useContext } from 'react';
 
-// import { TAppProps } from '~~/models/TAppProps';
+// import { TAppProps } from '~/models/TAppProps';
 
 // // displays a page header
 // export interface IMainPageHeaderProps {

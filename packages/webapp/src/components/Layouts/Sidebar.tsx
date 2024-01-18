@@ -22,8 +22,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { toggleSidebar } from '../../store/themeConfigSlice';
 
-import { useGetAdminQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
+import { useGetAdminQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
 
 const Sidebar = () => {
   const router = useRouter();

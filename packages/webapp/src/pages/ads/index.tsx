@@ -1,4 +1,4 @@
-import AdsList from "./list";
+import AdsList from './list';
 
 export const Ads = AdsList;
 

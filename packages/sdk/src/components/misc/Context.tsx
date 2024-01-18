@@ -1,13 +1,11 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { publicProvider } from '@wagmi/core/providers/public';
-import { ReactNode, createContext, useState } from 'react';
+import { createContext, useState } from 'react';
 import { Provider } from 'react-redux';
 import { useAsync } from 'react-use';
-import { Config, WagmiConfig, createConfig, configureChains, mainnet, createStorage } from 'wagmi';
 
 import { createUserIdentity } from '../..';
 import { initServices } from '../../utils/context';
 import { store } from '../../utils/store';
+
 import { TargecyContextType, TargecyComponentProps, TargecyBaseProps } from './Context.types';
 
 export const TargecyServicesContext = createContext<TargecyContextType>({
@@ -15,7 +13,7 @@ export const TargecyServicesContext = createContext<TargecyContextType>({
   userIdentity: undefined,
 });
 
-export const TargecyComponent = ({ children, ...props }: TargecyComponentProps & TargecyBaseProps) => {
+export const TargecyComponent = ({ children }: TargecyComponentProps & TargecyBaseProps) => {
   const [initialized, setInitialized] = useState(false);
 
   const [context, setContext] = useState<TargecyContextType>({

@@ -19,15 +19,15 @@
     "baseUrl": ".",
     "outDir": "dist",
     "paths": {
-      "~~/*": ["./src/*"],
+      "~/*": ["./src/*"],
       "~helpers/*": ["./helpers/*"],
       "~contracts/*": ["./contracts/*"],
       "~tests/*": ["./tests/*"],
       "~generated/*": ["./generated/*"],
-      "~tasks/*": ["./tasks/*"],
-      "~common/*": ["../common/src/*"],
       "~scripts/*": ["./scripts/*"],
-      "~backend/*": ["../backend/src/*"]
+      "~tasks/*": ["./tasks/*"],
+      "@common/*": ["../common/src/*"],
+      "@backend/*": ["../backend/src/*"]
     }
   },
   "include": ["types", "scripts", "tests", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "../common/tsconfig.json"],

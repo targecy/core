@@ -1,4 +1,5 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
+
 import { cloneCredential } from './credential';
 
 /**
@@ -42,7 +43,7 @@ function saveItem(key: string, value: string): Promise<boolean> {
 }
 
 function retrieveItem(key: string): Promise<string | null> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     // Create an iframe and append it to the DOM
     const iframe = document.createElement('iframe');
     iframe.src = URL;

@@ -9,10 +9,10 @@ import {
   parseNetwork,
 } from './functions/config';
 
-import { buildReact, startReact } from '~~/commands/functions/launchReact';
-import { compileSolidity, deploySolidity, startChain } from '~~/commands/functions/launchSolidity';
-import { testSolidity } from '~~/commands/functions/launchTests';
-import { watchSolidity } from '~~/commands/functions/watchSolidity';
+import { buildReact, startReact } from '~/commands/functions/launchReact';
+import { compileSolidity, deploySolidity, startChain } from '~/commands/functions/launchSolidity';
+import { testSolidity } from '~/commands/functions/launchTests';
+import { watchSolidity } from '~/commands/functions/watchSolidity';
 
 const program = new Command();
 

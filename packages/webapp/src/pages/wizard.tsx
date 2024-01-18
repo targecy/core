@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { env } from '~~/env.mjs';
+import { env } from '~/env.mjs';
 
 const schema = z.object({
   width: z.string().describe('Please fill the width'),

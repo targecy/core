@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -5,9 +6,8 @@ import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAudienceQuery } from '~~/generated/graphql.types';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetAudienceQuery } from '~/generated/graphql.types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');

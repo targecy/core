@@ -1,6 +1,5 @@
 import path from 'path';
 
-import Swal from 'sweetalert2';
 import {
   BjjProvider,
   CredentialStorage,
@@ -31,16 +30,18 @@ import {
   CredentialStatusType,
   CircuitStorage,
   type CircuitData,
+  CircuitId,
+  core,
+  W3CCredential,
 } from '@0xpolygonid/js-sdk';
 import { Hex, getRandomBytes } from '@iden3/js-crypto';
 import { SchemaHash } from '@iden3/js-iden3-core';
 import { keccak256 } from '@lumeweb/js-sha3-browser';
+import Swal from 'sweetalert2';
 
 export type StoragesSide = 'server' | 'client';
 
-const userSeed = 'userseedseedseedseedseedseedseed';
-
-import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
+const _userSeed = 'userseedseedseedseedseedseedseed';
 
 import { TargecyContextType, UserIdentityType, ZkServicesType } from '../components/misc/Context.types';
 import { addressZero, BigNumberZero } from '../constants/chain';
@@ -95,7 +96,7 @@ export async function generateZKProof(
   proof.proof.pi_c = proof.proof.pi_c.slice(0, 2);
 
   // Check Proof
-  const proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
+  const _proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
 
   return proof;
 }
@@ -210,7 +211,7 @@ export function initProofService(
 }
 
 async function fetchBinaryFile(side: StoragesSide, file: string) {
-  const prefix = side === 'server' ? path.resolve(__dirname + '../../public/') : '/';
+  const prefix: string = side === 'server' ? path.resolve(__dirname + '../../public/') : '/';
 
   const response = await fetch(prefix + file); // Change this to your url
 
@@ -360,7 +361,7 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
 export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generateProof>, ad: Ad) => {
   const awaitedProofs = await proofs;
 
-  const data = JSON.stringify([
+  const _data = JSON.stringify([
     BigInt(ad.id),
     {
       percentage: BigNumberZero,
@@ -378,7 +379,7 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
   try {
     // const response = await relayerTrpcClient.txs.send.mutate({
     //   signature: '',
-    //   data,
+    //   _data,
     // });
 
     await Swal.mixin({
@@ -427,7 +428,7 @@ export const consumeAd = async (proofs: ReturnType<typeof generateProof>, ad: Ad
       ],
     });
 
-    const tx = await waitTxFn({ hash: consumeAdResponse.hash });
+    const _tx = await waitTxFn({ hash: consumeAdResponse.hash });
 
     await Swal.mixin({
       toast: true,

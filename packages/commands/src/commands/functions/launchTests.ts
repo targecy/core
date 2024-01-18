@@ -1,8 +1,8 @@
 import chalk from 'chalk';
 import shell from 'shelljs';
 
-import { processUnknownArgs } from '~~/commands/functions/processUnknownArgs';
-import { load, printConfig } from '~~/helpers/configManager';
+import { processUnknownArgs } from '~/commands/functions/processUnknownArgs';
+import { load, printConfig } from '~/helpers/configManager';
 
 export const testSolidity = (args: string[]): void => {
   const config = load();

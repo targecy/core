@@ -20,10 +20,8 @@
     "jsx": "preserve",
     "jsxImportSource": "@emotion/react",
     "paths": {
-      "~~/*": ["./src/*"],
       "~/*": ["./src/*"],
       "@targecy/sdk": ["../sdk/src"],
-      "~common/*": ["../common/src/*"],
       "@common/*": ["../common/src/*"]
     }
   },

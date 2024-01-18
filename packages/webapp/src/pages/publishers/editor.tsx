@@ -6,10 +6,10 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetPublisherQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetPublisherQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');

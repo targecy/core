@@ -17,8 +17,8 @@ import { compose } from '@reduxjs/toolkit';
 import { datadogRum } from '@datadog/browser-rum';
 import { datadogLogs } from '@datadog/browser-logs';
 
-import { env } from '~~/env.mjs';
-import { withProviders } from '~~/lib/withProviders';
+import { env } from '~/env.mjs';
+import { withProviders } from '~/lib/withProviders';
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -65,7 +65,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
           name="description"
-          content="A decentralised and transparent advertising solution ready to empower the next generation of web3 protocols."
+          content="A decentralized and transparent advertising solution ready to empower the next generation of web3 protocols."
         />
         <link rel="icon" href="/images/logo.svg" />
       </Head>

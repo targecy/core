@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
-// import { loadScaffoldConfig } from '~common/scaffold.config';
+// import { loadScaffoldConfig } from '@common/scaffold.config';
 
 /** ****************************** */
 // global environmental variable declarations

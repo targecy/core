@@ -1,7 +1,6 @@
+import { scaffoldConfigSchema, TScaffoldConfig } from '@common/models';
 import chalk from 'chalk';
 import editJson from 'edit-json-file';
-
-import { scaffoldConfigSchema, TScaffoldConfig } from '~common/models';
 
 const packagesPath = '../../packages';
 const configPath = packagesPath + '/common/src/scaffold.config.json';

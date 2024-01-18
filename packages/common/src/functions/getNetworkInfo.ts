@@ -1,7 +1,7 @@
 import { getNetwork } from '@ethersproject/networks';
 
-import { networkDefinitions, TNetworkDefinition } from '~common/constants';
-import { TNetworkNamesList } from '~common/models';
+import { networkDefinitions, TNetworkDefinition } from '~/constants';
+import { TNetworkNamesList } from '~/models';
 
 export const getNetworkInfo = (chainId: number | undefined): TNetworkDefinition | undefined => {
   if (!chainId) return;

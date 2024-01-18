@@ -12,4 +12,3 @@ export async function triggerSweetAlert(title: string, icon: 'error' | 'success'
     padding: '10px 20px',
   });
 }
-

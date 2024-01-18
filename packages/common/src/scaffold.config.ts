@@ -2,7 +2,7 @@ import { invariant } from 'ts-invariant';
 
 import json from './scaffold.config.json';
 
-import { scaffoldConfigSchema, TScaffoldConfig } from '~common/models';
+import { scaffoldConfigSchema, TScaffoldConfig } from '~/models';
 
 export const validatedScaffoldConfigSchema = scaffoldConfigSchema.refine((data) => {
   // additional validation
@@ -25,7 +25,7 @@ export const scaffoldConfig = validatedScaffoldConfigSchema.parse(json);
  */
 let configForHardhat: TScaffoldConfig = scaffoldConfig;
 export const loadScaffoldConfig = async (): Promise<TScaffoldConfig> => {
-  const data = await import('~common/scaffold.config.json');
+  const data = await import('~/scaffold.config.json');
   configForHardhat = validatedScaffoldConfigSchema.parse(data);
 
   console.log('...done loading scaffold config');

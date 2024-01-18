@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import CodeHighlight from '~~/components/Highlight';
+import CodeHighlight from '~/components/Highlight';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,

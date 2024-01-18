@@ -4206,12 +4206,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:12.3.4, @next/eslint-plugin-next@npm:^12.3.0":
+"@next/eslint-plugin-next@npm:12.3.4":
   version: 12.3.4
   resolution: "@next/eslint-plugin-next@npm:12.3.4"
   dependencies:
     glob: "npm:7.1.7"
   checksum: 173bc404d7199c127b29feee78876dc4d710e231faf8f0bff9b77b1482268d31bfe4ede866b1824a87e600a14e090a5e14e02ea677913fcac6724e3a50f7b60a
+  languageName: node
+  linkType: hard
+
+"@next/eslint-plugin-next@npm:^14.0.4":
+  version: 14.0.4
+  resolution: "@next/eslint-plugin-next@npm:14.0.4"
+  dependencies:
+    glob: "npm:7.1.7"
+  checksum: 17871e2a86b66584b9eff8796a76d0c59ae62626dd8d0ae1cb7ca6977decf6273eb935d67e204f575a9ba0574a1c289329e6bbcb70d866e4c7f2879597cbd55a
   languageName: node
   linkType: hard
 
@@ -7611,7 +7620,7 @@ __metadata:
     "@mantine/core": "npm:^5.10.5"
     "@mantine/hooks": "npm:^5.10.5"
     "@maticnetwork/maticjs": "npm:^3.4.0"
-    "@next/eslint-plugin-next": "npm:^12.3.0"
+    "@next/eslint-plugin-next": "npm:^14.0.4"
     "@next/font": "npm:13.1.2"
     "@rainbow-me/rainbowkit": "npm:1.0.8"
     "@rainbow-me/rainbowkit-siwe-next-auth": "npm:^0.3.4"

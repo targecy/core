@@ -3,8 +3,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 
-import { isVercelDevelopment } from '~~/constants/app.constants';
-import { env } from '~~/env.mjs';
+import { isVercelDevelopment } from '~/constants/app.constants';
+import { env } from '~/env.mjs';
 
 const WHITELISTED_ADDRESSES = [
   '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',

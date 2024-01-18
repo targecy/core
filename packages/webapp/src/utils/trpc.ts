@@ -5,7 +5,7 @@ import superjson from 'superjson';
 
 import type { AppRouter as backendAppRouter } from '../../../backend/src/trpc/router/index';
 
-import { env } from '~~/env.mjs';
+import { env } from '~/env.mjs';
 
 export const backendTrpcClient = createTRPCProxyClient<backendAppRouter>({
   links: [

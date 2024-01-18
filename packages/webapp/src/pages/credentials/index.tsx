@@ -1,12 +1,11 @@
-import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { useTargecyContext, cloneCredential, useCredentials, useCredentialsStatistics } from '@targecy/sdk';
 import { useState } from 'react';
 import { useSignMessage } from 'wagmi';
 
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { useWallet } from '~~/hooks';
-import { triggerSweetAlert } from '~~/utils/alerts';
-import { backendTrpcClient } from '~~/utils/trpc';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { useWallet } from '~/hooks';
+import { triggerSweetAlert } from '~/utils/alerts';
+import { backendTrpcClient } from '~/utils/trpc';
 
 const Credentials = () => {
   const { context } = useTargecyContext();
@@ -116,7 +115,7 @@ const Credentials = () => {
             {/* Identity Credential */}
 
             {/* Misc credentials */}
-            {credentials.map((credential: W3CCredential) => (
+            {credentials.map((credential) => (
               <div
                 key={credential.id}
                 className="m-3 w-[50rem] rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
