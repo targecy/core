@@ -2,6 +2,8 @@ import 'tsconfig-paths/register';
 
 import '@typechain/hardhat';
 
+import 'hardhat-watcher';
+
 import '@nomicfoundation/hardhat-toolbox';
 
 import '@nomicfoundation/hardhat-ethers';

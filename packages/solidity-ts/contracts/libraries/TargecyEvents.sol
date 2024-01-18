@@ -45,4 +45,6 @@ library TargecyEvents {
   event AdminSet(address indexed admin);
 
   event AdminRemoved(address indexed admin);
+
+  event RewardsDistributed(uint256 indexed adId, DataTypes.RewardsDistribution rewardsDistributed);
 }

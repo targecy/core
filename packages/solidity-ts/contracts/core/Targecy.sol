@@ -40,7 +40,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _segmentId = 1;
     _audienceId = 1;
     totalconsumptions = 0;
-    
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
     emit TargecyEvents.AdminSet(targecyAdmin);
@@ -108,6 +107,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   function fundAdvertiserBudget(address advertiser) external payable override {
     DataTypes.Budget storage budget = budgets[advertiser];
 
+    budget.advertiser = advertiser;
     budget.totalBudget = budget.totalBudget + msg.value;
     budget.remainingBudget = budget.remainingBudget + msg.value;
 
@@ -266,21 +266,22 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   function distributeRewards(uint256 adId, address user, DataTypes.Ad storage ad, DataTypes.PublisherSettings memory publisher) internal {
     uint256 consumptionPrice = Helpers.getConsumptionPrice(ad.attribution, publisher, defaultImpressionPrice, defaultClickPrice, defaultConversionPrice);
 
+    // Ad Budget's limitations
     if (consumptionPrice > ad.maxPricePerConsumption) {
-      revert Errors.ConsumptionPriceTooHigh();
+      revert Errors.ConsumptionPriceTooHigh(); // Advertiser does not agree with the price
     }
-
-    uint256 remainingBudget = ad.maxBudget - ad.currentBudget;
-
-    if (consumptionPrice > remainingBudget) {
-      revert Errors.InsufficientFunds();
+    uint256 adRemainingBudget = ad.maxBudget - ad.currentBudget;
+    if (consumptionPrice > adRemainingBudget) {
+      revert Errors.InsufficientFunds(); // Ad's max budget has been reached
     }
-
     ad.currentBudget = ad.currentBudget + consumptionPrice;
     ad.consumptions = ad.consumptions + 1;
 
-    // Remaining Budget
+    // Advertiser's Core Budget
     DataTypes.Budget storage budget = budgets[ad.advertiser];
+    if (consumptionPrice > budget.remainingBudget) {
+      revert Errors.InsufficientFunds(); // Advertiser's core budget limit has been reached
+    }
     budget.remainingBudget = budget.remainingBudget - consumptionPrice;
 
     // Protocol Fee
@@ -295,6 +296,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
     payable(publisher.vault).transfer(publisherFee);
 
+    emit TargecyEvents.RewardsDistributed(adId, DataTypes.RewardsDistribution(publisher.vault, publisherFee, user, userRewards, protocolVault, protocolFee));
     emit TargecyEvents.AdConsumed(adId, ad, publisher, consumptionPrice);
   }
 
@@ -310,7 +312,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
   function _consumeAd(
     address viewer,
-    uint64 adId,
+    uint256 adId,
     address publisherVault,
     DataTypes.ZKProofs calldata zkProofs,
     bytes[] calldata actionParams
@@ -319,11 +321,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     if (ad.currentBudget == ad.maxBudget) {
       revert Errors.AdConsumed();
-    }
-
-    DataTypes.Budget storage budget = budgets[ad.advertiser];
-    if (budget.remainingBudget < ad.maxPricePerConsumption) {
-      revert Errors.InsufficientFunds();
     }
 
     if (ad.startingTimestamp > block.timestamp || ad.endingTimestamp < block.timestamp) {
@@ -377,7 +374,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    */
   function consumeAdViaRelayer(
     address viewer,
-    uint64 adId,
+    uint256 adId,
     address publisher,
     DataTypes.ZKProofs calldata zkProofs,
     bytes[] calldata actionParams
@@ -393,26 +390,8 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    * @param adId        The id of the ad to be consumed.
    * @param publisher   The publisher that has shown the ad.
    * @param zkProofs    The zk proofs.
-   * @param targecySig  Targecy's signature validating that the ad has been seen.
    */
-  function consumeAd(
-    uint64 adId,
-    address publisher,
-    DataTypes.ZKProofs calldata zkProofs,
-    bytes[] calldata actionParams,
-    DataTypes.EIP712Signature calldata targecySig
-  ) external override whenNotPaused {
-    // Validates Targecy's signature
-    require(!usedSigNonces[targecySig.nonce], "Targecy: Signature nonce already used");
-    unchecked {
-      Helpers._validateRecoveredAddress(
-        Helpers._calculateDigest(keccak256(abi.encode(Constants.CONSUME_AD_VERIFICATION_SIG_TYPEHASH, adId, targecySig.nonce, targecySig.deadline))),
-        relayerAddress,
-        targecySig
-      );
-    }
-    usedSigNonces[targecySig.nonce] = true;
-
+  function consumeAd(uint256 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external override whenNotPaused {
     DataTypes.Ad storage ad = ads[adId];
 
     if (ad.attribution != DataTypes.Attribution.Conversion) {

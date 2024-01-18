@@ -135,5 +135,17 @@ export const config: HardhatUserConfig = {
     target: 'ethers-v6',
     discriminateTypes: true,
   },
+  watcher: {
+    compilation: {
+      tasks: ['compile'],
+      files: ['./contracts'],
+      verbose: true,
+    },
+    test: {
+      tasks: ['compile', 'test'],
+      files: ['./contracts', './tests'],
+      clearOnStart: true,
+    },
+  },
 };
 export default config;

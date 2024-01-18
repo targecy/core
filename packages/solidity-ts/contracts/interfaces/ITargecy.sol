@@ -36,15 +36,9 @@ interface ITargecy {
 
   function deleteAd(uint256 adId) external;
 
-  function consumeAd(
-    uint64 adId,
-    address publisher,
-    DataTypes.ZKProofs calldata zkProofs,
-    bytes[] calldata actionParams,
-    DataTypes.EIP712Signature calldata targecySig
-  ) external;
+  function consumeAd(uint256 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external;
 
-  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external;
+  function consumeAdViaRelayer(address viewer, uint256 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external;
 
   function setAudience(uint256 audienceIdReceived, string calldata metadataURI, uint256[] calldata audienceIds) external;
 

@@ -4,17 +4,16 @@
 import '~helpers/hardhat-imports';
 import '~tests/utils/chai-imports';
 
-import { BigNumber } from '@ethersproject/bignumber';
 import { expect } from 'chai';
-import { AddressLike, BigNumberish, JsonRpcProvider, JsonRpcSigner } from 'ethers';
+import { AddressLike, BigNumberish, JsonRpcProvider, JsonRpcSigner, ZeroAddress } from 'ethers';
 import { Targecy, MockValidator } from 'generated/contract-types';
 import { ethers } from 'hardhat';
 
 import * as evm from '../utils/evm';
 
-import { decodeEvents, defaultIssuer, getTestAudience, getTestProof, relayerAddress } from './helpers';
+import { ZKServices, decodeEvents, defaultIssuer, getTestAudience, getTestProof, initZKServices, relayerAddress } from './helpers';
 
-import { DataTypes } from '~generated/contract-types/contracts/core/Targecy';
+import { getStringFromFile, saveStringToFile } from '~scripts/utils';
 
 // @todo add 100% coverage, separate in different files and add proper testing for zk proofs. Test that all events needed in subgraph are being thrown.
 describe('Tests', function () {
@@ -33,23 +32,59 @@ describe('Tests', function () {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars-ts
   let advertiserWithProvider: JsonRpcSigner;
 
-  let defaultSegment: DataTypes.SegmentStruct;
+  const defaultSegment = {
+    metadataURI: '',
+    issuer: defaultIssuer,
+    query: {
+      schema: 1,
+      slotIndex: 1,
+      operator: 1,
+      value: [],
+      circuitId: '',
+    },
+  };
+
   let snapshotId: string;
   let provider: JsonRpcProvider;
+
+  interface AddressesFile {
+    targecy?: string;
+    validator?: string;
+  }
+  const addressesFilePath = '../tests/hardhat-tests/addresses.json';
+
+  let zkServices: ZKServices;
 
   before(async () => {
     await evm.reset();
 
-    provider = new ethers.JsonRpcProvider(
-      'http://localhost:8545',
-      {
-        chainId: 1337,
-        name: 'localhost',
-      },
-      {
-        polling: true,
+    const TEST_USING_LOCAL_CHAIN = process.env.TEST_USING_LOCAL_CHAIN === 'true';
+    let deployedAddresses: AddressesFile = {};
+    let addressesModified = false;
+
+    if (!TEST_USING_LOCAL_CHAIN) {
+      provider = ethers.provider;
+    } else {
+      provider = new ethers.JsonRpcProvider(
+        'http://localhost:8545',
+        {
+          chainId: 1337,
+          name: 'localhost',
+        },
+        {
+          polling: true,
+        }
+      );
+
+      try {
+        console.log('Loading addresses.json...');
+        deployedAddresses = JSON.parse(getStringFromFile(addressesFilePath));
+        console.log('Loaded addresses.json');
+      } catch (e) {
+        console.log('Could not load addresses.json, deploying contracts...');
+        addressesModified = true;
       }
-    );
+    }
 
     deployerWithProvider = await provider.getSigner(0);
     adminWithProvider = await provider.getSigner(1);
@@ -64,7 +99,10 @@ describe('Tests', function () {
 
     console.log('Deploying MockValidator...');
     const validatorFactory = (await ethers.getContractFactory('MockValidator')).connect(deployerWithProvider);
-    validator = (await validatorFactory.deploy()).connect(adminWithProvider) as unknown as MockValidator;
+    validator =
+      deployedAddresses.validator !== undefined
+        ? (validatorFactory.attach(deployedAddresses.validator) as MockValidator)
+        : ((await validatorFactory.deploy()).connect(adminWithProvider) as MockValidator);
     const validatorAddress = await validator.getAddress();
     console.log(" | MockValidator's address: ", validatorAddress);
     console.log(" | MockValidator's mock example: ", await validator.connect(adminWithProvider).getCircuitId());
@@ -78,32 +116,31 @@ describe('Tests', function () {
       _relayerAddress: AddressLike
     ] = [await validator.getAddress(), vaultWithProvider.address, adminWithProvider.address, defaultIssuer.toString(), relayerAddress];
     const factory = (await ethers.getContractFactory('Targecy')).connect(deployerWithProvider);
-    const targecyDeployed = (await factory.deploy()) as Targecy;
-    await targecyDeployed.initialize(...targecyArgs);
+    let targecyDeployed;
+    if (deployedAddresses.targecy !== undefined) {
+      targecyDeployed = factory.attach(deployedAddresses.targecy) as Targecy;
+    } else {
+      targecyDeployed = (await factory.deploy()).connect(adminWithProvider) as Targecy;
+      await targecyDeployed.initialize(...targecyArgs);
+    }
     targecy = targecyDeployed.connect(adminWithProvider);
 
     const address = await targecy.getAddress();
     console.log(" | Targecy's address: ", address);
     console.log(" | Connected's address: ", (targecy.runner as JsonRpcSigner).address);
-    console.log(" | Targecy's provider", targecy.runner?.provider);
+    console.log(" | Connected's address balance", await provider.getBalance((targecy.runner as JsonRpcSigner).address));
     console.log(' | Initialized values > Validator', await targecy.zkProofsValidator());
     console.log(' | Initialized values > Vault', await targecy.protocolVault());
     console.log(' | Initialized values > Relayer Address', await targecy.relayerAddress());
     console.log(' | Initialized values > Ad Id', await targecy._adId());
 
-    defaultSegment = {
-      metadataURI: '',
-      issuer: defaultIssuer,
-      query: {
-        schema: 1,
-        slotIndex: 1,
-        operator: 1,
-        value: [],
-        circuitId: '',
-      },
-    };
+    if (addressesModified) saveStringToFile(JSON.stringify({ targecy: address, validator: validatorAddress }), addressesFilePath, true);
 
-    console.log('\nAll initialized, running tests! \n\n');
+    console.log('\nInitializing Zero-Knowledge Proofs Helpers...');
+    zkServices = await initZKServices();
+    console.log('Done!');
+
+    console.log('\nReady! Running tests! \n\n');
 
     snapshotId = await evm.snapshot.take();
   });
@@ -114,23 +151,24 @@ describe('Tests', function () {
 
   describe('Audiences', () => {
     it('Should be able to create a audience', async () => {
-      expect(await targecy._audienceId()).to.equal(BigNumber.from(1));
+      expect(await targecy._audienceId()).to.equal(1n);
 
       const tx = await targecy.setSegment(0, defaultSegment);
       const receipt = await tx.wait();
-
-      console.log(decodeEvents(receipt));
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
-      expect(await targecy._audienceId()).to.equal(BigNumber.from(2));
+      const segmentId = (await targecy._audienceId()) - 1n;
 
-      const saved = await targecy.requestQueries(1);
+      const tx2 = await targecy.setAudience(0, 'metadata', [segmentId]);
+      const receipt2 = await tx2.wait();
+      expect(decodeEvents(receipt2)?.filter((e) => e.name === 'AudienceEdited').length).to.equal(1);
+      const audienceId = (await targecy._audienceId()) - 1n;
 
-      expect(saved.query.circuitId).to.equal(defaultSegment.query.circuitId);
-      expect(saved.query.operator).to.equal(defaultSegment.query.operator);
-      expect(saved.query.schema).to.equal(defaultSegment.query.schema);
-      expect(saved.query.slotIndex).to.equal(defaultSegment.query.slotIndex);
-      expect(saved.query.value).to.deep.equal(defaultSegment.query.value);
-      expect(saved.metadataURI).to.equal(defaultSegment.metadataURI);
+      const saved = await targecy.audiences(audienceId);
+      expect(saved.metadataURI).to.equal('metadata');
+      expect(saved.consumptions).to.equal(0);
+      expect(await targecy.getAudienceSegments(audienceId)).to.deep.equal([segmentId]);
+      expect(audienceId).to.equal(1n);
+      expect(await targecy._audienceId()).to.equal(2n);
     });
   });
 
@@ -146,12 +184,12 @@ describe('Tests', function () {
     });
 
     it('Should be able to create a target group', async () => {
-      expect(await targecy._audienceId()).to.equal(BigNumber.from(1));
+      expect(await targecy._audienceId()).to.equal(1n);
 
       const tx = await targecy.setAudience(0, 'metadata', [segmentId]);
       const receipt = await tx.wait();
 
-      expect(await targecy._audienceId()).to.equal(BigNumber.from(2));
+      expect(await targecy._audienceId()).to.equal(2n);
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AudienceEdited').length).to.equal(1);
 
       const saved = await targecy.audiences(1);
@@ -162,9 +200,6 @@ describe('Tests', function () {
   });
 
   describe('Ad', () => {
-    let segmentId: bigint;
-    let tgId: bigint;
-
     before(async () => {
       // Create Target Group and Audience
 
@@ -172,34 +207,32 @@ describe('Tests', function () {
       const zkReceipt = await zkTx.wait();
       expect(decodeEvents(zkReceipt)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
 
-      segmentId = (await targecy._audienceId()) - 1n;
+      const segmentId = (await targecy._audienceId()) - 1n;
 
       const aTx = await targecy.setAudience(0, 'metadata', [segmentId]);
       const aReceipt = await aTx.wait();
 
       expect(decodeEvents(aReceipt)?.filter((e) => e.name === 'AudienceEdited').length).to.equal(1);
-
-      tgId = (await targecy._audienceId()) - 1n;
     });
 
-    it.only('Should be able to create an ad', async () => {
+    it('Should be able to create an ad', async () => {
       await targecy.setSegment(0, defaultSegment);
+      const segmentId = (await targecy._audienceId()) - 1n;
       await targecy.setAudience(0, 'metadata', [segmentId]);
+      const audienceId = (await targecy._audienceId()) - 1n;
 
-      console.log('a');
-      expect(await targecy._adId()).to.equal(BigNumber.from(1));
+      expect(await targecy._adId()).to.equal(1n);
 
-      console.log('b');
-      const tx = await targecy.setAd(0, {
+      const tx = await targecy.connect(advertiserWithProvider).setAd.send(0, {
         metadataURI: 'metadata',
         attribution: 0,
         active: true,
         abi: '',
-        target: '',
+        target: ZeroAddress,
 
         startingTimestamp: 1,
         endingTimestamp: 100,
-        audienceIds: [],
+        audienceIds: [audienceId],
         blacklistedPublishers: [],
         blacklistedWeekdays: [],
 
@@ -208,21 +241,19 @@ describe('Tests', function () {
         maxConsumptionsPerDay: 100,
       });
 
-      console.log('c');
-
       const receipt = await tx.wait();
 
-      expect(await targecy._adId()).to.equal(BigNumber.from(2));
+      expect(await targecy._adId()).to.equal(2n);
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
 
-      console.log('d');
       const saved = await targecy.ads(1);
       expect(saved.metadataURI).to.equal('metadata');
-      expect(saved.advertiser).to.equal(await userWithProvider.getAddress());
+      expect(saved.advertiser).to.equal(await advertiserWithProvider.getAddress());
+
       expect(saved.maxPricePerConsumption).to.equal(20000);
       expect(saved.startingTimestamp).to.equal(1);
       expect(saved.endingTimestamp).to.equal(100);
-      expect(await targecy.getAdAudiences(1)).to.deep.equal([tgId]);
+      expect(await targecy.getAdAudiences(1)).to.deep.equal([audienceId]);
     });
   });
 
@@ -232,54 +263,51 @@ describe('Tests', function () {
 
       await targecy.setSegment(0, getTestAudience());
       await targecy.setAudience(0, 'metadata', [1]);
-      await targecy.setAd(
-        0,
-        {
-          active: true,
-          attribution: 1,
-          abi: '',
-          target: '',
-          metadataURI: 'metadata',
-          maxConsumptionsPerDay: 100,
-          budget: 1000000000,
-          maxPricePerConsumption: 20000,
-          startingTimestamp: 0,
-          endingTimestamp: ethers.MaxUint256,
-          audienceIds: [1],
-          blacklistedPublishers: [],
-          blacklistedWeekdays: [],
-        },
-        { value: 1000000000 }
-      );
+      await targecy.connect(advertiserWithProvider).setAd(0, {
+        active: true,
+        attribution: 2,
+        abi: '',
+        target: ZeroAddress,
+        metadataURI: 'metadata',
+        maxConsumptionsPerDay: 100,
+        budget: 1000000000,
+        maxPricePerConsumption: 3000000,
+        startingTimestamp: 0,
+        endingTimestamp: ethers.MaxUint256,
+        audienceIds: [1],
+        blacklistedPublishers: [],
+        blacklistedWeekdays: [],
+      });
 
-      console.log('    > Generating proof, this may take +30s');
-      const proof = await getTestProof(1);
+      const proof = await getTestProof(zkServices, 1);
 
       const publisherPastBalance = await provider.getBalance(publisherWithProvider.address);
       const vaultPastBalance = await provider.getBalance(vaultWithProvider.address);
 
-      await targecy.setPublisher({ vault: publisherWithProvider.address, userRewardsPercentage: 0, active: true, cpi: 0, cpa: 0, cpc: 0 });
+      await targecy.setPublisher({ userRewardsPercentage: 0n, vault: publisherWithProvider.address, active: true, cpi: 0n, cpa: 0n, cpc: 0n });
 
+      expect((await targecy.budgets(advertiserWithProvider.address)).remainingBudget).to.equal(0n);
+      await targecy.fundAdvertiserBudget(advertiserWithProvider.address, {
+        value: 1000000000n,
+      });
+      expect((await targecy.budgets(advertiserWithProvider.address)).remainingBudget).to.equal(1000000000n);
+
+      const signals = proof.pub_signals.map((signal) => BigInt(signal));
+      signals[7] = defaultIssuer;
       const tx = await targecy.consumeAd(
-        1,
+        1n,
         publisherWithProvider.address,
         {
-          inputs: [proof.pub_signals],
-          a: [proof.proof.pi_a.map((x) => BigNumber.from(x)) as any],
-          b: [proof.proof.pi_b.map((x) => x.map((y) => BigNumber.from(y))) as any],
-          c: [proof.proof.pi_c.map((x) => BigNumber.from(x)) as any],
+          inputs: [signals],
+          a: [proof.proof.pi_a.map((x) => BigInt(x)) as any],
+          b: [proof.proof.pi_b.map((x) => x.map((y) => BigInt(y))) as any],
+          c: [proof.proof.pi_c.map((x) => BigInt(x)) as any],
         },
-        [],
-        {
-          v: '',
-          r: '',
-          s: '',
-          deadline: 0,
-          nonce: 0,
-        }
+        []
       );
       const receipt = await tx.wait();
 
+      expect(decodeEvents(receipt)?.filter((e) => e.name === 'RewardsDistributed').length).to.equal(1);
       expect(decodeEvents(receipt)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
       expect(publisherPastBalance).to.be.lt(await provider.getBalance(publisherWithProvider.address));
       expect(vaultPastBalance).to.be.lt(await provider.getBalance(vaultWithProvider.address));

@@ -40,18 +40,31 @@ export function getTestAudience(): DataTypes.SegmentStruct {
   };
 }
 
-export async function getTestProof(audienceId: number): Promise<ZeroKnowledgeProofResponse> {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export async function initZKServices() {
   const storages = initializeStorages();
   const circuitStorage = await getCircuitStorage();
   const issuerIdentity = await createIssuerIdentity(storages.identityWallet);
   const userIdentity = await createUserIdentity(storages.identityWallet);
   const proofService = initProofService(storages.identityWallet, storages.credWallet, storages.dataStorage.states, circuitStorage);
 
+  return {
+    storages,
+    circuitStorage,
+    issuerIdentity,
+    userIdentity,
+    proofService,
+  };
+}
+
+export type ZKServices = Awaited<ReturnType<typeof initZKServices>>;
+
+export async function getTestProof(zkServices: ZKServices, audienceId: number): Promise<ZeroKnowledgeProofResponse> {
   const credentialRequest: CredentialRequest = {
     credentialSchema: 'https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json/KYCAgeCredential-v3.json',
     type: 'KYCAgeCredential',
     credentialSubject: {
-      id: `did:iden3:${userIdentity.did.id.toString()}`,
+      id: `did:iden3:${zkServices.userIdentity.did.id.toString()}`,
       birthday: 19960424,
       documentType: 99,
     },
@@ -62,8 +75,8 @@ export async function getTestProof(audienceId: number): Promise<ZeroKnowledgePro
     },
   };
 
-  const credential = await storages.identityWallet.issueCredential(issuerIdentity.did, credentialRequest);
-  await storages.dataStorage.credential.saveCredential(credential);
+  const credential = await zkServices.storages.identityWallet.issueCredential(zkServices.issuerIdentity.did, credentialRequest);
+  await zkServices.storages.dataStorage.credential.saveCredential(credential);
 
   const proofReqSig = {
     id: Number(audienceId),
@@ -81,11 +94,13 @@ export async function getTestProof(audienceId: number): Promise<ZeroKnowledgePro
     },
   };
 
-  const proof = await proofService.generateProof(proofReqSig, userIdentity.did, {
+  const proof = await zkServices.proofService.generateProof(proofReqSig, zkServices.userIdentity.did, {
     credential: credential,
     challenge: BigInt(1),
     skipRevocation: false,
   });
+
+  console.log('    Generating proof > takes ~5 seconds');
 
   proof.proof.pi_a = proof.proof.pi_a.slice(0, 2);
   proof.proof.pi_b = [

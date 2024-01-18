@@ -104,4 +104,13 @@ library DataTypes {
     uint256 cpc;
     uint256 cpa;
   }
+
+  struct RewardsDistribution {
+    address publisher;
+    uint256 publisherAmount;
+    address user;
+    uint256 userAmount;
+    address protocolVault;
+    uint256 protocolAmount;
+  }
 }
