@@ -73,6 +73,7 @@ export const AdComponent = (props: AdProps) => {
         },
         id: '0',
         attribution: 0,
+        active: true,
         blacklistedPublishers: [],
         blacklistedWeekdays: [],
         consumptions: 0,

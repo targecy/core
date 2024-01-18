@@ -9,7 +9,8 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
-import { GetAllAdsQuery, useGetAllAdsQuery } from '~/generated/graphql.types';
+import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');

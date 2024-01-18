@@ -60,6 +60,8 @@ const Demo = () => {
                 subtitleColor: props.styling?.subtitleColor,
                 borderRadius: props.styling?.borderRadius,
                 publisher: ethers.constants.AddressZero,
+                boxShadow: props.styling?.boxShadow,
+                border: props.styling?.border,
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -253,12 +255,12 @@ const Demo = () => {
                         placeholder="Enter Box Shadow"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.boxShadow = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
@@ -282,12 +284,12 @@ const Demo = () => {
                         placeholder="Enter Border"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.border = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 

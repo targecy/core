@@ -2,7 +2,8 @@ import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 
 import { environment } from './context';
-import { appRouter } from '../generated/types/relayer/router';
+import { appRouter as RelayerAppRouter } from '../generated/types/relayer/router';
+import { appRouter as BackendAppRouter } from '../generated/types/backend/router';
 
 export const getBackendUrl = (env: environment) => {
   switch (env) {
@@ -30,13 +31,28 @@ export const getRelayerUrl = (env: environment) => {
   }
 };
 
-type RelayerAppRouter = typeof appRouter;
 
 export const relayerTrpcClient = (env: environment) =>
-  createTRPCProxyClient<RelayerAppRouter>({
+  createTRPCProxyClient<typeof RelayerAppRouter>({
     links: [
       httpBatchLink({
         url: getRelayerUrl(env),
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            mode: 'cors',
+          });
+        },
+      }),
+    ],
+    transformer: superjson as any,
+  });
+
+export const backendTrpcClient = (env: environment) =>
+  createTRPCProxyClient<typeof BackendAppRouter>({
+    links: [
+      httpBatchLink({
+        url: getBackendUrl(env),
         fetch(url, options) {
           return fetch(url, {
             ...options,
