@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { prepareCircuitArrayValues } from '@0xpolygonid/js-sdk';
+import { KNOWN_PROTOCOLS, KNOWN_TOKENS } from '@backend/constants/contracts.constants';
+import { SCHEMAS } from '@backend/constants/schemas/schemas.constant';
 import { MtValue, PoseidonHasher } from '@iden3/js-jsonld-merklization';
-
-import { KNOWN_PROTOCOLS, KNOWN_TOKENS } from '~backend/constants/contracts.constants';
-import { SCHEMAS } from '~backend/constants/schemas/schemas.constant';
 
 const Operators = {
   NOOP: 0n, // No operation, skip query verification in circuit
