@@ -18,6 +18,7 @@ import { getStringFromFile, saveStringToFile } from '~scripts/utils';
 // @todo add 100% coverage, separate in different files and add proper testing for zk proofs. Test that all events needed in subgraph are being thrown.
 describe('Tests', function () {
   this.timeout(0);
+  
 
   let targecy: Targecy;
   let validator: MockValidator;

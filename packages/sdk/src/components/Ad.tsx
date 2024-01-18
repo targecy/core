@@ -100,7 +100,6 @@ export const AdComponent = (params: AdParams) => {
     dispatch(setEnvironment(params.env));
   }, [params.env, dispatch]);
 
-
   const context = useContext(TargecyServicesContext);
   const [ad, setAd] = useState<ReturnType<typeof useAd>['ad']>();
   const [isLoading, setIsLoading] = useState<ReturnType<typeof useAd>['isLoading']>(true);
@@ -121,7 +120,7 @@ export const AdComponent = (params: AdParams) => {
   const [isConsumed, setIsConsumed] = useState(false); // Consume only once.
   const consumeAd = () => {
     if (!ad?.ad) return undefined;
-    
+
     setIsConsumed(true);
     console.log('Consuming Ad');
 
@@ -130,7 +129,6 @@ export const AdComponent = (params: AdParams) => {
         adId: ad.ad.id,
         publisher: params.publisher,
         data: '',
-        signature: '',
       })
       .catch((error) => {
         console.error(error);
