@@ -1,5 +1,3 @@
-
-
 export const appName = 'Targecy';
 
 export enum ConnectorId {

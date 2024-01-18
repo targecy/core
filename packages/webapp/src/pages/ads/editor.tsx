@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { defaultStyling } from '@targecy/sdk/src/components/Ad';
 import AdLayout from '@targecy/sdk/src/components/AdLayout';
 import { Field, Form, Formik } from 'formik';
@@ -12,14 +13,13 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import DatePicker from '~~/components/DatePicker';
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { fetchMetadata } from '~~/utils/metadata';
-import { backendTrpcClient } from '~~/utils/trpc';
+import DatePicker from '~/components/DatePicker';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { fetchMetadata } from '~/utils/metadata';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -300,13 +300,13 @@ export const AdEditorComponent = (id?: string) => {
               initialValues={{
                 title: currentMetadata?.title ?? '',
                 description: currentMetadata?.description ?? '',
-                image: null,
+                image: undefined,
                 imageUrl: currentMetadata?.image ?? '',
                 budget: ad?.remainingBudget ? Number(ad.remainingBudget) : undefined,
                 maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
                 maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
-                startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : null,
-                endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : null,
+                startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
+                endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : undefined,
                 attribution: ad?.attribution ? Number(ad.attribution) : undefined,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],

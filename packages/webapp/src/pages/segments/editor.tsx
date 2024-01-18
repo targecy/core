@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,12 +12,11 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.constant';
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetSegmentQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { backendTrpcClient } from '~~/utils/trpc';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetSegmentQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -230,7 +230,7 @@ export const SegmentEditorComponent = (id?: string) => {
     if (!currentSchema && initialSchema) {
       setCurrentSchema(initialSchema);
     }
-  }, [segment]);
+  }, [currentSchema, segment]);
 
   const [currentOperator, setCurrentOperator] = useState<number | undefined>(undefined);
   useEffect(() => {
@@ -239,7 +239,7 @@ export const SegmentEditorComponent = (id?: string) => {
     if (!currentOperator && initialOperator) {
       setCurrentOperator(initialOperator);
     }
-  }, [segment]);
+  }, [currentOperator, segment]);
 
   const [currentSlotIndex, setCurrentSlotIndex] = useState<number | undefined>(undefined);
   useEffect(() => {
@@ -248,7 +248,7 @@ export const SegmentEditorComponent = (id?: string) => {
     if (!currentSlotIndex && initialSlotIndex) {
       setCurrentSlotIndex(initialSlotIndex);
     }
-  }, [segment]);
+  }, [currentSlotIndex, segment]);
 
   const [slotIndexOptions, setSlotIndexOptions] = useState<{ label: string; value: number }[]>([]);
   useEffect(() => {

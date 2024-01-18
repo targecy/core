@@ -1,19 +1,14 @@
-import { GenericContract } from 'eth-components/ant/generic-contract';
-import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners, useEventListener } from 'eth-hooks';
+import { useBalance } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
-import { useDexEthPrice } from 'eth-hooks/dapps';
-import { asEthersAdaptor } from 'eth-hooks/functions';
 import { NextPage } from 'next';
 import { ReactElement } from 'react';
 
-import { createTabsAndPages, TContractPageList } from '.';
-
-// import { useLoadAppContracts, useConnectAppContracts, useAppContracts } from '~common/components/context';
-// import { useCreateAntNotificationHolder } from '~common/components/hooks/useAntNotification';
-// import { useBurnerFallback } from '~common/components/hooks/useBurnerFallback';
-// import { useScaffoldAppProviders } from '~common/components/hooks/useScaffoldAppProviders';
-// import { Targecy } from '~common/generated/contract-types';
-// import { useScaffoldHooksExamples } from '~~/components/hooks/useScaffoldHooksExamples';
+// import { useLoadAppContracts, useConnectAppContracts, useAppContracts } from '@common/components/context';
+// import { useCreateAntNotificationHolder } from '@common/components/hooks/useAntNotification';
+// import { useBurnerFallback } from '@common/components/hooks/useBurnerFallback';
+// import { useScaffoldAppProviders } from '@common/components/hooks/useScaffoldAppProviders';
+// import { Targecy } from '@common/generated/contract-types';
+// import { useScaffoldHooksExamples } from '~/components/hooks/useScaffoldHooksExamples';
 // import {
 //   AVAILABLE_NETWORKS_DEFINITIONS,
 //   CONNECT_TO_BURNER_AUTOMATICALLY,
@@ -21,8 +16,8 @@ import { createTabsAndPages, TContractPageList } from '.';
 //   MAINNET_PROVIDER,
 //   INFURA_ID,
 //   BURNER_FALLBACK_ENABLED,
-// } from '~~/config/nextjsApp.config';
-import { TAppProps } from '~~/models/TAppProps';
+// } from '~/config/nextjsApp.config';
+import { TAppProps } from '~/models/TAppProps';
 
 /** ********************************
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️

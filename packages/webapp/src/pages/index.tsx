@@ -8,7 +8,7 @@ import { setPageTitle } from '../store/themeConfigSlice';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
-import { Home } from '~~/components/Home';
+import { Home } from '~/components/Home';
 
 const Index = () => {
   const dispatch = useDispatch();

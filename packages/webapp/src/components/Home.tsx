@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -8,17 +9,16 @@ import { useContractRead } from 'wagmi';
 import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
 import * as abi from '../generated/abis/Targecy.json';
 
-import { getIPFSStorageUrl } from '~common/functions/getIPFSStorageUrl';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { env } from '~~/env.mjs';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { env } from '~/env.mjs';
 import {
   useGetAdvertiserQuery,
   useGetLastAdsQuery,
   useGetLastAudiencesQuery,
   useGetLastSegmentsQuery,
-} from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { backendTrpcClient } from '~~/utils';
+} from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { backendTrpcClient } from '~/utils';
 
 const scannerUrl: Record<typeof env.NEXT_PUBLIC_VERCEL_ENV, string> = {
   development: `http://localhost:8090`,

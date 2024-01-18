@@ -1,4 +1,4 @@
-import { env } from '~~/env.mjs';
+import { env } from '~/env.mjs';
 
 export const vercelEnv = env.NEXT_PUBLIC_VERCEL_ENV;
 export const isVercelPreview = vercelEnv === 'preview';

@@ -1,5 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { darkTheme, getDefaultWallets, midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { darkTheme, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider, GetSiweMessageOptions } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { SessionProvider } from 'next-auth/react';
@@ -9,7 +9,7 @@ import { polygonMumbai, localhost } from 'wagmi/chains';
 
 import { appName } from '../Wallet.constants';
 
-import { isVercelDevelopment } from '~~/constants/app.constants';
+import { isVercelDevelopment } from '~/constants/app.constants';
 
 const { chains, publicClient } = configureChains(
   [isVercelDevelopment ? localhost : polygonMumbai],
