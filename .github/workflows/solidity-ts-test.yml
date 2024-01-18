@@ -18,7 +18,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # or the version you need
+          node-version: '18'
+          cache: 'yarn' # This automatically caches and restores Yarn dependencies
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
