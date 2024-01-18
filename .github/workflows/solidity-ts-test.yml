@@ -24,3 +24,5 @@ jobs:
 
       - name: Run tests in package/solidity-ts
         run: cd packages/solidity-ts && yarn test
+        env:
+          PRIVATE_KEY: ${{ vars.PRIVATE_KEY }}
