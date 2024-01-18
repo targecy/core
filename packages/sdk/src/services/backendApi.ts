@@ -1,7 +1,8 @@
 import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
-import { BaseQueryFn, FetchBaseQueryError, FetchBaseQueryMeta, createApi } from '@reduxjs/toolkit/query/react';
+import { FetchBaseQueryError, FetchBaseQueryMeta, createApi } from '@reduxjs/toolkit/query/react';
 import { TRPCClientError } from '@trpc/client';
 import { HYDRATE } from 'next-redux-wrapper';
+
 import { backendTrpcClient } from '../utils';
 
 // const backendApiTagTypes = [] as const;
@@ -44,7 +45,7 @@ export const backendApi = createApi({
   baseQuery: trpcBaseQuery(),
   reducerPath: backendApiReducerPath,
   tagTypes: backendApiTagTypes,
-  // eslint-disable-next-line consistent-return
+
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === HYDRATE) {
       return action.payload[reducerPath];

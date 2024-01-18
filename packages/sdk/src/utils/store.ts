@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
+
 import { api, relayerApi } from '../services';
 
 export const rootReducer = combineReducers({

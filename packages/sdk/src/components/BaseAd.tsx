@@ -29,7 +29,7 @@ export const BaseAd = (props: BaseAdProps) => {
       transport: custom(window.ethereum),
     });
 
-    client.getAddresses().then(([account]) =>
+    void client.getAddresses().then(([account]) =>
       client
         .signMessage({
           account,

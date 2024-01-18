@@ -1,6 +1,3 @@
-import { ReactNode } from 'react';
-import { Config } from 'wagmi';
-
 import {
   IdentityWallet,
   CredentialWallet,
@@ -13,6 +10,8 @@ import {
   core,
   W3CCredential,
 } from '@0xpolygonid/js-sdk';
+import { ReactNode } from 'react';
+import { Config } from 'wagmi';
 
 export type TargecyContextType = {
   zkServices?: ZkServicesType;
