@@ -6,6 +6,6 @@ export const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${strin
 
 export const walletClient = createWalletClient({
   account,
-  chain: process.env.NODE_ENV == 'development' ? localhost : polygonMumbai,
+  chain: process.env.NODE_ENV === 'development' ? localhost : polygonMumbai,
   transport: http(),
 });
