@@ -25,7 +25,7 @@
     "jsx": "react-jsxdev",
     "jsxImportSource": "@emotion/react",
     "paths": {
-      "~common/*": ["./src/*"]
+      "~/*": ["./src/*"]
     }
   },
   "include": ["src", "src/**/*.json"],

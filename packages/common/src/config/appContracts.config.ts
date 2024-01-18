@@ -6,10 +6,10 @@ import {
 } from 'eth-hooks/context';
 import { invariant } from 'ts-invariant';
 
-import * as toolkitContracts from '~common/generated/contract-types/';
-import foundryDeployedContractsJson from '~common/generated/foundry_contracts.json';
-import hardhatDeployedContractsJson from '~common/generated/hardhat_contracts.json';
-import { scaffoldConfig } from '~common/scaffold.config';
+import * as toolkitContracts from '~/generated/contract-types/';
+import foundryDeployedContractsJson from '~/generated/foundry_contracts.json';
+import hardhatDeployedContractsJson from '~/generated/hardhat_contracts.json';
+import { scaffoldConfig } from '~/scaffold.config';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️

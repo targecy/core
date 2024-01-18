@@ -1,6 +1,6 @@
 import { TCreateEthersModalConnector, TEthersAdaptor, TEthersProvider } from 'eth-hooks/models';
 
-import { TNetworkDefinition } from '~common/constants';
+import { TNetworkDefinition } from '~/constants';
 
 export interface IScaffoldAppProviders {
   currentProvider: TEthersProvider | undefined;
