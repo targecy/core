@@ -347,23 +347,8 @@ const Demo = () => {
               </pre>
             </div>
           </div>
-<<<<<<< HEAD
-          <div className="flex place-items-center  justify-center">
-            <Ad
-              // demo={{
-              //   title: 'This is a demo title',
-              //   description: 'This is an engaging demo description!',
-              //   image:
-              //     'https://www.coindesk.com/resizer/hcfZgL-G2lLBytu1w2FQPfGIxNY=/975x548/filters:quality(80):format(jpg)/cloudfront-us-east-1.images.arcpublishing.com/coindesk/J6PYAX7JBZGQLCBW2Y6FWQXEKU.jpg',
-              // }}
-              env={env.NEXT_PUBLIC_VERCEL_ENV}
-              publisher={params.publisher}
-              styling={params.styling}
-            />{' '}
-=======
           <div className="flex place-items-center justify-center">
             <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={props.publisher} styling={props.styling} />
->>>>>>> main
           </div>
         </div>
       </div>
