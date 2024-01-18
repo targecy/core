@@ -1,38 +1,10 @@
-import { CredentialStatusType, W3CCredential } from '@0xpolygonid/js-sdk';
-import { Issuer, Prisma } from '@prisma/client';
+import { CredentialStatusType } from '@0xpolygonid/js-sdk';
 
-import { getCredentialIdentifier } from '../src/utils/credentials/credentials.utils';
-
-import { credentials } from './data';
-
-export const credentialsData = (issuer: Issuer): Prisma.CredentialCreateManyInput[] =>
-  credentials().map((c: PartialCredential) => {
-    return {
-      did: c.id,
-      type: c.type.toLocaleString(),
-      identifier: getCredentialIdentifier(c),
-      credential: JSON.parse(JSON.stringify(c)),
-      issuerDid: issuer.did,
-      issuedTo: c.credentialSubject['@id'] as string,
-    };
-  });
+import { PartialCredential } from './types';
 
 export function getRandomInt(max: number = 10000000000000000, min: number = 1000) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-type PartialCredential = Pick<
-  W3CCredential,
-  | 'id'
-  | 'type'
-  | 'issuer'
-  | 'issuanceDate'
-  | 'expirationDate'
-  | 'credentialSubject'
-  | 'credentialSchema'
-  | 'credentialStatus'
-  | '@context'
->;
 
 export const makeCredential = (credentialSubject: any): PartialCredential => {
   return {

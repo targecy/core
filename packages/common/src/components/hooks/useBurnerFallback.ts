@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { IScaffoldAppProviders } from '../../models/IScaffoldAppProviders';
 
-import { networkDefinitions } from '~common/constants/networkDefinitions';
+import { networkDefinitions } from '~/constants/networkDefinitions';
 
 export const useBurnerFallback = (appProviders: IScaffoldAppProviders, enable: boolean): void => {
   const ethersAppContext = useEthersAppContext();
@@ -30,7 +30,6 @@ export const useBurnerFallback = (appProviders: IScaffoldAppProviders, enable: b
     ) {
       void ethersAppContext.changeSigner?.(burnerFallback.signer);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     ethersAppContext.account,
     localAddress,

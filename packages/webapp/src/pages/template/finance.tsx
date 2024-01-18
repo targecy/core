@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Dropdown from '~~/components/Dropdown';
+import Dropdown from '~/components/Dropdown';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,

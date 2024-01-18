@@ -1,5 +1,7 @@
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
+import { HYDRATE } from 'next-redux-wrapper';
+
 import { environment } from '../utils/context';
 import { GetAllAdsDocument } from '../generated/graphql.types';
 

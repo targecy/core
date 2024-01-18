@@ -1,9 +1,6 @@
 name: Solidity-TS Test
 
 on:
-  push:
-    paths:
-      - 'packages/solidity-ts/**'
   pull_request:
     paths:
       - 'packages/solidity-ts/**'

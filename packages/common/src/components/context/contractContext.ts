@@ -1,6 +1,6 @@
 import { contractsContextFactory } from 'eth-hooks/context';
 
-import { appContractsConfig } from '~common/config';
+import { appContractsConfig } from '~/config';
 
 /**
  * This file initalises the contractContextFactory and exports the types

@@ -16,8 +16,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "paths": {
-      "~~/*": ["./src/*"],
-      "~common/*": ["../common/src/*"]
+      "~/*": ["./src/*"],
+      "@common/*": ["../common/src/*"]
     }
   },
   "ts-node": {

@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,12 +10,12 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { Segment, useGetAllSegmentsQuery, useGetAudienceQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { fetchMetadata } from '~~/utils/metadata';
-import { backendTrpcClient } from '~~/utils/trpc';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Segment, useGetAllSegmentsQuery, useGetAudienceQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { fetchMetadata } from '~/utils/metadata';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -47,7 +48,7 @@ export const AudienceEditorComponent = (id?: string) => {
   const audience = audienceData?.audience;
   useAsync(async () => {
     if (audience) {
-      const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
       const json = await newMetadata.json();
       setCurrentMetadata({ title: json.title, description: json.description });
     }
@@ -159,7 +160,7 @@ export const AudienceEditorComponent = (id?: string) => {
         (
           await Promise.all(
             segments.map(async (s) => {
-              const newMetadata = await fetch(`https://${s.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(s.metadataURI));
               const json = await newMetadata.json();
               return {
                 id: s.id,

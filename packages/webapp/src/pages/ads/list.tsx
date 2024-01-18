@@ -1,4 +1,5 @@
 import { EditOutlined, DeleteOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -7,9 +8,8 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { GetAllAdsQuery, useGetAllAdsQuery } from '~/generated/graphql.types';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -34,11 +34,11 @@ const AdsList = () => {
         (
           await Promise.all(
             ads.map(async (ad) => {
-              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
-              const json = await newMetadata.json();
+              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
+              const { title, description, image, imageUrl } = await newMetadata.json();
               return {
                 id: ad.id,
-                metadata: { title: json.title, description: json.description, image: json.imageUrl },
+                metadata: { title, description, image: image || imageUrl },
               };
             })
           )
@@ -87,11 +87,11 @@ const AdsList = () => {
     { title: 'Id', accessor: 'id' },
     {
       title: 'Image',
-      accessor: 'id',
+      accessor: 'image',
       render: (ad) => <img src={metadata[ad.id]?.image} className="h-[75px] w-[75px] object-contain"></img>,
     },
-    { title: 'Title', accessor: 'id', render: (ad) => metadata[ad.id]?.title },
-    { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
+    { title: 'Title', accessor: 'title', render: (ad) => metadata[ad.id]?.title },
+    { title: 'Description', accessor: 'description', render: (ad) => metadata[ad.id]?.description },
     {
       title: 'Attribution',
       accessor: 'attribution',
@@ -254,8 +254,9 @@ const AdsList = () => {
           }}
           highlightOnHover={true}
           minHeight={100}
-          noRecordsText={`No ads found for your address. Please create one.`}
-          columns={columns}></DataTable>
+          columns={columns}
+          idAccessor="id"
+        />
       </div>
     </div>
   );

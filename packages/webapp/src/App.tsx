@@ -30,7 +30,7 @@ function App({ children }: PropsWithChildren) {
     // locale
     const locale = localStorage.getItem('i18nextLng') || themeConfig.locale;
     dispatch(toggleLocale(locale));
-    i18n.changeLanguage(locale);
+    void i18n.changeLanguage(locale);
   }, [
     dispatch,
     themeConfig.theme,
@@ -41,6 +41,7 @@ function App({ children }: PropsWithChildren) {
     themeConfig.navbar,
     themeConfig.locale,
     themeConfig.semidark,
+    i18n,
   ]);
 
   return (

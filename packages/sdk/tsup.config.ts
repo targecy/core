@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import alias from 'esbuild-plugin-alias';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -7,5 +8,12 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  minify: true,
+  esbuildPlugins: [
+    alias({
+      '~': './src',
+      '@backend': '../backend/src',
+      '@relayer': '../relayer/src',
+      '@common': '../common/src',
+    }),
+  ],
 });

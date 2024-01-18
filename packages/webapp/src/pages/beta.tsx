@@ -5,9 +5,9 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { useWallet } from '~~/hooks';
-import { trimAddress } from '~~/utils/evm';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { useWallet } from '~/hooks';
+import { trimAddress } from '~/utils/evm';
 
 const FORM_LINK = 'https://skugmdh7toi.typeform.com/to/hEiAYGEx';
 

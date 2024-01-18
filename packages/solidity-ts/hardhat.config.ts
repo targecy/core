@@ -3,6 +3,8 @@ import path from 'path';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
+import { hardhatNamedAccounts } from '@common/constants';
+import scaffoldConfig from '@common/scaffold.config';
 import chalk from 'chalk';
 import glob from 'glob';
 import type { HardhatUserConfig } from 'hardhat/config';
@@ -10,8 +12,6 @@ import { removeConsoleLog } from 'hardhat-preprocessor';
 
 import { getMnemonic } from './helpers/functions';
 
-import { hardhatNamedAccounts } from '~common/constants';
-import scaffoldConfig from '~common/scaffold.config';
 import { hardhatArtifactsDir, typechainOutDir } from '~helpers/constants/toolkitPaths';
 
 // eslint-disable-next-line no-duplicate-imports

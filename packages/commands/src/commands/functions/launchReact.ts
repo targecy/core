@@ -3,7 +3,7 @@ import shell from 'shelljs';
 
 import { processUnknownArgs } from './processUnknownArgs';
 
-import { load, printConfig } from '~~/helpers/configManager';
+import { load, printConfig } from '~/helpers/configManager';
 
 export const startReact = (args: string[]): void => {
   const config = load();

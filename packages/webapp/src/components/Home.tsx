@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -8,16 +9,16 @@ import { useContractRead } from 'wagmi';
 import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
 import abi from '../generated/abis/Targecy.json';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { env } from '~~/env.mjs';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { env } from '~/env.mjs';
 import {
   useGetAdvertiserQuery,
   useGetLastAdsQuery,
   useGetLastAudiencesQuery,
   useGetLastSegmentsQuery,
-} from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { backendTrpcClient } from '~~/utils';
+} from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { backendTrpcClient } from '~/utils';
 
 const scannerUrl: Record<typeof env.NEXT_PUBLIC_VERCEL_ENV, string> = {
   development: `http://localhost:8090`,
@@ -67,7 +68,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastAds.ads.map(async (ad) => {
-              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
               const json = await newMetadata.json();
               return { id: ad.id, metadata: { title: json.title, description: json.description } };
             })
@@ -90,7 +91,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastAudiences.audiences.map(async (audience) => {
-              const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
               const json = await newMetadata.json();
               return { id: audience.id, metadata: { title: json.title, description: json.description } };
             })
@@ -113,7 +114,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastSegments.segments.map(async (segment) => {
-              const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
               const json = await newMetadata.json();
               return { id: segment.id, metadata: { title: json.title, description: json.description } };
             })

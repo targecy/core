@@ -1,4 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -11,10 +12,10 @@ import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.consta
 
 import { operatorOptions } from './editor';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~~/generated/graphql.types';
-import { shortString } from '~~/utils';
-import { backendTrpcClient } from '~~/utils/trpc';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~/generated/graphql.types';
+import { shortString } from '~/utils';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -36,7 +37,7 @@ const SegmentsList = () => {
         (
           await Promise.all(
             segments.map(async (zkpr) => {
-              const newMetadata = await fetch(`https://${zkpr.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(zkpr.metadataURI));
               const json = await newMetadata.json();
               return { id: zkpr.id, metadata: { title: json.title, description: json.description } };
             })

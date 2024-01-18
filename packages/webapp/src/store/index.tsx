@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
 import themeConfigSlice from './themeConfigSlice';
 
-import { api } from '~~/services/baseApi';
+import { api } from '~/services/baseApi';
 
 const rootReducer = combineReducers({
   themeConfig: themeConfigSlice,

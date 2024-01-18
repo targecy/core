@@ -3,12 +3,12 @@
 // import { useEthersAppContext } from 'eth-hooks/context';
 // import React, { FC, ReactNode, Suspense } from 'react';
 
-// // import { Ramp, getFaucetAvailable, ThemeSwitcher } from '~common/components';
-// // import { networkDefinitions } from '~common/constants';
-// // import { getNetworkInfo } from '~common/functions';
-// // import { IScaffoldAppProviders } from '~common/models';
-// // import { FAUCET_ENABLED } from '~~/config/nextjsApp.config';
-// import { TAppProps } from '~~/models/TAppProps';
+// // import { Ramp, getFaucetAvailable, ThemeSwitcher } from '@common/components';
+// // import { networkDefinitions } from '@common/constants';
+// // import { getNetworkInfo } from '@common/functions';
+// // import { IScaffoldAppProviders } from '@common/models';
+// // import { FAUCET_ENABLED } from '~/config/nextjsApp.config';
+// import { TAppProps } from '~/models/TAppProps';
 
 // export interface IMainPageFooterProps {
 //   // scaffoldAppProviders: IScaffoldAppProviders;
