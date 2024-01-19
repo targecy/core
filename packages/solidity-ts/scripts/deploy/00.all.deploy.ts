@@ -5,14 +5,18 @@ import { hostname } from 'os';
 
 import { ethers } from 'hardhat';
 import { DeployFunction } from 'hardhat-deploy/types';
+import { isolatedEnv } from 'hardhat.config';
 
+import { ERC20PresetFixedSupply, ERC20PresetFixedSupply__factory } from '~generated/contract-types';
 import { THardhatRuntimeEnvironmentExtended } from '~helpers/types/THardhatRuntimeEnvironmentExtended';
 import { getStringFromFile, saveStringToFile } from '~scripts/utils';
 
 const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => {
   console.log("Starting deployment of Targecy's contracts...");
   const { deployments, getNamedAccounts, network, upgrades } = hre;
-  const { deployer } = await getNamedAccounts();
+  const { deployer, admin, vault, user, publisher, advertiser } = await getNamedAccounts();
+
+  if (Boolean(isolatedEnv)) console.warn('\n\n>>> RUNNING IN ISOLATED MODE. ARE YOU SURE?  <<< \n\n');
 
   let config: {
     defaultIssuer: bigint;
@@ -21,6 +25,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     relayer: `0x${string}`;
     multisig?: `0x${string}`;
     validator?: `0x${string}`;
+    erc20?: `0x${string}`;
   };
 
   switch (network.name) {
@@ -40,6 +45,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
         multisig: '0x8fe74Ce445F70b9a46F254dcc02c0857974F96eb',
         validator: '0xF2D4Eeb4d455fb673104902282Ce68B9ce4Ac450',
         relayer: '0x8fe74Ce445F70b9a46F254dcc02c0857974F96eb', // @todo SET CORRECT AND DEPLOY
+        erc20: '0x', // @todo SET REAL USDC
       };
       break;
     case 'matic':
@@ -57,13 +63,37 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
       log: true,
     });
     config.validator = mockValidatorDeployResult.address as `0x${string}`;
+
+    console.log('Deploying MockERC20...');
+    const amountToGive = 1000000000n;
+    const mockERC20DeployResult = await deployments.deploy('ERC20PresetFixedSupply', {
+      from: deployer,
+      log: true,
+      args: ['USDC', 'USDC', amountToGive * 100n, deployer],
+    });
+    config.erc20 = mockERC20DeployResult.address as `0x${string}`;
+    const erc20Factory = (await ethers.getContractFactory('ERC20PresetFixedSupply')) as ERC20PresetFixedSupply__factory;
+    const erc20 = erc20Factory.attach(config.erc20) as ERC20PresetFixedSupply;
+
+    // Distribute MockERC20 on local chain
+    console.log('Distributing mock erc20 assets');
+    const accounts = [admin, vault, user, publisher, advertiser];
+    for (const account of accounts) await erc20.transfer(account, amountToGive);
+
+    console.log(`${accounts} have ${await erc20.balanceOf(accounts[0])}`);
+
+    // @todo CHECK THIS WORKS AS EXPECTED
   }
 
   console.log("Deploying Targecy's proxy...");
   const factory = await ethers.getContractFactory('Targecy');
-  const deploymentResult = await upgrades.deployProxy(factory, [config.validator, config.vault, config.admin, config.defaultIssuer, config.relayer], {
-    verifySourceCode: true,
-  });
+  const deploymentResult = await upgrades.deployProxy(
+    factory,
+    [config.validator, config.vault, config.admin, config.defaultIssuer, config.relayer, config.erc20],
+    {
+      verifySourceCode: true,
+    }
+  );
   const address = await deploymentResult.getAddress();
   console.log("Targecy's address: ", address);
 

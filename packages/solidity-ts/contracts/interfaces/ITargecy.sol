@@ -24,7 +24,7 @@ interface ITargecy {
 
   function setRelayerAddress(address _relayerAddress) external;
 
-  function fundAdvertiserBudget(address advertiser) external payable;
+  function fundAdvertiserBudget(address advertiser, uint256 amount) external;
 
   function withdrawAdvertiserBudget(uint256 amount) external;
 

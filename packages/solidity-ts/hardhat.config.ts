@@ -43,6 +43,7 @@ if (process.env.BUILDING !== 'true') {
 }
 
 if (process.env.PRIVATE_KEY == null) throw new Error('PRIVATE_KEY env variable not set');
+export const isolatedEnv = process.env.ISOLATED_ENV === 'true';
 
 /**
  * loads network list and config from '@scaffold-eth/common/src
@@ -62,14 +63,14 @@ const networks: HardhatUserConfig['networks'] = {
 
   // Test
   mumbai: {
-    url: 'https://rpc.ankr.com/polygon_mumbai',
+    url: isolatedEnv ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon_mumbai',
     chainId: 80001,
     accounts: [process.env.PRIVATE_KEY],
   },
 
   // Production
   matic: {
-    url: 'https://rpc.ankr.com/polygon',
+    url: isolatedEnv ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon',
     chainId: 137,
     accounts: [process.env.PRIVATE_KEY],
   },

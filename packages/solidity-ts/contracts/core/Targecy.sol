@@ -7,6 +7,7 @@ import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/securit
 import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { ITargecy } from "../interfaces/ITargecy.sol";
 import { TargecyStorage } from "./storage/TargecyStorage.sol";
@@ -22,7 +23,8 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     address _protocolVault,
     address targecyAdmin,
     uint256 _defaultIssuer,
-    address _relayerAddress
+    address _relayerAddress,
+    address _usdcTokenAddress
   ) external initializer {
     __AccessControl_init();
     __Pausable_init();
@@ -31,6 +33,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     protocolVault = _protocolVault;
     defaultIssuer = _defaultIssuer;
     relayerAddress = _relayerAddress;
+    usdcTokenAddress = _usdcTokenAddress;
 
     defaultImpressionPrice = 10000;
     defaultClickPrice = 100000;
@@ -104,14 +107,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     emit TargecyEvents.SegmentEdited(idToUse, address(zkProofsValidator), _segment.query, _segment.metadataURI);
   }
 
-  function fundAdvertiserBudget(address advertiser) external payable override {
+  function fundAdvertiserBudget(address advertiser, uint256 amount) external override {
+    require(IERC20(usdcTokenAddress).transferFrom(msg.sender, address(this), amount), "Transfer failed. Please check your allowance.");
+
     DataTypes.Budget storage budget = budgets[advertiser];
-
     budget.advertiser = advertiser;
-    budget.totalBudget = budget.totalBudget + msg.value;
-    budget.remainingBudget = budget.remainingBudget + msg.value;
+    budget.totalBudget = budget.totalBudget + amount;
+    budget.remainingBudget = budget.remainingBudget + amount;
 
-    emit TargecyEvents.AdvertiserBudgetFunded(advertiser, msg.value);
+    emit TargecyEvents.AdvertiserBudgetFunded(advertiser, amount);
   }
 
   function withdrawAdvertiserBudget(uint256 amount) external override {
@@ -124,7 +128,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     budget.remainingBudget = budget.remainingBudget - amount;
     budget.totalBudget = budget.totalBudget - amount;
 
-    payable(budget.advertiser).transfer(amount);
+    require(IERC20(usdcTokenAddress).transfer(msg.sender, amount), "Transfer failed");
 
     emit TargecyEvents.AdvertiserBudgetWithdrawn(budget.advertiser, amount);
   }
@@ -286,15 +290,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     // Protocol Fee
     uint256 protocolFee = Helpers.calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
-    payable(protocolVault).transfer(protocolFee);
-
+    require(IERC20(usdcTokenAddress).transfer(protocolVault, protocolFee), "Transfer to protocol vault failed.");
+    
     // User Rewards
     uint256 userRewards = publisher.userRewardsPercentage > 0 ? Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage) : 0;
-    payable(user).transfer(userRewards);
+    require(IERC20(usdcTokenAddress).transfer(user, userRewards), "Transfer to user failed.");
 
     // User Rewards
     uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
-    payable(publisher.vault).transfer(publisherFee);
+    require(IERC20(usdcTokenAddress).transfer(publisher.vault, publisherFee), "Transfer to publisher failed.");
 
     emit TargecyEvents.RewardsDistributed(adId, DataTypes.RewardsDistribution(publisher.vault, publisherFee, user, userRewards, protocolVault, protocolFee));
     emit TargecyEvents.AdConsumed(adId, ad, publisher, consumptionPrice);
@@ -403,7 +407,14 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   }
 
   function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher.vault] = publisher;
+    whitelistedPublishers[publisher.vault] = DataTypes.PublisherSettings(
+        publisher.userRewardsPercentage,
+        publisher.vault,
+        publisher.active,
+        publisher.cpi,
+        publisher.cpc,
+        publisher.cpa
+    );
 
     emit TargecyEvents.PublisherWhitelisted(publisher.vault, publisher);
   }

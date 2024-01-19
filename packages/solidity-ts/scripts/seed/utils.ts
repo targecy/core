@@ -1,8 +1,8 @@
 import { join } from 'path';
 
-import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
+import { NFTStorage } from 'nft.storage';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require('dotenv').config({ path: join(__dirname, '../../.env') });
 
 const NFT_STORAGE_TOKEN = process.env.NFT_STORAGE_TOKEN;

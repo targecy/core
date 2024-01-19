@@ -9,6 +9,7 @@ abstract contract TargecyStorage {
   address public zkProofsValidator;
   address public protocolVault;
   address public relayerAddress;
+  address public usdcTokenAddress;
 
   uint256 public _segmentId;
   uint256 public _adId;
