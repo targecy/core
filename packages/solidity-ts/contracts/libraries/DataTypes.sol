@@ -23,9 +23,9 @@ library DataTypes {
   }
 
   enum Attribution {
-    Impression,
-    Click,
-    Conversion
+    Impression, // 0
+    Click, // 1
+    Conversion // 2
   }
   struct NewAd {
     // Properties

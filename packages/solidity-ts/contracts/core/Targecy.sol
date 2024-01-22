@@ -293,7 +293,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     require(IERC20(usdcTokenAddress).transfer(protocolVault, protocolFee), "Transfer to protocol vault failed.");
     
     // User Rewards
-    uint256 userRewards = publisher.userRewardsPercentage > 0 ? Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage) : 0;
+    uint256 userRewards = Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage);
     require(IERC20(usdcTokenAddress).transfer(user, userRewards), "Transfer to user failed.");
 
     // User Rewards

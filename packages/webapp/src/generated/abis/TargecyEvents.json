@@ -1,0 +1,782 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "advertiser",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "metadataURI",
+            "type": "string"
+          },
+          {
+            "internalType": "enum DataTypes.Attribution",
+            "name": "attribution",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "abi",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startingTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endingTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "audienceIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "blacklistedPublishers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "blacklistedWeekdays",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxBudget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentBudget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxConsumptionsPerDay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPricePerConsumption",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "consumptions",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.Ad",
+        "name": "ad",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "userRewardsPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpi",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpc",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpa",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.PublisherSettings",
+        "name": "publisher",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "consumptionPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdConsumed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "advertiser",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "metadataURI",
+            "type": "string"
+          },
+          {
+            "internalType": "enum DataTypes.Attribution",
+            "name": "attribution",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "abi",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startingTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endingTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "audienceIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "blacklistedPublishers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "blacklistedWeekdays",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "budget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPricePerConsumption",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxConsumptionsPerDay",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.NewAd",
+        "name": "ad",
+        "type": "tuple"
+      }
+    ],
+    "name": "AdCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "advertiser",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "metadataURI",
+            "type": "string"
+          },
+          {
+            "internalType": "enum DataTypes.Attribution",
+            "name": "attribution",
+            "type": "uint8"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "abi",
+            "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "target",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startingTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endingTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "audienceIds",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "address[]",
+            "name": "blacklistedPublishers",
+            "type": "address[]"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "blacklistedWeekdays",
+            "type": "uint8[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxBudget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentBudget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxConsumptionsPerDay",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxPricePerConsumption",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "consumptions",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.Ad",
+        "name": "ad",
+        "type": "tuple"
+      }
+    ],
+    "name": "AdEdited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdPaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdUnpaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "admin",
+        "type": "address"
+      }
+    ],
+    "name": "AdminRemoved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "admin",
+        "type": "address"
+      }
+    ],
+    "name": "AdminSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "advertiser",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdvertiserBudgetFunded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "advertiser",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "AdvertiserBudgetWithdrawn",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "audienceId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadataURI",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "segmentIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "AudienceCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "audienceId",
+        "type": "uint256"
+      }
+    ],
+    "name": "AudienceDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "audienceId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadataURI",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "segmentIds",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "AudienceEdited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "PausePublisher",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "PublisherRemovedFromWhitelist",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "userRewardsPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "vault",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "active",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpi",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpc",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "cpa",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.PublisherSettings",
+        "name": "publisher",
+        "type": "tuple"
+      }
+    ],
+    "name": "PublisherWhitelisted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "adId",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "publisher",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "publisherAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "userAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "protocolVault",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "protocolAmount",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct DataTypes.RewardsDistribution",
+        "name": "rewardsDistributed",
+        "type": "tuple"
+      }
+    ],
+    "name": "RewardsDistributed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "segmentId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "validator",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "schema",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "slotIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "operator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "value",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "string",
+            "name": "circuitId",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct ICircuitValidator.CircuitQuery",
+        "name": "query",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadataURI",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "issuer",
+        "type": "uint256"
+      }
+    ],
+    "name": "SegmentCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "segmentId",
+        "type": "uint256"
+      }
+    ],
+    "name": "SegmentDeleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "segmentId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "validator",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "schema",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "slotIndex",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "operator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "value",
+            "type": "uint256[]"
+          },
+          {
+            "internalType": "string",
+            "name": "circuitId",
+            "type": "string"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct ICircuitValidator.CircuitQuery",
+        "name": "query",
+        "type": "tuple"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "metadataURI",
+        "type": "string"
+      }
+    ],
+    "name": "SegmentEdited",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "publisher",
+        "type": "address"
+      }
+    ],
+    "name": "UnpausePublisher",
+    "type": "event"
+  }
+]

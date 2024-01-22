@@ -24,53 +24,69 @@ import type {
 } from "../../common";
 
 export declare namespace DataTypes {
-  export type AdStruct = {
-    advertiser: AddressLike;
+  export type ZKProofsStruct = {
+    inputs: BigNumberish[][];
+    a: [BigNumberish, BigNumberish][];
+    b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]][];
+    c: [BigNumberish, BigNumberish][];
+  };
+
+  export type ZKProofsStructOutput = [
+    inputs: bigint[][],
+    a: [bigint, bigint][],
+    b: [[bigint, bigint], [bigint, bigint]][],
+    c: [bigint, bigint][]
+  ] & {
+    inputs: bigint[][];
+    a: [bigint, bigint][];
+    b: [[bigint, bigint], [bigint, bigint]][];
+    c: [bigint, bigint][];
+  };
+
+  export type NewAdStruct = {
     metadataURI: string;
     attribution: BigNumberish;
     active: boolean;
+    abi: string;
+    target: AddressLike;
     startingTimestamp: BigNumberish;
     endingTimestamp: BigNumberish;
     audienceIds: BigNumberish[];
     blacklistedPublishers: AddressLike[];
     blacklistedWeekdays: BigNumberish[];
-    totalBudget: BigNumberish;
-    remainingBudget: BigNumberish;
-    maxConsumptionsPerDay: BigNumberish;
+    budget: BigNumberish;
     maxPricePerConsumption: BigNumberish;
-    consumptions: BigNumberish;
+    maxConsumptionsPerDay: BigNumberish;
   };
 
-  export type AdStructOutput = [
-    advertiser: string,
+  export type NewAdStructOutput = [
     metadataURI: string,
     attribution: bigint,
     active: boolean,
+    abi: string,
+    target: string,
     startingTimestamp: bigint,
     endingTimestamp: bigint,
     audienceIds: bigint[],
     blacklistedPublishers: string[],
     blacklistedWeekdays: bigint[],
-    totalBudget: bigint,
-    remainingBudget: bigint,
-    maxConsumptionsPerDay: bigint,
+    budget: bigint,
     maxPricePerConsumption: bigint,
-    consumptions: bigint
+    maxConsumptionsPerDay: bigint
   ] & {
-    advertiser: string;
     metadataURI: string;
     attribution: bigint;
     active: boolean;
+    abi: string;
+    target: string;
     startingTimestamp: bigint;
     endingTimestamp: bigint;
     audienceIds: bigint[];
     blacklistedPublishers: string[];
     blacklistedWeekdays: bigint[];
-    totalBudget: bigint;
-    remainingBudget: bigint;
-    maxConsumptionsPerDay: bigint;
+    budget: bigint;
     maxPricePerConsumption: bigint;
-    consumptions: bigint;
+    maxConsumptionsPerDay: bigint;
   };
 
   export type PublisherSettingsStruct = {
@@ -97,81 +113,6 @@ export declare namespace DataTypes {
     cpc: bigint;
     cpa: bigint;
   };
-
-  export type NewAdStruct = {
-    metadataURI: string;
-    attribution: BigNumberish;
-    active: boolean;
-    startingTimestamp: BigNumberish;
-    endingTimestamp: BigNumberish;
-    audienceIds: BigNumberish[];
-    blacklistedPublishers: AddressLike[];
-    blacklistedWeekdays: BigNumberish[];
-    budget: BigNumberish;
-    maxPricePerConsumption: BigNumberish;
-    maxConsumptionsPerDay: BigNumberish;
-  };
-
-  export type NewAdStructOutput = [
-    metadataURI: string,
-    attribution: bigint,
-    active: boolean,
-    startingTimestamp: bigint,
-    endingTimestamp: bigint,
-    audienceIds: bigint[],
-    blacklistedPublishers: string[],
-    blacklistedWeekdays: bigint[],
-    budget: bigint,
-    maxPricePerConsumption: bigint,
-    maxConsumptionsPerDay: bigint
-  ] & {
-    metadataURI: string;
-    attribution: bigint;
-    active: boolean;
-    startingTimestamp: bigint;
-    endingTimestamp: bigint;
-    audienceIds: bigint[];
-    blacklistedPublishers: string[];
-    blacklistedWeekdays: bigint[];
-    budget: bigint;
-    maxPricePerConsumption: bigint;
-    maxConsumptionsPerDay: bigint;
-  };
-
-  export type ZKProofsStruct = {
-    inputs: BigNumberish[][];
-    a: [BigNumberish, BigNumberish][];
-    b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]][];
-    c: [BigNumberish, BigNumberish][];
-  };
-
-  export type ZKProofsStructOutput = [
-    inputs: bigint[][],
-    a: [bigint, bigint][],
-    b: [[bigint, bigint], [bigint, bigint]][],
-    c: [bigint, bigint][]
-  ] & {
-    inputs: bigint[][];
-    a: [bigint, bigint][];
-    b: [[bigint, bigint], [bigint, bigint]][];
-    c: [bigint, bigint][];
-  };
-
-  export type EIP712SignatureStruct = {
-    v: BigNumberish;
-    r: BytesLike;
-    s: BytesLike;
-    deadline: BigNumberish;
-    nonce: BigNumberish;
-  };
-
-  export type EIP712SignatureStructOutput = [
-    v: bigint,
-    r: string,
-    s: string,
-    deadline: bigint,
-    nonce: bigint
-  ] & { v: bigint; r: string; s: string; deadline: bigint; nonce: bigint };
 
   export type SegmentStruct = {
     query: ICircuitValidator.CircuitQueryStruct;
@@ -223,13 +164,11 @@ export interface TargecyInterface extends Interface {
       | "_segmentId"
       | "ads"
       | "audiences"
-      | "calculatePercentage"
+      | "budgets"
       | "changePublisherAddress"
       | "consumeAd"
       | "consumeAdViaRelayer"
       | "consumptionsPerDay"
-      | "createAd"
-      | "createAudience"
       | "defaultClickPrice"
       | "defaultConversionPrice"
       | "defaultImpressionPrice"
@@ -237,9 +176,7 @@ export interface TargecyInterface extends Interface {
       | "deleteAd"
       | "deleteAudience"
       | "deleteSegment"
-      | "editAd"
-      | "editAudience"
-      | "editSegment"
+      | "fundAdvertiserBudget"
       | "getAdAudiences"
       | "getAudienceSegments"
       | "getRoleAdmin"
@@ -257,13 +194,16 @@ export interface TargecyInterface extends Interface {
       | "renounceRole"
       | "requestQueries"
       | "revokeRole"
+      | "setAd"
       | "setAdmin"
+      | "setAudience"
       | "setDefaultClickPrice"
       | "setDefaultConversionPrice"
       | "setDefaultImpressionPrice"
       | "setDefaultIssuer"
       | "setProtocolVault"
       | "setPublisher"
+      | "setRelayerAddress"
       | "setSegment"
       | "setZKProofsValidator"
       | "supportsInterface"
@@ -271,37 +211,20 @@ export interface TargecyInterface extends Interface {
       | "unpause"
       | "unpauseAd"
       | "unpausePublisher"
+      | "usdcTokenAddress"
       | "usedSigNonces"
-      | "verifyZKProof"
       | "whitelistedPublishers"
+      | "withdrawAdvertiserBudget"
       | "zkProofsValidator"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "AdConsumed"
-      | "AdCreated"
-      | "AdDeleted"
-      | "AdEdited"
-      | "AdPaused"
-      | "AdUnpaused"
-      | "AdminRemoved"
-      | "AdminSet"
-      | "AudienceCreated"
-      | "AudienceDeleted"
-      | "AudienceEdited"
       | "Initialized"
-      | "PausePublisher"
       | "Paused"
-      | "PublisherRemovedFromWhitelist"
-      | "PublisherWhitelisted"
       | "RoleAdminChanged"
       | "RoleGranted"
       | "RoleRevoked"
-      | "SegmentCreated"
-      | "SegmentDeleted"
-      | "SegmentEdited"
-      | "UnpausePublisher"
       | "Unpaused"
   ): EventFragment;
 
@@ -324,8 +247,8 @@ export interface TargecyInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "calculatePercentage",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "budgets",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "changePublisherAddress",
@@ -333,28 +256,21 @@ export interface TargecyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAd",
-    values: [
-      BigNumberish,
-      AddressLike,
-      DataTypes.ZKProofsStruct,
-      DataTypes.EIP712SignatureStruct
-    ]
+    values: [BigNumberish, AddressLike, DataTypes.ZKProofsStruct, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAdViaRelayer",
-    values: [AddressLike, BigNumberish, AddressLike, DataTypes.ZKProofsStruct]
+    values: [
+      AddressLike,
+      BigNumberish,
+      AddressLike,
+      DataTypes.ZKProofsStruct,
+      BytesLike[]
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "consumptionsPerDay",
     values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createAd",
-    values: [DataTypes.NewAdStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createAudience",
-    values: [string, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "defaultClickPrice",
@@ -385,16 +301,8 @@ export interface TargecyInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "editAd",
-    values: [BigNumberish, DataTypes.NewAdStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "editAudience",
-    values: [BigNumberish, string, BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "editSegment",
-    values: [BigNumberish, DataTypes.SegmentStruct]
+    functionFragment: "fundAdvertiserBudget",
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getAdAudiences",
@@ -418,7 +326,14 @@ export interface TargecyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [AddressLike, AddressLike, AddressLike, BigNumberish]
+    values: [
+      AddressLike,
+      AddressLike,
+      AddressLike,
+      BigNumberish,
+      AddressLike,
+      AddressLike
+    ]
   ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(
@@ -459,8 +374,16 @@ export interface TargecyInterface extends Interface {
     values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "setAd",
+    values: [BigNumberish, DataTypes.NewAdStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setAdmin",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAudience",
+    values: [BigNumberish, string, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setDefaultClickPrice",
@@ -487,8 +410,12 @@ export interface TargecyInterface extends Interface {
     values: [DataTypes.PublisherSettingsStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "setRelayerAddress",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSegment",
-    values: [DataTypes.SegmentStruct]
+    values: [BigNumberish, DataTypes.SegmentStruct]
   ): string;
   encodeFunctionData(
     functionFragment: "setZKProofsValidator",
@@ -512,22 +439,20 @@ export interface TargecyInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "usdcTokenAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "usedSigNonces",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "verifyZKProof",
-    values: [
-      BigNumberish,
-      BigNumberish[],
-      [BigNumberish, BigNumberish],
-      [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]],
-      [BigNumberish, BigNumberish]
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "whitelistedPublishers",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawAdvertiserBudget",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "zkProofsValidator",
@@ -546,10 +471,7 @@ export interface TargecyInterface extends Interface {
   decodeFunctionResult(functionFragment: "_segmentId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ads", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "audiences", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "calculatePercentage",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "budgets", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "changePublisherAddress",
     data: BytesLike
@@ -561,11 +483,6 @@ export interface TargecyInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "consumptionsPerDay",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "createAd", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "createAudience",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -593,13 +510,8 @@ export interface TargecyInterface extends Interface {
     functionFragment: "deleteSegment",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "editAd", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "editAudience",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "editSegment",
+    functionFragment: "fundAdvertiserBudget",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -649,7 +561,12 @@ export interface TargecyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setAd", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAudience",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setDefaultClickPrice",
     data: BytesLike
@@ -674,6 +591,10 @@ export interface TargecyInterface extends Interface {
     functionFragment: "setPublisher",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRelayerAddress",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "setSegment", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setZKProofsValidator",
@@ -694,11 +615,11 @@ export interface TargecyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "usedSigNonces",
+    functionFragment: "usdcTokenAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "verifyZKProof",
+    functionFragment: "usedSigNonces",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -706,185 +627,13 @@ export interface TargecyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "withdrawAdvertiserBudget",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "zkProofsValidator",
     data: BytesLike
   ): Result;
-}
-
-export namespace AdConsumedEvent {
-  export type InputTuple = [
-    adId: BigNumberish,
-    ad: DataTypes.AdStruct,
-    publisher: DataTypes.PublisherSettingsStruct,
-    consumptionPrice: BigNumberish
-  ];
-  export type OutputTuple = [
-    adId: bigint,
-    ad: DataTypes.AdStructOutput,
-    publisher: DataTypes.PublisherSettingsStructOutput,
-    consumptionPrice: bigint
-  ];
-  export interface OutputObject {
-    adId: bigint;
-    ad: DataTypes.AdStructOutput;
-    publisher: DataTypes.PublisherSettingsStructOutput;
-    consumptionPrice: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdCreatedEvent {
-  export type InputTuple = [
-    adId: BigNumberish,
-    advertiser: AddressLike,
-    ad: DataTypes.NewAdStruct
-  ];
-  export type OutputTuple = [
-    adId: bigint,
-    advertiser: string,
-    ad: DataTypes.NewAdStructOutput
-  ];
-  export interface OutputObject {
-    adId: bigint;
-    advertiser: string;
-    ad: DataTypes.NewAdStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdDeletedEvent {
-  export type InputTuple = [adId: BigNumberish];
-  export type OutputTuple = [adId: bigint];
-  export interface OutputObject {
-    adId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdEditedEvent {
-  export type InputTuple = [adId: BigNumberish, ad: DataTypes.AdStruct];
-  export type OutputTuple = [adId: bigint, ad: DataTypes.AdStructOutput];
-  export interface OutputObject {
-    adId: bigint;
-    ad: DataTypes.AdStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdPausedEvent {
-  export type InputTuple = [adId: BigNumberish];
-  export type OutputTuple = [adId: bigint];
-  export interface OutputObject {
-    adId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdUnpausedEvent {
-  export type InputTuple = [adId: BigNumberish];
-  export type OutputTuple = [adId: bigint];
-  export interface OutputObject {
-    adId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdminRemovedEvent {
-  export type InputTuple = [admin: AddressLike];
-  export type OutputTuple = [admin: string];
-  export interface OutputObject {
-    admin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AdminSetEvent {
-  export type InputTuple = [admin: AddressLike];
-  export type OutputTuple = [admin: string];
-  export interface OutputObject {
-    admin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AudienceCreatedEvent {
-  export type InputTuple = [
-    audienceId: BigNumberish,
-    metadataURI: string,
-    segmentIds: BigNumberish[]
-  ];
-  export type OutputTuple = [
-    audienceId: bigint,
-    metadataURI: string,
-    segmentIds: bigint[]
-  ];
-  export interface OutputObject {
-    audienceId: bigint;
-    metadataURI: string;
-    segmentIds: bigint[];
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AudienceDeletedEvent {
-  export type InputTuple = [audienceId: BigNumberish];
-  export type OutputTuple = [audienceId: bigint];
-  export interface OutputObject {
-    audienceId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace AudienceEditedEvent {
-  export type InputTuple = [
-    audienceId: BigNumberish,
-    metadataURI: string,
-    segmentIds: BigNumberish[]
-  ];
-  export type OutputTuple = [
-    audienceId: bigint,
-    metadataURI: string,
-    segmentIds: bigint[]
-  ];
-  export interface OutputObject {
-    audienceId: bigint;
-    metadataURI: string;
-    segmentIds: bigint[];
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace InitializedEvent {
@@ -899,54 +648,11 @@ export namespace InitializedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace PausePublisherEvent {
-  export type InputTuple = [publisher: AddressLike];
-  export type OutputTuple = [publisher: string];
-  export interface OutputObject {
-    publisher: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace PausedEvent {
   export type InputTuple = [account: AddressLike];
   export type OutputTuple = [account: string];
   export interface OutputObject {
     account: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PublisherRemovedFromWhitelistEvent {
-  export type InputTuple = [publisher: AddressLike];
-  export type OutputTuple = [publisher: string];
-  export interface OutputObject {
-    publisher: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PublisherWhitelistedEvent {
-  export type InputTuple = [
-    vault: AddressLike,
-    publisher: DataTypes.PublisherSettingsStruct
-  ];
-  export type OutputTuple = [
-    vault: string,
-    publisher: DataTypes.PublisherSettingsStructOutput
-  ];
-  export interface OutputObject {
-    vault: string;
-    publisher: DataTypes.PublisherSettingsStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1005,83 +711,6 @@ export namespace RoleRevokedEvent {
     role: string;
     account: string;
     sender: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace SegmentCreatedEvent {
-  export type InputTuple = [
-    segmentId: BigNumberish,
-    validator: AddressLike,
-    query: ICircuitValidator.CircuitQueryStruct,
-    metadataURI: string,
-    issuer: BigNumberish
-  ];
-  export type OutputTuple = [
-    segmentId: bigint,
-    validator: string,
-    query: ICircuitValidator.CircuitQueryStructOutput,
-    metadataURI: string,
-    issuer: bigint
-  ];
-  export interface OutputObject {
-    segmentId: bigint;
-    validator: string;
-    query: ICircuitValidator.CircuitQueryStructOutput;
-    metadataURI: string;
-    issuer: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace SegmentDeletedEvent {
-  export type InputTuple = [segmentId: BigNumberish];
-  export type OutputTuple = [segmentId: bigint];
-  export interface OutputObject {
-    segmentId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace SegmentEditedEvent {
-  export type InputTuple = [
-    segmentId: BigNumberish,
-    validator: AddressLike,
-    query: ICircuitValidator.CircuitQueryStruct,
-    metadataURI: string
-  ];
-  export type OutputTuple = [
-    segmentId: bigint,
-    validator: string,
-    query: ICircuitValidator.CircuitQueryStructOutput,
-    metadataURI: string
-  ];
-  export interface OutputObject {
-    segmentId: bigint;
-    validator: string;
-    query: ICircuitValidator.CircuitQueryStructOutput;
-    metadataURI: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace UnpausePublisherEvent {
-  export type InputTuple = [publisher: AddressLike];
-  export type OutputTuple = [publisher: string];
-  export interface OutputObject {
-    publisher: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1162,6 +791,8 @@ export interface Targecy extends BaseContract {
         string,
         bigint,
         boolean,
+        string,
+        string,
         bigint,
         bigint,
         bigint,
@@ -1174,10 +805,12 @@ export interface Targecy extends BaseContract {
         metadataURI: string;
         attribution: bigint;
         active: boolean;
+        abi: string;
+        target: string;
         startingTimestamp: bigint;
         endingTimestamp: bigint;
-        totalBudget: bigint;
-        remainingBudget: bigint;
+        maxBudget: bigint;
+        currentBudget: bigint;
         maxConsumptionsPerDay: bigint;
         maxPricePerConsumption: bigint;
         consumptions: bigint;
@@ -1192,9 +825,15 @@ export interface Targecy extends BaseContract {
     "view"
   >;
 
-  calculatePercentage: TypedContractMethod<
-    [total: BigNumberish, percentage: BigNumberish],
-    [bigint],
+  budgets: TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [string, bigint, bigint] & {
+        advertiser: string;
+        totalBudget: bigint;
+        remainingBudget: bigint;
+      }
+    ],
     "view"
   >;
 
@@ -1209,7 +848,7 @@ export interface Targecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      targecySig: DataTypes.EIP712SignatureStruct
+      actionParams: BytesLike[]
     ],
     [void],
     "nonpayable"
@@ -1220,7 +859,8 @@ export interface Targecy extends BaseContract {
       viewer: AddressLike,
       adId: BigNumberish,
       publisher: AddressLike,
-      zkProofs: DataTypes.ZKProofsStruct
+      zkProofs: DataTypes.ZKProofsStruct,
+      actionParams: BytesLike[]
     ],
     [void],
     "nonpayable"
@@ -1230,14 +870,6 @@ export interface Targecy extends BaseContract {
     [arg0: BigNumberish, arg1: BigNumberish],
     [bigint],
     "view"
-  >;
-
-  createAd: TypedContractMethod<[ad: DataTypes.NewAdStruct], [void], "payable">;
-
-  createAudience: TypedContractMethod<
-    [metadataURI: string, audienceIds: BigNumberish[]],
-    [void],
-    "nonpayable"
   >;
 
   defaultClickPrice: TypedContractMethod<[], [bigint], "view">;
@@ -1258,20 +890,8 @@ export interface Targecy extends BaseContract {
 
   deleteSegment: TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
 
-  editAd: TypedContractMethod<
-    [adId: BigNumberish, ad: DataTypes.NewAdStruct],
-    [void],
-    "payable"
-  >;
-
-  editAudience: TypedContractMethod<
-    [audienceId: BigNumberish, metadataURI: string, segmentIds: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
-
-  editSegment: TypedContractMethod<
-    [id: BigNumberish, _segment: DataTypes.SegmentStruct],
+  fundAdvertiserBudget: TypedContractMethod<
+    [advertiser: AddressLike, amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -1303,7 +923,9 @@ export interface Targecy extends BaseContract {
       _zkProofsValidator: AddressLike,
       _protocolVault: AddressLike,
       targecyAdmin: AddressLike,
-      _defaultIssuer: BigNumberish
+      _defaultIssuer: BigNumberish,
+      _relayerAddress: AddressLike,
+      _usdcTokenAddress: AddressLike
     ],
     [void],
     "nonpayable"
@@ -1361,8 +983,24 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
+  setAd: TypedContractMethod<
+    [adIdReceived: BigNumberish, ad: DataTypes.NewAdStruct],
+    [void],
+    "payable"
+  >;
+
   setAdmin: TypedContractMethod<
     [targecyAdmin: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setAudience: TypedContractMethod<
+    [
+      audienceIdReceived: BigNumberish,
+      metadataURI: string,
+      segmentIds: BigNumberish[]
+    ],
     [void],
     "nonpayable"
   >;
@@ -1403,8 +1041,14 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
+  setRelayerAddress: TypedContractMethod<
+    [_relayerAddress: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setSegment: TypedContractMethod<
-    [_segment: DataTypes.SegmentStruct],
+    [idReceived: BigNumberish, _segment: DataTypes.SegmentStruct],
     [void],
     "nonpayable"
   >;
@@ -1433,19 +1077,9 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
-  usedSigNonces: TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
+  usdcTokenAddress: TypedContractMethod<[], [string], "view">;
 
-  verifyZKProof: TypedContractMethod<
-    [
-      requestId: BigNumberish,
-      inputs: BigNumberish[],
-      a: [BigNumberish, BigNumberish],
-      b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]],
-      c: [BigNumberish, BigNumberish]
-    ],
-    [boolean],
-    "view"
-  >;
+  usedSigNonces: TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
 
   whitelistedPublishers: TypedContractMethod<
     [arg0: AddressLike],
@@ -1460,6 +1094,12 @@ export interface Targecy extends BaseContract {
       }
     ],
     "view"
+  >;
+
+  withdrawAdvertiserBudget: TypedContractMethod<
+    [amount: BigNumberish],
+    [void],
+    "nonpayable"
   >;
 
   zkProofsValidator: TypedContractMethod<[], [string], "view">;
@@ -1490,6 +1130,8 @@ export interface Targecy extends BaseContract {
         string,
         bigint,
         boolean,
+        string,
+        string,
         bigint,
         bigint,
         bigint,
@@ -1502,10 +1144,12 @@ export interface Targecy extends BaseContract {
         metadataURI: string;
         attribution: bigint;
         active: boolean;
+        abi: string;
+        target: string;
         startingTimestamp: bigint;
         endingTimestamp: bigint;
-        totalBudget: bigint;
-        remainingBudget: bigint;
+        maxBudget: bigint;
+        currentBudget: bigint;
         maxConsumptionsPerDay: bigint;
         maxPricePerConsumption: bigint;
         consumptions: bigint;
@@ -1521,10 +1165,16 @@ export interface Targecy extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "calculatePercentage"
+    nameOrSignature: "budgets"
   ): TypedContractMethod<
-    [total: BigNumberish, percentage: BigNumberish],
-    [bigint],
+    [arg0: AddressLike],
+    [
+      [string, bigint, bigint] & {
+        advertiser: string;
+        totalBudget: bigint;
+        remainingBudget: bigint;
+      }
+    ],
     "view"
   >;
   getFunction(
@@ -1541,7 +1191,7 @@ export interface Targecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      targecySig: DataTypes.EIP712SignatureStruct
+      actionParams: BytesLike[]
     ],
     [void],
     "nonpayable"
@@ -1553,7 +1203,8 @@ export interface Targecy extends BaseContract {
       viewer: AddressLike,
       adId: BigNumberish,
       publisher: AddressLike,
-      zkProofs: DataTypes.ZKProofsStruct
+      zkProofs: DataTypes.ZKProofsStruct,
+      actionParams: BytesLike[]
     ],
     [void],
     "nonpayable"
@@ -1564,16 +1215,6 @@ export interface Targecy extends BaseContract {
     [arg0: BigNumberish, arg1: BigNumberish],
     [bigint],
     "view"
-  >;
-  getFunction(
-    nameOrSignature: "createAd"
-  ): TypedContractMethod<[ad: DataTypes.NewAdStruct], [void], "payable">;
-  getFunction(
-    nameOrSignature: "createAudience"
-  ): TypedContractMethod<
-    [metadataURI: string, audienceIds: BigNumberish[]],
-    [void],
-    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "defaultClickPrice"
@@ -1597,23 +1238,9 @@ export interface Targecy extends BaseContract {
     nameOrSignature: "deleteSegment"
   ): TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "editAd"
+    nameOrSignature: "fundAdvertiserBudget"
   ): TypedContractMethod<
-    [adId: BigNumberish, ad: DataTypes.NewAdStruct],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "editAudience"
-  ): TypedContractMethod<
-    [audienceId: BigNumberish, metadataURI: string, segmentIds: BigNumberish[]],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "editSegment"
-  ): TypedContractMethod<
-    [id: BigNumberish, _segment: DataTypes.SegmentStruct],
+    [advertiser: AddressLike, amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -1647,7 +1274,9 @@ export interface Targecy extends BaseContract {
       _zkProofsValidator: AddressLike,
       _protocolVault: AddressLike,
       targecyAdmin: AddressLike,
-      _defaultIssuer: BigNumberish
+      _defaultIssuer: BigNumberish,
+      _relayerAddress: AddressLike,
+      _usdcTokenAddress: AddressLike
     ],
     [void],
     "nonpayable"
@@ -1704,8 +1333,26 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setAd"
+  ): TypedContractMethod<
+    [adIdReceived: BigNumberish, ad: DataTypes.NewAdStruct],
+    [void],
+    "payable"
+  >;
+  getFunction(
     nameOrSignature: "setAdmin"
   ): TypedContractMethod<[targecyAdmin: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setAudience"
+  ): TypedContractMethod<
+    [
+      audienceIdReceived: BigNumberish,
+      metadataURI: string,
+      segmentIds: BigNumberish[]
+    ],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "setDefaultClickPrice"
   ): TypedContractMethod<
@@ -1741,9 +1388,12 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setRelayerAddress"
+  ): TypedContractMethod<[_relayerAddress: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setSegment"
   ): TypedContractMethod<
-    [_segment: DataTypes.SegmentStruct],
+    [idReceived: BigNumberish, _segment: DataTypes.SegmentStruct],
     [void],
     "nonpayable"
   >;
@@ -1770,21 +1420,11 @@ export interface Targecy extends BaseContract {
     nameOrSignature: "unpausePublisher"
   ): TypedContractMethod<[publisher: AddressLike], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "usdcTokenAddress"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "usedSigNonces"
   ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "verifyZKProof"
-  ): TypedContractMethod<
-    [
-      requestId: BigNumberish,
-      inputs: BigNumberish[],
-      a: [BigNumberish, BigNumberish],
-      b: [[BigNumberish, BigNumberish], [BigNumberish, BigNumberish]],
-      c: [BigNumberish, BigNumberish]
-    ],
-    [boolean],
-    "view"
-  >;
   getFunction(
     nameOrSignature: "whitelistedPublishers"
   ): TypedContractMethod<
@@ -1802,86 +1442,12 @@ export interface Targecy extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "withdrawAdvertiserBudget"
+  ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "zkProofsValidator"
   ): TypedContractMethod<[], [string], "view">;
 
-  getEvent(
-    key: "AdConsumed"
-  ): TypedContractEvent<
-    AdConsumedEvent.InputTuple,
-    AdConsumedEvent.OutputTuple,
-    AdConsumedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdCreated"
-  ): TypedContractEvent<
-    AdCreatedEvent.InputTuple,
-    AdCreatedEvent.OutputTuple,
-    AdCreatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdDeleted"
-  ): TypedContractEvent<
-    AdDeletedEvent.InputTuple,
-    AdDeletedEvent.OutputTuple,
-    AdDeletedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdEdited"
-  ): TypedContractEvent<
-    AdEditedEvent.InputTuple,
-    AdEditedEvent.OutputTuple,
-    AdEditedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdPaused"
-  ): TypedContractEvent<
-    AdPausedEvent.InputTuple,
-    AdPausedEvent.OutputTuple,
-    AdPausedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdUnpaused"
-  ): TypedContractEvent<
-    AdUnpausedEvent.InputTuple,
-    AdUnpausedEvent.OutputTuple,
-    AdUnpausedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdminRemoved"
-  ): TypedContractEvent<
-    AdminRemovedEvent.InputTuple,
-    AdminRemovedEvent.OutputTuple,
-    AdminRemovedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AdminSet"
-  ): TypedContractEvent<
-    AdminSetEvent.InputTuple,
-    AdminSetEvent.OutputTuple,
-    AdminSetEvent.OutputObject
-  >;
-  getEvent(
-    key: "AudienceCreated"
-  ): TypedContractEvent<
-    AudienceCreatedEvent.InputTuple,
-    AudienceCreatedEvent.OutputTuple,
-    AudienceCreatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AudienceDeleted"
-  ): TypedContractEvent<
-    AudienceDeletedEvent.InputTuple,
-    AudienceDeletedEvent.OutputTuple,
-    AudienceDeletedEvent.OutputObject
-  >;
-  getEvent(
-    key: "AudienceEdited"
-  ): TypedContractEvent<
-    AudienceEditedEvent.InputTuple,
-    AudienceEditedEvent.OutputTuple,
-    AudienceEditedEvent.OutputObject
-  >;
   getEvent(
     key: "Initialized"
   ): TypedContractEvent<
@@ -1890,32 +1456,11 @@ export interface Targecy extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
-    key: "PausePublisher"
-  ): TypedContractEvent<
-    PausePublisherEvent.InputTuple,
-    PausePublisherEvent.OutputTuple,
-    PausePublisherEvent.OutputObject
-  >;
-  getEvent(
     key: "Paused"
   ): TypedContractEvent<
     PausedEvent.InputTuple,
     PausedEvent.OutputTuple,
     PausedEvent.OutputObject
-  >;
-  getEvent(
-    key: "PublisherRemovedFromWhitelist"
-  ): TypedContractEvent<
-    PublisherRemovedFromWhitelistEvent.InputTuple,
-    PublisherRemovedFromWhitelistEvent.OutputTuple,
-    PublisherRemovedFromWhitelistEvent.OutputObject
-  >;
-  getEvent(
-    key: "PublisherWhitelisted"
-  ): TypedContractEvent<
-    PublisherWhitelistedEvent.InputTuple,
-    PublisherWhitelistedEvent.OutputTuple,
-    PublisherWhitelistedEvent.OutputObject
   >;
   getEvent(
     key: "RoleAdminChanged"
@@ -1939,34 +1484,6 @@ export interface Targecy extends BaseContract {
     RoleRevokedEvent.OutputObject
   >;
   getEvent(
-    key: "SegmentCreated"
-  ): TypedContractEvent<
-    SegmentCreatedEvent.InputTuple,
-    SegmentCreatedEvent.OutputTuple,
-    SegmentCreatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "SegmentDeleted"
-  ): TypedContractEvent<
-    SegmentDeletedEvent.InputTuple,
-    SegmentDeletedEvent.OutputTuple,
-    SegmentDeletedEvent.OutputObject
-  >;
-  getEvent(
-    key: "SegmentEdited"
-  ): TypedContractEvent<
-    SegmentEditedEvent.InputTuple,
-    SegmentEditedEvent.OutputTuple,
-    SegmentEditedEvent.OutputObject
-  >;
-  getEvent(
-    key: "UnpausePublisher"
-  ): TypedContractEvent<
-    UnpausePublisherEvent.InputTuple,
-    UnpausePublisherEvent.OutputTuple,
-    UnpausePublisherEvent.OutputObject
-  >;
-  getEvent(
     key: "Unpaused"
   ): TypedContractEvent<
     UnpausedEvent.InputTuple,
@@ -1975,127 +1492,6 @@ export interface Targecy extends BaseContract {
   >;
 
   filters: {
-    "AdConsumed(uint256,tuple,tuple,uint256)": TypedContractEvent<
-      AdConsumedEvent.InputTuple,
-      AdConsumedEvent.OutputTuple,
-      AdConsumedEvent.OutputObject
-    >;
-    AdConsumed: TypedContractEvent<
-      AdConsumedEvent.InputTuple,
-      AdConsumedEvent.OutputTuple,
-      AdConsumedEvent.OutputObject
-    >;
-
-    "AdCreated(uint256,address,tuple)": TypedContractEvent<
-      AdCreatedEvent.InputTuple,
-      AdCreatedEvent.OutputTuple,
-      AdCreatedEvent.OutputObject
-    >;
-    AdCreated: TypedContractEvent<
-      AdCreatedEvent.InputTuple,
-      AdCreatedEvent.OutputTuple,
-      AdCreatedEvent.OutputObject
-    >;
-
-    "AdDeleted(uint256)": TypedContractEvent<
-      AdDeletedEvent.InputTuple,
-      AdDeletedEvent.OutputTuple,
-      AdDeletedEvent.OutputObject
-    >;
-    AdDeleted: TypedContractEvent<
-      AdDeletedEvent.InputTuple,
-      AdDeletedEvent.OutputTuple,
-      AdDeletedEvent.OutputObject
-    >;
-
-    "AdEdited(uint256,tuple)": TypedContractEvent<
-      AdEditedEvent.InputTuple,
-      AdEditedEvent.OutputTuple,
-      AdEditedEvent.OutputObject
-    >;
-    AdEdited: TypedContractEvent<
-      AdEditedEvent.InputTuple,
-      AdEditedEvent.OutputTuple,
-      AdEditedEvent.OutputObject
-    >;
-
-    "AdPaused(uint256)": TypedContractEvent<
-      AdPausedEvent.InputTuple,
-      AdPausedEvent.OutputTuple,
-      AdPausedEvent.OutputObject
-    >;
-    AdPaused: TypedContractEvent<
-      AdPausedEvent.InputTuple,
-      AdPausedEvent.OutputTuple,
-      AdPausedEvent.OutputObject
-    >;
-
-    "AdUnpaused(uint256)": TypedContractEvent<
-      AdUnpausedEvent.InputTuple,
-      AdUnpausedEvent.OutputTuple,
-      AdUnpausedEvent.OutputObject
-    >;
-    AdUnpaused: TypedContractEvent<
-      AdUnpausedEvent.InputTuple,
-      AdUnpausedEvent.OutputTuple,
-      AdUnpausedEvent.OutputObject
-    >;
-
-    "AdminRemoved(address)": TypedContractEvent<
-      AdminRemovedEvent.InputTuple,
-      AdminRemovedEvent.OutputTuple,
-      AdminRemovedEvent.OutputObject
-    >;
-    AdminRemoved: TypedContractEvent<
-      AdminRemovedEvent.InputTuple,
-      AdminRemovedEvent.OutputTuple,
-      AdminRemovedEvent.OutputObject
-    >;
-
-    "AdminSet(address)": TypedContractEvent<
-      AdminSetEvent.InputTuple,
-      AdminSetEvent.OutputTuple,
-      AdminSetEvent.OutputObject
-    >;
-    AdminSet: TypedContractEvent<
-      AdminSetEvent.InputTuple,
-      AdminSetEvent.OutputTuple,
-      AdminSetEvent.OutputObject
-    >;
-
-    "AudienceCreated(uint256,string,uint256[])": TypedContractEvent<
-      AudienceCreatedEvent.InputTuple,
-      AudienceCreatedEvent.OutputTuple,
-      AudienceCreatedEvent.OutputObject
-    >;
-    AudienceCreated: TypedContractEvent<
-      AudienceCreatedEvent.InputTuple,
-      AudienceCreatedEvent.OutputTuple,
-      AudienceCreatedEvent.OutputObject
-    >;
-
-    "AudienceDeleted(uint256)": TypedContractEvent<
-      AudienceDeletedEvent.InputTuple,
-      AudienceDeletedEvent.OutputTuple,
-      AudienceDeletedEvent.OutputObject
-    >;
-    AudienceDeleted: TypedContractEvent<
-      AudienceDeletedEvent.InputTuple,
-      AudienceDeletedEvent.OutputTuple,
-      AudienceDeletedEvent.OutputObject
-    >;
-
-    "AudienceEdited(uint256,string,uint256[])": TypedContractEvent<
-      AudienceEditedEvent.InputTuple,
-      AudienceEditedEvent.OutputTuple,
-      AudienceEditedEvent.OutputObject
-    >;
-    AudienceEdited: TypedContractEvent<
-      AudienceEditedEvent.InputTuple,
-      AudienceEditedEvent.OutputTuple,
-      AudienceEditedEvent.OutputObject
-    >;
-
     "Initialized(uint8)": TypedContractEvent<
       InitializedEvent.InputTuple,
       InitializedEvent.OutputTuple,
@@ -2107,17 +1503,6 @@ export interface Targecy extends BaseContract {
       InitializedEvent.OutputObject
     >;
 
-    "PausePublisher(address)": TypedContractEvent<
-      PausePublisherEvent.InputTuple,
-      PausePublisherEvent.OutputTuple,
-      PausePublisherEvent.OutputObject
-    >;
-    PausePublisher: TypedContractEvent<
-      PausePublisherEvent.InputTuple,
-      PausePublisherEvent.OutputTuple,
-      PausePublisherEvent.OutputObject
-    >;
-
     "Paused(address)": TypedContractEvent<
       PausedEvent.InputTuple,
       PausedEvent.OutputTuple,
@@ -2127,28 +1512,6 @@ export interface Targecy extends BaseContract {
       PausedEvent.InputTuple,
       PausedEvent.OutputTuple,
       PausedEvent.OutputObject
-    >;
-
-    "PublisherRemovedFromWhitelist(address)": TypedContractEvent<
-      PublisherRemovedFromWhitelistEvent.InputTuple,
-      PublisherRemovedFromWhitelistEvent.OutputTuple,
-      PublisherRemovedFromWhitelistEvent.OutputObject
-    >;
-    PublisherRemovedFromWhitelist: TypedContractEvent<
-      PublisherRemovedFromWhitelistEvent.InputTuple,
-      PublisherRemovedFromWhitelistEvent.OutputTuple,
-      PublisherRemovedFromWhitelistEvent.OutputObject
-    >;
-
-    "PublisherWhitelisted(address,tuple)": TypedContractEvent<
-      PublisherWhitelistedEvent.InputTuple,
-      PublisherWhitelistedEvent.OutputTuple,
-      PublisherWhitelistedEvent.OutputObject
-    >;
-    PublisherWhitelisted: TypedContractEvent<
-      PublisherWhitelistedEvent.InputTuple,
-      PublisherWhitelistedEvent.OutputTuple,
-      PublisherWhitelistedEvent.OutputObject
     >;
 
     "RoleAdminChanged(bytes32,bytes32,bytes32)": TypedContractEvent<
@@ -2182,50 +1545,6 @@ export interface Targecy extends BaseContract {
       RoleRevokedEvent.InputTuple,
       RoleRevokedEvent.OutputTuple,
       RoleRevokedEvent.OutputObject
-    >;
-
-    "SegmentCreated(uint256,address,tuple,string,uint256)": TypedContractEvent<
-      SegmentCreatedEvent.InputTuple,
-      SegmentCreatedEvent.OutputTuple,
-      SegmentCreatedEvent.OutputObject
-    >;
-    SegmentCreated: TypedContractEvent<
-      SegmentCreatedEvent.InputTuple,
-      SegmentCreatedEvent.OutputTuple,
-      SegmentCreatedEvent.OutputObject
-    >;
-
-    "SegmentDeleted(uint256)": TypedContractEvent<
-      SegmentDeletedEvent.InputTuple,
-      SegmentDeletedEvent.OutputTuple,
-      SegmentDeletedEvent.OutputObject
-    >;
-    SegmentDeleted: TypedContractEvent<
-      SegmentDeletedEvent.InputTuple,
-      SegmentDeletedEvent.OutputTuple,
-      SegmentDeletedEvent.OutputObject
-    >;
-
-    "SegmentEdited(uint256,address,tuple,string)": TypedContractEvent<
-      SegmentEditedEvent.InputTuple,
-      SegmentEditedEvent.OutputTuple,
-      SegmentEditedEvent.OutputObject
-    >;
-    SegmentEdited: TypedContractEvent<
-      SegmentEditedEvent.InputTuple,
-      SegmentEditedEvent.OutputTuple,
-      SegmentEditedEvent.OutputObject
-    >;
-
-    "UnpausePublisher(address)": TypedContractEvent<
-      UnpausePublisherEvent.InputTuple,
-      UnpausePublisherEvent.OutputTuple,
-      UnpausePublisherEvent.OutputObject
-    >;
-    UnpausePublisher: TypedContractEvent<
-      UnpausePublisherEvent.InputTuple,
-      UnpausePublisherEvent.OutputTuple,
-      UnpausePublisherEvent.OutputObject
     >;
 
     "Unpaused(address)": TypedContractEvent<

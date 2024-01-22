@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.txsRouter = void 0;
 const __1 = require("..");
-const relayer_service_1 = require("../../trpc/services/relayer.service");
+const relayer_service_1 = require("../services/relayer.service");
 const zod_1 = require("zod");
 const viem_1 = require("viem");
 const server_1 = require("@trpc/server");
@@ -47,7 +47,7 @@ exports.txsRouter = (0, __1.router)({
     }))
         .mutation(async ({ ctx, input }) => {
         const viewer = ethers_1.ZeroAddress; // To be changed in attribution v1.
-        const result = await (0, relayer_service_1.consumeAd)([viewer, input.adId, input.publisher, input.zkProofs]);
+        const result = await (0, relayer_service_1.consumeAd)([viewer, input.adId, input.publisher, input.zkProofs, []]);
         const saved = await ctx.prisma.tx.create({
             data: {
                 hash: result,

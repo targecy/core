@@ -109,7 +109,6 @@ export const AdEditorComponent = (id?: string) => {
         audienceIds: data.audienceIds,
         blacklistedPublishers: data.blacklistedPublishers,
         blacklistedWeekdays: data.blacklistedWeekdays,
-        budget: data.budget,
         maxPricePerConsumption: data.maxPricePerConsumption,
         maxConsumptionsPerDay: data.maxConsumptionsPerDay,
       };
@@ -119,7 +118,6 @@ export const AdEditorComponent = (id?: string) => {
         hash = (
           await editAdAsync({
             args: [id, newAdArgs],
-            value: BigInt(data.budget),
           })
         ).hash;
       } else {
@@ -127,7 +125,6 @@ export const AdEditorComponent = (id?: string) => {
         hash = (
           await createAdAsync({
             args: [newAdArgs],
-            value: BigInt(data.budget),
           })
         ).hash;
       }
@@ -169,7 +166,6 @@ export const AdEditorComponent = (id?: string) => {
     active: z.boolean().describe('Please provide an active'),
     blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
     blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
-    budget: z.number().describe('Please choose a budget'),
     maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
     maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
     startingDate: z.date().describe('Please provide a starting date'),
@@ -302,7 +298,6 @@ export const AdEditorComponent = (id?: string) => {
                 description: currentMetadata?.description ?? '',
                 image: undefined,
                 imageUrl: currentMetadata?.image ?? '',
-                budget: ad?.remainingBudget ? Number(ad.remainingBudget) : undefined,
                 maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
                 maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
                 startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
@@ -394,31 +389,6 @@ export const AdEditorComponent = (id?: string) => {
                       {submitCount ? (
                         errors.image ? (
                           <div className="mt-1 text-danger">{errors.description}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div className={submitCount ? (errors.budget ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="budget">{editingMode ? 'Remaining Budget' : 'Budget'}</label>
-                      <div className="flex">
-                        <div className="flex items-center justify-center border border-white-light bg-[#eee] px-3 font-semibold ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0 dark:border-[#17263c] dark:bg-[#1b2e4b]">
-                          MATIC
-                        </div>
-                        <Field
-                          name="budget"
-                          type="number"
-                          id="budget"
-                          placeholder="Enter budget"
-                          className="form-input ltr:rounded-l-none rtl:rounded-r-none"
-                        />
-                      </div>
-                      {submitCount ? (
-                        errors.budget ? (
-                          <div className="mt-1 text-danger">{errors.budget.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )

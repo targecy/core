@@ -79,6 +79,16 @@ const _abi = [
         type: "bool",
       },
       {
+        internalType: "string",
+        name: "abi",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
         internalType: "uint256",
         name: "startingTimestamp",
         type: "uint256",
@@ -90,12 +100,12 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "totalBudget",
+        name: "maxBudget",
         type: "uint256",
       },
       {
         internalType: "uint256",
-        name: "remainingBudget",
+        name: "currentBudget",
         type: "uint256",
       },
       {
@@ -135,6 +145,35 @@ const _abi = [
       {
         internalType: "uint256",
         name: "consumptions",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "budgets",
+    outputs: [
+      {
+        internalType: "address",
+        name: "advertiser",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "totalBudget",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "remainingBudget",
         type: "uint256",
       },
     ],
@@ -307,6 +346,19 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "usdcTokenAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",

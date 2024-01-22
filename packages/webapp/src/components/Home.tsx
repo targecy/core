@@ -13,6 +13,7 @@ import { targecyContractAddress } from '~/constants/contracts.constants';
 import { env } from '~/env.mjs';
 import {
   useGetAdvertiserQuery,
+  useGetBudgetQuery,
   useGetLastAdsQuery,
   useGetLastAudiencesQuery,
   useGetLastSegmentsQuery,
@@ -33,7 +34,7 @@ export const Home = () => {
     functionName: '_adId',
   });
   const adsQuantity = adsQuantityData?.toString() ?? 0;
-  
+
   const { data: audiencesQuantityData } = useContractRead({
     address: targecyContractAddress,
     abi,
@@ -142,6 +143,10 @@ export const Home = () => {
     (Number(advertiserData?.advertiser?.impressions) || 0) +
     (Number(advertiserData?.advertiser?.clicks) || 0) +
     (Number(advertiserData?.advertiser?.conversions) || 0);
+
+  const { data: budget } = useGetBudgetQuery({
+    id: wallet.address || '',
+  });
 
   if (!mounted) return <></>;
 
@@ -349,7 +354,7 @@ export const Home = () => {
                     <div>
                       <div>
                         <div>Remaining Budget</div>
-                        <div className="text-lg text-secondary">{advertiserData?.advertiser?.remainingBudget || 0}</div>
+                        <div className="text-lg text-secondary">{budget?.budget?.remainingBudget || 0}</div>
                       </div>
                     </div>
 
@@ -368,8 +373,7 @@ export const Home = () => {
                         <div>Cost per any interaction</div>
                         <div className="text-lg text-white dark:text-white ">
                           {totalInteractions > 0
-                            ? (Number(advertiserData?.advertiser?.totalBudget) -
-                                Number(advertiserData?.advertiser?.remainingBudget)) /
+                            ? (Number(budget?.budget?.totalBudget) - Number(budget?.budget?.remainingBudget)) /
                               totalInteractions
                             : '-'}{' '}
                         </div>

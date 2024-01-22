@@ -15,10 +15,14 @@ export const relayerDir = '../relayer/src/generated';
 const publishContract = (dir: string, contractName: string): boolean => {
   try {
     const contract = fs.readFileSync(`${hardhatArtifactsDir}/contracts/core/${contractName}.sol/${contractName}.json`).toString();
+    const events = fs.readFileSync(`${hardhatArtifactsDir}/contracts/libraries/${contractName}Events.sol/${contractName}Events.json`).toString();
+    
     const contractJson: { address: string; abi: [] } = JSON.parse(contract as string);
+    const eventsJson: { address: string; abi: [] } = JSON.parse(events as string);
 
     if (!Boolean(fs.existsSync(`${dir}/abis`))) fs.mkdirSync(`${dir}/abis`);
     fs.writeFileSync(`${dir}/abis/${contractName}.json`, JSON.stringify(contractJson.abi, null, 2));
+    fs.writeFileSync(`${dir}/abis/${contractName}Events.json`, JSON.stringify(eventsJson.abi, null, 2));
 
     console.log(' 📠 Published ' + chalk.green(contractName));
 

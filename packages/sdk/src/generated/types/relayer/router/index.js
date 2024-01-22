@@ -2,7 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appRouter = void 0;
 const __1 = require("..");
-const txsRouter_1 = require("./txsRouter");
+const txs_router_1 = require("./txs.router");
 exports.appRouter = (0, __1.router)({
-    txs: txsRouter_1.txsRouter,
+    ping: __1.publicProcedure.query(() => {
+        return 'pong';
+    }),
+    txs: txs_router_1.txsRouter,
 });

@@ -15,7 +15,9 @@ import {
   UnpausePublisher as UnpausePublisherEvent,
   AdminSet as AdminSetEvent,
   AdminRemoved as AdminRemovedEvent,
-} from '../generated/Targecy/Targecy';
+  AdvertiserBudgetFunded as AdvertiserBudgetFundedEvent,
+  AdvertiserBudgetWithdrawn as AdvertiserBudgetWithdrawnEvent,
+} from '../generated/Targecy/TargecyEvents';
 import {
   Ad,
   Publisher,
@@ -239,6 +241,26 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
   advertiser.save();
 }
 
+export function handleAdvertiserBudgetFunded(event: AdvertiserBudgetFundedEvent): void {
+  let budget = Budget.load(event.params.advertiser.toHexString());
+  if (budget == null) {
+    budget = new Budget(event.params.advertiser.toHexString());
+  }
+  budget.totalBudget = budget.totalBudget.plus(event.params.amount);
+  budget.remainingBudget = budget.remainingBudget.plus(event.params.amount);
+  budget.save();
+}
+
+export function handleAdvertiserBudgetWithdrawn(event: AdvertiserBudgetWithdrawnEvent): void {
+  let budget = Budget.load(event.params.advertiser.toHexString());
+  if (budget == null) {
+    throw new Error('Could not find budget.');
+  }
+  budget.remainingBudget = budget.remainingBudget.minus(event.params.amount);
+  budget.totalBudget = budget.totalBudget.minus(event.params.amount);
+  budget.save();
+}
+
 export function handleAdDeleted(event: AdDeletedEvent): void {
   let entity = Ad.load(event.params.adId.toString());
   if (entity == null) {
@@ -252,7 +274,6 @@ export function handleAdDeleted(event: AdDeletedEvent): void {
   advertiser.adsQuantity = advertiser.adsQuantity.minus(BigInt.fromI32(1));
 
   advertiser.save();
-  // @todo (Martin): Check if needed to remove ad from advertiser.ads
 
   store.remove('Ad', event.params.adId.toString());
 }
@@ -261,12 +282,10 @@ export function handleAdEdited(event: AdEditedEvent): void {
   let entity = Ad.load(event.params.adId.toString());
 
   if (entity == null) {
-    // LOG SOMETHING
-    return;
+    throw new Error('Ad not found. Cannot edit.');
   }
 
   entity.metadataURI = event.params.ad.metadataURI;
-  entity.maxBudget = event.params.ad.totalBudget;
   entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
   entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
@@ -296,7 +315,7 @@ export function handleAudienceEdited(event: AudienceEditedEvent): void {
   let entity = Audience.load(event.params.audienceId.toString());
 
   if (entity == null) {
-    // LOG SOMETHING
+    throw new Error('Audience not found. Cannot edit.');
     return;
   }
 

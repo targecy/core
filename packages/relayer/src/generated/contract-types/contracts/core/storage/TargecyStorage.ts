@@ -53,6 +53,7 @@ export interface TargecyStorageInterface extends Interface {
       | "_segmentId"
       | "ads"
       | "audiences"
+      | "budgets"
       | "consumptionsPerDay"
       | "defaultClickPrice"
       | "defaultConversionPrice"
@@ -62,6 +63,7 @@ export interface TargecyStorageInterface extends Interface {
       | "relayerAddress"
       | "requestQueries"
       | "totalconsumptions"
+      | "usdcTokenAddress"
       | "usedSigNonces"
       | "whitelistedPublishers"
       | "zkProofsValidator"
@@ -80,6 +82,10 @@ export interface TargecyStorageInterface extends Interface {
   encodeFunctionData(
     functionFragment: "audiences",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "budgets",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "consumptionsPerDay",
@@ -118,6 +124,10 @@ export interface TargecyStorageInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "usdcTokenAddress",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "usedSigNonces",
     values: [BigNumberish]
   ): string;
@@ -138,6 +148,7 @@ export interface TargecyStorageInterface extends Interface {
   decodeFunctionResult(functionFragment: "_segmentId", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ads", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "audiences", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "budgets", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "consumptionsPerDay",
     data: BytesLike
@@ -172,6 +183,10 @@ export interface TargecyStorageInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "totalconsumptions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "usdcTokenAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -247,6 +262,8 @@ export interface TargecyStorage extends BaseContract {
         string,
         bigint,
         boolean,
+        string,
+        string,
         bigint,
         bigint,
         bigint,
@@ -259,10 +276,12 @@ export interface TargecyStorage extends BaseContract {
         metadataURI: string;
         attribution: bigint;
         active: boolean;
+        abi: string;
+        target: string;
         startingTimestamp: bigint;
         endingTimestamp: bigint;
-        totalBudget: bigint;
-        remainingBudget: bigint;
+        maxBudget: bigint;
+        currentBudget: bigint;
         maxConsumptionsPerDay: bigint;
         maxPricePerConsumption: bigint;
         consumptions: bigint;
@@ -274,6 +293,18 @@ export interface TargecyStorage extends BaseContract {
   audiences: TypedContractMethod<
     [arg0: BigNumberish],
     [[string, bigint] & { metadataURI: string; consumptions: bigint }],
+    "view"
+  >;
+
+  budgets: TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [string, bigint, bigint] & {
+        advertiser: string;
+        totalBudget: bigint;
+        remainingBudget: bigint;
+      }
+    ],
     "view"
   >;
 
@@ -308,6 +339,8 @@ export interface TargecyStorage extends BaseContract {
   >;
 
   totalconsumptions: TypedContractMethod<[], [bigint], "view">;
+
+  usdcTokenAddress: TypedContractMethod<[], [string], "view">;
 
   usedSigNonces: TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
 
@@ -351,6 +384,8 @@ export interface TargecyStorage extends BaseContract {
         string,
         bigint,
         boolean,
+        string,
+        string,
         bigint,
         bigint,
         bigint,
@@ -363,10 +398,12 @@ export interface TargecyStorage extends BaseContract {
         metadataURI: string;
         attribution: bigint;
         active: boolean;
+        abi: string;
+        target: string;
         startingTimestamp: bigint;
         endingTimestamp: bigint;
-        totalBudget: bigint;
-        remainingBudget: bigint;
+        maxBudget: bigint;
+        currentBudget: bigint;
         maxConsumptionsPerDay: bigint;
         maxPricePerConsumption: bigint;
         consumptions: bigint;
@@ -379,6 +416,19 @@ export interface TargecyStorage extends BaseContract {
   ): TypedContractMethod<
     [arg0: BigNumberish],
     [[string, bigint] & { metadataURI: string; consumptions: bigint }],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "budgets"
+  ): TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [string, bigint, bigint] & {
+        advertiser: string;
+        totalBudget: bigint;
+        remainingBudget: bigint;
+      }
+    ],
     "view"
   >;
   getFunction(
@@ -422,6 +472,9 @@ export interface TargecyStorage extends BaseContract {
   getFunction(
     nameOrSignature: "totalconsumptions"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "usdcTokenAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "usedSigNonces"
   ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;

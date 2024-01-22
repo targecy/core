@@ -10,6 +10,7 @@ export const Ads = gql`
     attribution
     active
     startingTimestamp
+    maxBudget
     endingTimestamp
     audiences {
       ...AudienceFragment
@@ -18,8 +19,6 @@ export const Ads = gql`
       id
     }
     blacklistedWeekdays
-    totalBudget
-    remainingBudget
     maxConsumptionsPerDay
     maxPricePerConsumption
     consumptions
@@ -38,7 +37,7 @@ export const Ads = gql`
   }
 
   query GetAdToShow {
-    ads(where: { audiences_not: [] }, orderBy: remainingBudget, orderDirection: desc) {
+    ads(where: { audiences_not: [] }, orderBy: id, orderDirection: desc) {
       ...AdFragment
     }
   }

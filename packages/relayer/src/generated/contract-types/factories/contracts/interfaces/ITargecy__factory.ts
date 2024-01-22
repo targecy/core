@@ -30,9 +30,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint64",
+        internalType: "uint256",
         name: "adId",
-        type: "uint64",
+        type: "uint256",
       },
       {
         internalType: "address",
@@ -67,36 +67,9 @@ const _abi = [
         type: "tuple",
       },
       {
-        components: [
-          {
-            internalType: "uint8",
-            name: "v",
-            type: "uint8",
-          },
-          {
-            internalType: "bytes32",
-            name: "r",
-            type: "bytes32",
-          },
-          {
-            internalType: "bytes32",
-            name: "s",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint256",
-            name: "deadline",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "nonce",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct DataTypes.EIP712Signature",
-        name: "targecySig",
-        type: "tuple",
+        internalType: "bytes[]",
+        name: "actionParams",
+        type: "bytes[]",
       },
     ],
     name: "consumeAd",
@@ -112,9 +85,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint64",
+        internalType: "uint256",
         name: "adId",
-        type: "uint64",
+        type: "uint256",
       },
       {
         internalType: "address",
@@ -148,96 +121,13 @@ const _abi = [
         name: "zkProofs",
         type: "tuple",
       },
+      {
+        internalType: "bytes[]",
+        name: "actionParams",
+        type: "bytes[]",
+      },
     ],
     name: "consumeAdViaRelayer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        components: [
-          {
-            internalType: "string",
-            name: "metadataURI",
-            type: "string",
-          },
-          {
-            internalType: "enum DataTypes.Attribution",
-            name: "attribution",
-            type: "uint8",
-          },
-          {
-            internalType: "bool",
-            name: "active",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "startingTimestamp",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "endingTimestamp",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256[]",
-            name: "audienceIds",
-            type: "uint256[]",
-          },
-          {
-            internalType: "address[]",
-            name: "blacklistedPublishers",
-            type: "address[]",
-          },
-          {
-            internalType: "uint8[]",
-            name: "blacklistedWeekdays",
-            type: "uint8[]",
-          },
-          {
-            internalType: "uint256",
-            name: "budget",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxPricePerConsumption",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxConsumptionsPerDay",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct DataTypes.NewAd",
-        name: "ad",
-        type: "tuple",
-      },
-    ],
-    name: "createAd",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "metadataURI",
-        type: "string",
-      },
-      {
-        internalType: "uint256[]",
-        name: "audienceIds",
-        type: "uint256[]",
-      },
-    ],
-    name: "createAudience",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -284,159 +174,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "adId",
-        type: "uint256",
+        internalType: "address",
+        name: "advertiser",
+        type: "address",
       },
-      {
-        components: [
-          {
-            internalType: "string",
-            name: "metadataURI",
-            type: "string",
-          },
-          {
-            internalType: "enum DataTypes.Attribution",
-            name: "attribution",
-            type: "uint8",
-          },
-          {
-            internalType: "bool",
-            name: "active",
-            type: "bool",
-          },
-          {
-            internalType: "uint256",
-            name: "startingTimestamp",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "endingTimestamp",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256[]",
-            name: "audienceIds",
-            type: "uint256[]",
-          },
-          {
-            internalType: "address[]",
-            name: "blacklistedPublishers",
-            type: "address[]",
-          },
-          {
-            internalType: "uint8[]",
-            name: "blacklistedWeekdays",
-            type: "uint8[]",
-          },
-          {
-            internalType: "uint256",
-            name: "budget",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxPricePerConsumption",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "maxConsumptionsPerDay",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct DataTypes.NewAd",
-        name: "ad",
-        type: "tuple",
-      },
-    ],
-    name: "editAd",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "uint256",
-        name: "audienceId",
+        name: "amount",
         type: "uint256",
       },
-      {
-        internalType: "string",
-        name: "metadataURI",
-        type: "string",
-      },
-      {
-        internalType: "uint256[]",
-        name: "audienceIds",
-        type: "uint256[]",
-      },
     ],
-    name: "editAudience",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "audienceId",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "schema",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "slotIndex",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "operator",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256[]",
-                name: "value",
-                type: "uint256[]",
-              },
-              {
-                internalType: "string",
-                name: "circuitId",
-                type: "string",
-              },
-            ],
-            internalType: "struct ICircuitValidator.CircuitQuery",
-            name: "query",
-            type: "tuple",
-          },
-          {
-            internalType: "string",
-            name: "metadataURI",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "issuer",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct DataTypes.Segment",
-        name: "_segment",
-        type: "tuple",
-      },
-    ],
-    name: "editSegment",
+    name: "fundAdvertiserBudget",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -534,12 +282,120 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "adIdReceived",
+        type: "uint256",
+      },
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "metadataURI",
+            type: "string",
+          },
+          {
+            internalType: "enum DataTypes.Attribution",
+            name: "attribution",
+            type: "uint8",
+          },
+          {
+            internalType: "bool",
+            name: "active",
+            type: "bool",
+          },
+          {
+            internalType: "string",
+            name: "abi",
+            type: "string",
+          },
+          {
+            internalType: "address",
+            name: "target",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "startingTimestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "endingTimestamp",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256[]",
+            name: "audienceIds",
+            type: "uint256[]",
+          },
+          {
+            internalType: "address[]",
+            name: "blacklistedPublishers",
+            type: "address[]",
+          },
+          {
+            internalType: "uint8[]",
+            name: "blacklistedWeekdays",
+            type: "uint8[]",
+          },
+          {
+            internalType: "uint256",
+            name: "budget",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxPricePerConsumption",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxConsumptionsPerDay",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct DataTypes.NewAd",
+        name: "ad",
+        type: "tuple",
+      },
+    ],
+    name: "setAd",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "targecyAdmin",
         type: "address",
       },
     ],
     name: "setAdmin",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "audienceIdReceived",
+        type: "uint256",
+      },
+      {
+        internalType: "string",
+        name: "metadataURI",
+        type: "string",
+      },
+      {
+        internalType: "uint256[]",
+        name: "audienceIds",
+        type: "uint256[]",
+      },
+    ],
+    name: "setAudience",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -657,6 +513,24 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_relayerAddress",
+        type: "address",
+      },
+    ],
+    name: "setRelayerAddress",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "audienceIdReceived",
+        type: "uint256",
+      },
+      {
         components: [
           {
             components: [
@@ -746,6 +620,19 @@ const _abi = [
       },
     ],
     name: "unpausePublisher",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "withdrawAdvertiserBudget",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

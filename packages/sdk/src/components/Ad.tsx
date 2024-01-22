@@ -1,5 +1,5 @@
 import { Skeleton } from 'antd';
-import { ethers } from 'ethers';
+import { ZeroAddress, ethers } from 'ethers';
 import { useContext } from 'react';
 import { Address } from 'wagmi';
 
@@ -67,12 +67,17 @@ export const AdComponent = (props: AdProps) => {
           impressions: 0,
           clicks: 0,
           conversions: 0,
-          totalBudget: 0,
-          remainingBudget: 0,
           adsQuantity: 0,
+          budget: {
+            totalBudget: 0,
+            remainingBudget: 0,
+            id: ZeroAddress,
+          },
         },
         id: '0',
         attribution: 0,
+        maxBudget: 0,
+        currentBudget: 0,
         active: true,
         blacklistedPublishers: [],
         blacklistedWeekdays: [],
@@ -83,9 +88,7 @@ export const AdComponent = (props: AdProps) => {
         maxPricePerConsumption: 0,
         metadataURI: '',
         startingTimestamp: 0,
-        remainingBudget: 0,
         audiences: [],
-        totalBudget: 0,
       },
       metadata: {
         title: 'Are you looking for the best yield!',

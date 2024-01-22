@@ -3,12 +3,15 @@ import { gql } from 'graphql-request';
 export const Advertisers = gql`
   fragment AdvertiserFragment on Advertiser {
     id
-    totalBudget
-    remainingBudget
     adsQuantity
     impressions
     clicks
     conversions
+    budget {
+      id
+      totalBudget
+      remainingBudget
+    }
   }
 
   query GetAllAdvertisers {

@@ -321,8 +321,6 @@ export interface Targecy extends BaseContract {
       [string, string, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
         advertiser: string;
         metadataURI: string;
-        totalBudget: BigNumber;
-        remainingBudget: BigNumber;
         maxImpressionPrice: BigNumber;
         minBlock: BigNumber;
         maxBlock: BigNumber;

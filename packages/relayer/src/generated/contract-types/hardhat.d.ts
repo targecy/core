@@ -34,6 +34,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.PausableUpgradeable__factory>;
     getContractFactory(
+      name: "ReentrancyGuardUpgradeable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ReentrancyGuardUpgradeable__factory>;
+    getContractFactory(
       name: "ContextUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContextUpgradeable__factory>;
@@ -46,6 +50,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165Upgradeable__factory>;
     getContractFactory(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
       name: "TargecyStorage",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TargecyStorage__factory>;
@@ -57,6 +65,14 @@ declare module "hardhat/types/runtime" {
       name: "ICircuitValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ICircuitValidator__factory>;
+    getContractFactory(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20__factory>;
+    getContractFactory(
+      name: "IERC20Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Metadata__factory>;
     getContractFactory(
       name: "ITargecy",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -74,9 +90,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TargecyEvents__factory>;
     getContractFactory(
+      name: "ERC20PresetFixedSupply",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20PresetFixedSupply__factory>;
+    getContractFactory(
       name: "MockValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockValidator__factory>;
+    getContractFactory(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
+      name: "ERC20Burnable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Burnable__factory>;
 
     getContractAt(
       name: "AccessControlUpgradeable",
@@ -104,6 +132,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.PausableUpgradeable>;
     getContractAt(
+      name: "ReentrancyGuardUpgradeable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    getContractAt(
       name: "ContextUpgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -119,6 +152,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165Upgradeable>;
     getContractAt(
+      name: "IERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20>;
+    getContractAt(
       name: "TargecyStorage",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -133,6 +171,16 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ICircuitValidator>;
+    getContractAt(
+      name: "IERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20>;
+    getContractAt(
+      name: "IERC20Metadata",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Metadata>;
     getContractAt(
       name: "ITargecy",
       address: string | ethers.Addressable,
@@ -154,10 +202,25 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TargecyEvents>;
     getContractAt(
+      name: "ERC20PresetFixedSupply",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20PresetFixedSupply>;
+    getContractAt(
       name: "MockValidator",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.MockValidator>;
+    getContractAt(
+      name: "ERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20>;
+    getContractAt(
+      name: "ERC20Burnable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Burnable>;
 
     deployContract(
       name: "AccessControlUpgradeable",
@@ -180,6 +243,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PausableUpgradeable>;
     deployContract(
+      name: "ReentrancyGuardUpgradeable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    deployContract(
       name: "ContextUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ContextUpgradeable>;
@@ -192,6 +259,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165Upgradeable>;
     deployContract(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20>;
+    deployContract(
       name: "TargecyStorage",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TargecyStorage>;
@@ -203,6 +274,14 @@ declare module "hardhat/types/runtime" {
       name: "ICircuitValidator",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ICircuitValidator>;
+    deployContract(
+      name: "IERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20>;
+    deployContract(
+      name: "IERC20Metadata",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Metadata>;
     deployContract(
       name: "ITargecy",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -220,9 +299,21 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TargecyEvents>;
     deployContract(
+      name: "ERC20PresetFixedSupply",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20PresetFixedSupply>;
+    deployContract(
       name: "MockValidator",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockValidator>;
+    deployContract(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20>;
+    deployContract(
+      name: "ERC20Burnable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Burnable>;
 
     deployContract(
       name: "AccessControlUpgradeable",
@@ -250,6 +341,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.PausableUpgradeable>;
     deployContract(
+      name: "ReentrancyGuardUpgradeable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ReentrancyGuardUpgradeable>;
+    deployContract(
       name: "ContextUpgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -265,6 +361,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC165Upgradeable>;
     deployContract(
+      name: "IERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20>;
+    deployContract(
       name: "TargecyStorage",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -279,6 +380,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ICircuitValidator>;
+    deployContract(
+      name: "IERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20>;
+    deployContract(
+      name: "IERC20Metadata",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Metadata>;
     deployContract(
       name: "ITargecy",
       args: any[],
@@ -300,10 +411,25 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TargecyEvents>;
     deployContract(
+      name: "ERC20PresetFixedSupply",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20PresetFixedSupply>;
+    deployContract(
       name: "MockValidator",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockValidator>;
+    deployContract(
+      name: "ERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20>;
+    deployContract(
+      name: "ERC20Burnable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Burnable>;
 
     // default types
     getContractFactory(

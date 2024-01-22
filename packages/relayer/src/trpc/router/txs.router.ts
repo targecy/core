@@ -1,5 +1,5 @@
 import { router, publicProcedure } from '..';
-import { consumeAd } from '../../trpc/services/relayer.service';
+import { consumeAd } from '../services/relayer.service';
 import { z } from 'zod';
 import { recoverMessageAddress } from 'viem';
 import { TRPCError } from '@trpc/server';
@@ -48,7 +48,7 @@ export const txsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       const viewer = ZeroAddress; // To be changed in attribution v1.
-      const result = await consumeAd([viewer, input.adId, input.publisher, input.zkProofs]);
+      const result = await consumeAd([viewer, input.adId, input.publisher, input.zkProofs, []]);
       const saved = await ctx.prisma.tx.create({
         data: {
           hash: result,

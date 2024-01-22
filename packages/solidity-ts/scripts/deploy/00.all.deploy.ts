@@ -14,7 +14,7 @@ import { getStringFromFile, saveStringToFile } from '~scripts/utils';
 const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => {
   console.log("Starting deployment of Targecy's contracts...");
   const { deployments, getNamedAccounts, network, upgrades } = hre;
-  const { deployer, admin, vault, user, publisher, advertiser } = await getNamedAccounts();
+  const { deployer, user1: admin, user2: vault, user3: user, user4: publisher, user5: advertiser } = await getNamedAccounts();
 
   if (Boolean(isolatedEnv)) console.warn('\n\n>>> RUNNING IN ISOLATED MODE. ARE YOU SURE?  <<< \n\n');
 
@@ -78,7 +78,10 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     // Distribute MockERC20 on local chain
     console.log('Distributing mock erc20 assets');
     const accounts = [admin, vault, user, publisher, advertiser];
-    for (const account of accounts) await erc20.transfer(account, amountToGive);
+    for (const account of accounts) {
+      console.log(`Giving ${account} ${amountToGive} USDC`);
+      await erc20.transfer(account, amountToGive);
+    }
 
     console.log(`${accounts} have ${await erc20.balanceOf(accounts[0])}`);
 

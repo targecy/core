@@ -110,8 +110,6 @@ const AdsList = () => {
       },
     },
     { title: 'Consumptions', accessor: 'consumptions', render: (value) => value.consumptions },
-    { title: 'Remaining Budget', accessor: 'remainingBudget' },
-    { title: 'Total Budget', accessor: 'totalBudget' },
     {
       accessor: 'actions',
       title: '',

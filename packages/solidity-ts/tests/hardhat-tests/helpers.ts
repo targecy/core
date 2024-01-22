@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { CircuitId, CredentialRequest, CredentialStatusType, ZeroKnowledgeProofResponse } from '@0xpolygonid/js-sdk';
-import { EventFragment, Interface } from '@ethersproject/abi';
+import { Interface, LogDescription } from '@ethersproject/abi';
 import { ContractTransactionReceipt } from 'ethers';
-import { TargecyEvents__factory } from 'generated/contract-types';
 
 import '~helpers/hardhat-imports';
 import '~tests/utils/chai-imports';
@@ -9,20 +12,22 @@ import { DataTypes } from '~generated/contract-types/contracts/core/Targecy';
 import { createIssuerIdentity, createUserIdentity, getCircuitStorage, initProofService, initializeStorages } from '~tests/utils/zk.utils';
 
 export const defaultIssuer = 1313424234234234234n;
-export const relayerAddress = '0x3bBF2d68CBb8C813Cbc4b4237abFeeE7023279ae';
 
-export function decodeEvents(receipt?: ContractTransactionReceipt | null): EventFragment[] {
+export function decodeEvents(receipt: ContractTransactionReceipt | null, abiByAddress: Record<string, any>): LogDescription[] {
   if (receipt?.logs == null) return [];
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-  const iface = new Interface(TargecyEvents__factory.abi);
+  if (!Boolean(abiByAddress)) throw new Error('ifaceByAddress is required');
 
-  return receipt.logs?.map(
-    (log) =>
-      iface.parseLog({
+  return (
+    receipt.logs?.map((log) => {
+      if (!Boolean(log.address)) throw new Error('log.address is required');
+      if (!abiByAddress[log.address]) throw new Error(`ifaceByAddress[${log.address}] is required`);
+
+      return new Interface(abiByAddress[log.address]).parseLog({
         topics: log.topics as string[],
         data: log.data,
-      }).eventFragment
+      });
+    }) || []
   );
 }
 

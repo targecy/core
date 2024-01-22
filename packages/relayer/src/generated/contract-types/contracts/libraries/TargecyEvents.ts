@@ -26,13 +26,15 @@ export declare namespace DataTypes {
     metadataURI: string;
     attribution: BigNumberish;
     active: boolean;
+    abi: string;
+    target: AddressLike;
     startingTimestamp: BigNumberish;
     endingTimestamp: BigNumberish;
     audienceIds: BigNumberish[];
     blacklistedPublishers: AddressLike[];
     blacklistedWeekdays: BigNumberish[];
-    totalBudget: BigNumberish;
-    remainingBudget: BigNumberish;
+    maxBudget: BigNumberish;
+    currentBudget: BigNumberish;
     maxConsumptionsPerDay: BigNumberish;
     maxPricePerConsumption: BigNumberish;
     consumptions: BigNumberish;
@@ -43,13 +45,15 @@ export declare namespace DataTypes {
     metadataURI: string,
     attribution: bigint,
     active: boolean,
+    abi: string,
+    target: string,
     startingTimestamp: bigint,
     endingTimestamp: bigint,
     audienceIds: bigint[],
     blacklistedPublishers: string[],
     blacklistedWeekdays: bigint[],
-    totalBudget: bigint,
-    remainingBudget: bigint,
+    maxBudget: bigint,
+    currentBudget: bigint,
     maxConsumptionsPerDay: bigint,
     maxPricePerConsumption: bigint,
     consumptions: bigint
@@ -58,13 +62,15 @@ export declare namespace DataTypes {
     metadataURI: string;
     attribution: bigint;
     active: boolean;
+    abi: string;
+    target: string;
     startingTimestamp: bigint;
     endingTimestamp: bigint;
     audienceIds: bigint[];
     blacklistedPublishers: string[];
     blacklistedWeekdays: bigint[];
-    totalBudget: bigint;
-    remainingBudget: bigint;
+    maxBudget: bigint;
+    currentBudget: bigint;
     maxConsumptionsPerDay: bigint;
     maxPricePerConsumption: bigint;
     consumptions: bigint;
@@ -99,6 +105,8 @@ export declare namespace DataTypes {
     metadataURI: string;
     attribution: BigNumberish;
     active: boolean;
+    abi: string;
+    target: AddressLike;
     startingTimestamp: BigNumberish;
     endingTimestamp: BigNumberish;
     audienceIds: BigNumberish[];
@@ -113,6 +121,8 @@ export declare namespace DataTypes {
     metadataURI: string,
     attribution: bigint,
     active: boolean,
+    abi: string,
+    target: string,
     startingTimestamp: bigint,
     endingTimestamp: bigint,
     audienceIds: bigint[],
@@ -125,6 +135,8 @@ export declare namespace DataTypes {
     metadataURI: string;
     attribution: bigint;
     active: boolean;
+    abi: string;
+    target: string;
     startingTimestamp: bigint;
     endingTimestamp: bigint;
     audienceIds: bigint[];
@@ -133,6 +145,31 @@ export declare namespace DataTypes {
     budget: bigint;
     maxPricePerConsumption: bigint;
     maxConsumptionsPerDay: bigint;
+  };
+
+  export type RewardsDistributionStruct = {
+    publisher: AddressLike;
+    publisherAmount: BigNumberish;
+    user: AddressLike;
+    userAmount: BigNumberish;
+    protocolVault: AddressLike;
+    protocolAmount: BigNumberish;
+  };
+
+  export type RewardsDistributionStructOutput = [
+    publisher: string,
+    publisherAmount: bigint,
+    user: string,
+    userAmount: bigint,
+    protocolVault: string,
+    protocolAmount: bigint
+  ] & {
+    publisher: string;
+    publisherAmount: bigint;
+    user: string;
+    userAmount: bigint;
+    protocolVault: string;
+    protocolAmount: bigint;
   };
 }
 
@@ -171,12 +208,15 @@ export interface TargecyEventsInterface extends Interface {
       | "AdUnpaused"
       | "AdminRemoved"
       | "AdminSet"
+      | "AdvertiserBudgetFunded"
+      | "AdvertiserBudgetWithdrawn"
       | "AudienceCreated"
       | "AudienceDeleted"
       | "AudienceEdited"
       | "PausePublisher"
       | "PublisherRemovedFromWhitelist"
       | "PublisherWhitelisted"
+      | "RewardsDistributed"
       | "SegmentCreated"
       | "SegmentDeleted"
       | "SegmentEdited"
@@ -304,6 +344,32 @@ export namespace AdminSetEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace AdvertiserBudgetFundedEvent {
+  export type InputTuple = [advertiser: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [advertiser: string, amount: bigint];
+  export interface OutputObject {
+    advertiser: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace AdvertiserBudgetWithdrawnEvent {
+  export type InputTuple = [advertiser: AddressLike, amount: BigNumberish];
+  export type OutputTuple = [advertiser: string, amount: bigint];
+  export interface OutputObject {
+    advertiser: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace AudienceCreatedEvent {
   export type InputTuple = [
     audienceId: BigNumberish,
@@ -396,6 +462,25 @@ export namespace PublisherWhitelistedEvent {
   export interface OutputObject {
     vault: string;
     publisher: DataTypes.PublisherSettingsStructOutput;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace RewardsDistributedEvent {
+  export type InputTuple = [
+    adId: BigNumberish,
+    rewardsDistributed: DataTypes.RewardsDistributionStruct
+  ];
+  export type OutputTuple = [
+    adId: bigint,
+    rewardsDistributed: DataTypes.RewardsDistributionStructOutput
+  ];
+  export interface OutputObject {
+    adId: bigint;
+    rewardsDistributed: DataTypes.RewardsDistributionStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -586,6 +671,20 @@ export interface TargecyEvents extends BaseContract {
     AdminSetEvent.OutputObject
   >;
   getEvent(
+    key: "AdvertiserBudgetFunded"
+  ): TypedContractEvent<
+    AdvertiserBudgetFundedEvent.InputTuple,
+    AdvertiserBudgetFundedEvent.OutputTuple,
+    AdvertiserBudgetFundedEvent.OutputObject
+  >;
+  getEvent(
+    key: "AdvertiserBudgetWithdrawn"
+  ): TypedContractEvent<
+    AdvertiserBudgetWithdrawnEvent.InputTuple,
+    AdvertiserBudgetWithdrawnEvent.OutputTuple,
+    AdvertiserBudgetWithdrawnEvent.OutputObject
+  >;
+  getEvent(
     key: "AudienceCreated"
   ): TypedContractEvent<
     AudienceCreatedEvent.InputTuple,
@@ -626,6 +725,13 @@ export interface TargecyEvents extends BaseContract {
     PublisherWhitelistedEvent.InputTuple,
     PublisherWhitelistedEvent.OutputTuple,
     PublisherWhitelistedEvent.OutputObject
+  >;
+  getEvent(
+    key: "RewardsDistributed"
+  ): TypedContractEvent<
+    RewardsDistributedEvent.InputTuple,
+    RewardsDistributedEvent.OutputTuple,
+    RewardsDistributedEvent.OutputObject
   >;
   getEvent(
     key: "SegmentCreated"
@@ -745,6 +851,28 @@ export interface TargecyEvents extends BaseContract {
       AdminSetEvent.OutputObject
     >;
 
+    "AdvertiserBudgetFunded(address,uint256)": TypedContractEvent<
+      AdvertiserBudgetFundedEvent.InputTuple,
+      AdvertiserBudgetFundedEvent.OutputTuple,
+      AdvertiserBudgetFundedEvent.OutputObject
+    >;
+    AdvertiserBudgetFunded: TypedContractEvent<
+      AdvertiserBudgetFundedEvent.InputTuple,
+      AdvertiserBudgetFundedEvent.OutputTuple,
+      AdvertiserBudgetFundedEvent.OutputObject
+    >;
+
+    "AdvertiserBudgetWithdrawn(address,uint256)": TypedContractEvent<
+      AdvertiserBudgetWithdrawnEvent.InputTuple,
+      AdvertiserBudgetWithdrawnEvent.OutputTuple,
+      AdvertiserBudgetWithdrawnEvent.OutputObject
+    >;
+    AdvertiserBudgetWithdrawn: TypedContractEvent<
+      AdvertiserBudgetWithdrawnEvent.InputTuple,
+      AdvertiserBudgetWithdrawnEvent.OutputTuple,
+      AdvertiserBudgetWithdrawnEvent.OutputObject
+    >;
+
     "AudienceCreated(uint256,string,uint256[])": TypedContractEvent<
       AudienceCreatedEvent.InputTuple,
       AudienceCreatedEvent.OutputTuple,
@@ -809,6 +937,17 @@ export interface TargecyEvents extends BaseContract {
       PublisherWhitelistedEvent.InputTuple,
       PublisherWhitelistedEvent.OutputTuple,
       PublisherWhitelistedEvent.OutputObject
+    >;
+
+    "RewardsDistributed(uint256,tuple)": TypedContractEvent<
+      RewardsDistributedEvent.InputTuple,
+      RewardsDistributedEvent.OutputTuple,
+      RewardsDistributedEvent.OutputObject
+    >;
+    RewardsDistributed: TypedContractEvent<
+      RewardsDistributedEvent.InputTuple,
+      RewardsDistributedEvent.OutputTuple,
+      RewardsDistributedEvent.OutputObject
     >;
 
     "SegmentCreated(uint256,address,tuple,string,uint256)": TypedContractEvent<
