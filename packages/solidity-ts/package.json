@@ -1,5 +1,5 @@
 {
-  "name": "@scaffold-eth/solidity",
+  "name": "@targecy/solidity",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
@@ -8,7 +8,7 @@
     "test:watch": "yarn hardhat watch test --show-stack-traces --network hardhat",
     "compile": "hardhat compile",
     "compile:watch:hardhat": "cross-env BUILDING=true hardhat watch compile",
-    "contracts:build": "yarn workspace @scaffold-eth/common contracts:build",
+    "contracts:build": "yarn workspace @targecy/common contracts:build",
     "watch:hardhat": "cross-env BUILDING=true yarn hardhat watch compile",
     "deploy": "hardhat deploy --export-all ../common/src/generated/hardhat_contracts.json",
     "deploy:mumbai": "hardhat deploy --network mumbai --export-all ../common/src/generated/hardhat_contracts.json",
@@ -52,7 +52,7 @@
     "@nomiclabs/hardhat-solhint": "^2.0.1",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.9.3",
-    "@scaffold-eth/common": "0.0.0",
+    "@targecy/common": "0.0.0",
     "@tenderly/hardhat-tenderly": "^1.1.6",
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^6.1.3",

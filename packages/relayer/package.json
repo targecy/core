@@ -1,6 +1,6 @@
 {
   "name": "@targecy/relayer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build": "shx rm -rf build && tsc -p tsconfig.json && yarn export-types",
     "dev": "concurrently \"ts-node-dev -r tsconfig-paths/register src/index.ts\" \"nodemon\"",
