@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { SessionProvider } from 'next-auth/react';
+import ReactQueryProvider from '~/components/shared/ReactQueryProvider';
 
 import { WalletProvider } from '~/components/shared/Wallet';
 import { env } from '~/env.mjs';

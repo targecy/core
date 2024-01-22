@@ -1,6 +1,7 @@
 {
   "files.exclude": {
     "**/.git": true,
+    "**/.next": true,
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
@@ -10,6 +11,7 @@
     "**/.vs/": true,
     "**/*.cs": true,
     "**/*.orig": true,
+    "**/*.tsbuildinfo": true,
     "**/bin/": true,
     "**/build/": true,
     "**/build/**/*": true,
@@ -21,5 +23,6 @@
     "node_modules/*/**": true,
     "**/.yalc": true
   },
-  "explorerExclude.backup": null
+  "explorerExclude.backup": null,
+  "cSpell.words": ["clsx", "IPFS"]
 }
