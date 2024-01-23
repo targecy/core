@@ -14,6 +14,9 @@ import {
   ERC20PresetFixedSupply__factory,
   TargecyEvents__factory,
   MockValidator__factory,
+  MockExternalVaultContract,
+  MockExternalVaultContract__factory,
+  Targecy__factory,
 } from 'generated/contract-types';
 import { ethers } from 'hardhat';
 import { isolatedEnv } from 'hardhat.config';
@@ -28,6 +31,7 @@ interface AddressesFile {
   targecy?: string;
   validator?: string;
   erc20?: string;
+  externalContract?: string;
 }
 
 describe('Tests', function () {
@@ -42,6 +46,8 @@ describe('Tests', function () {
   let targecyAddress: AddressLike;
   let validator: MockValidator;
   let erc20: ERC20;
+  let externalContract: MockExternalVaultContract;
+  let externalContractAddress: AddressLike;
   let abiByAddress: Record<string, any>;
 
   // Users
@@ -113,7 +119,17 @@ describe('Tests', function () {
       `Signers \n | Deployer: ${deployerWithProvider.address} \n | Admin: ${adminWithProvider.address} \n | Vault: ${vaultWithProvider.address} \n | User: ${userWithProvider.address} \n | Publisher: ${publisherWithProvider.address} \n | Advertiser: ${advertiserWithProvider.address} \n`
     );
 
-    console.log('Deploying MockValidator...');
+    console.log('Deploying MockExternalVaultContract...');
+    const externalContractFactory = (await ethers.getContractFactory('MockExternalVaultContract')).connect(deployerWithProvider);
+    externalContract =
+      deployedAddresses.externalContract !== undefined
+        ? (externalContractFactory.attach(deployedAddresses.externalContract) as MockExternalVaultContract)
+        : ((await externalContractFactory.deploy()).connect(adminWithProvider) as MockExternalVaultContract);
+    externalContractAddress = await externalContract.getAddress();
+    console.log(" | MockExternalVaultContract's address: ", externalContractAddress);
+    console.log(" | MockExternalVaultContract's initial value: ", await externalContract.connect(adminWithProvider).value());
+
+    console.log('\nDeploying MockValidator...');
     const validatorFactory = (await ethers.getContractFactory('MockValidator')).connect(deployerWithProvider);
     validator =
       deployedAddresses.validator !== undefined
@@ -188,13 +204,16 @@ describe('Tests', function () {
     console.log(' | Initialized values > Ad Id', await targecy._adId());
 
     abiByAddress = {
-      [targecyAddress]: TargecyEvents__factory.abi,
+      [targecyAddress]: [...TargecyEvents__factory.abi, ...Targecy__factory.abi],
       [validatorAddress]: MockValidator__factory.abi,
       [erc20Address]: ERC20PresetFixedSupply__factory.abi,
+      [externalContractAddress]: MockExternalVaultContract__factory.abi,
     };
 
-    if (addressesModified)
-      saveStringToFile(JSON.stringify({ targecy: targecyAddress, validator: validatorAddress, erc20: erc20Address }), addressesFilePath, true);
+    if (addressesModified) {
+      const toSave: AddressesFile = { targecy: targecyAddress, validator: validatorAddress, erc20: erc20Address, externalContract: externalContractAddress };
+      saveStringToFile(JSON.stringify(toSave), addressesFilePath, true);
+    }
 
     if (!Boolean(isolatedEnv)) {
       console.log('\nInitializing Zero-Knowledge Proofs Helpers...');
@@ -632,7 +651,7 @@ describe('Tests', function () {
       };
       await targecy.connect(advertiserWithProvider).setAd(0, {
         active: true,
-        attribution: 2,
+        attribution: 0,
         abi: '',
         target: ZeroAddress,
         metadataURI: 'metadata',
@@ -662,17 +681,20 @@ describe('Tests', function () {
             ],
             c: [[1n, 1n]],
           },
-          []
+          ZeroAddress
         )
       ).to.be.reverted; // @todo use specific errors!
     });
   });
 
   describe('Consumptions', () => {
-    let adId: bigint;
+    let conversionAdId: bigint;
+    let viewAdId: bigint;
     let zkProofs: any;
 
-    before(async () => {
+    beforeEach(async () => {
+      await evm.snapshot.revert(snapshotId);
+
       if (Boolean(isolatedEnv)) return; // This ad requires internet connection for generating proofs. @todo (@Martin): review this with polygon id team
       await targecy.setSegment(0, getTestAudience());
       await targecy.setAudience(0, 'metadata', [1]);
@@ -680,8 +702,8 @@ describe('Tests', function () {
       const response = await targecy.connect(advertiserWithProvider).setAd(0, {
         active: true,
         attribution: 2,
-        abi: '',
-        target: ZeroAddress,
+        abi: 'setValue(bytes)',
+        target: externalContractAddress,
         metadataURI: 'metadata',
         maxConsumptionsPerDay: 100,
         maxBudget: 1000000000,
@@ -694,8 +716,26 @@ describe('Tests', function () {
       });
       const receipt = await response.wait();
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
+      conversionAdId = (await targecy._adId()) - 1n;
 
-      adId = (await targecy._adId()) - 1n;
+      const response2 = await targecy.connect(advertiserWithProvider).setAd(0, {
+        active: true,
+        attribution: 0,
+        abi: '',
+        target: ZeroAddress,
+        metadataURI: 'metadata',
+        maxConsumptionsPerDay: 100,
+        maxBudget: 1000000000,
+        maxPricePerConsumption: 3000000,
+        startingTimestamp: 0,
+        endingTimestamp: ethers.MaxUint256,
+        audienceIds: [1],
+        blacklistedPublishers: [],
+        blacklistedWeekdays: [],
+      });
+      const receipt2 = await response2.wait();
+      expect(decodeEvents(receipt2, abiByAddress)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
+      viewAdId = (await targecy._adId()) - 1n;
 
       this.timeout(100000);
       const proof = await getTestProof(zkServices, 1);
@@ -718,15 +758,29 @@ describe('Tests', function () {
       };
     });
 
-    it('Should be able to consume an ad directly', async () => {
+    it('Should be able to consume an ad converting at an external contract', async () => {
       const publisherPastBalance = await erc20.balanceOf(publisherWithProvider.address);
       const vaultPastBalance = await erc20.balanceOf(vaultWithProvider.address);
       const userPastBalance = await erc20.balanceOf(userWithProvider.address);
       const contractPastBalance = await erc20.balanceOf(targecyAddress);
       const advertiserRemainingBudget = (await targecy.budgets(advertiserWithProvider.address)).remainingBudget;
+      const valueForExternalContract = 2n;
+      const encodedValueForExternalContract = ethers.AbiCoder.defaultAbiCoder().encode(
+        ['uint256', 'address'],
+        [valueForExternalContract, userWithProvider.address]
+      );
+      expect(await externalContract.owner()).to.equal(ZeroAddress);
+      expect(await externalContract.value()).to.equal(0n);
 
-      const tx = await targecy.connect(userWithProvider).consumeAd(adId, publisherWithProvider.address, zkProofs, []);
+      const tx = await targecy.connect(userWithProvider).consumeAd(conversionAdId, publisherWithProvider.address, zkProofs, encodedValueForExternalContract, {
+        value: valueForExternalContract,
+      });
       const receipt = await tx.wait();
+
+      expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'ValueSet').length).to.equal(1);
+
+      expect(await externalContract.owner()).to.equal(userWithProvider.address);
+      expect(await externalContract.value()).to.equal(valueForExternalContract);
 
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'RewardsDistributed').length).to.equal(1);
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
@@ -744,7 +798,9 @@ describe('Tests', function () {
       const contractPastBalance = await erc20.balanceOf(targecyAddress);
       const advertiserRemainingBudget = (await targecy.budgets(advertiserWithProvider.address)).remainingBudget;
 
-      const tx = await targecy.connect(relayerWithProvider).consumeAdViaRelayer(userWithProvider.address, adId, publisherWithProvider.address, zkProofs, []);
+      const tx = await targecy
+        .connect(relayerWithProvider)
+        .consumeAdViaRelayer(userWithProvider.address, viewAdId, publisherWithProvider.address, zkProofs, ZeroAddress);
       const receipt = await tx.wait();
 
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'RewardsDistributed').length).to.equal(1);
@@ -757,13 +813,50 @@ describe('Tests', function () {
     });
 
     it('Non whitelisted publishers can not consume ads', async () => {
-      await expect(targecy.connect(userWithProvider).consumeAd(adId, ZeroAddress, zkProofs, [])).to.be.reverted;
+      await expect(targecy.connect(userWithProvider).consumeAd(viewAdId, ZeroAddress, zkProofs, ZeroAddress)).to.be.reverted;
     });
 
     it('Invalid ZK Proofs structure', async () => {
       const invalidZKProofs = zkProofs;
       invalidZKProofs.a = [];
-      await expect(targecy.connect(userWithProvider).consumeAd(adId, publisherWithProvider.address, invalidZKProofs, [])).to.be.reverted;
+      await expect(targecy.connect(userWithProvider).consumeAd(viewAdId, publisherWithProvider.address, invalidZKProofs, ZeroAddress)).to.be.reverted;
+    });
+
+    it('Advertiser need to have funds in order to consume ads', async () => {
+      await targecy.connect(userWithProvider).setAd(0, {
+        active: true,
+        attribution: 2,
+        abi: '',
+        target: ZeroAddress,
+        metadataURI: 'metadata',
+        maxConsumptionsPerDay: 100,
+        maxBudget: 1000000000,
+        maxPricePerConsumption: 3000000,
+        startingTimestamp: 0,
+        endingTimestamp: ethers.MaxUint256,
+        audienceIds: [1],
+        blacklistedPublishers: [],
+        blacklistedWeekdays: [],
+      });
+      const invalidAdId = (await targecy._adId()) - 1n;
+
+      await expect(
+        targecy.connect(relayerWithProvider).consumeAdViaRelayer(userWithProvider.address, invalidAdId, publisherWithProvider.address, zkProofs, ZeroAddress)
+      ).to.be.reverted;
+
+      // Fund advertiser
+
+      expect((await targecy.budgets(userWithProvider.address)).remainingBudget).to.equal(0n);
+      await erc20.approve(await targecy.getAddress(), 1000000000n); // Must approve ERC20 transfers
+      await targecy.fundAdvertiserBudget(userWithProvider.address, 1000000000n);
+      expect((await targecy.budgets(userWithProvider.address)).remainingBudget).to.equal(1000000000n);
+
+      // Try again
+      const tx = await targecy
+        .connect(relayerWithProvider)
+        .consumeAdViaRelayer(userWithProvider.address, invalidAdId, publisherWithProvider.address, zkProofs, ZeroAddress);
+      const receipt = await tx.wait();
+      expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'AdConsumed').length).to.equal(1);
     });
   });
 

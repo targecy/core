@@ -312,7 +312,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256 adId,
     address publisherVault,
     DataTypes.ZKProofs calldata zkProofs,
-    bytes[] calldata actionParams
+    bytes calldata actionParams
   ) internal nonReentrant {
     DataTypes.Ad storage ad = ads[adId];
 
@@ -353,13 +353,17 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     totalConsumptions += 1;
 
-    // Proofs verified, distribute rewards
-    distributeRewards(adId, viewer, ad, publisher);
-
     if (ad.attribution == DataTypes.Attribution.Conversion) {
-      (bool success, ) = ad.target.call(abi.encodeWithSignature(ad.abi, actionParams));
-      require(success, "Conversion action failed.");
+      (bool success, bytes memory result) = address(ad.target).call{ value: msg.value }(abi.encodeWithSignature(ad.abi, actionParams));
+      if (success == false) {
+        // Redirect revert message
+        assembly {
+          revert(add(result, 32), mload(result))
+        }
+      }
     }
+
+    distributeRewards(adId, viewer, ad, publisher);
   }
 
   /**
@@ -374,8 +378,8 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     uint256 adId,
     address publisher,
     DataTypes.ZKProofs calldata zkProofs,
-    bytes[] calldata actionParams
-  ) external override whenNotPaused {
+    bytes calldata actionParams
+  ) external payable override whenNotPaused {
     require(msg.sender == relayer, "Targecy: Only relayer can call this function");
 
     _consumeAd(viewer, adId, publisher, zkProofs, actionParams);
@@ -388,7 +392,12 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    * @param publisher   The publisher that has shown the ad.
    * @param zkProofs    The zk proofs.
    */
-  function consumeAd(uint256 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes[] calldata actionParams) external override whenNotPaused {
+  function consumeAd(
+    uint256 adId,
+    address publisher,
+    DataTypes.ZKProofs calldata zkProofs,
+    bytes calldata actionParams
+  ) external payable override whenNotPaused {
     DataTypes.Ad storage ad = ads[adId];
 
     if (ad.attribution != DataTypes.Attribution.Conversion) {

@@ -23,10 +23,16 @@ export function decodeEvents(receipt: ContractTransactionReceipt | null, abiByAd
       if (!Boolean(log.address)) throw new Error('log.address is required');
       if (!abiByAddress[log.address]) throw new Error(`ifaceByAddress[${log.address}] is required`);
 
-      return new Interface(abiByAddress[log.address]).parseLog({
-        topics: log.topics as string[],
-        data: log.data,
-      });
+      try {
+        return new Interface(abiByAddress[log.address]).parseLog({
+          topics: log.topics as string[],
+          data: log.data,
+        });
+      } catch (e) {
+        console.error('Error decoding event', log);
+
+        throw e;
+      }
     }) || []
   );
 }
