@@ -232,6 +232,22 @@ describe('Tests', function () {
       expect(saved.query.value).to.deep.equal(defaultSegment.query.value);
     });
 
+    it('Should be able to edit a segment', async () => {
+      expect(await targecy._segmentId()).to.equal(1n);
+
+      await targecy.setSegment(0, defaultSegment);
+      const saved = await targecy.requestQueries(1);
+      expect(saved.metadataURI).to.equal('metadata');
+
+      const editedSegment = defaultSegment;
+      editedSegment.metadataURI = 'metadata2';
+      const editTx = await targecy.setSegment(1, editedSegment);
+      const editReceipt = await editTx.wait();
+      expect(decodeEvents(editReceipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
+      const savedEdited = await targecy.requestQueries(1);
+      expect(savedEdited.metadataURI).to.equal('metadata2');
+    });
+
     it('Should be able to delete a segment', async () => {
       expect(await targecy._segmentId()).to.equal(1n);
 
@@ -243,9 +259,10 @@ describe('Tests', function () {
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
 
       const saved = await targecy.requestQueries(1);
-      expect(saved.metadataURI).to.equal('metadata');
+      expect(saved.metadataURI).to.equal(defaultSegment.metadataURI);
       expect(saved.query.schema).to.equal(defaultSegment.query.schema);
 
+      await expect(targecy.connect(userWithProvider).deleteAd(segmentId)).to.be.reverted; // Only admin can delete it
       await targecy.deleteSegment(segmentId);
       const deleted = await targecy.requestQueries(1);
       expect(deleted.query.schema).to.be.eq(0n);
@@ -257,7 +274,7 @@ describe('Tests', function () {
       await evm.snapshot.revert(snapshotId);
     });
 
-    it('Should be able to create a audience', async () => {
+    it('Should be able to create an audience', async () => {
       expect(await targecy._audienceId()).to.equal(1n);
 
       const tx = await targecy.setSegment(0, defaultSegment);
@@ -276,6 +293,40 @@ describe('Tests', function () {
       expect(await targecy.getAudienceSegments(audienceId)).to.deep.equal([segmentId]);
       expect(audienceId).to.equal(1n);
       expect(await targecy._audienceId()).to.equal(2n);
+    });
+
+    it('Should be able to edit an audience', async () => {
+      expect(await targecy._audienceId()).to.equal(1n);
+
+      const tx = await targecy.setSegment(0, defaultSegment);
+      const receipt = await tx.wait();
+      expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
+      const segmentId = (await targecy._segmentId()) - 1n;
+
+      const segment2tx = await targecy.setSegment(0, defaultSegment);
+      const segment2receipt = await segment2tx.wait();
+      expect(decodeEvents(segment2receipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
+      const segment2Id = (await targecy._segmentId()) - 1n;
+
+      const tx2 = await targecy.setAudience(0, 'metadata', [segmentId]);
+      const receipt2 = await tx2.wait();
+      expect(decodeEvents(receipt2, abiByAddress)?.filter((e) => e.name === 'AudienceEdited').length).to.equal(1);
+      const audienceId = (await targecy._audienceId()) - 1n;
+
+      const saved = await targecy.audiences(audienceId);
+      expect(saved.metadataURI).to.equal('metadata');
+      expect(saved.consumptions).to.equal(0);
+      expect(await targecy.getAudienceSegments(audienceId)).to.deep.equal([segmentId]);
+      expect(audienceId).to.equal(1n);
+      expect(await targecy._audienceId()).to.equal(2n);
+
+      const editionTx = await targecy.setAudience(audienceId, 'metadata2', [segment2Id]);
+      const editionReceipt = await editionTx.wait();
+      expect(decodeEvents(editionReceipt, abiByAddress)?.filter((e) => e.name === 'AudienceEdited').length).to.equal(1);
+      const savedEdited = await targecy.audiences(audienceId);
+      expect(savedEdited.metadataURI).to.equal('metadata2');
+      expect(savedEdited.consumptions).to.equal(0);
+      expect(await targecy.getAudienceSegments(audienceId)).to.deep.equal([segment2Id]);
     });
 
     it('Should be able to delete a audience', async () => {
@@ -298,6 +349,7 @@ describe('Tests', function () {
       expect(audienceId).to.equal(1n);
       expect(await targecy._audienceId()).to.equal(2n);
 
+      await expect(targecy.connect(userWithProvider).deleteAudience(audienceId)).to.be.reverted; // Only admin can delete it
       await targecy.deleteAudience(audienceId);
       const deleted = await targecy.audiences(audienceId);
       expect(deleted.metadataURI).to.equal('');
@@ -332,7 +384,7 @@ describe('Tests', function () {
 
       expect(await targecy._adId()).to.equal(1n);
 
-      const tx = await targecy.connect(advertiserWithProvider).setAd.send(0, {
+      const tx = await targecy.connect(advertiserWithProvider).setAd(0, {
         metadataURI: 'metadata',
         attribution: 0,
         active: true,
@@ -345,7 +397,7 @@ describe('Tests', function () {
         blacklistedPublishers: [],
         blacklistedWeekdays: [],
 
-        budget: 10000000,
+        maxBudget: 10000000,
         maxPricePerConsumption: 20000,
         maxConsumptionsPerDay: 100,
       });
@@ -363,6 +415,122 @@ describe('Tests', function () {
       expect(saved.startingTimestamp).to.equal(1);
       expect(saved.endingTimestamp).to.equal(100);
       expect(await targecy.getAdAudiences(1)).to.deep.equal([audienceId]);
+    });
+
+    it('Should be able to edit an ad', async () => {
+      (await targecy.setSegment(0, defaultSegment)).wait();
+      const segmentId = (await targecy._audienceId()) - 1n;
+      (await targecy.setAudience(0, 'metadata', [segmentId])).wait();
+      (await targecy.setAudience(0, 'metadata', [segmentId])).wait();
+      const audienceId = (await targecy._audienceId()) - 2n;
+      const audienceId2 = (await targecy._audienceId()) - 1n;
+
+      expect(await targecy._adId()).to.equal(1n);
+
+      const ad1 = {
+        metadataURI: 'metadata',
+        attribution: 0,
+        active: true,
+        abi: '',
+        target: ZeroAddress,
+
+        startingTimestamp: 1,
+        endingTimestamp: 100,
+        audienceIds: [audienceId],
+        blacklistedPublishers: [ZeroAddress],
+        blacklistedWeekdays: [1],
+
+        maxBudget: 10000000,
+        maxPricePerConsumption: 20000,
+        maxConsumptionsPerDay: 100,
+      };
+
+      const ad2 = ad1;
+      ad2.metadataURI = 'metadata2';
+      ad2.active = false;
+      ad2.abi = 'abi';
+      ad2.target = ZeroAddress;
+      ad2.startingTimestamp = 2;
+      ad2.endingTimestamp = 200;
+      ad2.audienceIds = [audienceId2];
+      ad2.maxBudget = 20000000;
+      ad2.maxPricePerConsumption = 30000;
+      ad2.maxConsumptionsPerDay = 200;
+      ad2.blacklistedPublishers = [publisherWithProvider.address];
+      ad2.blacklistedWeekdays = [2];
+
+      const tx = await targecy.connect(advertiserWithProvider).setAd(0, ad1);
+      const receipt = await tx.wait();
+      expect(await targecy._adId()).to.equal(2n);
+      const adId = (await targecy._adId()) - 1n;
+      expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
+
+      const saved = await targecy.ads(1);
+      expect(saved.metadataURI).to.equal(ad1.metadataURI);
+      expect(saved.attribution).to.equal(ad1.attribution);
+      expect(saved.active).to.equal(ad1.active);
+      expect(saved.abi).to.equal(ad1.abi);
+      expect(saved.target).to.equal(ad1.target);
+      expect(saved.maxBudget).to.equal(ad1.maxBudget);
+      expect(saved.advertiser).to.equal(await advertiserWithProvider.getAddress());
+      expect(saved.maxPricePerConsumption).to.equal(ad1.maxPricePerConsumption);
+      expect(saved.startingTimestamp).to.equal(ad1.startingTimestamp);
+      expect(saved.endingTimestamp).to.equal(ad1.endingTimestamp);
+      expect(await targecy.getAdAudiences(adId)).to.deep.equal(ad1.audienceIds);
+
+      // Edit
+      const tx2 = await targecy.connect(advertiserWithProvider).setAd(adId, ad2);
+      const receipt2 = await tx2.wait();
+      expect(await targecy._adId()).to.equal(2n);
+      expect(decodeEvents(receipt2, abiByAddress)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
+
+      const savedEdited = await targecy.ads(adId);
+      expect(savedEdited.metadataURI).to.equal(ad2.metadataURI);
+      expect(savedEdited.attribution).to.equal(ad2.attribution);
+      expect(savedEdited.active).to.equal(ad2.active);
+      expect(savedEdited.abi).to.equal(ad2.abi);
+      expect(savedEdited.target).to.equal(ad2.target);
+      expect(savedEdited.maxBudget).to.equal(ad2.maxBudget);
+      expect(savedEdited.advertiser).to.equal(await advertiserWithProvider.getAddress());
+      expect(savedEdited.maxPricePerConsumption).to.equal(ad2.maxPricePerConsumption);
+      expect(savedEdited.startingTimestamp).to.equal(ad2.startingTimestamp);
+      expect(savedEdited.endingTimestamp).to.equal(ad2.endingTimestamp);
+      expect(await targecy.getAdAudiences(adId)).to.deep.equal(ad2.audienceIds);
+      // Todo check blacklisted weekdays and publishers -> contract too long if I add helpers for those.
+    });
+
+    it('Should be able to delete an ad', async () => {
+      (
+        await targecy.connect(advertiserWithProvider).setAd(0, {
+          metadataURI: 'metadata',
+          attribution: 0,
+          active: true,
+          abi: '',
+          target: ZeroAddress,
+
+          startingTimestamp: 1,
+          endingTimestamp: 100,
+          audienceIds: [],
+          blacklistedPublishers: [ZeroAddress],
+          blacklistedWeekdays: [1],
+
+          maxBudget: 10000000,
+          maxPricePerConsumption: 20000,
+          maxConsumptionsPerDay: 100,
+        })
+      ).wait();
+      const adId = (await targecy._adId()) - 1n;
+
+      const saved = await targecy.ads(adId);
+      expect(saved.metadataURI).to.equal('metadata');
+
+      await expect(targecy.deleteAd(adId)).to.be.reverted; // Only advertiser can delete it!
+      const deleteTx = await targecy.connect(advertiserWithProvider).deleteAd(adId);
+      const receipt = await deleteTx.wait();
+      expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'AdDeleted').length).to.equal(1);
+
+      const deleted = await targecy.ads(adId);
+      expect(deleted.metadataURI).to.equal('');
     });
   });
 
@@ -469,7 +637,7 @@ describe('Tests', function () {
         target: ZeroAddress,
         metadataURI: 'metadata',
         maxConsumptionsPerDay: 100,
-        budget: 1000000000,
+        maxBudget: 1000000000,
         maxPricePerConsumption: 3000000,
         startingTimestamp: 0,
         endingTimestamp: ethers.MaxUint256,
@@ -500,7 +668,7 @@ describe('Tests', function () {
     });
   });
 
-  describe.only('Consumptions', () => {
+  describe('Consumptions', () => {
     let adId: bigint;
     let zkProofs: any;
 
@@ -516,7 +684,7 @@ describe('Tests', function () {
         target: ZeroAddress,
         metadataURI: 'metadata',
         maxConsumptionsPerDay: 100,
-        budget: 1000000000,
+        maxBudget: 1000000000,
         maxPricePerConsumption: 3000000,
         startingTimestamp: 0,
         endingTimestamp: ethers.MaxUint256,

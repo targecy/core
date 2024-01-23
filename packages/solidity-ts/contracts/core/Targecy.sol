@@ -154,13 +154,13 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
         revert Errors.NotAdvertiser();
       }
 
-      if (ad.budget > 0) {
-        if (ad.budget <= adStorage.currentBudget) {
+      if (ad.maxBudget > 0) {
+        if (ad.maxBudget <= adStorage.currentBudget) {
           // Already spent
           revert Errors.InvalidNewBudget();
         }
 
-        adStorage.maxBudget = ad.budget;
+        adStorage.maxBudget = ad.maxBudget;
       }
 
       adStorage.metadataURI = ad.metadataURI;
@@ -190,7 +190,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
         ad.blacklistedPublishers,
         ad.blacklistedWeekdays,
         // Budget
-        ad.budget,
+        ad.maxBudget,
         0,
         ad.maxConsumptionsPerDay,
         ad.maxPricePerConsumption,
@@ -227,9 +227,9 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   }
 
   function deleteAd(uint256 adId) external override whenNotPaused {
-    DataTypes.Ad storage adStorage = ads[adId];
+    DataTypes.Ad storage ad = ads[adId];
 
-    if (adStorage.advertiser != _msgSender()) {
+    if (ad.advertiser != _msgSender()) {
       revert Errors.NotAdvertiser();
     }
 
@@ -291,7 +291,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     // Protocol Fee
     uint256 protocolFee = Helpers.calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
     require(IERC20(usdcTokenAddress).transfer(protocolVault, protocolFee), "Transfer to protocol vault failed.");
-    
+
     // User Rewards
     uint256 userRewards = Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage);
     require(IERC20(usdcTokenAddress).transfer(user, userRewards), "Transfer to user failed.");
@@ -408,12 +408,12 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
   function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     whitelistedPublishers[publisher.vault] = DataTypes.PublisherSettings(
-        publisher.userRewardsPercentage,
-        publisher.vault,
-        publisher.active,
-        publisher.cpi,
-        publisher.cpc,
-        publisher.cpa
+      publisher.userRewardsPercentage,
+      publisher.vault,
+      publisher.active,
+      publisher.cpi,
+      publisher.cpc,
+      publisher.cpa
     );
 
     emit TargecyEvents.PublisherWhitelisted(publisher.vault, publisher);

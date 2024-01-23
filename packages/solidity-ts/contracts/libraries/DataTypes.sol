@@ -42,7 +42,7 @@ library DataTypes {
     address[] blacklistedPublishers;
     uint8[] blacklistedWeekdays;
     // Budget
-    uint256 budget;
+    uint256 maxBudget;
     uint256 maxPricePerConsumption;
     uint256 maxConsumptionsPerDay;
   }
