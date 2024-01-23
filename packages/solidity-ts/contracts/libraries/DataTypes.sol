@@ -110,7 +110,7 @@ library DataTypes {
     uint256 publisherAmount;
     address user;
     uint256 userAmount;
-    address protocolVault;
+    address vault;
     uint256 protocolAmount;
   }
 }

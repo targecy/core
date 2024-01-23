@@ -18,22 +18,15 @@ import { Helpers } from "../libraries/Helpers.sol";
 import { Errors } from "../libraries/Errors.sol";
 
 contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TargecyStorage, ITargecy {
-  function initialize(
-    address _zkProofsValidator,
-    address _protocolVault,
-    address targecyAdmin,
-    uint256 _defaultIssuer,
-    address _relayerAddress,
-    address _usdcTokenAddress
-  ) external initializer {
+  function initialize(address _validator, address _vault, address targecyAdmin, uint256 _defaultIssuer, address _relayer, address _erc20) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
-    zkProofsValidator = _zkProofsValidator;
-    protocolVault = _protocolVault;
+    validator = _validator;
+    vault = _vault;
     defaultIssuer = _defaultIssuer;
-    relayerAddress = _relayerAddress;
-    usdcTokenAddress = _usdcTokenAddress;
+    relayer = _relayer;
+    erc20 = _erc20;
 
     defaultImpressionPrice = 10000;
     defaultClickPrice = 100000;
@@ -42,7 +35,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _adId = 1;
     _segmentId = 1;
     _audienceId = 1;
-    totalconsumptions = 0;
+    totalConsumptions = 0;
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
     emit TargecyEvents.AdminSet(targecyAdmin);
@@ -60,12 +53,12 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     emit TargecyEvents.AdminRemoved(targecyAdmin);
   }
 
-  function setZKProofsValidator(address _zkProofsValidator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    zkProofsValidator = _zkProofsValidator;
+  function setvalidator(address _validator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    validator = _validator;
   }
 
-  function setProtocolVault(address _protocolVault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    protocolVault = _protocolVault;
+  function setvault(address _vault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    vault = _vault;
   }
 
   function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -76,8 +69,8 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultClickPrice = _defaultClickPrice;
   }
 
-  function setRelayerAddress(address _relayerAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    relayerAddress = _relayerAddress;
+  function setrelayer(address _relayer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    relayer = _relayer;
   }
 
   function setDefaultConversionPrice(uint256 _defaultConversionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -95,20 +88,20 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       _segmentId += 1;
     }
 
-    requestQueries[idToUse] = _segment;
+    segments[idToUse] = _segment;
 
     // Use given issuer or default issuer
     if (_segment.issuer == 0) {
-      requestQueries[idToUse].issuer = defaultIssuer;
+      segments[idToUse].issuer = defaultIssuer;
     } else {
-      requestQueries[idToUse].issuer = _segment.issuer;
+      segments[idToUse].issuer = _segment.issuer;
     }
 
-    emit TargecyEvents.SegmentEdited(idToUse, address(zkProofsValidator), _segment.query, _segment.metadataURI);
+    emit TargecyEvents.SegmentEdited(idToUse, address(validator), _segment.query, _segment.metadataURI);
   }
 
   function fundAdvertiserBudget(address advertiser, uint256 amount) external override {
-    require(IERC20(usdcTokenAddress).transferFrom(msg.sender, address(this), amount), "Transfer failed. Please check your allowance.");
+    require(IERC20(erc20).transferFrom(msg.sender, address(this), amount), "Transfer failed. Please check your allowance.");
 
     DataTypes.Budget storage budget = budgets[advertiser];
     budget.advertiser = advertiser;
@@ -128,13 +121,13 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     budget.remainingBudget = budget.remainingBudget - amount;
     budget.totalBudget = budget.totalBudget - amount;
 
-    require(IERC20(usdcTokenAddress).transfer(msg.sender, amount), "Transfer failed");
+    require(IERC20(erc20).transfer(msg.sender, amount), "Transfer failed");
 
     emit TargecyEvents.AdvertiserBudgetWithdrawn(budget.advertiser, amount);
   }
 
   function deleteSegment(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    delete requestQueries[id];
+    delete segments[id];
 
     emit TargecyEvents.SegmentDeleted(id);
   }
@@ -290,17 +283,17 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     // Protocol Fee
     uint256 protocolFee = Helpers.calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
-    require(IERC20(usdcTokenAddress).transfer(protocolVault, protocolFee), "Transfer to protocol vault failed.");
+    require(IERC20(erc20).transfer(vault, protocolFee), "Transfer to protocol vault failed.");
 
     // User Rewards
     uint256 userRewards = Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage);
-    require(IERC20(usdcTokenAddress).transfer(user, userRewards), "Transfer to user failed.");
+    require(IERC20(erc20).transfer(user, userRewards), "Transfer to user failed.");
 
     // User Rewards
     uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
-    require(IERC20(usdcTokenAddress).transfer(publisher.vault, publisherFee), "Transfer to publisher failed.");
+    require(IERC20(erc20).transfer(publisher.vault, publisherFee), "Transfer to publisher failed.");
 
-    emit TargecyEvents.RewardsDistributed(adId, DataTypes.RewardsDistribution(publisher.vault, publisherFee, user, userRewards, protocolVault, protocolFee));
+    emit TargecyEvents.RewardsDistributed(adId, DataTypes.RewardsDistribution(publisher.vault, publisherFee, user, userRewards, vault, protocolFee));
     emit TargecyEvents.AdConsumed(adId, ad, publisher, consumptionPrice);
   }
 
@@ -331,7 +324,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.AdNotAvailable();
     }
 
-    DataTypes.PublisherSettings memory publisher = whitelistedPublishers[publisherVault];
+    DataTypes.PublisherSettings memory publisher = publishers[publisherVault];
 
     for (uint256 i = 0; i < ad.blacklistedPublishers.length; i++) {
       if (ad.blacklistedPublishers[i] == publisher.vault) {
@@ -356,9 +349,9 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
     consumptionsPerDay[adId][dayFromEpoch] = consumptionsPerDay[adId][dayFromEpoch] + 1;
 
-    if (!Helpers.verifyAudiences(ad, zkProofs, audiences, requestQueries, zkProofsValidator)) revert Errors.InvalidZKProofsInput();
+    if (!Helpers.verifyAudiences(ad, zkProofs, audiences, segments, validator)) revert Errors.InvalidZKProofsInput();
 
-    totalconsumptions += 1;
+    totalConsumptions += 1;
 
     // Proofs verified, distribute rewards
     distributeRewards(adId, viewer, ad, publisher);
@@ -383,7 +376,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     DataTypes.ZKProofs calldata zkProofs,
     bytes[] calldata actionParams
   ) external override whenNotPaused {
-    require(msg.sender == relayerAddress, "Targecy: Only relayer can call this function");
+    require(msg.sender == relayer, "Targecy: Only relayer can call this function");
 
     _consumeAd(viewer, adId, publisher, zkProofs, actionParams);
   }
@@ -407,7 +400,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   }
 
   function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher.vault] = DataTypes.PublisherSettings(
+    publishers[publisher.vault] = DataTypes.PublisherSettings(
       publisher.userRewardsPercentage,
       publisher.vault,
       publisher.active,
@@ -420,25 +413,25 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   }
 
   function removePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    delete whitelistedPublishers[publisher];
+    delete publishers[publisher];
 
     emit TargecyEvents.PublisherRemovedFromWhitelist(publisher);
   }
 
   function changePublisherAddress(address oldAddress, address newAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    DataTypes.PublisherSettings memory publisher = whitelistedPublishers[oldAddress];
-    delete whitelistedPublishers[oldAddress];
-    whitelistedPublishers[newAddress] = publisher;
+    DataTypes.PublisherSettings memory publisher = publishers[oldAddress];
+    delete publishers[oldAddress];
+    publishers[newAddress] = publisher;
   }
 
   function pausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher].active = false;
+    publishers[publisher].active = false;
 
     emit TargecyEvents.PausePublisher(publisher);
   }
 
   function unpausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher].active = true;
+    publishers[publisher].active = true;
 
     emit TargecyEvents.UnpausePublisher(publisher);
   }

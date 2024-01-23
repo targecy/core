@@ -6,9 +6,9 @@ import { DataTypes } from "../libraries/DataTypes.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 interface ITargecy {
-  function setZKProofsValidator(address _zkProofsValidator) external;
+  function setvalidator(address _validator) external;
 
-  function setProtocolVault(address _protocolVault) external;
+  function setvault(address _vault) external;
 
   function setSegment(uint256 audienceIdReceived, DataTypes.Segment memory _segment) external;
 
@@ -22,7 +22,7 @@ interface ITargecy {
 
   function setDefaultIssuer(uint256 _defaultIssuer) external;
 
-  function setRelayerAddress(address _relayerAddress) external;
+  function setrelayer(address _relayer) external;
 
   function fundAdvertiserBudget(address advertiser, uint256 amount) external;
 

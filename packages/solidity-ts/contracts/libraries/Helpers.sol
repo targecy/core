@@ -24,12 +24,12 @@ library Helpers {
     uint256[2][2][] memory b,
     uint256[2][] memory c,
     uint256[] memory segmentsIds,
-    mapping(uint256 => DataTypes.Segment) storage requestQueries
+    mapping(uint256 => DataTypes.Segment) storage segments
   ) internal view returns (bool) {
     require(a.length == b.length && b.length == c.length && c.length == segmentsIds.length, "Invalid input lengths.");
 
     for (uint256 i = 0; i < segmentsIds.length; i++) {
-      DataTypes.Segment memory segment = requestQueries[segmentsIds[i]];
+      DataTypes.Segment memory segment = segments[segmentsIds[i]];
 
       if (!Helpers.verifyZKProof(validator, inputs[i], a[i], b[i], c[i], segment)) {
         return false;
@@ -43,7 +43,7 @@ library Helpers {
     DataTypes.Ad memory ad,
     DataTypes.ZKProofs calldata zkProofs,
     mapping(uint256 => DataTypes.Audience) storage audiences,
-    mapping(uint256 => DataTypes.Segment) storage requestQueries,
+    mapping(uint256 => DataTypes.Segment) storage segments,
     address validator
   ) internal view returns (bool) {
     for (uint256 i = 0; i < ad.audienceIds.length; i++) {
@@ -54,7 +54,7 @@ library Helpers {
         continue;
       }
 
-      if (verifyAudience(validator, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c, audience.segmentIds, requestQueries)) {
+      if (verifyAudience(validator, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c, audience.segmentIds, segments)) {
         audience.consumptions = audience.consumptions + 1;
         return true;
       }

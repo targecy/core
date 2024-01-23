@@ -152,11 +152,11 @@ describe('Tests', function () {
 
     console.log('\nDeploying Targecy...');
     const targecyArgs: [
-      _zkProofsValidator: AddressLike,
-      _protocolVault: AddressLike,
+      _validator: AddressLike,
+      _vault: AddressLike,
       targecyAdmin: AddressLike,
       _defaultIssuer: BigNumberish,
-      _relayerAddress: AddressLike,
+      _relayer: AddressLike,
       _erc20Address: AddressLike
     ] = [
       await validator.getAddress(),
@@ -181,10 +181,10 @@ describe('Tests', function () {
     console.log(" | Connected's address: ", (targecy.runner as JsonRpcSigner).address);
     console.log(" | Connected's address native assets balance", await provider.getBalance((targecy.runner as JsonRpcSigner).address));
     console.log(" | Connected's address erc20 assets balance", await erc20.balanceOf((targecy.runner as JsonRpcSigner).address));
-    console.log(' | Initialized values > Validator', await targecy.zkProofsValidator());
-    console.log(' | Initialized values > MockERC20', await targecy.usdcTokenAddress());
-    console.log(' | Initialized values > Vault', await targecy.protocolVault());
-    console.log(' | Initialized values > Relayer Address', await targecy.relayerAddress());
+    console.log(' | Initialized values > Validator', await targecy.validator());
+    console.log(' | Initialized values > MockERC20', await targecy.erc20());
+    console.log(' | Initialized values > Vault', await targecy.vault());
+    console.log(' | Initialized values > Relayer Address', await targecy.relayer());
     console.log(' | Initialized values > Ad Id', await targecy._adId());
 
     abiByAddress = {
@@ -223,7 +223,7 @@ describe('Tests', function () {
       expect(await targecy._segmentId()).to.equal(2n);
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
 
-      const saved = await targecy.requestQueries(1);
+      const saved = await targecy.segments(1);
       expect(saved.metadataURI).to.equal('metadata');
       expect(saved.query.schema).to.equal(defaultSegment.query.schema);
       expect(saved.query.circuitId).to.equal(defaultSegment.query.circuitId);
@@ -236,7 +236,7 @@ describe('Tests', function () {
       expect(await targecy._segmentId()).to.equal(1n);
 
       await targecy.setSegment(0, defaultSegment);
-      const saved = await targecy.requestQueries(1);
+      const saved = await targecy.segments(1);
       expect(saved.metadataURI).to.equal('metadata');
 
       const editedSegment = defaultSegment;
@@ -244,7 +244,7 @@ describe('Tests', function () {
       const editTx = await targecy.setSegment(1, editedSegment);
       const editReceipt = await editTx.wait();
       expect(decodeEvents(editReceipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
-      const savedEdited = await targecy.requestQueries(1);
+      const savedEdited = await targecy.segments(1);
       expect(savedEdited.metadataURI).to.equal('metadata2');
     });
 
@@ -258,13 +258,13 @@ describe('Tests', function () {
       const segmentId = (await targecy._segmentId()) - 1n;
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'SegmentEdited').length).to.equal(1);
 
-      const saved = await targecy.requestQueries(1);
+      const saved = await targecy.segments(1);
       expect(saved.metadataURI).to.equal(defaultSegment.metadataURI);
       expect(saved.query.schema).to.equal(defaultSegment.query.schema);
 
       await expect(targecy.connect(userWithProvider).deleteAd(segmentId)).to.be.reverted; // Only admin can delete it
       await targecy.deleteSegment(segmentId);
-      const deleted = await targecy.requestQueries(1);
+      const deleted = await targecy.segments(1);
       expect(deleted.query.schema).to.be.eq(0n);
     });
   });
@@ -612,7 +612,7 @@ describe('Tests', function () {
       };
       await expect(targecy.connect(userWithProvider).setPublisher(params)).to.be.reverted;
       await targecy.connect(adminWithProvider).setPublisher(params);
-      const saved = await targecy.whitelistedPublishers(publisherWithProvider.address);
+      const saved = await targecy.publishers(publisherWithProvider.address);
       expect(saved.userRewardsPercentage).to.be.eq(params.userRewardsPercentage);
       expect(saved.vault).to.be.eq(params.vault);
       expect(saved.active).to.be.eq(params.active);
@@ -793,16 +793,16 @@ describe('Tests', function () {
       expect(targecy.connect(adminWithProvider).setAdmin(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setAdmin);
     });
     it('Only admins can set ZKProofs Validator', async () => {
-      await expect(targecy.connect(userWithProvider).setZKProofsValidator(ZeroAddress)).to.be.reverted;
-      expect(targecy.connect(adminWithProvider).setZKProofsValidator(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setZKProofsValidator);
+      await expect(targecy.connect(userWithProvider).setvalidator(ZeroAddress)).to.be.reverted;
+      expect(targecy.connect(adminWithProvider).setvalidator(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setvalidator);
     });
     it('Only admins can set Protocol Vault', async () => {
-      await expect(targecy.connect(userWithProvider).setProtocolVault(ZeroAddress)).to.be.reverted;
-      expect(targecy.connect(adminWithProvider).setProtocolVault(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setProtocolVault);
+      await expect(targecy.connect(userWithProvider).setvault(ZeroAddress)).to.be.reverted;
+      expect(targecy.connect(adminWithProvider).setvault(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setvault);
     });
     it('Only admins can set relayer address', async () => {
-      await expect(targecy.connect(userWithProvider).setRelayerAddress(ZeroAddress)).to.be.reverted;
-      expect(targecy.connect(adminWithProvider).setRelayerAddress(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setRelayerAddress);
+      await expect(targecy.connect(userWithProvider).setrelayer(ZeroAddress)).to.be.reverted;
+      expect(targecy.connect(adminWithProvider).setrelayer(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setrelayer);
     });
   });
 });
