@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { Home } from '~/components/Home';
+import { useAppDispatch } from '~/hooks';
 import { setPageTitle } from '~/store/themeConfigSlice';
 
 const Index = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(setPageTitle('Home'));

@@ -1,9 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/no-default-export */
-
-import { CodegenConfig } from '@graphql-codegen/cli';
 
 import { join } from 'path';
+
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 require('dotenv').config({ path: join(__dirname, '.env') });
 

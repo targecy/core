@@ -1,5 +1,4 @@
 import { NextPage } from 'next';
-import ReactQueryProvider from '~/components/shared/ReactQueryProvider';
 
 import { WalletProvider } from '~/components/shared/Wallet';
 import { env } from '~/env.mjs';

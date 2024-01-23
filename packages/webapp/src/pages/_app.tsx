@@ -9,11 +9,10 @@ import { ni18nConfig } from 'ni18n.config.ts';
 import { ReactElement, ReactNode } from 'react';
 import { Provider } from 'react-redux';
 
-import DefaultLayout from '../components/Layouts/DefaultLayout';
-import store from '../store/index';
-
+import DefaultLayout from '~/components/Layouts/DefaultLayout';
 import { env } from '~/env.mjs';
 import { withProviders } from '~/lib/withProviders';
+import { wrapper } from '~/store';
 
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -55,8 +54,9 @@ if (env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
   });
 }
 
-const App = ({ Component, pageProps }: AppPropsWithLayout) => {
+const App = ({ Component, ...rest }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
+  const { store, props } = wrapper.useWrappedStore(rest);
 
   return (
     <Provider store={store}>
@@ -72,7 +72,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
         <link rel="icon" href="/images/logo.svg" />
       </Head>
 
-      {getLayout(<Component {...pageProps} />)}
+      {getLayout(<Component {...props.pageProps} />)}
     </Provider>
   );
 };

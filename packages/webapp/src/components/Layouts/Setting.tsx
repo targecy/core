@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { IRootState } from '../../store';
+import { RootState } from '../../store';
 import {
   toggleAnimation,
   toggleLayout,
@@ -12,9 +11,11 @@ import {
   toggleSemidark,
 } from '../../store/themeConfigSlice';
 
+import { useAppDispatch, useAppSelector } from '~/hooks';
+
 const Setting = () => {
-  const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-  const dispatch = useDispatch();
+  const themeConfig = useAppSelector((state: RootState) => state.themeConfig);
+  const dispatch = useAppDispatch();
 
   const [showCustomizer, setShowCustomizer] = useState(false);
 

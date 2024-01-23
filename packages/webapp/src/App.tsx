@@ -1,8 +1,8 @@
 import { useTranslation } from 'next-i18next';
 import { PropsWithChildren, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { IRootState } from './store';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { RootState } from '~/store';
 import {
   toggleRTL,
   toggleTheme,
@@ -12,11 +12,11 @@ import {
   toggleAnimation,
   toggleNavbar,
   toggleSemidark,
-} from './store/themeConfigSlice';
+} from '~/store/themeConfigSlice';
 
 function App({ children }: PropsWithChildren) {
-  const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-  const dispatch = useDispatch();
+  const themeConfig = useAppSelector((state: RootState) => state.themeConfig);
+  const dispatch = useAppDispatch();
   const { i18n } = useTranslation();
 
   useEffect(() => {

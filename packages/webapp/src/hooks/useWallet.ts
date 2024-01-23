@@ -2,7 +2,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useMountedState } from 'react-use';
 import { useAccount, useNetwork, usePublicClient, useSwitchNetwork, useWalletClient } from 'wagmi';
 
-import { ConnectorId } from '~/components/shared/Wallet/Wallet.constants';
+import { ConnectorId } from '~/constants/wallet.constants';
 
 export const useWallet = () => {
   const { address, connector, isConnected, isConnecting } = useAccount();

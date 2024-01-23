@@ -22,7 +22,8 @@
     "paths": {
       "~/*": ["./src/*"],
       "@targecy/sdk": ["../sdk/src"],
-      "@common/*": ["../common/src/*"]
+      "@common/*": ["../common/src/*"],
+      "@backend/*": ["../backend/src/*"]
     }
   },
   "include": ["src", "codegen.ts", "apollo.config.js"],

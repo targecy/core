@@ -1,18 +1,20 @@
 import Link from 'next/link';
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { setPageTitle } from '../store/themeConfigSlice';
 
 import BlankLayout from '~/components/Layouts/BlankLayout';
-import { IRootState } from '~/store';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { RootState } from '~/store';
 
 const Error503 = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(setPageTitle('Error 503'));
   });
-  const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
+  const isDark = useAppSelector(
+    (state: RootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode
+  );
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden">

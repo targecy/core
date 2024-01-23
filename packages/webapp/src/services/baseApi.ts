@@ -54,4 +54,7 @@ export const api = createApi({
   }),
 });
 
-export const { useTestQuery } = api;
+export const {
+  useTestQuery,
+  util: { getRunningQueriesThunk },
+} = api;

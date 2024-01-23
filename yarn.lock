@@ -7742,7 +7742,7 @@ __metadata:
     next-i18next: "npm:^15.2.0"
     next-redux-wrapper: "npm:8.0.0"
     nft.storage: "npm:^7.1.1"
-    ni18n: "npm:^1.0.5"
+    ni18n: "npm:^1.1.0"
     pino-pretty: "npm:^10.2.0"
     postcss: "npm:^8.4.16"
     prettier: "npm:^2.7.1"
@@ -25350,7 +25350,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ni18n@npm:^1.0.5":
+"ni18n@npm:^1.1.0":
   version: 1.1.0
   resolution: "ni18n@npm:1.1.0"
   dependencies:

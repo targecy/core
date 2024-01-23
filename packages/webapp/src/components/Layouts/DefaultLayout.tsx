@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import App from '../../App';
 import Portals from '../../components/Portals';
@@ -9,16 +8,17 @@ import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
 
-import { IRootState } from '~/store';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { RootState } from '~/store';
 import { toggleSidebar } from '~/store/themeConfigSlice';
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const [showLoader, setShowLoader] = useState(true);
   const [showTopButton, setShowTopButton] = useState(false);
-  const themeConfig = useSelector((state: IRootState) => state.themeConfig);
+  const themeConfig = useAppSelector((state: RootState) => state.themeConfig);
   const [animation, setAnimation] = useState(themeConfig.animation);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const goToTop = () => {
     document.body.scrollTop = 0;

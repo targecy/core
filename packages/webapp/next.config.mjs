@@ -30,6 +30,7 @@ const nextConfig = {
       'react-dom': resolve(__dirname, './node_modules/react-dom'),
       // -------------------------------------------
       '@common': resolve(__dirname, '../common/src'),
+      '@backend': resolve(__dirname, '../backends/src'),
     };
 
     config.experiments = {

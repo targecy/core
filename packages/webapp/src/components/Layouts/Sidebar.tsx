@@ -17,20 +17,19 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { IRootState } from '../../store';
+import { RootState } from '../../store';
 import { toggleSidebar } from '../../store/themeConfigSlice';
 
 import { useGetAdminQuery } from '~/generated/graphql.types';
-import { useWallet } from '~/hooks';
+import { useAppDispatch, useAppSelector, useWallet } from '~/hooks';
 
 const Sidebar = () => {
   const router = useRouter();
   const [currentMenu, setCurrentMenu] = useState<string>('');
   const [errorSubMenu, setErrorSubMenu] = useState(false);
-  const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-  const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
+  const themeConfig = useAppSelector((state: RootState) => state.themeConfig);
+  const semidark = useAppSelector((state: RootState) => state.themeConfig.semidark);
   const toggleMenu = (value: string) => {
     setCurrentMenu((oldValue) => {
       return oldValue === value ? '' : value;
@@ -54,7 +53,7 @@ const Sidebar = () => {
     }
   }, []);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
   const setActiveRoute = () => {
@@ -95,14 +94,14 @@ const Sidebar = () => {
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/" className="main-logo flex shrink-0 items-center">
               <img className="ml-[5px] w-8 flex-none" src="/images/logo.svg" alt="logo" />
-              <span className="align-middle text-2xl font-semibold dark:text-white-light lg:inline ltr:ml-1.5 rtl:mr-1.5">
+              <span className="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
                 {t('TARGECY')}
               </span>
             </Link>
 
             <button
               type="button"
-              className="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 dark:text-white-light dark:hover:bg-dark-light/10 rtl:rotate-180"
+              className="collapse-icon flex h-8 w-8 items-center rounded-full transition duration-300 hover:bg-gray-500/10 rtl:rotate-180 dark:text-white-light dark:hover:bg-dark-light/10"
               onClick={() => dispatch(toggleSidebar())}>
               <svg
                 width="24"
@@ -139,7 +138,7 @@ const Sidebar = () => {
                     <Link href="/" className="group">
                       <div className="flex items-center">
                         <HomeOutlined rev={undefined} />
-                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Insights Hub')}
                         </span>
                       </div>
@@ -151,7 +150,7 @@ const Sidebar = () => {
                     <Link href="/credentials" className="group">
                       <div className="flex items-center">
                         <BookOutlined rev={undefined} />
-                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Credentials')}
                         </span>
                       </div>
@@ -161,7 +160,7 @@ const Sidebar = () => {
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <RiseOutlined rev={undefined} />
-                        <span className="text-gray dark:text-[#506690] ltr:pl-3 rtl:pr-3 ">
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
                           {t('Leaderboard (coming soon)')}
                         </span>
                       </div>
@@ -171,7 +170,7 @@ const Sidebar = () => {
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <GiftOutlined rev={undefined} />
-                        <span className="text-gray dark:text-[#506690] ltr:pl-3 rtl:pr-3 ">
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
                           {t('Rewards (coming soon)')}
                         </span>
                       </div>
@@ -183,7 +182,7 @@ const Sidebar = () => {
                     <Link href="/ads" className="group">
                       <div className="flex items-center">
                         <EditOutlined rev={undefined} />
-                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Campaigns')}
                         </span>
                       </div>
@@ -193,7 +192,7 @@ const Sidebar = () => {
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <DotChartOutlined rev={undefined} />
-                        <span className="text-gray dark:text-[#506690] ltr:pl-3 rtl:pr-3 ">
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
                           {t('Performace (coming soon)')}
                         </span>
                       </div>
@@ -205,7 +204,7 @@ const Sidebar = () => {
                     <Link href="/wizard" className="group">
                       <div className="flex items-center">
                         <PlaySquareOutlined rev={undefined} />
-                        <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Wizard')}
                         </span>
                       </div>
@@ -215,7 +214,7 @@ const Sidebar = () => {
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <FileTextOutlined rev={undefined} />
-                        <span className="text-gray dark:text-[#506690] ltr:pl-3 rtl:pr-3 ">
+                        <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
                           {t('Docs (coming soon)')}
                         </span>
                       </div>
@@ -229,7 +228,7 @@ const Sidebar = () => {
                       <Link href="/audiences" className="group">
                         <div className="flex items-center">
                           <UsergroupAddOutlined rev={undefined} />
-                          <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                             {t('Audiences')}
                           </span>
                         </div>
@@ -239,7 +238,7 @@ const Sidebar = () => {
                       <Link href="/segments" className="group">
                         <div className="flex items-center">
                           <SecurityScanOutlined rev={undefined} />
-                          <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                             {t('Segments')}
                           </span>
                         </div>
@@ -249,7 +248,7 @@ const Sidebar = () => {
                       <Link href="/publishers" className="group">
                         <div className="flex items-center">
                           <ShareAltOutlined rev={undefined} />
-                          <span className="text-black dark:text-[#506690] dark:group-hover:text-white-dark ltr:pl-3 rtl:pr-3">
+                          <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                             {t('Publishers')}
                           </span>
                         </div>

@@ -1,89 +1,92 @@
+import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import { useAsync } from 'react-use';
 
-import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
-
-import { useGetLastAdsQuery, useGetLastAudiencesQuery, useGetLastSegmentsQuery } from '~/generated/graphql.types';
+import {
+  GetLastAdsQuery,
+  GetLastAudiencesQuery,
+  GetLastSegmentsQuery,
+  useGetLastAdsQuery,
+  useGetLastAudiencesQuery,
+  useGetLastSegmentsQuery,
+} from '~/generated/graphql.types';
 import { backendTrpcClient } from '~/utils';
 
+type PickArrayProps<T> = {
+  [K in keyof T]: T[K] extends Array<any> ? K : never;
+}[keyof T];
+
+type Metadata = {
+  title?: string;
+  description?: string;
+};
+
 export default function ActivityLog() {
-  const { data: lastAds } = useGetLastAdsQuery({ limit: 5 });
-  const { data: lastAudiences } = useGetLastAudiencesQuery({ limit: 5 });
-  const { data: lastSegments } = useGetLastSegmentsQuery({ limit: 5 });
+  const { data: lastAdsResult } = useGetLastAdsQuery({ limit: 5 });
+  const { data: lastAudiencesResult } = useGetLastAudiencesQuery({ limit: 5 });
+  const { data: lastSegmentsResult } = useGetLastSegmentsQuery({ limit: 5 });
 
-  const [lastAdsMetadata, setLastAdsMetadata] = useState<Record<string, { title?: string; description?: string }>>({});
-  const [lastAudiencesMetadata, setLastAudiencesMetadata] = useState<
-    Record<string, { title?: string; description?: string }>
-  >({});
-  const [lastSegmentsMetadata, setLastSegmentsMetadata] = useState<
-    Record<string, { title?: string; description?: string }>
-  >({});
-
+  const [metadata, setMetadata] = useState<{
+    ads: Record<string, Metadata>;
+    audiences: Record<string, Metadata>;
+    segments: Record<string, Metadata>;
+  }>({
+    ads: {},
+    audiences: {},
+    segments: {},
+  });
   const [schemas, setSchemas] = useState<SCHEMA[]>([]);
 
-  useAsync(async () => {
-    if (lastAds) {
-      setLastAdsMetadata(
-        (
-          await Promise.all(
-            lastAds.ads.map(async (ad) => {
-              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
-              const json = await newMetadata.json();
-              return { id: ad.id, metadata: { title: json.title, description: json.description } };
-            })
-          )
-        ).reduce<typeof lastAdsMetadata>((acc, curr) => {
-          acc[curr.id] = curr.metadata;
-          return acc;
-        }, {})
-      );
-    }
-  }, [lastAds]);
+  async function fetchMetadata<
+    T extends GetLastAdsQuery | GetLastAudiencesQuery | GetLastSegmentsQuery,
+    K extends PickArrayProps<T>
+  >(results: T | undefined, entityName: K) {
+    try {
+      if (!results) return {};
 
-  useAsync(async () => {
-    if (lastAudiences) {
-      setLastAudiencesMetadata(
-        (
-          await Promise.all(
-            lastAudiences.audiences.map(async (audience) => {
-              const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
-              const json = await newMetadata.json();
-              return { id: audience.id, metadata: { title: json.title, description: json.description } };
-            })
-          )
-        ).reduce<typeof lastAudiencesMetadata>((acc, curr) => {
-          acc[curr.id] = curr.metadata;
-          return acc;
-        }, {})
+      const entities = results[entityName] as Array<{ id: string; metadataURI: string }>;
+      const responses = await Promise.all(
+        entities.map(async (item) => {
+          const response = await fetch(getIPFSStorageUrl(item.metadataURI));
+          const json = await response.json();
+          return { id: item.id, metadata: { title: json.title, description: json.description } };
+        })
       );
+      return responses.reduce<Record<string, Metadata>>((acc, curr) => {
+        acc[curr.id] = curr.metadata;
+        return acc;
+      }, {});
+    } catch (error) {
+      console.error('Error fetching metadata:', error);
+      return {};
     }
-  }, [lastAudiences]);
+  }
 
-  useAsync(async () => {
-    if (lastSegments) {
-      setLastSegmentsMetadata(
-        (
-          await Promise.all(
-            lastSegments.segments.map(async (segment) => {
-              const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
-              const json = await newMetadata.json();
-              return { id: segment.id, metadata: { title: json.title, description: json.description } };
-            })
-          )
-        ).reduce<typeof lastSegmentsMetadata>((acc, curr) => {
-          acc[curr.id] = curr.metadata;
-          return acc;
-        }, {})
-      );
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [adsMetadata, audiencesMetadata, segmentsMetadata] = await Promise.all([
+          fetchMetadata(lastAdsResult, 'ads'),
+          fetchMetadata(lastAudiencesResult, 'audiences'),
+          fetchMetadata(lastSegmentsResult, 'segments'),
+        ]);
+
+        setMetadata({
+          ads: adsMetadata,
+          audiences: audiencesMetadata,
+          segments: segmentsMetadata,
+        });
+
+        const response = await backendTrpcClient.schemas.getAllSchemas.query();
+        setSchemas(Object.entries(response).map(([, schema]) => schema));
+      } catch (error) {
+        console.error('Error in fetchData:', error);
+      }
     }
-  }, [lastSegments]);
 
-  useAsync(async () => {
-    const response = await backendTrpcClient.schemas.getAllSchemas.query();
-    setSchemas(Object.entries(response).map(([, schema]) => schema));
-  }, []);
+    void fetchData();
+  }, [lastAdsResult, lastAudiencesResult, lastSegmentsResult]);
 
   return (
     <div className="panel">
@@ -93,7 +96,7 @@ export default function ActivityLog() {
       </div>
       <PerfectScrollbar className="perfect-scrollbar relative h-[360px] ltr:-mr-3 ltr:pr-3 rtl:-ml-3 rtl:pl-3">
         <div className="space-y-7">
-          {lastAds?.ads.map((ad) => (
+          {lastAdsResult?.ads.map((ad) => (
             <div className="flex" key={ad.id}>
               <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow">
@@ -114,7 +117,7 @@ export default function ActivityLog() {
                 <h5 className="font-semibold dark:text-white-light">
                   New ad created :{' '}
                   <button type="button" className="text-success">
-                    {lastAdsMetadata[ad.id]?.title}
+                    {metadata.ads[ad.id]?.title}
                   </button>
                 </h5>
                 <p className="text-xs text-white-dark">
@@ -126,7 +129,7 @@ export default function ActivityLog() {
               </div>
             </div>
           ))}
-          {lastAudiences?.audiences.map((audience) => (
+          {lastAudiencesResult?.audiences.map((audience) => (
             <div className="flex" key={audience.id}>
               <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-white shadow">
@@ -147,14 +150,14 @@ export default function ActivityLog() {
                 <h5 className="font-semibold dark:text-white-light">
                   New audience created :{' '}
                   <button type="button" className="text-success">
-                    {lastAudiencesMetadata[audience.id]?.title}
+                    {metadata.audiences[audience.id]?.title}
                   </button>
                 </h5>
                 <p className="text-xs text-white-dark">{audience.segments.length} Segments</p>
               </div>
             </div>
           ))}
-          {lastSegments?.segments.map((segment) => (
+          {lastSegmentsResult?.segments.map((segment) => (
             <div className="flex" key={segment.id}>
               <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-dark text-white shadow">
@@ -175,7 +178,7 @@ export default function ActivityLog() {
                 <h5 className="font-semibold dark:text-white-light">
                   New segment created :{' '}
                   <button type="button" className="text-success">
-                    {lastSegmentsMetadata[segment.id]?.title}
+                    {metadata.segments[segment.id]?.title}
                   </button>
                 </h5>
                 <p className="text-xs text-white-dark">

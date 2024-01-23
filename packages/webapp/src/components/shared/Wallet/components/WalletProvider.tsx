@@ -7,7 +7,7 @@ import { ReactNode } from 'react';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import { polygonMumbai, localhost } from 'wagmi/chains';
 
-import { appName } from '../Wallet.constants';
+import { appName } from '../../../../constants/wallet.constants';
 
 import { isVercelDevelopment } from '~/constants/app.constants';
 
