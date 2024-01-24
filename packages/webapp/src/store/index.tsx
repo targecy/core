@@ -8,7 +8,7 @@ import { api } from '~/services/baseApi';
 
 const rootReducer = combineReducers({
   themeConfig: themeConfigSlice,
-  baseApi: api.reducer,
+  [api.reducerPath]: api.reducer,
 });
 
 export const makeStore = (_context: Context) =>

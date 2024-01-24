@@ -4,7 +4,7 @@ import Statistic from './Statistic';
 
 import { scannerUrl } from '~/constants/scanner.constants';
 import { env } from '~/env.mjs';
-import { useReadContract } from '~/hooks/useContractData';
+import { useReadFromContract } from '~/hooks/useContractData';
 
 export default function NetworkStatistics() {
   return (
@@ -22,10 +22,10 @@ export default function NetworkStatistics() {
           </h6>
         </div>
         {/* @todo(kevin): check if the function is totalconsumptions instead of totalConsumptions  */}
-        <Statistic title="Impressions/Clicks/Conversions" statistic={useReadContract('totalConsumptions')} />
-        <Statistic title="Ads" statistic={useReadContract('_adId')} />
-        <Statistic title="Audiences" statistic={useReadContract('_audienceId')} />
-        <Statistic title="Segments" statistic={useReadContract('_segmentId')} />
+        <Statistic title="Impressions/Clicks/Conversions" statistic={useReadFromContract('totalConsumptions')} />
+        <Statistic title="Ads" statistic={useReadFromContract('_adId')} />
+        <Statistic title="Audiences" statistic={useReadFromContract('_audienceId')} />
+        <Statistic title="Segments" statistic={useReadFromContract('_segmentId')} />
       </div>
     </div>
   );
