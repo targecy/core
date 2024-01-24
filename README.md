@@ -1,6 +1,6 @@
 # Targecy
 
-This monorepo contains the code for all the services that make up the Targecy platform. Please review the [whitepaper](./docs/whitepaper.pdf) (see docs folder) for context or [ARCHITECTURE.md](./ARCHITECTURE.md) for a high-level overview of the platform.
+This monorepo contains the code for all the services that make up the Targecy platform. Please review the [BACKGROUND.md](./BACKGROUND.md) to understand the context, the [whitepaper](./docs/whitepaper.pdf) (see docs folder) for more details or [ARCHITECTURE.md](./ARCHITECTURE.md) for a high-level overview of how the platform is structured.
 
 ## Requirements
 
