@@ -1,92 +1,31 @@
 import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
-import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-import {
-  GetLastAdsQuery,
-  GetLastAudiencesQuery,
-  GetLastSegmentsQuery,
-  useGetLastAdsQuery,
-  useGetLastAudiencesQuery,
-  useGetLastSegmentsQuery,
-} from '~/generated/graphql.types';
+import { useGetLastAdsQuery, useGetLastAudiencesQuery, useGetLastSegmentsQuery } from '~/services/api';
 import { backendTrpcClient } from '~/utils';
 
-type PickArrayProps<T> = {
-  [K in keyof T]: T[K] extends Array<any> ? K : never;
-}[keyof T];
-
-type Metadata = {
-  title?: string;
-  description?: string;
-};
+// @todo(kevin): add loader/skeleton for type of data
 
 export default function ActivityLog() {
   const { data: lastAdsResult } = useGetLastAdsQuery({ limit: 5 });
   const { data: lastAudiencesResult } = useGetLastAudiencesQuery({ limit: 5 });
   const { data: lastSegmentsResult } = useGetLastSegmentsQuery({ limit: 5 });
 
-  const [metadata, setMetadata] = useState<{
-    ads: Record<string, Metadata>;
-    audiences: Record<string, Metadata>;
-    segments: Record<string, Metadata>;
-  }>({
-    ads: {},
-    audiences: {},
-    segments: {},
-  });
   const [schemas, setSchemas] = useState<SCHEMA[]>([]);
-
-  async function fetchMetadata<
-    T extends GetLastAdsQuery | GetLastAudiencesQuery | GetLastSegmentsQuery,
-    K extends PickArrayProps<T>
-  >(results: T | undefined, entityName: K) {
-    try {
-      if (!results) return {};
-
-      const entities = results[entityName] as Array<{ id: string; metadataURI: string }>;
-      const responses = await Promise.all(
-        entities.map(async (item) => {
-          const response = await fetch(getIPFSStorageUrl(item.metadataURI));
-          const json = await response.json();
-          return { id: item.id, metadata: { title: json.title, description: json.description } };
-        })
-      );
-      return responses.reduce<Record<string, Metadata>>((acc, curr) => {
-        acc[curr.id] = curr.metadata;
-        return acc;
-      }, {});
-    } catch (error) {
-      console.error('Error fetching metadata:', error);
-      return {};
-    }
-  }
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const [adsMetadata, audiencesMetadata, segmentsMetadata] = await Promise.all([
-          fetchMetadata(lastAdsResult, 'ads'),
-          fetchMetadata(lastAudiencesResult, 'audiences'),
-          fetchMetadata(lastSegmentsResult, 'segments'),
-        ]);
-
-        setMetadata({
-          ads: adsMetadata,
-          audiences: audiencesMetadata,
-          segments: segmentsMetadata,
-        });
-
         const response = await backendTrpcClient.schemas.getAllSchemas.query();
         setSchemas(Object.entries(response).map(([, schema]) => schema));
       } catch (error) {
-        console.error('Error in fetchData:', error);
+        console.error('Error in ...:', error);
       }
     }
 
     void fetchData();
-  }, [lastAdsResult, lastAudiencesResult, lastSegmentsResult]);
+  }, []);
 
   return (
     <div className="panel">
@@ -117,7 +56,7 @@ export default function ActivityLog() {
                 <h5 className="font-semibold dark:text-white-light">
                   New ad created :{' '}
                   <button type="button" className="text-success">
-                    {metadata.ads[ad.id]?.title}
+                    {ad.metadata.title}
                   </button>
                 </h5>
                 <p className="text-xs text-white-dark">
@@ -150,7 +89,7 @@ export default function ActivityLog() {
                 <h5 className="font-semibold dark:text-white-light">
                   New audience created :{' '}
                   <button type="button" className="text-success">
-                    {metadata.audiences[audience.id]?.title}
+                    {audience.metadata.title}
                   </button>
                 </h5>
                 <p className="text-xs text-white-dark">{audience.segments.length} Segments</p>
@@ -178,7 +117,7 @@ export default function ActivityLog() {
                 <h5 className="font-semibold dark:text-white-light">
                   New segment created :{' '}
                   <button type="button" className="text-success">
-                    {metadata.segments[segment.id]?.title}
+                    {segment.metadata.title}
                   </button>
                 </h5>
                 <p className="text-xs text-white-dark">

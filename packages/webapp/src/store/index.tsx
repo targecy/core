@@ -21,4 +21,4 @@ export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore['getState']>;
 export type AppDispatch = AppStore['dispatch'];
 
-export const wrapper = createWrapper<AppStore>(makeStore, { debug: env.NEXT_PUBLIC_VERCEL_ENV === 'development' });
+export const wrapper = createWrapper<AppStore>(makeStore, { debug: env.NEXT_PUBLIC_REDUX_WRAPPER_DEBUG });

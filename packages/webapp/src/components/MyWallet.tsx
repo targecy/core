@@ -18,7 +18,7 @@ export default function MyWallet() {
           <Statistic title="Public On-Chain Data Credentials" statistic={credentialsStatistics.public} />
           <Statistic title="Behaviour Data Credentials" statistic={credentialsStatistics.behaviour} />
           <Statistic title="Private Data Credentials" statistic={credentialsStatistics.private} />
-          <Statistic className="text-success" title="Total" statistic={credentialsStatistics.total} />
+          <Statistic variant="success" title="Total" statistic={credentialsStatistics.total} />
         </div>
       </div>
     </div>

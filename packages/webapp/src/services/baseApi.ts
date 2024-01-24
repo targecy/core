@@ -33,13 +33,6 @@ export const graphqlBaseQuery =
     return { data: result };
   };
 
-export const testEndpoint = (build: Build): any =>
-  build.query<any, any>({
-    queryFn: () => {
-      return Promise.resolve({ data: 'test' });
-    },
-  });
-
 export const api = createApi({
   baseQuery: graphqlBaseQuery(),
   reducerPath: baseApiReducerPath,
@@ -49,12 +42,7 @@ export const api = createApi({
       return action.payload[reducerPath];
     }
   },
-  endpoints: (build) => ({
-    test: testEndpoint(build),
-  }),
+  endpoints: (_build) => ({}),
 });
 
-export const {
-  useTestQuery,
-  util: { getRunningQueriesThunk },
-} = api;
+export const {} = api;

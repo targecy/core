@@ -7,6 +7,11 @@ import { env } from '~/env.mjs';
 import { useReadFromContract } from '~/hooks/useContractData';
 
 export default function NetworkStatistics() {
+  const totalConsumptions = useReadFromContract('totalConsumptions');
+  const countAds = useReadFromContract('_adId');
+  const countAudiences = useReadFromContract('_audienceId');
+  const countSegments = useReadFromContract('_segmentId');
+
   return (
     <div className="panel h-max-[100px] m-3 w-full">
       <div className="flex justify-between gap-5 pr-10 text-sm font-bold text-[#515365] sm:grid-cols-2">
@@ -21,11 +26,10 @@ export default function NetworkStatistics() {
             </Link>
           </h6>
         </div>
-        {/* @todo(kevin): check if the function is totalconsumptions instead of totalConsumptions  */}
-        <Statistic title="Impressions/Clicks/Conversions" statistic={useReadFromContract('totalConsumptions')} />
-        <Statistic title="Ads" statistic={useReadFromContract('_adId')} />
-        <Statistic title="Audiences" statistic={useReadFromContract('_audienceId')} />
-        <Statistic title="Segments" statistic={useReadFromContract('_segmentId')} />
+        <Statistic title="Impressions/Clicks/Conversions" statistic={totalConsumptions} />
+        <Statistic title="Ads" statistic={countAds} />
+        <Statistic title="Audiences" statistic={countAudiences} />
+        <Statistic title="Segments" statistic={countSegments} />
       </div>
     </div>
   );
