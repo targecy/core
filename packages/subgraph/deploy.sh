@@ -13,7 +13,7 @@ fi
 source "$env_file"
 
 # Check if a network argument is provided, default to 'localhost'
-subgraph=${1:-targecy_test}
+subgraph=${1:-"targecy-mumbai"}
 echo "Subgraph: $subgraph"
 
 key=${2:-$TEST_SUBGRAPH_KEY}

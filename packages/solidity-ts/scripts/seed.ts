@@ -195,10 +195,10 @@ export async function seed(network: string, force = false): Promise<void> {
       console.log('http://http://localhost:8000/subgraphs/name/targecy/graphql');
       break;
     case 'mumbai':
-      console.log('https://api.studio.thegraph.com/query/58687/targecy_test/version/latest');
+      console.log('https://api.studio.thegraph.com/query/58687/targecy-mumbai/version/latest');
       break;
     case 'matic':
-      console.log('https://api.studio.thegraph.com/query/58687/targecy_test/version/latest');
+      throw new Error('Set up config for MATIC network');
       break;
     default:
       console.log('Network not supported');

@@ -44,8 +44,8 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
         vault: '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
         multisig: '0x8fe74Ce445F70b9a46F254dcc02c0857974F96eb',
         validator: '0xF2D4Eeb4d455fb673104902282Ce68B9ce4Ac450',
-        relayer: '0x8fe74Ce445F70b9a46F254dcc02c0857974F96eb', // @todo SET CORRECT AND DEPLOY
-        erc20: '0x', // @todo SET REAL USDC
+        relayer: '0x3bBF2d68CBb8C813Cbc4b4237abFeeE7023279ae', 
+        erc20: '0x0FA8781a83E46826621b3BC094Ea2A0212e71B23',
       };
       break;
     case 'matic':

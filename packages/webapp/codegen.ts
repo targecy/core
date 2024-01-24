@@ -12,7 +12,7 @@ const config: CodegenConfig = {
   generates: {
     [`src/generated/graphql.types.ts`]: {
       schema: {
-        [process.env.NEXT_PUBLIC_SUBGRAPH_URL ?? '']: {
+        [`${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_URL}/${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_VERSION}`]: {
           headers: {
             'content-type': 'application/json',
           },
