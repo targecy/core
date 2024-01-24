@@ -13,7 +13,7 @@ abstract contract TargecyStorage {
   uint256 public _segmentId;
   uint256 public _adId;
   uint256 public _audienceId;
-  uint256 public totalconsumptions;
+  uint256 public totalConsumptions;
 
   uint256 public defaultImpressionPrice;
   uint256 public defaultClickPrice;

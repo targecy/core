@@ -32,7 +32,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _adId = 1;
     _segmentId = 1;
     _audienceId = 1;
-    totalconsumptions = 0;
+    totalConsumptions = 0;
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
     emit AdminSet(targecyAdmin);
@@ -406,7 +406,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     // Accept user's signature (for gasless txs)
     // TODO: Validate publisher's signature to avoid calls from code.
 
-    totalconsumptions += 1;
+    totalConsumptions += 1;
 
     // Proofs verified, distribute rewards
     distributeRewards(adId, viewer, ad, publisher);
