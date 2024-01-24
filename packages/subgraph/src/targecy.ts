@@ -8,7 +8,8 @@ import {
   AudienceCreated as AudienceCreatedEvent,
   AudienceDeleted as AudienceDeletedEvent,
   AudienceEdited as AudienceEditedEvent,
-  SegmentCreated as SegmentCreatedEvent,
+  SegmentEdited as SegmentEditedEvent,
+  SegmentDeleted as SegmentDeletedEvent,
   AdPaused as AdPausedEvent,
   AdUnpaused as AdUnpausedEvent,
   PausePublisher as PausePublisherEvent,
@@ -18,17 +19,7 @@ import {
   AdvertiserBudgetFunded as AdvertiserBudgetFundedEvent,
   AdvertiserBudgetWithdrawn as AdvertiserBudgetWithdrawnEvent,
 } from '../generated/Targecy/TargecyEvents';
-import {
-  Ad,
-  Publisher,
-  Audience,
-  Segment,
-  Advertiser,
-  ConsumptionsPerDay,
-  Issuer,
-  Admin,
-  Budget,
-} from '../generated/schema';
+import { Ad, Publisher, Audience, Segment, Advertiser, ConsumptionsPerDay, Admin, Budget } from '../generated/schema';
 import { BigInt, Bytes, store, log } from '@graphprotocol/graph-ts';
 
 function createAdvertiser(id: string): Advertiser {
@@ -63,61 +54,6 @@ export function handleAdminSet(event: AdminSetEvent): void {
 
 export function handleAdminRemoved(event: AdminRemovedEvent): void {
   store.remove('Admin', event.params.admin.toHexString());
-}
-
-export function handleAdCreated(event: AdCreatedEvent): void {
-  let adEntity = Ad.load(event.params.adId.toString());
-
-  if (adEntity != null) {
-    throw new Error('Ad already created.' + event.params.adId.toString());
-  }
-
-  let entity = new Ad(event.params.adId.toString());
-
-  // Properties
-  entity.advertiser = createAdvertiser(event.params.advertiser.toHexString()).id;
-  entity.metadataURI = event.params.ad.metadataURI;
-  entity.attribution = event.params.ad.attribution;
-  entity.active = event.params.ad.active;
-
-  // Conditions
-  entity.startingTimestamp = event.params.ad.startingTimestamp;
-  entity.endingTimestamp = event.params.ad.endingTimestamp;
-  entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
-  entity.blacklistedPublishers = new Array<string>(event.params.ad.blacklistedPublishers.length);
-  for (let i = 0; i < event.params.ad.blacklistedPublishers.length; i++) {
-    const address = event.params.ad.blacklistedPublishers[i];
-    let publisher = Publisher.load(address.toString());
-    if (publisher == null) {
-      publisher = new Publisher(address.toString());
-      if (publisher == null) {
-        throw new Error('Could not create publisher.');
-      }
-      publisher.save();
-    }
-    entity.blacklistedPublishers[i] = address.toHexString();
-  }
-  entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
-  entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
-
-  // Budget
-  entity.maxBudget = event.params.ad.maxBudget;
-  entity.currentBudget = BigInt.fromI32(0);
-  entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
-  entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
-
-  entity.consumptions = BigInt.fromI32(0);
-  entity.consumptionsPerDay = [];
-
-  entity.save();
-
-  const advertiser = Advertiser.load(entity.advertiser);
-  if (advertiser == null) {
-    throw new Error('Could not find advertiser.');
-  }
-
-  advertiser.adsQuantity = advertiser.adsQuantity.plus(BigInt.fromI32(1));
-  advertiser.save();
 }
 
 function handleAdPaused(event: AdPausedEvent): void {
@@ -195,6 +131,15 @@ export function handleAdConsumed(event: AdConsumedEvent): void {
   }
 
   adEntity.consumptions = adEntity.consumptions.plus(BigInt.fromI32(1));
+  const audiences = adEntity.audiences;
+  for (let i = 0; i < audiences.length; i++) {
+    const audience = Audience.load(audiences[i]);
+    if (audience == null) {
+      throw new Error('Could not find audience.');
+    }
+    audience.consumptions = audience.consumptions.plus(BigInt.fromI32(1));
+    audience.save();
+  }
 
   const budget = Budget.load(adEntity.advertiser);
   if (budget == null) {
@@ -282,10 +227,34 @@ export function handleAdEdited(event: AdEditedEvent): void {
   let entity = Ad.load(event.params.adId.toString());
 
   if (entity == null) {
-    throw new Error('Ad not found. Cannot edit.');
+    entity = new Ad(event.params.adId.toString());
   }
 
+  let advertiser = Advertiser.load(event.params.ad.advertiser.toHexString());
+  if (advertiser == null) {
+    advertiser = new Advertiser(event.params.ad.advertiser.toHexString());
+    advertiser.adsQuantity = BigInt.fromI32(0);
+    advertiser.impressions = BigInt.fromI32(0);
+    advertiser.clicks = BigInt.fromI32(0);
+    advertiser.conversions = BigInt.fromI32(0);
+    let budget = Budget.load(event.params.ad.advertiser.toHexString());
+    if (budget == null) {
+      budget = new Budget(event.params.ad.advertiser.toHexString());
+      budget.totalBudget = BigInt.fromI32(0);
+      budget.remainingBudget = BigInt.fromI32(0);
+      budget.save();
+    }
+    advertiser.budget = budget.id;
+    advertiser.save();
+  }
+
+  entity.advertiser = advertiser.id;
+  entity.maxBudget = event.params.ad.maxBudget;
+  entity.startingTimestamp = event.params.ad.startingTimestamp;
+  entity.endingTimestamp = event.params.ad.endingTimestamp;
+  entity.currentBudget = event.params.ad.currentBudget;
   entity.metadataURI = event.params.ad.metadataURI;
+  entity.consumptions = event.params.ad.consumptions;
   entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
   entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
@@ -293,18 +262,32 @@ export function handleAdEdited(event: AdEditedEvent): void {
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
   entity.attribution = event.params.ad.attribution;
   entity.active = event.params.ad.active;
+  entity.consumptionsPerDay = [];
 
   entity.save();
 }
 
-export function handleAudienceCreated(event: AudienceCreatedEvent): void {
-  let entity = new Audience(event.params.audienceId.toString());
+export function handleSegmentEdited(event: SegmentEditedEvent): void {
+  let entity = Segment.load(event.params.segmentId.toString());
+
+  if (entity == null) {
+    entity = new Segment(event.params.segmentId.toString());
+  }
 
   entity.metadataURI = event.params.metadataURI;
-  entity.segments = event.params.segmentIds.map<string>((id) => id.toString());
-  entity.consumptions = BigInt.fromI32(0);
+  entity.issuer = event.params.issuer;
+
+  entity.queryCircuitId = event.params.query.circuitId;
+  entity.queryOperator = event.params.query.operator;
+  entity.querySchema = event.params.query.schema;
+  entity.querySlotIndex = event.params.query.slotIndex;
+  entity.queryValue = event.params.query.value;
 
   entity.save();
+}
+
+export function handleSegmentDeleted(event: SegmentDeletedEvent): void {
+  store.remove('Segment', event.params.segmentId.toString());
 }
 
 export function handleAudienceDeleted(event: AudienceDeletedEvent): void {
@@ -315,42 +298,14 @@ export function handleAudienceEdited(event: AudienceEditedEvent): void {
   let entity = Audience.load(event.params.audienceId.toString());
 
   if (entity == null) {
-    throw new Error('Audience not found. Cannot edit.');
-    return;
+    entity = new Audience(event.params.audienceId.toString());
+    entity.consumptions = BigInt.fromI32(0);
   }
 
   entity.metadataURI = event.params.metadataURI;
   entity.segments = event.params.segmentIds.map<string>((id) => id.toString());
 
   entity.save();
-}
-
-export function handleSegmentCreated(event: SegmentCreatedEvent): void {
-  log.debug('handleSegmentCreated for id: {}', [event.params.segmentId.toString()]);
-  log.debug('handleSegmentCreated metadataURI: {}', [event.params.metadataURI]);
-  log.debug('asd', []);
-
-  let entity = new Segment(event.params.segmentId.toString());
-
-  entity.metadataURI = event.params.metadataURI;
-  entity.validator = event.params.validator.toHexString();
-
-  entity.queryCircuitId = event.params.query.circuitId;
-  entity.queryOperator = event.params.query.operator;
-  entity.querySchema = event.params.query.schema;
-  entity.querySlotIndex = event.params.query.slotIndex;
-  entity.queryValue = event.params.query.value;
-
-  let issuer = Issuer.load(event.params.issuer.toHexString());
-  if (issuer == null) {
-    issuer = new Issuer(event.params.issuer.toHexString());
-    issuer.save();
-  }
-  entity.issuer = issuer.id;
-
-  entity.save();
-
-  log.info('New entity saved for id: {}', [entity.id.toString()]);
 }
 
 export function handlePublisherWhitelisted(event: PublisherWhitelisted): void {

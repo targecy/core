@@ -8,7 +8,7 @@ import { env } from '~/env.mjs';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
-export const GRAPHQL_API_URL = env.NEXT_PUBLIC_SUBGRAPH_URL;
+export const GRAPHQL_API_URL = env.NEXT_PUBLIC_TARGECY_SUBGRAPH_URL;
 
 export type Build = EndpointBuilder<
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -24,7 +24,7 @@ export const graphqlBaseQuery =
     }
   ): BaseQueryFn =>
   async ({ document, variables }) => {
-    if (!baseUrl) throw new Error('Missing NEXT_PUBLIC_SUBGRAPH_URL environment variable.');
+    if (!baseUrl) throw new Error('Missing NEXT_PUBLIC_TARGECY_SUBGRAPH_URL environment variable.');
 
     const graphQLClient = new GraphQLClient(baseUrl, {});
 

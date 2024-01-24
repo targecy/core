@@ -28,7 +28,7 @@ library TargecyEvents {
 
   event SegmentCreated(uint256 indexed segmentId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI, uint256 issuer);
 
-  event SegmentEdited(uint256 indexed segmentId, address indexed validator, ICircuitValidator.CircuitQuery query, string metadataURI);
+  event SegmentEdited(uint256 indexed segmentId, uint256 issuer, ICircuitValidator.CircuitQuery query, string metadataURI);
 
   event SegmentDeleted(uint256 indexed segmentId);
 

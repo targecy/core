@@ -8,11 +8,8 @@ export const SegmentFragment = gql`
     queryCircuitId
     queryOperator
     id
-    issuer {
-      id
-    }
+    issuer
     metadataURI
-    validator
   }
 `;
 

@@ -718,10 +718,10 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "validator",
-        "type": "address"
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "issuer",
+        "type": "uint256"
       },
       {
         "components": [

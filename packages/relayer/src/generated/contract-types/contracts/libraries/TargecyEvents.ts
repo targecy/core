@@ -531,19 +531,19 @@ export namespace SegmentDeletedEvent {
 export namespace SegmentEditedEvent {
   export type InputTuple = [
     segmentId: BigNumberish,
-    validator: AddressLike,
+    issuer: BigNumberish,
     query: ICircuitValidator.CircuitQueryStruct,
     metadataURI: string
   ];
   export type OutputTuple = [
     segmentId: bigint,
-    validator: string,
+    issuer: bigint,
     query: ICircuitValidator.CircuitQueryStructOutput,
     metadataURI: string
   ];
   export interface OutputObject {
     segmentId: bigint;
-    validator: string;
+    issuer: bigint;
     query: ICircuitValidator.CircuitQueryStructOutput;
     metadataURI: string;
   }
@@ -972,7 +972,7 @@ export interface TargecyEvents extends BaseContract {
       SegmentDeletedEvent.OutputObject
     >;
 
-    "SegmentEdited(uint256,address,tuple,string)": TypedContractEvent<
+    "SegmentEdited(uint256,uint256,tuple,string)": TypedContractEvent<
       SegmentEditedEvent.InputTuple,
       SegmentEditedEvent.OutputTuple,
       SegmentEditedEvent.OutputObject

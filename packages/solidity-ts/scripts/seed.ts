@@ -5,6 +5,7 @@ import { env, exit } from 'process';
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require('dotenv').config();
 
+import { ZeroAddress } from 'ethers';
 import { ethers } from 'hardhat';
 
 import { hostname } from 'os';
@@ -165,25 +166,21 @@ export async function seed(network: string, force = false): Promise<void> {
     ads[index].metadataURI = uri;
 
     // Call smart contract function to create an ad
-    await targecy.setAd(
-      0,
-      {
-        metadataURI: ad.metadataURI ?? '',
-        attribution: ad.attribution,
-        active: true,
-        abi: '',
-        target: '',
-        startingTimestamp: ad.startingTimestamp,
-        endingTimestamp: ad.endingTimestamp,
-        audienceIds: ad.audiencesIds,
-        blacklistedPublishers: ad.blacklistedPublishers,
-        blacklistedWeekdays: ad.blacklistedWeekdays,
-        maxBudget: ad.budget,
-        maxPricePerConsumption: ad.maxPricePerConsumption,
-        maxConsumptionsPerDay: ad.maxConsumptionsPerDay,
-      },
-      { value: ad.budget }
-    );
+    await targecy.setAd(0, {
+      metadataURI: ad.metadataURI ?? '',
+      attribution: ad.attribution,
+      active: true,
+      abi: '',
+      target: ZeroAddress,
+      startingTimestamp: ad.startingTimestamp,
+      endingTimestamp: ad.endingTimestamp,
+      audienceIds: ad.audiencesIds,
+      blacklistedPublishers: ad.blacklistedPublishers,
+      blacklistedWeekdays: ad.blacklistedWeekdays,
+      maxBudget: ad.budget,
+      maxPricePerConsumption: ad.maxPricePerConsumption,
+      maxConsumptionsPerDay: ad.maxConsumptionsPerDay,
+    });
 
     console.log(`Ad '${ad.metadata.title}' created`);
   }

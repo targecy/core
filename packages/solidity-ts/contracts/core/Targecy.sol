@@ -97,7 +97,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       segments[idToUse].issuer = _segment.issuer;
     }
 
-    emit TargecyEvents.SegmentEdited(idToUse, address(validator), _segment.query, _segment.metadataURI);
+    emit TargecyEvents.SegmentEdited(idToUse, segments[idToUse].issuer, _segment.query, _segment.metadataURI);
   }
 
   function fundAdvertiserBudget(address advertiser, uint256 amount) external override {

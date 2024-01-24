@@ -67,20 +67,18 @@ dataSources:
       eventHandlers:
         - event: AdConsumed(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),(uint256,address,bool,uint256,uint256,uint256),uint256)
           handler: handleAdConsumed
-        - event: AdCreated(indexed uint256,indexed address,(string,uint8,bool,string,address,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256))
-          handler: handleAdCreated
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted
         - event: AdEdited(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
           handler: handleAdEdited
-        - event: AudienceCreated(indexed uint256,string,uint256[])
-          handler: handleAudienceCreated
         - event: AudienceDeleted(indexed uint256)
           handler: handleAudienceDeleted
         - event: AudienceEdited(indexed uint256,string,uint256[])
           handler: handleAudienceEdited
-        - event: SegmentCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string,uint256)
-          handler: handleSegmentCreated
+        - event: SegmentEdited(indexed uint256,uint256,(uint256,uint256,uint256,uint256[],string),string)
+          handler: handleSegmentEdited
+        - event: SegmentDeleted(indexed uint256)
+          handler: handleSegmentDeleted
         - event: PublisherWhitelisted(indexed address,(uint256,address,bool,uint256,uint256,uint256))
           handler: handlePublisherWhitelisted
         - event: PublisherRemovedFromWhitelist(indexed address)
