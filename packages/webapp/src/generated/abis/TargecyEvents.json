@@ -213,7 +213,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "budget",
+            "name": "maxBudget",
             "type": "uint256"
           },
           {
@@ -613,7 +613,7 @@
           },
           {
             "internalType": "address",
-            "name": "protocolVault",
+            "name": "vault",
             "type": "address"
           },
           {

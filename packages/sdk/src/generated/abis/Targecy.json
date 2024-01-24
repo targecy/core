@@ -430,14 +430,14 @@
         "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "actionParams",
-        "type": "bytes[]"
+        "type": "bytes"
       }
     ],
     "name": "consumeAd",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -485,14 +485,14 @@
         "type": "tuple"
       },
       {
-        "internalType": "bytes[]",
+        "internalType": "bytes",
         "name": "actionParams",
-        "type": "bytes[]"
+        "type": "bytes"
       }
     ],
     "name": "consumeAdViaRelayer",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -608,6 +608,19 @@
     "name": "deleteSegment",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "erc20",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -731,12 +744,12 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_zkProofsValidator",
+        "name": "_validator",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_protocolVault",
+        "name": "_vault",
         "type": "address"
       },
       {
@@ -751,12 +764,12 @@
       },
       {
         "internalType": "address",
-        "name": "_relayerAddress",
+        "name": "_relayer",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_usdcTokenAddress",
+        "name": "_erc20",
         "type": "address"
       }
     ],
@@ -812,13 +825,44 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "protocolVault",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "name": "publishers",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "userRewardsPercentage",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "vault",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "active",
+        "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cpi",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cpc",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cpa",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -826,7 +870,7 @@
   },
   {
     "inputs": [],
-    "name": "relayerAddress",
+    "name": "relayer",
     "outputs": [
       {
         "internalType": "address",
@@ -884,12 +928,30 @@
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
     ],
-    "name": "requestQueries",
+    "name": "segments",
     "outputs": [
       {
         "components": [
@@ -935,24 +997,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "role",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "revokeRole",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1016,7 +1060,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "budget",
+            "name": "maxBudget",
             "type": "uint256"
           },
           {
@@ -1131,19 +1175,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_protocolVault",
-        "type": "address"
-      }
-    ],
-    "name": "setProtocolVault",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "components": [
           {
             "internalType": "uint256",
@@ -1182,19 +1213,6 @@
       }
     ],
     "name": "setPublisher",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_relayerAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setRelayerAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1265,11 +1283,37 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_zkProofsValidator",
+        "name": "_relayer",
         "type": "address"
       }
     ],
-    "name": "setZKProofsValidator",
+    "name": "setrelayer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_validator",
+        "type": "address"
+      }
+    ],
+    "name": "setvalidator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_vault",
+        "type": "address"
+      }
+    ],
+    "name": "setvault",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1295,7 +1339,7 @@
   },
   {
     "inputs": [],
-    "name": "totalconsumptions",
+    "name": "totalConsumptions",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1341,7 +1385,7 @@
   },
   {
     "inputs": [],
-    "name": "usdcTokenAddress",
+    "name": "validator",
     "outputs": [
       {
         "internalType": "address",
@@ -1353,63 +1397,13 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "usedSigNonces",
+    "inputs": [],
+    "name": "vault",
     "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "name": "whitelistedPublishers",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "userRewardsPercentage",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "vault",
-        "type": "address"
-      },
-      {
-        "internalType": "bool",
-        "name": "active",
-        "type": "bool"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cpi",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cpc",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "cpa",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -1426,19 +1420,6 @@
     "name": "withdrawAdvertiserBudget",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "zkProofsValidator",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   }
 ]

@@ -67,14 +67,14 @@ const _abi = [
         type: "tuple",
       },
       {
-        internalType: "bytes[]",
+        internalType: "bytes",
         name: "actionParams",
-        type: "bytes[]",
+        type: "bytes",
       },
     ],
     name: "consumeAd",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -122,14 +122,14 @@ const _abi = [
         type: "tuple",
       },
       {
-        internalType: "bytes[]",
+        internalType: "bytes",
         name: "actionParams",
-        type: "bytes[]",
+        type: "bytes",
       },
     ],
     name: "consumeAdViaRelayer",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -340,7 +340,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "budget",
+            name: "maxBudget",
             type: "uint256",
           },
           {
@@ -455,19 +455,6 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_protocolVault",
-        type: "address",
-      },
-    ],
-    name: "setProtocolVault",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         components: [
           {
             internalType: "uint256",
@@ -506,19 +493,6 @@ const _abi = [
       },
     ],
     name: "setPublisher",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "_relayerAddress",
-        type: "address",
-      },
-    ],
-    name: "setRelayerAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -589,11 +563,37 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_zkProofsValidator",
+        name: "_relayer",
         type: "address",
       },
     ],
-    name: "setZKProofsValidator",
+    name: "setrelayer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_validator",
+        type: "address",
+      },
+    ],
+    name: "setvalidator",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_vault",
+        type: "address",
+      },
+    ],
+    name: "setvault",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

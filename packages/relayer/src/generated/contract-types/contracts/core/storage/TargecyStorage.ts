@@ -59,14 +59,13 @@ export interface TargecyStorageInterface extends Interface {
       | "defaultConversionPrice"
       | "defaultImpressionPrice"
       | "defaultIssuer"
-      | "protocolVault"
-      | "relayerAddress"
-      | "requestQueries"
-      | "totalconsumptions"
-      | "usdcTokenAddress"
-      | "usedSigNonces"
-      | "whitelistedPublishers"
-      | "zkProofsValidator"
+      | "erc20"
+      | "publishers"
+      | "relayer"
+      | "segments"
+      | "totalConsumptions"
+      | "validator"
+      | "vault"
   ): FunctionFragment;
 
   encodeFunctionData(functionFragment: "_adId", values?: undefined): string;
@@ -107,38 +106,22 @@ export interface TargecyStorageInterface extends Interface {
     functionFragment: "defaultIssuer",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "protocolVault",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "relayerAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requestQueries",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalconsumptions",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "usdcTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "usedSigNonces",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "whitelistedPublishers",
+    functionFragment: "publishers",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "relayer", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "zkProofsValidator",
+    functionFragment: "segments",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalConsumptions",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "validator", values?: undefined): string;
+  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "_adId", data: BytesLike): Result;
   decodeFunctionResult(
@@ -169,38 +152,16 @@ export interface TargecyStorageInterface extends Interface {
     functionFragment: "defaultIssuer",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "publishers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "relayer", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "segments", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "protocolVault",
+    functionFragment: "totalConsumptions",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "relayerAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestQueries",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "totalconsumptions",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "usdcTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "usedSigNonces",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "whitelistedPublishers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "zkProofsValidator",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "validator", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
 }
 
 export interface TargecyStorage extends BaseContract {
@@ -322,29 +283,9 @@ export interface TargecyStorage extends BaseContract {
 
   defaultIssuer: TypedContractMethod<[], [bigint], "view">;
 
-  protocolVault: TypedContractMethod<[], [string], "view">;
+  erc20: TypedContractMethod<[], [string], "view">;
 
-  relayerAddress: TypedContractMethod<[], [string], "view">;
-
-  requestQueries: TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [ICircuitValidator.CircuitQueryStructOutput, string, bigint] & {
-        query: ICircuitValidator.CircuitQueryStructOutput;
-        metadataURI: string;
-        issuer: bigint;
-      }
-    ],
-    "view"
-  >;
-
-  totalconsumptions: TypedContractMethod<[], [bigint], "view">;
-
-  usdcTokenAddress: TypedContractMethod<[], [string], "view">;
-
-  usedSigNonces: TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
-
-  whitelistedPublishers: TypedContractMethod<
+  publishers: TypedContractMethod<
     [arg0: AddressLike],
     [
       [bigint, string, boolean, bigint, bigint, bigint] & {
@@ -359,7 +300,25 @@ export interface TargecyStorage extends BaseContract {
     "view"
   >;
 
-  zkProofsValidator: TypedContractMethod<[], [string], "view">;
+  relayer: TypedContractMethod<[], [string], "view">;
+
+  segments: TypedContractMethod<
+    [arg0: BigNumberish],
+    [
+      [ICircuitValidator.CircuitQueryStructOutput, string, bigint] & {
+        query: ICircuitValidator.CircuitQueryStructOutput;
+        metadataURI: string;
+        issuer: bigint;
+      }
+    ],
+    "view"
+  >;
+
+  totalConsumptions: TypedContractMethod<[], [bigint], "view">;
+
+  validator: TypedContractMethod<[], [string], "view">;
+
+  vault: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -451,35 +410,10 @@ export interface TargecyStorage extends BaseContract {
     nameOrSignature: "defaultIssuer"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
-    nameOrSignature: "protocolVault"
+    nameOrSignature: "erc20"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "relayerAddress"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "requestQueries"
-  ): TypedContractMethod<
-    [arg0: BigNumberish],
-    [
-      [ICircuitValidator.CircuitQueryStructOutput, string, bigint] & {
-        query: ICircuitValidator.CircuitQueryStructOutput;
-        metadataURI: string;
-        issuer: bigint;
-      }
-    ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "totalconsumptions"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "usdcTokenAddress"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "usedSigNonces"
-  ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "whitelistedPublishers"
+    nameOrSignature: "publishers"
   ): TypedContractMethod<
     [arg0: AddressLike],
     [
@@ -495,7 +429,29 @@ export interface TargecyStorage extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "zkProofsValidator"
+    nameOrSignature: "relayer"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "segments"
+  ): TypedContractMethod<
+    [arg0: BigNumberish],
+    [
+      [ICircuitValidator.CircuitQueryStructOutput, string, bigint] & {
+        query: ICircuitValidator.CircuitQueryStructOutput;
+        metadataURI: string;
+        issuer: bigint;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "totalConsumptions"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "validator"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "vault"
   ): TypedContractMethod<[], [string], "view">;
 
   filters: {};

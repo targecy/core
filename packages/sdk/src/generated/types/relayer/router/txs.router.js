@@ -47,7 +47,7 @@ exports.txsRouter = (0, __1.router)({
     }))
         .mutation(async ({ ctx, input }) => {
         const viewer = ethers_1.ZeroAddress; // To be changed in attribution v1.
-        const result = await (0, relayer_service_1.consumeAd)([viewer, input.adId, input.publisher, input.zkProofs, []]);
+        const result = await (0, relayer_service_1.consumeAd)([viewer, input.adId, input.publisher, input.zkProofs, ethers_1.ZeroHash]);
         const saved = await ctx.prisma.tx.create({
             data: {
                 hash: result,

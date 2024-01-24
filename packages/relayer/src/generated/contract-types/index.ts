@@ -44,6 +44,8 @@ export type { TargecyEvents } from "./contracts/libraries/TargecyEvents";
 export { TargecyEvents__factory } from "./factories/contracts/libraries/TargecyEvents__factory";
 export type { ERC20PresetFixedSupply } from "./contracts/mock/ERC20PresetFixedSupply";
 export { ERC20PresetFixedSupply__factory } from "./factories/contracts/mock/ERC20PresetFixedSupply__factory";
+export type { MockExternalVaultContract } from "./contracts/mock/MockExternalVaultContract";
+export { MockExternalVaultContract__factory } from "./factories/contracts/mock/MockExternalVaultContract__factory";
 export type { MockValidator } from "./contracts/mock/MockValidator";
 export { MockValidator__factory } from "./factories/contracts/mock/MockValidator__factory";
 export type { ERC20 } from "./contracts/mock/utils/ERC20";

@@ -101,7 +101,7 @@ export function handleAdCreated(event: AdCreatedEvent): void {
   entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
 
   // Budget
-  entity.maxBudget = event.params.ad.budget;
+  entity.maxBudget = event.params.ad.maxBudget;
   entity.currentBudget = BigInt.fromI32(0);
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;

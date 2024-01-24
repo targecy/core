@@ -54,7 +54,7 @@ export declare namespace DataTypes {
     audienceIds: BigNumberish[];
     blacklistedPublishers: AddressLike[];
     blacklistedWeekdays: BigNumberish[];
-    budget: BigNumberish;
+    maxBudget: BigNumberish;
     maxPricePerConsumption: BigNumberish;
     maxConsumptionsPerDay: BigNumberish;
   };
@@ -70,7 +70,7 @@ export declare namespace DataTypes {
     audienceIds: bigint[],
     blacklistedPublishers: string[],
     blacklistedWeekdays: bigint[],
-    budget: bigint,
+    maxBudget: bigint,
     maxPricePerConsumption: bigint,
     maxConsumptionsPerDay: bigint
   ] & {
@@ -84,7 +84,7 @@ export declare namespace DataTypes {
     audienceIds: bigint[];
     blacklistedPublishers: string[];
     blacklistedWeekdays: bigint[];
-    budget: bigint;
+    maxBudget: bigint;
     maxPricePerConsumption: bigint;
     maxConsumptionsPerDay: bigint;
   };
@@ -176,6 +176,7 @@ export interface TargecyInterface extends Interface {
       | "deleteAd"
       | "deleteAudience"
       | "deleteSegment"
+      | "erc20"
       | "fundAdvertiserBudget"
       | "getAdAudiences"
       | "getAudienceSegments"
@@ -187,13 +188,13 @@ export interface TargecyInterface extends Interface {
       | "pauseAd"
       | "pausePublisher"
       | "paused"
-      | "protocolVault"
-      | "relayerAddress"
+      | "publishers"
+      | "relayer"
       | "removeAdmin"
       | "removePublisher"
       | "renounceRole"
-      | "requestQueries"
       | "revokeRole"
+      | "segments"
       | "setAd"
       | "setAdmin"
       | "setAudience"
@@ -201,21 +202,19 @@ export interface TargecyInterface extends Interface {
       | "setDefaultConversionPrice"
       | "setDefaultImpressionPrice"
       | "setDefaultIssuer"
-      | "setProtocolVault"
       | "setPublisher"
-      | "setRelayerAddress"
       | "setSegment"
-      | "setZKProofsValidator"
+      | "setrelayer"
+      | "setvalidator"
+      | "setvault"
       | "supportsInterface"
-      | "totalconsumptions"
+      | "totalConsumptions"
       | "unpause"
       | "unpauseAd"
       | "unpausePublisher"
-      | "usdcTokenAddress"
-      | "usedSigNonces"
-      | "whitelistedPublishers"
+      | "validator"
+      | "vault"
       | "withdrawAdvertiserBudget"
-      | "zkProofsValidator"
   ): FunctionFragment;
 
   getEvent(
@@ -256,7 +255,7 @@ export interface TargecyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAd",
-    values: [BigNumberish, AddressLike, DataTypes.ZKProofsStruct, BytesLike[]]
+    values: [BigNumberish, AddressLike, DataTypes.ZKProofsStruct, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAdViaRelayer",
@@ -265,7 +264,7 @@ export interface TargecyInterface extends Interface {
       BigNumberish,
       AddressLike,
       DataTypes.ZKProofsStruct,
-      BytesLike[]
+      BytesLike
     ]
   ): string;
   encodeFunctionData(
@@ -300,6 +299,7 @@ export interface TargecyInterface extends Interface {
     functionFragment: "deleteSegment",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "erc20", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "fundAdvertiserBudget",
     values: [AddressLike, BigNumberish]
@@ -346,13 +346,10 @@ export interface TargecyInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "protocolVault",
-    values?: undefined
+    functionFragment: "publishers",
+    values: [AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "relayerAddress",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "relayer", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeAdmin",
     values: [AddressLike]
@@ -366,12 +363,12 @@ export interface TargecyInterface extends Interface {
     values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "requestQueries",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "revokeRole",
     values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "segments",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setAd",
@@ -402,23 +399,23 @@ export interface TargecyInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setProtocolVault",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setPublisher",
     values: [DataTypes.PublisherSettingsStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setRelayerAddress",
-    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setSegment",
     values: [BigNumberish, DataTypes.SegmentStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "setZKProofsValidator",
+    functionFragment: "setrelayer",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setvalidator",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setvault",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -426,7 +423,7 @@ export interface TargecyInterface extends Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "totalconsumptions",
+    functionFragment: "totalConsumptions",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
@@ -438,25 +435,11 @@ export interface TargecyInterface extends Interface {
     functionFragment: "unpausePublisher",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "usdcTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "usedSigNonces",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "whitelistedPublishers",
-    values: [AddressLike]
-  ): string;
+  encodeFunctionData(functionFragment: "validator", values?: undefined): string;
+  encodeFunctionData(functionFragment: "vault", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "withdrawAdvertiserBudget",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "zkProofsValidator",
-    values?: undefined
   ): string;
 
   decodeFunctionResult(
@@ -510,6 +493,7 @@ export interface TargecyInterface extends Interface {
     functionFragment: "deleteSegment",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "erc20", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "fundAdvertiserBudget",
     data: BytesLike
@@ -536,14 +520,8 @@ export interface TargecyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "protocolVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "relayerAddress",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "publishers", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "relayer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeAdmin",
     data: BytesLike
@@ -556,11 +534,8 @@ export interface TargecyInterface extends Interface {
     functionFragment: "renounceRole",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestQueries",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "segments", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setAd", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
   decodeFunctionResult(
@@ -584,28 +559,22 @@ export interface TargecyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setProtocolVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setPublisher",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "setRelayerAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "setSegment", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setrelayer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setZKProofsValidator",
+    functionFragment: "setvalidator",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setvault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "totalconsumptions",
+    functionFragment: "totalConsumptions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -614,24 +583,10 @@ export interface TargecyInterface extends Interface {
     functionFragment: "unpausePublisher",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "usdcTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "usedSigNonces",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "whitelistedPublishers",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "validator", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "withdrawAdvertiserBudget",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "zkProofsValidator",
     data: BytesLike
   ): Result;
 }
@@ -848,10 +803,10 @@ export interface Targecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      actionParams: BytesLike[]
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
+    "payable"
   >;
 
   consumeAdViaRelayer: TypedContractMethod<
@@ -860,10 +815,10 @@ export interface Targecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      actionParams: BytesLike[]
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
+    "payable"
   >;
 
   consumptionsPerDay: TypedContractMethod<
@@ -889,6 +844,8 @@ export interface Targecy extends BaseContract {
   >;
 
   deleteSegment: TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
+
+  erc20: TypedContractMethod<[], [string], "view">;
 
   fundAdvertiserBudget: TypedContractMethod<
     [advertiser: AddressLike, amount: BigNumberish],
@@ -920,12 +877,12 @@ export interface Targecy extends BaseContract {
 
   initialize: TypedContractMethod<
     [
-      _zkProofsValidator: AddressLike,
-      _protocolVault: AddressLike,
+      _validator: AddressLike,
+      _vault: AddressLike,
       targecyAdmin: AddressLike,
       _defaultIssuer: BigNumberish,
-      _relayerAddress: AddressLike,
-      _usdcTokenAddress: AddressLike
+      _relayer: AddressLike,
+      _erc20: AddressLike
     ],
     [void],
     "nonpayable"
@@ -943,9 +900,22 @@ export interface Targecy extends BaseContract {
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  protocolVault: TypedContractMethod<[], [string], "view">;
+  publishers: TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [bigint, string, boolean, bigint, bigint, bigint] & {
+        userRewardsPercentage: bigint;
+        vault: string;
+        active: boolean;
+        cpi: bigint;
+        cpc: bigint;
+        cpa: bigint;
+      }
+    ],
+    "view"
+  >;
 
-  relayerAddress: TypedContractMethod<[], [string], "view">;
+  relayer: TypedContractMethod<[], [string], "view">;
 
   removeAdmin: TypedContractMethod<
     [targecyAdmin: AddressLike],
@@ -965,7 +935,13 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
-  requestQueries: TypedContractMethod<
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  segments: TypedContractMethod<
     [arg0: BigNumberish],
     [
       [ICircuitValidator.CircuitQueryStructOutput, string, bigint] & {
@@ -975,12 +951,6 @@ export interface Targecy extends BaseContract {
       }
     ],
     "view"
-  >;
-
-  revokeRole: TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
   >;
 
   setAd: TypedContractMethod<
@@ -1029,20 +999,8 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
-  setProtocolVault: TypedContractMethod<
-    [_protocolVault: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   setPublisher: TypedContractMethod<
     [publisher: DataTypes.PublisherSettingsStruct],
-    [void],
-    "nonpayable"
-  >;
-
-  setRelayerAddress: TypedContractMethod<
-    [_relayerAddress: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1053,11 +1011,19 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
-  setZKProofsValidator: TypedContractMethod<
-    [_zkProofsValidator: AddressLike],
+  setrelayer: TypedContractMethod<
+    [_relayer: AddressLike],
     [void],
     "nonpayable"
   >;
+
+  setvalidator: TypedContractMethod<
+    [_validator: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setvault: TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
 
   supportsInterface: TypedContractMethod<
     [interfaceId: BytesLike],
@@ -1065,7 +1031,7 @@ export interface Targecy extends BaseContract {
     "view"
   >;
 
-  totalconsumptions: TypedContractMethod<[], [bigint], "view">;
+  totalConsumptions: TypedContractMethod<[], [bigint], "view">;
 
   unpause: TypedContractMethod<[], [void], "nonpayable">;
 
@@ -1077,32 +1043,15 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
 
-  usdcTokenAddress: TypedContractMethod<[], [string], "view">;
+  validator: TypedContractMethod<[], [string], "view">;
 
-  usedSigNonces: TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
-
-  whitelistedPublishers: TypedContractMethod<
-    [arg0: AddressLike],
-    [
-      [bigint, string, boolean, bigint, bigint, bigint] & {
-        userRewardsPercentage: bigint;
-        vault: string;
-        active: boolean;
-        cpi: bigint;
-        cpc: bigint;
-        cpa: bigint;
-      }
-    ],
-    "view"
-  >;
+  vault: TypedContractMethod<[], [string], "view">;
 
   withdrawAdvertiserBudget: TypedContractMethod<
     [amount: BigNumberish],
     [void],
     "nonpayable"
   >;
-
-  zkProofsValidator: TypedContractMethod<[], [string], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
@@ -1191,10 +1140,10 @@ export interface Targecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      actionParams: BytesLike[]
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "consumeAdViaRelayer"
@@ -1204,10 +1153,10 @@ export interface Targecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      actionParams: BytesLike[]
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "consumptionsPerDay"
@@ -1237,6 +1186,9 @@ export interface Targecy extends BaseContract {
   getFunction(
     nameOrSignature: "deleteSegment"
   ): TypedContractMethod<[id: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "erc20"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "fundAdvertiserBudget"
   ): TypedContractMethod<
@@ -1271,12 +1223,12 @@ export interface Targecy extends BaseContract {
     nameOrSignature: "initialize"
   ): TypedContractMethod<
     [
-      _zkProofsValidator: AddressLike,
-      _protocolVault: AddressLike,
+      _validator: AddressLike,
+      _vault: AddressLike,
       targecyAdmin: AddressLike,
       _defaultIssuer: BigNumberish,
-      _relayerAddress: AddressLike,
-      _usdcTokenAddress: AddressLike
+      _relayer: AddressLike,
+      _erc20: AddressLike
     ],
     [void],
     "nonpayable"
@@ -1294,10 +1246,23 @@ export interface Targecy extends BaseContract {
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "protocolVault"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "publishers"
+  ): TypedContractMethod<
+    [arg0: AddressLike],
+    [
+      [bigint, string, boolean, bigint, bigint, bigint] & {
+        userRewardsPercentage: bigint;
+        vault: string;
+        active: boolean;
+        cpi: bigint;
+        cpc: bigint;
+        cpa: bigint;
+      }
+    ],
+    "view"
+  >;
   getFunction(
-    nameOrSignature: "relayerAddress"
+    nameOrSignature: "relayer"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "removeAdmin"
@@ -1313,7 +1278,14 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "requestQueries"
+    nameOrSignature: "revokeRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "segments"
   ): TypedContractMethod<
     [arg0: BigNumberish],
     [
@@ -1324,13 +1296,6 @@ export interface Targecy extends BaseContract {
       }
     ],
     "view"
-  >;
-  getFunction(
-    nameOrSignature: "revokeRole"
-  ): TypedContractMethod<
-    [role: BytesLike, account: AddressLike],
-    [void],
-    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "setAd"
@@ -1378,18 +1343,12 @@ export interface Targecy extends BaseContract {
     nameOrSignature: "setDefaultIssuer"
   ): TypedContractMethod<[_defaultIssuer: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setProtocolVault"
-  ): TypedContractMethod<[_protocolVault: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "setPublisher"
   ): TypedContractMethod<
     [publisher: DataTypes.PublisherSettingsStruct],
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "setRelayerAddress"
-  ): TypedContractMethod<[_relayerAddress: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setSegment"
   ): TypedContractMethod<
@@ -1398,17 +1357,19 @@ export interface Targecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setZKProofsValidator"
-  ): TypedContractMethod<
-    [_zkProofsValidator: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    nameOrSignature: "setrelayer"
+  ): TypedContractMethod<[_relayer: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setvalidator"
+  ): TypedContractMethod<[_validator: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setvault"
+  ): TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "totalconsumptions"
+    nameOrSignature: "totalConsumptions"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "unpause"
@@ -1420,33 +1381,14 @@ export interface Targecy extends BaseContract {
     nameOrSignature: "unpausePublisher"
   ): TypedContractMethod<[publisher: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "usdcTokenAddress"
+    nameOrSignature: "validator"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "usedSigNonces"
-  ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "whitelistedPublishers"
-  ): TypedContractMethod<
-    [arg0: AddressLike],
-    [
-      [bigint, string, boolean, bigint, bigint, bigint] & {
-        userRewardsPercentage: bigint;
-        vault: string;
-        active: boolean;
-        cpi: bigint;
-        cpc: bigint;
-        cpa: bigint;
-      }
-    ],
-    "view"
-  >;
+    nameOrSignature: "vault"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "withdrawAdvertiserBudget"
   ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "zkProofsValidator"
-  ): TypedContractMethod<[], [string], "view">;
 
   getEvent(
     key: "Initialized"

@@ -94,6 +94,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20PresetFixedSupply__factory>;
     getContractFactory(
+      name: "MockExternalVaultContract",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockExternalVaultContract__factory>;
+    getContractFactory(
       name: "MockValidator",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockValidator__factory>;
@@ -207,6 +211,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20PresetFixedSupply>;
     getContractAt(
+      name: "MockExternalVaultContract",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockExternalVaultContract>;
+    getContractAt(
       name: "MockValidator",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -303,6 +312,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20PresetFixedSupply>;
     deployContract(
+      name: "MockExternalVaultContract",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockExternalVaultContract>;
+    deployContract(
       name: "MockValidator",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockValidator>;
@@ -415,6 +428,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20PresetFixedSupply>;
+    deployContract(
+      name: "MockExternalVaultContract",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockExternalVaultContract>;
     deployContract(
       name: "MockValidator",
       args: any[],

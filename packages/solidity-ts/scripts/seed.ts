@@ -131,7 +131,7 @@ export async function seed(network: string, force = false): Promise<void> {
     segments[index].metadataURI = uri;
 
     // Call smart contract function to create a segment
-    await targecy.setSegment({
+    await targecy.setSegment(0, {
       metadataURI: segment.metadataURI ?? '',
       issuer: ethers.ZeroAddress, // use default
       query: {
@@ -153,7 +153,7 @@ export async function seed(network: string, force = false): Promise<void> {
     audiences[index].metadataURI = uri;
 
     // Call smart contract function to create a target group
-    await targecy.createAudience((audience.metadataURI as string) ?? '', audience.segmentIds as number[]);
+    await targecy.setAudience(0, (audience.metadataURI as string) ?? '', audience.segmentIds as number[]);
 
     console.log(`Target group '${audience.metadata.title}' created`);
   }
@@ -165,7 +165,8 @@ export async function seed(network: string, force = false): Promise<void> {
     ads[index].metadataURI = uri;
 
     // Call smart contract function to create an ad
-    await targecy.createAd(
+    await targecy.setAd(
+      0,
       {
         metadataURI: ad.metadataURI ?? '',
         attribution: ad.attribution,
@@ -177,7 +178,7 @@ export async function seed(network: string, force = false): Promise<void> {
         audienceIds: ad.audiencesIds,
         blacklistedPublishers: ad.blacklistedPublishers,
         blacklistedWeekdays: ad.blacklistedWeekdays,
-        budget: ad.budget,
+        maxBudget: ad.budget,
         maxPricePerConsumption: ad.maxPricePerConsumption,
         maxConsumptionsPerDay: ad.maxConsumptionsPerDay,
       },

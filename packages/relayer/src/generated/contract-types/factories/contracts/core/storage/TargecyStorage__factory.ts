@@ -258,7 +258,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "protocolVault",
+    name: "erc20",
     outputs: [
       {
         internalType: "address",
@@ -270,8 +270,52 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "publishers",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "userRewardsPercentage",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "vault",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "active",
+        type: "bool",
+      },
+      {
+        internalType: "uint256",
+        name: "cpi",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "cpc",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "cpa",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
-    name: "relayerAddress",
+    name: "relayer",
     outputs: [
       {
         internalType: "address",
@@ -290,7 +334,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "requestQueries",
+    name: "segments",
     outputs: [
       {
         components: [
@@ -340,7 +384,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "totalconsumptions",
+    name: "totalConsumptions",
     outputs: [
       {
         internalType: "uint256",
@@ -353,75 +397,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "usdcTokenAddress",
+    name: "validator",
     outputs: [
       {
         internalType: "address",
         name: "",
         type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "usedSigNonces",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "whitelistedPublishers",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "userRewardsPercentage",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "vault",
-        type: "address",
-      },
-      {
-        internalType: "bool",
-        name: "active",
-        type: "bool",
-      },
-      {
-        internalType: "uint256",
-        name: "cpi",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "cpc",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "cpa",
-        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -429,7 +410,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "zkProofsValidator",
+    name: "vault",
     outputs: [
       {
         internalType: "address",

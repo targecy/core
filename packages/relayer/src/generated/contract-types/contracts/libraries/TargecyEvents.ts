@@ -112,7 +112,7 @@ export declare namespace DataTypes {
     audienceIds: BigNumberish[];
     blacklistedPublishers: AddressLike[];
     blacklistedWeekdays: BigNumberish[];
-    budget: BigNumberish;
+    maxBudget: BigNumberish;
     maxPricePerConsumption: BigNumberish;
     maxConsumptionsPerDay: BigNumberish;
   };
@@ -128,7 +128,7 @@ export declare namespace DataTypes {
     audienceIds: bigint[],
     blacklistedPublishers: string[],
     blacklistedWeekdays: bigint[],
-    budget: bigint,
+    maxBudget: bigint,
     maxPricePerConsumption: bigint,
     maxConsumptionsPerDay: bigint
   ] & {
@@ -142,7 +142,7 @@ export declare namespace DataTypes {
     audienceIds: bigint[];
     blacklistedPublishers: string[];
     blacklistedWeekdays: bigint[];
-    budget: bigint;
+    maxBudget: bigint;
     maxPricePerConsumption: bigint;
     maxConsumptionsPerDay: bigint;
   };
@@ -152,7 +152,7 @@ export declare namespace DataTypes {
     publisherAmount: BigNumberish;
     user: AddressLike;
     userAmount: BigNumberish;
-    protocolVault: AddressLike;
+    vault: AddressLike;
     protocolAmount: BigNumberish;
   };
 
@@ -161,14 +161,14 @@ export declare namespace DataTypes {
     publisherAmount: bigint,
     user: string,
     userAmount: bigint,
-    protocolVault: string,
+    vault: string,
     protocolAmount: bigint
   ] & {
     publisher: string;
     publisherAmount: bigint;
     user: string;
     userAmount: bigint;
-    protocolVault: string;
+    vault: string;
     protocolAmount: bigint;
   };
 }

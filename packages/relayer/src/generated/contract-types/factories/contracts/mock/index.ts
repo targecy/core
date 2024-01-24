@@ -3,4 +3,5 @@
 /* eslint-disable */
 export * as utils from "./utils";
 export { ERC20PresetFixedSupply__factory } from "./ERC20PresetFixedSupply__factory";
+export { MockExternalVaultContract__factory } from "./MockExternalVaultContract__factory";
 export { MockValidator__factory } from "./MockValidator__factory";

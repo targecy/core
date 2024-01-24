@@ -229,7 +229,7 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "budget",
+            name: "maxBudget",
             type: "uint256",
           },
           {
@@ -629,7 +629,7 @@ const _abi = [
           },
           {
             internalType: "address",
-            name: "protocolVault",
+            name: "vault",
             type: "address",
           },
           {
@@ -798,7 +798,7 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212207a95cefb14f84410601ea0443b19d1ad581ed2b2ce91b9f5e73b1bfeb9065e9c64736f6c634300080a0033";
+  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220657c1973bd2203950cc5cb0d0f5ae0e1238049b939b66c2c95db8fdd7d6f831764736f6c634300080a0033";
 
 type TargecyEventsConstructorParams =
   | [signer?: Signer]
