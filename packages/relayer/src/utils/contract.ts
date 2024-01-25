@@ -8,7 +8,7 @@ import { hostname } from 'os';
 import * as abi from '../generated/abis/Targecy.json';
 
 export const getSettings = () => {
-  const env = process.env.NODE_ENV ?? 'staging';
+  const env = process.env.NODE_ENV;
 
   switch (env) {
     case 'development':

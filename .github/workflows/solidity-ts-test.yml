@@ -23,6 +23,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run tests in package/solidity-ts
-        run: cd packages/solidity-ts && yarn test
+        working-directory: packages/solidity-ts
+        run: yarn test
         env:
           PRIVATE_KEY: ${{ vars.PRIVATE_KEY }}

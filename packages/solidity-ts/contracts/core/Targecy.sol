@@ -53,11 +53,11 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     emit TargecyEvents.AdminRemoved(targecyAdmin);
   }
 
-  function setvalidator(address _validator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setValidator(address _validator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     validator = _validator;
   }
 
-  function setvault(address _vault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setVault(address _vault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     vault = _vault;
   }
 
@@ -69,7 +69,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultClickPrice = _defaultClickPrice;
   }
 
-  function setrelayer(address _relayer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+  function setRelayer(address _relayer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     relayer = _relayer;
   }
 
