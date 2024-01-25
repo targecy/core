@@ -299,8 +299,7 @@ export const initializeData = async () => {
       metadata: {
         title: 'Explore Ethereum Ecosystem',
         description: 'Ethereum is the most actively used blockchain.',
-        image:
-          'https://statics.ambcrypto.com/wp-content/uploads/2023/08/ambcrypto_Prompt_Enter_the_Crypto_Skies_Ethereum_Soars_Above_Si_014291ef-850a-4bce-ad0c-67624525fbca.jpg',
+        image: 'https://bafkreied5kebp57wdi3qo5ijvszejsnqa5swbpkfbb22yfj27rbpoedw5u.ipfs.nftstorage.link/',
       },
       audiencesIds: [audiences.findIndex((group) => group.metadata.title === 'Active on ethereum') + 1],
       budget: 1000000n,
