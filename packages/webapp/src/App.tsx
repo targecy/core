@@ -1,3 +1,4 @@
+import { Oxygen } from 'next/font/google';
 import { useTranslation } from 'next-i18next';
 import { PropsWithChildren, useEffect } from 'react';
 
@@ -13,6 +14,18 @@ import {
   toggleNavbar,
   toggleSemidark,
 } from '~/store/themeConfigSlice';
+
+/* const nunito = Nunito({
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  subsets: ['latin'],
+});*/
+
+const oxygen = Oxygen({
+  weight: ['400', '700'],
+  display: 'swap',
+  subsets: ['latin'],
+});
 
 function App({ children }: PropsWithChildren) {
   const themeConfig = useAppSelector((state: RootState) => state.themeConfig);
@@ -48,7 +61,7 @@ function App({ children }: PropsWithChildren) {
     <div
       className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${
         themeConfig.rtlClass
-      } main-section relative font-oxygen text-sm font-normal antialiased`}>
+      } main-section relative ${oxygen.className} text-sm font-normal antialiased`}>
       {children}
     </div>
   );
