@@ -1,6 +1,7 @@
 {
   "files.exclude": {
     "**/.git": true,
+    "**/.next": true,
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
@@ -13,6 +14,7 @@
     "**/bin/": true,
     "**/build/": true,
     "**/build/**/*": true,
+    "**/*.tsbuildinfo": true,
     "**/debug/": true,
     "**/dist/": true,
     "**/obj": true,
@@ -26,6 +28,7 @@
   },
   "search.exclude": {
     "**/.git": true,
+    "**/.next": true,
     "**/.svn": true,
     "**/.hg": true,
     "**/CVS": true,
@@ -38,6 +41,7 @@
     "**/bin/": true,
     "**/build/": true,
     "**/build/**/*": true,
+    "**/*.tsbuildinfo": true,
     "**/debug/": true,
     "**/dist/": true,
     "**/obj": true,
@@ -48,7 +52,8 @@
     "**/yarn-error.log": true,
     "**/.yalc": true,
     "**/.yarn": true,
-    "yarn.lock": true
+    "yarn.lock": true,
+    "**/generated/": true
   },
   "explorerExclude.backup": null,
   "eslint.debug": true,

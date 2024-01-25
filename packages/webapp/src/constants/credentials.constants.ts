@@ -1,4 +1,4 @@
-import { CredentialStatusType, W3CCredential } from '@0xpolygonid/js-sdk';
+import { CredentialStatusType, type W3CCredential } from '@0xpolygonid/js-sdk';
 
 export const TEST_CREDENTIAL: Partial<W3CCredential> = {
   id: 'TEST_ID',
