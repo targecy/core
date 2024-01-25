@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
@@ -135,7 +136,13 @@ const Header = () => {
         <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
           <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
             <Link href="https://targecy.xyz" target="_blank" className="main-logo flex shrink-0 items-center">
-              <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/images/logo.svg" alt="logo" />
+              <Image
+                width={288}
+                height={274}
+                className="inline w-8 ltr:-ml-1 rtl:-mr-1"
+                src="/images/logo.svg"
+                alt="logo"
+              />
               <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
                 TARGECY
               </span>

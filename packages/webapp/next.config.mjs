@@ -18,6 +18,20 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.ipfs.nftstorage.link' },
+      {
+        // This was the original image in the seed when the Ad Editor asked for the image url.
+        // We should remove it in the future.
+        protocol: 'https',
+        hostname: 'statics.ambcrypto.com',
+        pathname:
+          '/wp-content/uploads/2023/08/ambcrypto_Prompt_Enter_the_Crypto_Skies_Ethereum_Soars_Above_Si_014291ef-850a-4bce-ad0c-67624525fbca.jpg',
+      },
+    ],
+  },
+
   webpack: (config, { dev, isServer }) => {
     config.resolve.alias = {
       ...config.resolve.alias,

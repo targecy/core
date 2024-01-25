@@ -1,4 +1,5 @@
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -94,7 +95,13 @@ const AdDetailPage = () => {
           <div className="grid grid-cols-4 gap-4">
             <div className="col-span-3 grid grid-cols-3 gap-2">
               <div className="col-span-1">
-                <img src={metadata.image} className="h-[250px] w-[300px] object-contain"></img>
+                <Image
+                  width={300}
+                  height={250}
+                  src={metadata.image || ''}
+                  className="h-[250px] w-[300px] object-contain"
+                  alt={metadata.title || 'Ad image'}
+                />
               </div>
               <div className="col-span-2 p-4">
                 <label className="mb-1 text-2xl text-black dark:text-white">{metadata.title}</label>

@@ -1,5 +1,6 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
 import { Typography } from 'antd';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -28,7 +29,7 @@ export default function Beta() {
   return (
     <div className=" w-full justify-center ">
       <div className="flex min-h-screen w-full flex-col items-center justify-center gap-3  pb-40">
-        <img className="m-5 w-24 flex-none opacity-80 " src="/images/logo.svg" alt="logo" />
+        <Image width={96} height={274} className="m-5 w-24 flex-none opacity-80 " src="/images/logo.svg" alt="logo" />
 
         <Typography className="text-bold bg-gradient-to-tr from-gray-800 to-violet-500 bg-clip-text text-3xl  text-transparent  lg:text-6xl xl:text-8xl">
           The revolution starts here.
