@@ -886,16 +886,16 @@ describe('Tests', function () {
       expect(targecy.connect(adminWithProvider).setAdmin(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setAdmin);
     });
     it('Only admins can set ZKProofs Validator', async () => {
-      await expect(targecy.connect(userWithProvider).setvalidator(ZeroAddress)).to.be.reverted;
-      expect(targecy.connect(adminWithProvider).setvalidator(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setvalidator);
+      await expect(targecy.connect(userWithProvider).setValidator(ZeroAddress)).to.be.reverted;
+      expect(targecy.connect(adminWithProvider).setValidator(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setValidator);
     });
     it('Only admins can set Protocol Vault', async () => {
-      await expect(targecy.connect(userWithProvider).setvault(ZeroAddress)).to.be.reverted;
-      expect(targecy.connect(adminWithProvider).setvault(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setvault);
+      await expect(targecy.connect(userWithProvider).setVault(ZeroAddress)).to.be.reverted;
+      expect(targecy.connect(adminWithProvider).setVault(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setVault);
     });
     it('Only admins can set relayer address', async () => {
-      await expect(targecy.connect(userWithProvider).setrelayer(ZeroAddress)).to.be.reverted;
-      expect(targecy.connect(adminWithProvider).setrelayer(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setrelayer);
+      await expect(targecy.connect(userWithProvider).setRelayer(ZeroAddress)).to.be.reverted;
+      expect(targecy.connect(adminWithProvider).setRelayer(ZeroAddress)).to.be.satisfy(targecy.connect(adminWithProvider).setRelayer);
     });
   });
 });
