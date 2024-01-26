@@ -15,12 +15,6 @@ import {
   toggleSemidark,
 } from '~/store/themeConfigSlice';
 
-/* const nunito = Nunito({
-  weight: ['400', '500', '600', '700', '800'],
-  display: 'swap',
-  subsets: ['latin'],
-});*/
-
 const oxygen = Oxygen({
   weight: ['400', '700'],
   display: 'swap',

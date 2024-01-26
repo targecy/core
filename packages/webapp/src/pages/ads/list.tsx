@@ -17,13 +17,13 @@ const abi = require('../../generated/abis/Targecy.json');
 const AdsList = () => {
   const router = useRouter();
   const { address } = useWallet();
-  const data = useGetAdsByAdvertiserQuery({ advertiserId: address?.toLowerCase() ?? '' });
+  const results = useGetAdsByAdvertiserQuery({ advertiserId: address?.toLowerCase() ?? '' });
 
   useInterval(() => {
-    data.refetch();
+    results.refetch();
   }, 3000);
 
-  const ads = data?.data?.ads;
+  const ads = results?.data?.ads;
 
   const { writeAsync: deleteAdAsync } = useContractWrite({
     address: targecyContractAddress,
