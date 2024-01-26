@@ -1,0 +1,29 @@
+name: Solidity-TS Test
+
+on:
+  pull_request:
+    paths:
+      - 'packages/solidity-ts/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: Preview
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'yarn' # This automatically caches and restores Yarn dependencies
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run tests in package/solidity-ts
+        working-directory: packages/solidity-ts
+        run: yarn test
+        env:
+          PRIVATE_KEY: ${{ vars.PRIVATE_KEY }}

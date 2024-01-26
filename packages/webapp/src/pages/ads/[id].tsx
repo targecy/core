@@ -220,22 +220,12 @@ const AdDetailPage = () => {
               <label className="text-md text-dark dark:text-white"> Budget</label>
               <div className="space-between flex w-full flex-row gap-5">
                 <div className="flex-col">
-                  <label className="mb-3 text-xl text-secondary"> Total Budget </label>
+                  <label className="mb-3 text-xl text-secondary"> Maximum Budget </label>
                 </div>
                 <div className="flex-col">
-                  <label className="mb-3 text-xl text-black dark:text-white">{ad?.totalBudget}</label>
+                  <label className="mb-3 text-xl text-black dark:text-white">{ad?.maxBudget}</label>
                 </div>
               </div>
-
-              <div className="space-between flex w-full flex-row gap-5">
-                <div className="flex-col">
-                  <label className="mb-3 text-xl text-secondary"> Remaining Budget </label>
-                </div>
-                <div className="flex-col">
-                  <label className="mb-3 text-xl text-black dark:text-white">{ad?.remainingBudget}</label>
-                </div>
-              </div>
-
               <div className="space-between flex w-full flex-row gap-5">
                 <div className="flex-col">
                   <label className="mb-3 text-xl text-secondary"> Maximum {attributionLabel}s per day </label>
@@ -284,16 +274,6 @@ const AdDetailPage = () => {
                 </div>
                 <div className="flex-col">
                   <label className="mb-1 text-xl text-black dark:text-white">{ad?.consumptions}</label>
-                </div>
-              </div>
-              <div className="space-between flex w-full flex-row gap-5">
-                <div className="flex-col">
-                  <label className="mb-1 text-xl text-secondary"> Cost per {attributionLabel} </label>
-                </div>
-                <div className="flex-col">
-                  <label className="mb-1 text-xl text-black dark:text-white">
-                    {Number(Number(ad?.totalBudget) - Number(ad?.remainingBudget)) / Number(ad?.consumptions) || '-'}
-                  </label>
                 </div>
               </div>
 

@@ -28,7 +28,7 @@ const config: CodegenConfig = {
     },
     [`src/generated/targecy.types.ts`]: {
       schema: {
-        [process.env.SUBGRAPH_URL ?? '']: {
+        [`${process.env.TARGECY_SUBGRAPH_URL}/${process.env.TARGECY_SUBGRAPH_VERSION}`]: {
           headers: {
             'content-type': 'application/json',
           },

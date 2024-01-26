@@ -6,13 +6,11 @@ import { DataTypes } from "../libraries/DataTypes.sol";
 import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
 interface ITargecy {
-  function setZKProofsValidator(address _zkProofsValidator) external;
+  function setValidator(address _validator) external;
 
-  function setProtocolVault(address _protocolVault) external;
+  function setVault(address _vault) external;
 
-  function setSegment(DataTypes.Segment memory _segment) external;
-
-  function editSegment(uint256 audienceId, DataTypes.Segment memory _segment) external;
+  function setSegment(uint256 audienceIdReceived, DataTypes.Segment memory _segment) external;
 
   function deleteSegment(uint256 audienceId) external;
 
@@ -24,23 +22,25 @@ interface ITargecy {
 
   function setDefaultIssuer(uint256 _defaultIssuer) external;
 
-  function createAd(DataTypes.NewAd calldata ad) external payable;
+  function setRelayer(address _relayer) external;
+
+  function fundAdvertiserBudget(address advertiser, uint256 amount) external;
+
+  function withdrawAdvertiserBudget(uint256 amount) external;
 
   function pauseAd(uint256 adId) external;
 
   function unpauseAd(uint256 adId) external;
 
-  function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable;
+  function setAd(uint256 adIdReceived, DataTypes.NewAd calldata ad) external payable;
 
   function deleteAd(uint256 adId) external;
 
-  function consumeAd(uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, DataTypes.EIP712Signature calldata targecySig) external;
+  function consumeAd(uint256 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes calldata actionParams) external payable;
 
-  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external;
+  function consumeAdViaRelayer(address viewer, uint256 adId, address publisher, DataTypes.ZKProofs calldata zkProofs, bytes calldata actionParams) external payable;
 
-  function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external;
-
-  function editAudience(uint256 audienceId, string calldata metadataURI, uint256[] calldata audienceIds) external;
+  function setAudience(uint256 audienceIdReceived, string calldata metadataURI, uint256[] calldata audienceIds) external;
 
   function deleteAudience(uint256 audienceId) external;
 

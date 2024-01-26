@@ -7,12 +7,13 @@ import { useAsync } from 'react-use';
 import { useContractRead } from 'wagmi';
 
 import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
-import * as abi from '../generated/abis/Targecy.json';
+import abi from '../generated/abis/Targecy.json';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { env } from '~/env.mjs';
 import {
   useGetAdvertiserQuery,
+  useGetBudgetQuery,
   useGetLastAdsQuery,
   useGetLastAudiencesQuery,
   useGetLastSegmentsQuery,
@@ -51,7 +52,7 @@ export const Home = () => {
   const { data: totalConsumptionsData } = useContractRead({
     address: targecyContractAddress,
     abi,
-    functionName: 'totalConsumptions',
+    functionName: 'totalconsumptions',
   });
   const totalConsumptions = totalConsumptionsData?.toString() ?? 0;
 
@@ -142,6 +143,10 @@ export const Home = () => {
     (Number(advertiserData?.advertiser?.impressions) || 0) +
     (Number(advertiserData?.advertiser?.clicks) || 0) +
     (Number(advertiserData?.advertiser?.conversions) || 0);
+
+  const { data: budget } = useGetBudgetQuery({
+    id: wallet.address || '',
+  });
 
   if (!mounted) return <></>;
 
@@ -349,7 +354,7 @@ export const Home = () => {
                     <div>
                       <div>
                         <div>Remaining Budget</div>
-                        <div className="text-lg text-secondary">{advertiserData?.advertiser?.remainingBudget || 0}</div>
+                        <div className="text-lg text-secondary">{budget?.budget?.remainingBudget || 0}</div>
                       </div>
                     </div>
 
@@ -368,8 +373,7 @@ export const Home = () => {
                         <div>Cost per any interaction</div>
                         <div className="text-lg text-white dark:text-white ">
                           {totalInteractions > 0
-                            ? (Number(advertiserData?.advertiser?.totalBudget) -
-                                Number(advertiserData?.advertiser?.remainingBudget)) /
+                            ? (Number(budget?.budget?.totalBudget) - Number(budget?.budget?.remainingBudget)) /
                               totalInteractions
                             : '-'}{' '}
                         </div>

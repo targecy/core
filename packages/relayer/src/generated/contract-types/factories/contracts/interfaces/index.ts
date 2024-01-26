@@ -2,4 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export { ICircuitValidator__factory } from "./ICircuitValidator__factory";
+export { IERC20__factory } from "./IERC20__factory";
+export { IERC20Metadata__factory } from "./IERC20Metadata__factory";
 export { ITargecy__factory } from "./ITargecy__factory";

@@ -32,11 +32,18 @@ export const getSettings = () => {
   }
 };
 
+export const getSigner = () => {
+  const { provider } = getSettings();
+  if (!process.env.PRIVATE_KEY) throw new Error('Set up wallet private key');
+  const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+  return signer;
+};
+
+console.log("Signer's address: " + getSigner().address);
+
 export const getContract = () => {
   const { address, provider, network } = getSettings();
-  if (!process.env.WALLET_PRIVATE_KEY) throw new Error('Set up wallet private key');
-  console.log('Wallet private key: ', process.env);
-  const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY, provider);
+  const signer = getSigner();
   const targecy = new Targecy__factory(signer).attach(address) as Targecy;
   console.debug(
     `Targecy's address: ${address} | Wallet's address: ${signer.address} | Provider ready: ${provider.ready} | Network: ${network}`

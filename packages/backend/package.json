@@ -1,10 +1,11 @@
 {
   "name": "@targecy/backend",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "trpc-api-export": "tsup --config trpc-api-export/builder/tsup.config.ts && npm run format-fix",
     "build": "yarn graphql-codegen && shx rm -rf build && tsc -p tsconfig.json",
     "dev": "yarn graphql-codegen && concurrently \"ts-node-dev --watch ./src,../sdk/src -r tsconfig-paths/register src/index.ts\" \"yarn graphql-codegen-watch\"",
+    "export-types": "rm -rf types && rm -rf ../sdk/src/generated/types/backend && npx tsc --declaration --outDir types && cp -r types/src/trpc ../sdk/src/generated/types/backend && rm -rf types",
     "start": "node build/src/index.js",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src",
     "lint:fix": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore --fix ./src ",
@@ -44,6 +45,7 @@
     "rfc4648": "^1.5.3",
     "snarkjs": "^0.7.2",
     "superjson": "1.13.1",
+    "typescript": "5.2.2",
     "viem": "^1.11.0",
     "zod": "3.22.2"
   },
@@ -72,8 +74,7 @@
     "ts-node": "10.9.1",
     "ts-node-dev": "2.0.0",
     "tsconfig-paths": "4.2.0",
-    "tsup": "7.2.0",
-    "typescript": "5.2.2"
+    "tsup": "7.2.0"
   },
   "prisma": {
     "seed": "ts-node ./prisma/seed.ts"

@@ -1,10 +1,9 @@
-import { BaseQueryFn } from '@reduxjs/toolkit/dist/query';
-import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
 import { HYDRATE } from 'next-redux-wrapper';
 
 import { environment } from '../utils/context';
+import { GetAllAdsDocument } from '../generated/graphql.types';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
@@ -14,52 +13,39 @@ const getGraphQLUrl = (env: environment) => {
     case 'development':
       return 'http://localhost:8000/subgraphs/name/targecy';
     case 'preview':
-      return 'https://api.studio.thegraph.com/query/58687/targecy_test/version/latest';
+      return 'https://api.studio.thegraph.com/query/58687/targecy-mumbai/version/latest';
     case 'production':
-      return 'https://api.studio.thegraph.com/query/58687/targecy_test/version/latest';
+      throw new Error('Not implemented prod subgraph.');
     default:
       throw new Error('Invalid environment');
   }
 };
 
-export type Build = EndpointBuilder<
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  BaseQueryFn<any, unknown, unknown, {}, {}>,
-  (typeof baseApiTagTypes)[number],
-  typeof baseApiReducerPath
->;
+export const graphqlBaseQuery: BaseQueryFn = async (args, api) => {
+  const { document, variables } = args;
+  const state:
+    | {
+        environment: {
+          environment: environment;
+        };
+      }
+    | undefined = api.getState() as any;
+  const env = state?.environment.environment ?? 'development';
 
-export const graphqlBaseQuery =
-  (env: environment): BaseQueryFn =>
-  async ({ document, variables }) => {
-    const baseUrl = getGraphQLUrl(env);
+  const baseUrl = getGraphQLUrl(env);
 
-    const graphQLClient = new GraphQLClient(baseUrl, {});
+  const graphQLClient = new GraphQLClient(baseUrl, {});
 
-    const result = await graphQLClient.request(document, variables);
+  const result = await graphQLClient.request(document, variables);
 
-    return { data: result };
-  };
-
-export const testEndpoint = (build: Build): any =>
-  build.query<any, any>({
-    queryFn: () => {
-      return Promise.resolve({ data: 'test' });
-    },
-  });
+  return { data: result };
+};
 
 export const api = createApi({
-  baseQuery: graphqlBaseQuery('production'), // @todo (Martin): Check
+  baseQuery: graphqlBaseQuery,
   reducerPath: baseApiReducerPath,
   tagTypes: baseApiTagTypes,
-  extractRehydrationInfo(action, { reducerPath }) {
-    if (action.type === HYDRATE) {
-      return action.payload[reducerPath];
-    }
-  },
-  endpoints: (build) => ({
-    test: testEndpoint(build),
-  }),
+  endpoints: (build) => ({}),
 });
 
-export const { useTestQuery } = api;
+export const {} = api;

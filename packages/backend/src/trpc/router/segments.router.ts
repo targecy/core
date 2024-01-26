@@ -45,7 +45,6 @@ export const segmentRouter = router({
     .query(async ({ ctx, input }) => {
       // Generate database conditions to look for issued credentials
       const predicate = getPrismaPredicateForCredentialsFromSegment({
-        validator: '',
         metadataURI: '',
         id: '',
         issuer: {

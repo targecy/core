@@ -12,13 +12,19 @@ type Ad @entity {
   blacklistedPublishers: [Publisher!]! # address[]
   blacklistedWeekdays: [BigInt!]! # uint256[]
   # Budget
-  totalBudget: BigInt! # uint256
-  remainingBudget: BigInt! # uint256
+  maxBudget: BigInt! # uint256
+  currentBudget: BigInt! # uint256
   maxConsumptionsPerDay: BigInt! # uint256
   maxPricePerConsumption: BigInt! # uint256
   # Statistics
   consumptions: BigInt! # uint256
   consumptionsPerDay: [ConsumptionsPerDay!]! # uint256[]
+}
+
+type Budget @entity {
+  id: String! # advertiser address
+  totalBudget: BigInt! # uint256
+  remainingBudget: BigInt! # uint256
 }
 
 type ConsumptionsPerDay @entity {
@@ -38,8 +44,7 @@ type Audience @entity {
 type Segment @entity {
   id: ID! # uint256
   metadataURI: String! # string
-  issuer: Issuer! # address
-  validator: String! # address
+  issuer: BigInt!
   querySchema: BigInt! # uint256
   querySlotIndex: BigInt! # uint256
   queryOperator: BigInt! # uint256
@@ -50,16 +55,11 @@ type Segment @entity {
 type Advertiser @entity {
   id: String! # address
   # Statistics
-  totalBudget: BigInt! # uint256
-  remainingBudget: BigInt! # uint256
   adsQuantity: BigInt! # uint256
   impressions: BigInt! # uint256
   clicks: BigInt! # uint256
   conversions: BigInt! # uint256
-}
-
-type Issuer @entity {
-  id: String! # address
+  budget: Budget! # Budget
 }
 
 type Publisher @entity {

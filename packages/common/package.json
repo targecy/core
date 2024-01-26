@@ -1,5 +1,5 @@
 {
-  "name": "@scaffold-eth/common",
+  "name": "@targecy/common",
   "version": "0.0.0",
   "author": "Shravan Sunder<shravan.sunder.dev@gmail.com>",
   "description": "Common package to be used by solidity-ts and webapp-ts in the scaffold-eth-typescript workspace",

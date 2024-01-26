@@ -5,6 +5,7 @@ import { env, exit } from 'process';
 // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-var-requires
 require('dotenv').config();
 
+import { ZeroAddress } from 'ethers';
 import { ethers } from 'hardhat';
 
 import { hostname } from 'os';
@@ -131,7 +132,7 @@ export async function seed(network: string, force = false): Promise<void> {
     segments[index].metadataURI = uri;
 
     // Call smart contract function to create a segment
-    await targecy.setSegment({
+    await targecy.setSegment(0, {
       metadataURI: segment.metadataURI ?? '',
       issuer: ethers.ZeroAddress, // use default
       query: {
@@ -153,7 +154,7 @@ export async function seed(network: string, force = false): Promise<void> {
     audiences[index].metadataURI = uri;
 
     // Call smart contract function to create a target group
-    await targecy.createAudience((audience.metadataURI as string) ?? '', audience.segmentIds as number[]);
+    await targecy.setAudience(0, (audience.metadataURI as string) ?? '', audience.segmentIds as number[]);
 
     console.log(`Target group '${audience.metadata.title}' created`);
   }
@@ -165,22 +166,21 @@ export async function seed(network: string, force = false): Promise<void> {
     ads[index].metadataURI = uri;
 
     // Call smart contract function to create an ad
-    await targecy.createAd(
-      {
-        metadataURI: ad.metadataURI ?? '',
-        attribution: ad.attribution,
-        active: true,
-        startingTimestamp: ad.startingTimestamp,
-        endingTimestamp: ad.endingTimestamp,
-        audienceIds: ad.audiencesIds,
-        blacklistedPublishers: ad.blacklistedPublishers,
-        blacklistedWeekdays: ad.blacklistedWeekdays,
-        budget: ad.budget,
-        maxPricePerConsumption: ad.maxPricePerConsumption,
-        maxConsumptionsPerDay: ad.maxConsumptionsPerDay,
-      },
-      { value: ad.budget }
-    );
+    await targecy.setAd(0, {
+      metadataURI: ad.metadataURI ?? '',
+      attribution: ad.attribution,
+      active: true,
+      abi: '',
+      target: ZeroAddress,
+      startingTimestamp: ad.startingTimestamp,
+      endingTimestamp: ad.endingTimestamp,
+      audienceIds: ad.audiencesIds,
+      blacklistedPublishers: ad.blacklistedPublishers,
+      blacklistedWeekdays: ad.blacklistedWeekdays,
+      maxBudget: ad.budget,
+      maxPricePerConsumption: ad.maxPricePerConsumption,
+      maxConsumptionsPerDay: ad.maxConsumptionsPerDay,
+    });
 
     console.log(`Ad '${ad.metadata.title}' created`);
   }
@@ -192,10 +192,10 @@ export async function seed(network: string, force = false): Promise<void> {
       console.log('http://http://localhost:8000/subgraphs/name/targecy/graphql');
       break;
     case 'mumbai':
-      console.log('https://api.studio.thegraph.com/query/58687/targecy_test/version/latest');
+      console.log('https://api.studio.thegraph.com/query/58687/targecy-mumbai/version/latest');
       break;
     case 'matic':
-      console.log('https://api.studio.thegraph.com/query/58687/targecy_test/version/latest');
+      throw new Error('Set up config for MATIC network');
       break;
     default:
       console.log('Network not supported');

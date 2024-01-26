@@ -4,5 +4,6 @@
 !generated/config
 .openzeppelin
 scripts/addresses
+tests/hardhat-tests/addresses.json
 
 deployments/localhost

@@ -1,12 +1,12 @@
 {
-  "name": "@scaffold-eth/subgraph",
+  "name": "@targecy/subgraph",
   "license": "UNLICENSED",
   "version": "1.0.0",
   "scripts": {
     "prepare": "mustache config/config.json src/subgraph.template.yaml > subgraph.yaml",
     "codegen": "graph codegen",
     "build": "graph build",
-    "test": "graph test",
+    "test": "graph test ./tests/subgraph.test.ts",
     "graph-version": "graph -v",
     "create-local": "graph create --node http://localhost:8020/ targecy",
     "remove-local": "graph remove --node http://localhost:8020/ targecy",

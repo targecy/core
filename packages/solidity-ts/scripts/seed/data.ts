@@ -18,8 +18,6 @@ const Operators = {
 const stringToBigInt = async (str: string): Promise<bigint> => await MtValue.mkValueString(new PoseidonHasher(), str);
 const stringToBigIntArray = async (str: string, padding: number): Promise<bigint[]> => prepareCircuitArrayValues([await stringToBigInt(str)], padding);
 
-// @todo (martin): hash title to set custom id easy to find?
-
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const initializeData = async () => {
   const segments: Array<{

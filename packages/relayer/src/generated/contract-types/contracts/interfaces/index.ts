@@ -2,4 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { ICircuitValidator } from "./ICircuitValidator";
+export type { IERC20 } from "./IERC20";
+export type { IERC20Metadata } from "./IERC20Metadata";
 export type { ITargecy } from "./ITargecy";

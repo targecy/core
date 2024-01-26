@@ -6,26 +6,23 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
-import { useContractRead, useContractWrite } from 'wagmi';
+import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
-import { GetAllAdsQuery, useGetAllAdsQuery } from '~/generated/graphql.types';
+import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
 const AdsList = () => {
   const router = useRouter();
-  const data = useGetAllAdsQuery();
-  const { data: adsQuantity } = useContractRead({
-    address: targecyContractAddress,
-    abi,
-    functionName: '_adId',
-  });
+  const { address } = useWallet();
+  const data = useGetAdsByAdvertiserQuery({ advertiserId: address?.toLowerCase() ?? '' });
 
   useInterval(() => {
     data.refetch();
-  }, 3000);
+  }, 2000);
 
   const ads = data?.data?.ads;
 
@@ -113,8 +110,6 @@ const AdsList = () => {
       },
     },
     { title: 'Consumptions', accessor: 'consumptions', render: (value) => value.consumptions },
-    { title: 'Remaining Budget', accessor: 'remainingBudget' },
-    { title: 'Total Budget', accessor: 'totalBudget' },
     {
       accessor: 'actions',
       title: '',
@@ -251,7 +246,6 @@ const AdsList = () => {
           borderColor="grey"
           noRecordsIcon={<div></div>}
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
-          noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
           records={ads || []}
           onRowClick={(row) => {

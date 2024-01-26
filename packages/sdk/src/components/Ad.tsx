@@ -1,10 +1,13 @@
 import { Skeleton } from 'antd';
-import { ethers } from 'ethers';
+import { ZeroAddress, ethers } from 'ethers';
 import { useContext } from 'react';
 import { Address } from 'wagmi';
 
 import { useAd } from '../hooks/useAd';
 import { environment } from '../utils/context';
+import { relayerTrpcClient } from '..';
+import { useDispatch } from 'react-redux';
+import { setEnvironment } from '../utils/environent.state';
 
 import { AdStyling } from './AdLayout';
 import { BaseAd } from './BaseAd';
@@ -12,11 +15,13 @@ import { TargecyComponent, TargecyServicesContext } from './misc';
 
 export const defaultStyling: AdStyling = {
   width: '500px',
-  height: '400px',
+  height: '300px',
   backgroundColor: '#212121',
   titleColor: '#ffffff',
   subtitleColor: '#ffffff',
-  borderRadius: '0px',
+  borderRadius: '15px',
+  boxShadow: 'gray 0px 5px 15px',
+  border: '1px solid #212121',
 };
 
 type SharedAdProps = {
@@ -62,12 +67,18 @@ export const AdComponent = (props: AdProps) => {
           impressions: 0,
           clicks: 0,
           conversions: 0,
-          totalBudget: 0,
-          remainingBudget: 0,
           adsQuantity: 0,
+          budget: {
+            totalBudget: 0,
+            remainingBudget: 0,
+            id: ZeroAddress,
+          },
         },
         id: '0',
         attribution: 0,
+        maxBudget: 0,
+        currentBudget: 0,
+        active: true,
         blacklistedPublishers: [],
         blacklistedWeekdays: [],
         consumptions: 0,
@@ -77,9 +88,7 @@ export const AdComponent = (props: AdProps) => {
         maxPricePerConsumption: 0,
         metadataURI: '',
         startingTimestamp: 0,
-        remainingBudget: 0,
         audiences: [],
-        totalBudget: 0,
       },
       metadata: {
         title: 'Are you looking for the best yield!',
@@ -93,7 +102,7 @@ export const AdComponent = (props: AdProps) => {
 
   if (isLoading) return <Skeleton style={{ width: props.styling?.width, height: props.styling?.height }}></Skeleton>;
 
-  if (!ad) return undefined;
+  if (!ad) return <p>No ads were found for you. Try again later.</p>;
 
   const {
     ad: { id },
@@ -117,7 +126,7 @@ export const Ad = (props: AdProps) => {
   if (!isValidStyling(props.styling)) {
     console.error('Invalid styling. Please review requirements.');
 
-    return <label>Invalid Configuration</label>;
+    return <p>Invalid Configuration</p>;
   }
 
   const style = { ...defaultStyling };
@@ -133,6 +142,8 @@ export const Ad = (props: AdProps) => {
           overflow: 'hidden',
           backgroundColor: style?.backgroundColor,
           borderRadius: style?.borderRadius,
+          boxShadow: style?.boxShadow,
+          border: style?.border,
         }}>
         <AdComponent env={props.env} publisher={props.publisher} isDemo={props.isDemo} styling={style} />
       </div>

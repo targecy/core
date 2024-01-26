@@ -29,14 +29,14 @@ export type Ad = {
   blacklistedWeekdays: Array<Scalars['BigInt']>;
   consumptions: Scalars['BigInt'];
   consumptionsPerDay: Array<ConsumptionsPerDay>;
+  currentBudget: Scalars['BigInt'];
   endingTimestamp: Scalars['BigInt'];
   id: Scalars['ID'];
+  maxBudget: Scalars['BigInt'];
   maxConsumptionsPerDay: Scalars['BigInt'];
   maxPricePerConsumption: Scalars['BigInt'];
   metadataURI: Scalars['String'];
-  remainingBudget: Scalars['BigInt'];
   startingTimestamp: Scalars['BigInt'];
-  totalBudget: Scalars['BigInt'];
 };
 
 
@@ -138,6 +138,14 @@ export type Ad_Filter = {
   consumptions_lte?: InputMaybe<Scalars['BigInt']>;
   consumptions_not?: InputMaybe<Scalars['BigInt']>;
   consumptions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  currentBudget?: InputMaybe<Scalars['BigInt']>;
+  currentBudget_gt?: InputMaybe<Scalars['BigInt']>;
+  currentBudget_gte?: InputMaybe<Scalars['BigInt']>;
+  currentBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  currentBudget_lt?: InputMaybe<Scalars['BigInt']>;
+  currentBudget_lte?: InputMaybe<Scalars['BigInt']>;
+  currentBudget_not?: InputMaybe<Scalars['BigInt']>;
+  currentBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   endingTimestamp?: InputMaybe<Scalars['BigInt']>;
   endingTimestamp_gt?: InputMaybe<Scalars['BigInt']>;
   endingTimestamp_gte?: InputMaybe<Scalars['BigInt']>;
@@ -154,6 +162,14 @@ export type Ad_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
+  maxBudget?: InputMaybe<Scalars['BigInt']>;
+  maxBudget_gt?: InputMaybe<Scalars['BigInt']>;
+  maxBudget_gte?: InputMaybe<Scalars['BigInt']>;
+  maxBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  maxBudget_lt?: InputMaybe<Scalars['BigInt']>;
+  maxBudget_lte?: InputMaybe<Scalars['BigInt']>;
+  maxBudget_not?: InputMaybe<Scalars['BigInt']>;
+  maxBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   maxConsumptionsPerDay?: InputMaybe<Scalars['BigInt']>;
   maxConsumptionsPerDay_gt?: InputMaybe<Scalars['BigInt']>;
   maxConsumptionsPerDay_gte?: InputMaybe<Scalars['BigInt']>;
@@ -191,14 +207,6 @@ export type Ad_Filter = {
   metadataURI_starts_with?: InputMaybe<Scalars['String']>;
   metadataURI_starts_with_nocase?: InputMaybe<Scalars['String']>;
   or?: InputMaybe<Array<InputMaybe<Ad_Filter>>>;
-  remainingBudget?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_gt?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_gte?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  remainingBudget_lt?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_lte?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_not?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   startingTimestamp?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_gt?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_gte?: InputMaybe<Scalars['BigInt']>;
@@ -207,14 +215,6 @@ export type Ad_Filter = {
   startingTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_not?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalBudget?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_gt?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_gte?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalBudget_lt?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_lte?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_not?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export type Ad_OrderBy =
@@ -225,22 +225,20 @@ export type Ad_OrderBy =
   | 'advertiser__conversions'
   | 'advertiser__id'
   | 'advertiser__impressions'
-  | 'advertiser__remainingBudget'
-  | 'advertiser__totalBudget'
   | 'attribution'
   | 'audiences'
   | 'blacklistedPublishers'
   | 'blacklistedWeekdays'
   | 'consumptions'
   | 'consumptionsPerDay'
+  | 'currentBudget'
   | 'endingTimestamp'
   | 'id'
+  | 'maxBudget'
   | 'maxConsumptionsPerDay'
   | 'maxPricePerConsumption'
   | 'metadataURI'
-  | 'remainingBudget'
-  | 'startingTimestamp'
-  | 'totalBudget';
+  | 'startingTimestamp';
 
 export type Admin = {
   __typename?: 'Admin';
@@ -280,12 +278,11 @@ export type Admin_OrderBy =
 export type Advertiser = {
   __typename?: 'Advertiser';
   adsQuantity: Scalars['BigInt'];
+  budget: Budget;
   clicks: Scalars['BigInt'];
   conversions: Scalars['BigInt'];
   id: Scalars['String'];
   impressions: Scalars['BigInt'];
-  remainingBudget: Scalars['BigInt'];
-  totalBudget: Scalars['BigInt'];
 };
 
 export type Advertiser_Filter = {
@@ -300,6 +297,27 @@ export type Advertiser_Filter = {
   adsQuantity_not?: InputMaybe<Scalars['BigInt']>;
   adsQuantity_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   and?: InputMaybe<Array<InputMaybe<Advertiser_Filter>>>;
+  budget?: InputMaybe<Scalars['String']>;
+  budget_?: InputMaybe<Budget_Filter>;
+  budget_contains?: InputMaybe<Scalars['String']>;
+  budget_contains_nocase?: InputMaybe<Scalars['String']>;
+  budget_ends_with?: InputMaybe<Scalars['String']>;
+  budget_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  budget_gt?: InputMaybe<Scalars['String']>;
+  budget_gte?: InputMaybe<Scalars['String']>;
+  budget_in?: InputMaybe<Array<Scalars['String']>>;
+  budget_lt?: InputMaybe<Scalars['String']>;
+  budget_lte?: InputMaybe<Scalars['String']>;
+  budget_not?: InputMaybe<Scalars['String']>;
+  budget_not_contains?: InputMaybe<Scalars['String']>;
+  budget_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  budget_not_ends_with?: InputMaybe<Scalars['String']>;
+  budget_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  budget_not_in?: InputMaybe<Array<Scalars['String']>>;
+  budget_not_starts_with?: InputMaybe<Scalars['String']>;
+  budget_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  budget_starts_with?: InputMaybe<Scalars['String']>;
+  budget_starts_with_nocase?: InputMaybe<Scalars['String']>;
   clicks?: InputMaybe<Scalars['BigInt']>;
   clicks_gt?: InputMaybe<Scalars['BigInt']>;
   clicks_gte?: InputMaybe<Scalars['BigInt']>;
@@ -345,32 +363,18 @@ export type Advertiser_Filter = {
   impressions_not?: InputMaybe<Scalars['BigInt']>;
   impressions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   or?: InputMaybe<Array<InputMaybe<Advertiser_Filter>>>;
-  remainingBudget?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_gt?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_gte?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  remainingBudget_lt?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_lte?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_not?: InputMaybe<Scalars['BigInt']>;
-  remainingBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalBudget?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_gt?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_gte?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
-  totalBudget_lt?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_lte?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_not?: InputMaybe<Scalars['BigInt']>;
-  totalBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
 };
 
 export type Advertiser_OrderBy =
   | 'adsQuantity'
+  | 'budget'
+  | 'budget__id'
+  | 'budget__remainingBudget'
+  | 'budget__totalBudget'
   | 'clicks'
   | 'conversions'
   | 'id'
-  | 'impressions'
-  | 'remainingBudget'
-  | 'totalBudget';
+  | 'impressions';
 
 export type Audience = {
   __typename?: 'Audience';
@@ -455,6 +459,61 @@ export type Block_Height = {
   number_gte?: InputMaybe<Scalars['Int']>;
 };
 
+export type Budget = {
+  __typename?: 'Budget';
+  id: Scalars['String'];
+  remainingBudget: Scalars['BigInt'];
+  totalBudget: Scalars['BigInt'];
+};
+
+export type Budget_Filter = {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Budget_Filter>>>;
+  id?: InputMaybe<Scalars['String']>;
+  id_contains?: InputMaybe<Scalars['String']>;
+  id_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_ends_with?: InputMaybe<Scalars['String']>;
+  id_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_gt?: InputMaybe<Scalars['String']>;
+  id_gte?: InputMaybe<Scalars['String']>;
+  id_in?: InputMaybe<Array<Scalars['String']>>;
+  id_lt?: InputMaybe<Scalars['String']>;
+  id_lte?: InputMaybe<Scalars['String']>;
+  id_not?: InputMaybe<Scalars['String']>;
+  id_not_contains?: InputMaybe<Scalars['String']>;
+  id_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  id_not_ends_with?: InputMaybe<Scalars['String']>;
+  id_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  id_not_in?: InputMaybe<Array<Scalars['String']>>;
+  id_not_starts_with?: InputMaybe<Scalars['String']>;
+  id_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  id_starts_with?: InputMaybe<Scalars['String']>;
+  id_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  or?: InputMaybe<Array<InputMaybe<Budget_Filter>>>;
+  remainingBudget?: InputMaybe<Scalars['BigInt']>;
+  remainingBudget_gt?: InputMaybe<Scalars['BigInt']>;
+  remainingBudget_gte?: InputMaybe<Scalars['BigInt']>;
+  remainingBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  remainingBudget_lt?: InputMaybe<Scalars['BigInt']>;
+  remainingBudget_lte?: InputMaybe<Scalars['BigInt']>;
+  remainingBudget_not?: InputMaybe<Scalars['BigInt']>;
+  remainingBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalBudget?: InputMaybe<Scalars['BigInt']>;
+  totalBudget_gt?: InputMaybe<Scalars['BigInt']>;
+  totalBudget_gte?: InputMaybe<Scalars['BigInt']>;
+  totalBudget_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  totalBudget_lt?: InputMaybe<Scalars['BigInt']>;
+  totalBudget_lte?: InputMaybe<Scalars['BigInt']>;
+  totalBudget_not?: InputMaybe<Scalars['BigInt']>;
+  totalBudget_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+};
+
+export type Budget_OrderBy =
+  | 'id'
+  | 'remainingBudget'
+  | 'totalBudget';
+
 export type ConsumptionsPerDay = {
   __typename?: 'ConsumptionsPerDay';
   adId: Scalars['ID'];
@@ -518,41 +577,6 @@ export type ConsumptionsPerDay_OrderBy =
   | 'adId'
   | 'consumptions'
   | 'day'
-  | 'id';
-
-export type Issuer = {
-  __typename?: 'Issuer';
-  id: Scalars['String'];
-};
-
-export type Issuer_Filter = {
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>;
-  and?: InputMaybe<Array<InputMaybe<Issuer_Filter>>>;
-  id?: InputMaybe<Scalars['String']>;
-  id_contains?: InputMaybe<Scalars['String']>;
-  id_contains_nocase?: InputMaybe<Scalars['String']>;
-  id_ends_with?: InputMaybe<Scalars['String']>;
-  id_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  id_gt?: InputMaybe<Scalars['String']>;
-  id_gte?: InputMaybe<Scalars['String']>;
-  id_in?: InputMaybe<Array<Scalars['String']>>;
-  id_lt?: InputMaybe<Scalars['String']>;
-  id_lte?: InputMaybe<Scalars['String']>;
-  id_not?: InputMaybe<Scalars['String']>;
-  id_not_contains?: InputMaybe<Scalars['String']>;
-  id_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  id_not_ends_with?: InputMaybe<Scalars['String']>;
-  id_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  id_not_in?: InputMaybe<Array<Scalars['String']>>;
-  id_not_starts_with?: InputMaybe<Scalars['String']>;
-  id_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  id_starts_with?: InputMaybe<Scalars['String']>;
-  id_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  or?: InputMaybe<Array<InputMaybe<Issuer_Filter>>>;
-};
-
-export type Issuer_OrderBy =
   | 'id';
 
 /** Defines the order direction, either ascending or descending */
@@ -693,10 +717,10 @@ export type Query = {
   advertisers: Array<Advertiser>;
   audience?: Maybe<Audience>;
   audiences: Array<Audience>;
+  budget?: Maybe<Budget>;
+  budgets: Array<Budget>;
   consumptionsPerDay?: Maybe<ConsumptionsPerDay>;
   consumptionsPerDays: Array<ConsumptionsPerDay>;
-  issuer?: Maybe<Issuer>;
-  issuers: Array<Issuer>;
   publisher?: Maybe<Publisher>;
   publishers: Array<Publisher>;
   segment?: Maybe<Segment>;
@@ -781,6 +805,24 @@ export type QueryAudiencesArgs = {
 };
 
 
+export type QueryBudgetArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryBudgetsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Budget_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Budget_Filter>;
+};
+
+
 export type QueryConsumptionsPerDayArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -796,24 +838,6 @@ export type QueryConsumptionsPerDaysArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<ConsumptionsPerDay_Filter>;
-};
-
-
-export type QueryIssuerArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QueryIssuersArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Issuer_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Issuer_Filter>;
 };
 
 
@@ -855,14 +879,13 @@ export type QuerySegmentsArgs = {
 export type Segment = {
   __typename?: 'Segment';
   id: Scalars['ID'];
-  issuer: Issuer;
+  issuer: Scalars['BigInt'];
   metadataURI: Scalars['String'];
   queryCircuitId: Scalars['String'];
   queryOperator: Scalars['BigInt'];
   querySchema: Scalars['BigInt'];
   querySlotIndex: Scalars['BigInt'];
   queryValue: Array<Scalars['BigInt']>;
-  validator: Scalars['String'];
 };
 
 export type Segment_Filter = {
@@ -877,27 +900,14 @@ export type Segment_Filter = {
   id_lte?: InputMaybe<Scalars['ID']>;
   id_not?: InputMaybe<Scalars['ID']>;
   id_not_in?: InputMaybe<Array<Scalars['ID']>>;
-  issuer?: InputMaybe<Scalars['String']>;
-  issuer_?: InputMaybe<Issuer_Filter>;
-  issuer_contains?: InputMaybe<Scalars['String']>;
-  issuer_contains_nocase?: InputMaybe<Scalars['String']>;
-  issuer_ends_with?: InputMaybe<Scalars['String']>;
-  issuer_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  issuer_gt?: InputMaybe<Scalars['String']>;
-  issuer_gte?: InputMaybe<Scalars['String']>;
-  issuer_in?: InputMaybe<Array<Scalars['String']>>;
-  issuer_lt?: InputMaybe<Scalars['String']>;
-  issuer_lte?: InputMaybe<Scalars['String']>;
-  issuer_not?: InputMaybe<Scalars['String']>;
-  issuer_not_contains?: InputMaybe<Scalars['String']>;
-  issuer_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  issuer_not_ends_with?: InputMaybe<Scalars['String']>;
-  issuer_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  issuer_not_in?: InputMaybe<Array<Scalars['String']>>;
-  issuer_not_starts_with?: InputMaybe<Scalars['String']>;
-  issuer_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  issuer_starts_with?: InputMaybe<Scalars['String']>;
-  issuer_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  issuer?: InputMaybe<Scalars['BigInt']>;
+  issuer_gt?: InputMaybe<Scalars['BigInt']>;
+  issuer_gte?: InputMaybe<Scalars['BigInt']>;
+  issuer_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  issuer_lt?: InputMaybe<Scalars['BigInt']>;
+  issuer_lte?: InputMaybe<Scalars['BigInt']>;
+  issuer_not?: InputMaybe<Scalars['BigInt']>;
+  issuer_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
   metadataURI?: InputMaybe<Scalars['String']>;
   metadataURI_contains?: InputMaybe<Scalars['String']>;
   metadataURI_contains_nocase?: InputMaybe<Scalars['String']>;
@@ -969,39 +979,17 @@ export type Segment_Filter = {
   queryValue_not?: InputMaybe<Array<Scalars['BigInt']>>;
   queryValue_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
   queryValue_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
-  validator?: InputMaybe<Scalars['String']>;
-  validator_contains?: InputMaybe<Scalars['String']>;
-  validator_contains_nocase?: InputMaybe<Scalars['String']>;
-  validator_ends_with?: InputMaybe<Scalars['String']>;
-  validator_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  validator_gt?: InputMaybe<Scalars['String']>;
-  validator_gte?: InputMaybe<Scalars['String']>;
-  validator_in?: InputMaybe<Array<Scalars['String']>>;
-  validator_lt?: InputMaybe<Scalars['String']>;
-  validator_lte?: InputMaybe<Scalars['String']>;
-  validator_not?: InputMaybe<Scalars['String']>;
-  validator_not_contains?: InputMaybe<Scalars['String']>;
-  validator_not_contains_nocase?: InputMaybe<Scalars['String']>;
-  validator_not_ends_with?: InputMaybe<Scalars['String']>;
-  validator_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
-  validator_not_in?: InputMaybe<Array<Scalars['String']>>;
-  validator_not_starts_with?: InputMaybe<Scalars['String']>;
-  validator_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
-  validator_starts_with?: InputMaybe<Scalars['String']>;
-  validator_starts_with_nocase?: InputMaybe<Scalars['String']>;
 };
 
 export type Segment_OrderBy =
   | 'id'
   | 'issuer'
-  | 'issuer__id'
   | 'metadataURI'
   | 'queryCircuitId'
   | 'queryOperator'
   | 'querySchema'
   | 'querySlotIndex'
-  | 'queryValue'
-  | 'validator';
+  | 'queryValue';
 
 export type Subscription = {
   __typename?: 'Subscription';
@@ -1015,10 +1003,10 @@ export type Subscription = {
   advertisers: Array<Advertiser>;
   audience?: Maybe<Audience>;
   audiences: Array<Audience>;
+  budget?: Maybe<Budget>;
+  budgets: Array<Budget>;
   consumptionsPerDay?: Maybe<ConsumptionsPerDay>;
   consumptionsPerDays: Array<ConsumptionsPerDay>;
-  issuer?: Maybe<Issuer>;
-  issuers: Array<Issuer>;
   publisher?: Maybe<Publisher>;
   publishers: Array<Publisher>;
   segment?: Maybe<Segment>;
@@ -1103,6 +1091,24 @@ export type SubscriptionAudiencesArgs = {
 };
 
 
+export type SubscriptionBudgetArgs = {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars['ID'];
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionBudgetsArgs = {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Budget_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<Budget_Filter>;
+};
+
+
 export type SubscriptionConsumptionsPerDayArgs = {
   block?: InputMaybe<Block_Height>;
   id: Scalars['ID'];
@@ -1118,24 +1124,6 @@ export type SubscriptionConsumptionsPerDaysArgs = {
   skip?: InputMaybe<Scalars['Int']>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<ConsumptionsPerDay_Filter>;
-};
-
-
-export type SubscriptionIssuerArgs = {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars['ID'];
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptionIssuersArgs = {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<Issuer_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars['Int']>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Issuer_Filter>;
 };
 
 
@@ -1207,33 +1195,33 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | 'deny';
 
-export type SegmentFragment = { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } };
+export type SegmentFragment = { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, issuer: any, metadataURI: string };
 
 export type GetAllSegmentsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } }> };
+export type GetAllSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, issuer: any, metadataURI: string }> };
 
 export type GetSegmentQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSegmentQuery = { __typename?: 'Query', segment?: { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } } | null };
+export type GetSegmentQuery = { __typename?: 'Query', segment?: { __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, issuer: any, metadataURI: string } | null };
 
 export type GetSegmentsQueryVariables = Exact<{
   ids: Array<Scalars['ID']> | Scalars['ID'];
 }>;
 
 
-export type GetSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } }> };
+export type GetSegmentsQuery = { __typename?: 'Query', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, issuer: any, metadataURI: string }> };
 
 export type GetSegmentForAudienceQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetSegmentForAudienceQuery = { __typename?: 'Query', audience?: { __typename?: 'Audience', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, metadataURI: string, validator: string, issuer: { __typename?: 'Issuer', id: string } }> } | null };
+export type GetSegmentForAudienceQuery = { __typename?: 'Query', audience?: { __typename?: 'Audience', segments: Array<{ __typename?: 'Segment', querySchema: any, querySlotIndex: any, queryValue: Array<any>, queryCircuitId: string, queryOperator: any, id: string, issuer: any, metadataURI: string }> } | null };
 
 export const SegmentFragmentDoc = gql`
     fragment Segment on Segment {
@@ -1243,11 +1231,8 @@ export const SegmentFragmentDoc = gql`
   queryCircuitId
   queryOperator
   id
-  issuer {
-    id
-  }
+  issuer
   metadataURI
-  validator
 }
     `;
 export const GetAllSegmentsDocument = gql`

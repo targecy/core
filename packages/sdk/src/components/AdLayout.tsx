@@ -7,6 +7,8 @@ export type AdStyling = {
   titleColor?: string;
   subtitleColor?: string;
   borderRadius?: string; // in pixels
+  boxShadow?: string;
+  border?: string;
 };
 
 export type AdLayoutProps = {

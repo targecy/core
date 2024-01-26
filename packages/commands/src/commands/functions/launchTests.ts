@@ -9,9 +9,9 @@ export const testSolidity = (args: string[]): void => {
   printConfig(config);
   const passthroughArgs = processUnknownArgs(args);
   if (config.build.solidityToolkit === 'hardhat') {
-    shell.exec('yarn workspace @scaffold-eth/solidity hardhat test' + passthroughArgs);
+    shell.exec('yarn workspace @targecy/solidity hardhat test' + passthroughArgs);
   } else if (config.build.solidityToolkit === 'foundry') {
-    shell.exec('yarn workspace @scaffold-eth/solidity exec forge test' + passthroughArgs);
+    shell.exec('yarn workspace @targecy/solidity exec forge test' + passthroughArgs);
   } else {
     console.log(chalk.red('❌ Error! Invalid solidity toolkit in config!'));
   }

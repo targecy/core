@@ -1,5 +1,5 @@
 {
-  "name": "@scaffold-eth/typescript",
+  "name": "@targecy/monorepo",
   "version": "0.4.0",
   "keywords": [
     "ethereum",
@@ -13,21 +13,23 @@
     "download-env-vars": "sh ./download-env-vars.sh",
     "download-env-vars:stg": "sh ./download-env-vars.sh stg",
     "download-env-vars:prod": "sh ./download-env-vars.sh prod",
-    "start-services": "yarn workspace @scaffold-eth/services start-all",
-    "start-explorer": "yarn workspace @scaffold-eth/services start-explorer",
-    "stop-services": "yarn workspace @scaffold-eth/services stop-all",
+    "start-services": "yarn workspace @targecy/services start-all",
+    "start-explorer": "yarn workspace @targecy/services start-explorer",
+    "stop-services": "yarn workspace @targecy/services stop-all",
     "localhost-from-zero": "yarn reset-services && yarn deploy-contracts && yarn deploy-subgraph && yarn seed:contracts:localhost:force && yarn dev-dapp",
     "setup": "yarn deploy-contracts && yarn deploy-subgraph && yarn migrate-backend",
-    "seed": "yarn workspace @scaffold-eth/solidity seed && yarn workspace @targecy/backend prisma:seed",
-    "seed:contracts:localhost:force": "yarn workspace @scaffold-eth/solidity seed:force",
-    "seed:contracts:mumbai:force": "yarn workspace @scaffold-eth/solidity seed:mumbai:force",
-    "restart-services": "yarn workspace @scaffold-eth/services restart-all",
-    "reset-services": "yarn workspace @scaffold-eth/services reset-all",
+    "seed": "yarn workspace @targecy/solidity seed && yarn workspace @targecy/backend prisma:seed",
+    "seed:contracts:localhost:force": "yarn workspace @targecy/solidity seed:force",
+    "seed:contracts:mumbai:force": "yarn workspace @targecy/solidity seed:mumbai:force",
+    "restart-services": "yarn workspace @targecy/services restart-all",
+    "reset-services": "yarn workspace @targecy/services reset-all",
     "reset": "echo 'RESETING ALL, kill it if you do not want to lose data. You have 10 seconds.' && sleep 10 && yarn reset-services && yarn setup",
-    "deploy-contracts": "yarn workspace @scaffold-eth/solidity clean:deployments && yarn workspace @scaffold-eth/solidity deploy && yarn workspace @scaffold-eth/solidity deploy:post",
-    "deploy-subgraph": "yarn workspace @scaffold-eth/subgraph setup-local",
-    "deploy-subgraph:stg": "yarn workspace @scaffold-eth/subgraph setup-test",
-    "deploy-subgraph:prod": "yarn workspace @scaffold-eth/subgraph setup-prod",
+    "deploy-contracts": "yarn workspace @targecy/solidity clean:deployments && yarn workspace @targecy/solidity deploy && yarn workspace @targecy/solidity deploy:post",
+    "deploy-contracts:stg": "yarn workspace @targecy/solidity clean:deployments && yarn workspace @targecy/solidity deploy:mumbai && yarn workspace @targecy/solidity deploy:post",
+    "deploy-contracts:prod": "yarn workspace @targecy/solidity clean:deployments && yarn workspace @targecy/solidity deploy:matic && yarn workspace @targecy/solidity deploy:post",
+    "deploy-subgraph": "yarn workspace @targecy/subgraph setup-local",
+    "deploy-subgraph:stg": "yarn workspace @targecy/subgraph setup-test",
+    "deploy-subgraph:prod": "yarn workspace @targecy/subgraph setup-prod",
     "build-dapp": "yarn workspace @targecy/webapp build",
     "dev-dapp": "yarn workspace @targecy/webapp dev",
     "start-dapp": "yarn workspace @targecy/webapp start",
@@ -41,7 +43,7 @@
     "build-relayer": "yarn workspace @targecy/relayer prisma:generate && yarn workspace @targecy/relayer build",
     "start-relayer": "yarn workspace @targecy/relayer start",
     "dev-relayer": "yarn workspace @targecy/relayer dev",
-    "show-accounts": "yarn workspace @scaffold-eth/services show-accounts"
+    "show-accounts": "yarn workspace @targecy/services show-accounts"
   },
   "workspaces": [
     "packages/*"
@@ -63,7 +65,8 @@
     "prettier-plugin-solidity": "^1.0.0-dev.23",
     "shx": "^0.3.4",
     "syncpack": "^8.2.4",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "typescript": "5.2.2"
   },
   "lint-staged": {
     "packages/services/trpc-panel/src/**/*.{ts,tsx}": [
@@ -75,32 +78,32 @@
       "yarn workspace @targecy/webapp format"
     ],
     "packages/common/src/**/*.{ts,tsx}": [
-      "yarn workspace @scaffold-eth/common lint --fix",
-      "yarn workspace @scaffold-eth/common format"
+      "yarn workspace @targecy/common lint --fix",
+      "yarn workspace @targecy/common format"
     ],
     "packages/commands/src/**/*.{ts,tsx}": [
-      "yarn workspace @scaffold-eth/commands lint --fix",
-      "yarn workspace @scaffold-eth/commands format"
+      "yarn workspace @targecy/commands lint --fix",
+      "yarn workspace @targecy/commands format"
     ],
     "packages/solidity-ts-ts/tests/**/*.ts": [
-      "yarn workspace @scaffold-eth/solidity lint --fix",
-      "yarn workspace @scaffold-eth/solidity format"
+      "yarn workspace @targecy/solidity lint --fix",
+      "yarn workspace @targecy/solidity format"
     ],
     "packages/solidity-ts-ts/helpers/**/*.ts": [
-      "yarn workspace @scaffold-eth/solidity lint --fix",
-      "yarn workspace @scaffold-eth/solidity format"
+      "yarn workspace @targecy/solidity lint --fix",
+      "yarn workspace @targecy/solidity format"
     ],
     "packages/solidity-ts-ts/tasks/**/*.ts": [
-      "yarn workspace @scaffold-eth/solidity lint --fix",
-      "yarn workspace @scaffold-eth/solidity format"
+      "yarn workspace @targecy/solidity lint --fix",
+      "yarn workspace @targecy/solidity format"
     ],
     "packages/solidity-ts-ts/deploy/**/*.ts": [
-      "yarn workspace @scaffold-eth/solidity lint --fix",
-      "yarn workspace @scaffold-eth/solidity format"
+      "yarn workspace @targecy/solidity lint --fix",
+      "yarn workspace @targecy/solidity format"
     ],
     "packages/solidity-ts-ts/**/*.sol": [
-      "yarn workspace @scaffold-eth/solidity format",
-      "yarn workspace @scaffold-eth/solidity solhint --fix"
+      "yarn workspace @targecy/solidity format",
+      "yarn workspace @targecy/solidity solhint --fix"
     ]
   },
   "volta": {

@@ -31,19 +31,6 @@ export const TargecyComponent = ({ children }: TargecyComponentProps & TargecyBa
     }
   }, []);
 
-  // const { chains, publicClient } = configureChains([mainnet], [publicProvider()]);
-
-  // const { connectors } = getDefaultWallets({
-  //   appName: 'Targecy',
-  //   projectId: 'f9753e832046896b8250567dc3231c56',
-  //   chains,
-  // });
-  // const config = createConfig({
-  //   autoConnect: true,
-  //   connectors,
-  //   publicClient,
-  // });
-
   return (
     // <WagmiConfig config={config}>
     <Provider store={store}>
