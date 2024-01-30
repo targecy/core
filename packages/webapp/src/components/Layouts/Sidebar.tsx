@@ -74,16 +74,16 @@ const Sidebar = () => {
     }
   }, [router.pathname]);
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const { address } = useWallet();
   const { data: isAdminData } = useGetAdminQuery({ id: address?.toLowerCase() as string });
-  useEffect(() => {
-    if (isAdminData?.admin) {
-      setIsAdmin(true);
-    } else {
-      setIsAdmin(false);
-    }
-  }, [isAdminData]);
+  // useEffect(() => {
+  //   if (isAdminData?.admin) {
+  //     setIsAdmin(true);
+  //   } else {
+  //     setIsAdmin(false);
+  //   }
+  // }, [isAdminData]);
 
   return (
     <div className={semidark ? 'dark' : ''}>
