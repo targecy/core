@@ -1,14 +1,14 @@
 import { DID } from '@iden3/js-iden3-core';
 import { TRPCError } from '@trpc/server';
-import { updateSegment } from 'trpc/services/segments/segments.service';
 import { recoverMessageAddress } from 'viem';
 import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
 import { getThirdPartyIssuerProfile } from '../../constants/issuers/default/default.issuer';
-import * as credentialsService from '../../trpc/services/credentials/credentials.service';
 import { getCredentialIdentifier } from '../../utils/credentials/credentials.utils';
 import { createCredentialRequest, storages } from '../../utils/zk.utils';
+import * as credentialsService from '../services/credentials/credentials.service';
+import { updateSegment } from '../services/segments/segments.service';
 
 // @todo move logic to service layer and db connections to repository layer
 

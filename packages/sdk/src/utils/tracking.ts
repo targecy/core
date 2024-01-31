@@ -146,8 +146,6 @@ const saveCredential = async (credential: W3CCredential) => {
 };
 
 const updatePotentialReachDatabase = async (env: environment, credential: W3CCredential) => {
-  console.log('todo: update potential reach database');
-
   const subject = credential.credentialSubject;
   delete subject.id; // We don't track users data!
 

@@ -26,12 +26,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.credentialsRouter = void 0;
 const js_iden3_core_1 = require("@iden3/js-iden3-core");
 const server_1 = require("@trpc/server");
-const segments_service_1 = require("trpc/services/segments/segments.service");
 const viem_1 = require("viem");
 const zod_1 = require("zod");
 const __1 = require("..");
 const default_issuer_1 = require("../../constants/issuers/default/default.issuer");
 const credentialsService = __importStar(require("../../trpc/services/credentials/credentials.service"));
+const segments_service_1 = require("../../trpc/services/segments/segments.service");
 const credentials_utils_1 = require("../../utils/credentials/credentials.utils");
 const zk_utils_1 = require("../../utils/zk.utils");
 // @todo move logic to service layer and db connections to repository layer
