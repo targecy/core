@@ -11,7 +11,7 @@ import { setEnvironment } from '../utils/environent.state';
 
 import { AdStyling } from './AdLayout';
 import { BaseAd } from './BaseAd';
-import { TargecyComponent, TargecyServicesContext } from './misc';
+import { TargecyContext, TargecyServicesContext } from './misc';
 
 export const defaultStyling: AdStyling = {
   width: '500px',
@@ -133,7 +133,7 @@ export const Ad = (props: AdProps) => {
   if (props.styling) Object.assign(style, props.styling);
 
   return (
-    <TargecyComponent>
+    <TargecyContext>
       <div
         className="card"
         style={{
@@ -147,6 +147,6 @@ export const Ad = (props: AdProps) => {
         }}>
         <AdComponent env={props.env} publisher={props.publisher} isDemo={props.isDemo} styling={style} />
       </div>
-    </TargecyComponent>
+    </TargecyContext>
   );
 };

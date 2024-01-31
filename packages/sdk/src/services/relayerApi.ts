@@ -50,18 +50,7 @@ export const relayerApi = createApi({
     }
   },
   endpoints: (_build) => ({
-    // listTxs: _build.query({
-    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.list.query>[0]) =>
-    //     _trpcOperation(relayerTrpcClient.txs.list.query, input),
-    // }),
-    // deleteTx: _build.mutation({
-    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.delete.mutate>[0]) =>
-    //     _trpcOperation(relayerTrpcClient.txs.delete.mutate, input),
-    // }),
-    // sendTx: _build.mutation({
-    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.send.mutate>[0]) =>
-    //     _trpcOperation(relayerTrpcClient.txs.send.mutate, input),
-    // }),
+
   }),
 });
 

@@ -1,8 +1,8 @@
 import { publicProcedure, router } from '..';
 
 import { credentialsRouter } from './credentials.router';
+import { reachRouter } from './reach.router';
 import { schemasRouter } from './schemas.router';
-import { segmentRouter } from './segments.router';
 import { targetsRouter } from './targets.router';
 import { usersRouter } from './users.router';
 
@@ -13,7 +13,7 @@ export const appRouter = router({
   credentials: credentialsRouter,
   schemas: schemasRouter,
   targets: targetsRouter,
-  segment: segmentRouter,
+  reach: reachRouter,
   users: usersRouter,
 });
 

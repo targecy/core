@@ -45,3 +45,13 @@ model Credential {
   @@index([issuedAt], name: "credential_issued_at")
   @@index([credential(ops: JsonbPathOps)], type: Gin, name: "credential_content")
 }
+
+model Reach {
+  hash       String   
+  type       String   
+  issuer     String   
+  subject    Json     
+  amount     BigInt  
+
+  @@id([hash, type, issuer])
+}

@@ -1,4 +1,5 @@
 import { useTargecyContext, cloneCredential, useCredentials, useCredentialsStatistics } from '@targecy/sdk';
+import { useCredentialsByType } from '@targecy/sdk/src/hooks/useCredentialsByType';
 import { useState } from 'react';
 import { useSignMessage } from 'wagmi';
 
@@ -9,7 +10,8 @@ import { backendTrpcClient } from '~/utils/trpc';
 
 const Credentials = () => {
   const { context } = useTargecyContext();
-  const { credentials, setCredentials } = useCredentials(context);
+  const { setCredentials } = useCredentials(context);
+  const credentialsByType = useCredentialsByType(context);
   const credentialsStatistics = useCredentialsStatistics(context);
   const { isConnected, address } = useWallet();
   const { signMessageAsync } = useSignMessage();
@@ -62,8 +64,8 @@ const Credentials = () => {
 
             <div>
               <div>
-                <div>Total</div>
-                <div className="text-lg text-success ">{credentialsStatistics.total} </div>
+                <div>Configuration</div>
+                <div className="text-lg text-primary ">{credentialsStatistics.configuration} </div>
               </div>
             </div>
           </div>
@@ -115,34 +117,44 @@ const Credentials = () => {
             {/* Identity Credential */}
 
             {/* Misc credentials */}
-            {credentials.map((credential) => (
-              <div
-                key={credential.id}
-                className="m-3 w-[50rem] rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                <div className="w-full px-6 py-7">
-                  <h5 className="mb-4 text-xl font-semibold text-secondary">
-                    {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
-                  </h5>
-                  <p className="text-white-dark">
-                    Expiration: {credential.expirationDate && new Date(credential.expirationDate).toUTCString()}
-                  </p>
-
-                  {Object.entries(credential.credentialSubject)
-                    .filter((entry: any[2]) => entry[0] !== 'id' && entry[0] !== 'type')
-                    .map((entry: any[2]) => (
-                      <p key={entry[0]} className="text-white-dark">
-                        <b>{entry[0]}</b>: {entry[1].toString()}
+            {Object.keys(credentialsByType).map((type) => (
+              <>
+                <label key={type} className="text-lg font-semibold text-secondary">
+                  {type}
+                </label>
+                {credentialsByType[type].map((credential) => (
+                  <div
+                    key={credential.id}
+                    className="m-3 w-[50rem] rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                    <div className="w-full px-6 py-7">
+                      <h5 className="mb-4 text-xl font-semibold text-secondary">
+                        {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
+                      </h5>
+                      <p className="text-white-dark">Issuer: {credential.issuer}</p>
+                      <p className="text-white-dark">
+                        Expiration:{' '}
+                        {(credential.expirationDate && new Date(credential.expirationDate).toUTCString()) || 'None'}
                       </p>
-                    ))}
-                </div>
-              </div>
+
+                      {Object.entries(credential.credentialSubject)
+                        .filter((entry: any[2]) => entry[0] !== 'id' && entry[0] !== 'type')
+                        .map((entry: any[2]) => (
+                          <p key={entry[0]} className="text-white-dark">
+                            <b>{entry[0]}</b>: {entry[1].toString()}
+                          </p>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+              </>
             ))}
-            {!credentials.length && !credentialsFetched && (
+
+            {!credentialsStatistics.total && !credentialsFetched && (
               <label className="mt-4">
                 You have not fetched any credentials yet. Please click on the button above to fetch your credentials.
               </label>
             )}
-            {!credentials.length && credentialsFetched && (
+            {!credentialsStatistics.total && credentialsFetched && (
               <label className="mt-4">
                 We could not find any credentials for this wallet. Please try again in the future or request us for
                 specific credentials.

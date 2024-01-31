@@ -6,12 +6,8 @@ export declare function getSegmentForAudience(audienceId: string): Promise<{
     queryCircuitId: string;
     queryOperator: any;
     id: string;
+    issuer: any;
     metadataURI: string;
-    validator: string;
-    issuer: {
-        __typename?: "Issuer" | undefined;
-        id: string;
-    };
 }[]>;
 export declare function getSegmentById(id: string): Promise<{
     __typename?: "Segment" | undefined;
@@ -21,12 +17,8 @@ export declare function getSegmentById(id: string): Promise<{
     queryCircuitId: string;
     queryOperator: any;
     id: string;
+    issuer: any;
     metadataURI: string;
-    validator: string;
-    issuer: {
-        __typename?: "Issuer" | undefined;
-        id: string;
-    };
 }>;
 export declare function getSegmentsByIds(ids: string[]): Promise<{
     __typename?: "Segment" | undefined;
@@ -36,12 +28,8 @@ export declare function getSegmentsByIds(ids: string[]): Promise<{
     queryCircuitId: string;
     queryOperator: any;
     id: string;
+    issuer: any;
     metadataURI: string;
-    validator: string;
-    issuer: {
-        __typename?: "Issuer" | undefined;
-        id: string;
-    };
 }[]>;
 export declare function getAllSegments(): Promise<{
     __typename?: "Segment" | undefined;
@@ -51,10 +39,6 @@ export declare function getAllSegments(): Promise<{
     queryCircuitId: string;
     queryOperator: any;
     id: string;
+    issuer: any;
     metadataURI: string;
-    validator: string;
-    issuer: {
-        __typename?: "Issuer" | undefined;
-        id: string;
-    };
 }[]>;

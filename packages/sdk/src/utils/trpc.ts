@@ -1,4 +1,4 @@
-import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import { CreateTRPCProxyClient, createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 
 import { environment } from './context';
@@ -30,7 +30,6 @@ export const getRelayerUrl = (env: environment) => {
       throw new Error('Invalid environment');
   }
 };
-
 
 export const relayerTrpcClient = (env: environment) =>
   createTRPCProxyClient<typeof RelayerAppRouter>({

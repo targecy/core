@@ -1,3 +1,4 @@
+import SuperJSON from 'superjson';
 import { router, publicProcedure } from '..';
 
 import { txsRouter } from './txs.router';

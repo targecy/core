@@ -16917,9 +16917,11 @@ export type EthereumDexTrades = {
   price?: Maybe<Scalars['Float']>;
   /** Protocol name of the smart contract */
   protocol?: Maybe<Scalars['String']>;
+  /** For this metric works you need use "quoteCurrency{ tokenId }" dimension */
   quoteAmount?: Maybe<Scalars['Float']>;
   /** Quote currency */
   quoteCurrency?: Maybe<Currency>;
+  /** For this metric works you need use "quoteCurrency{ tokenId }" dimension */
   quotePrice?: Maybe<Scalars['Float']>;
   sellAmount?: Maybe<Scalars['Float']>;
   /** Maker sells this currency */

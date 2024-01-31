@@ -10,11 +10,8 @@ exports.SegmentFragment = (0, graphql_request_1.gql) `
     queryCircuitId
     queryOperator
     id
-    issuer {
-      id
-    }
+    issuer
     metadataURI
-    validator
   }
 `;
 exports.GetAllSegments = (0, graphql_request_1.gql) `

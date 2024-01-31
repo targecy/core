@@ -500,6 +500,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "_relayer",
+        type: "address",
+      },
+    ],
+    name: "setRelayer",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "audienceIdReceived",
         type: "uint256",
@@ -563,24 +576,11 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "_relayer",
-        type: "address",
-      },
-    ],
-    name: "setrelayer",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
         name: "_validator",
         type: "address",
       },
     ],
-    name: "setvalidator",
+    name: "setValidator",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -593,7 +593,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "setvault",
+    name: "setVault",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

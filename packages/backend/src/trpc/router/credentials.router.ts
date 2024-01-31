@@ -1,5 +1,6 @@
 import { DID } from '@iden3/js-iden3-core';
 import { TRPCError } from '@trpc/server';
+import { updateSegment } from 'trpc/services/segments/segments.service';
 import { recoverMessageAddress } from 'viem';
 import { z } from 'zod';
 
@@ -105,6 +106,16 @@ export const credentialsRouter = router({
           identifier: getCredentialIdentifier(credential),
         })),
       });
+
+      await Promise.all(
+        credentials.map(async (credential) => {
+          await updateSegment(ctx.prisma, {
+            type: credential.type.length > 1 ? credential.type[1] : credential.type[0],
+            issuer: credential.issuer,
+            subject: credential.credentialSubject,
+          });
+        })
+      );
 
       console.debug('saved', saved);
 

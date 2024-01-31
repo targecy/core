@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "scripts": {
     "build": "shx rm -rf build && tsc -p tsconfig.json && yarn export-types",
-    "dev": "concurrently \"ts-node-dev -r tsconfig-paths/register src/index.ts\" \"nodemon\"",
+    "dev": "concurrently \"ts-node-dev -r tsconfig-paths/register src/index.ts\" \"nodemon\" \"yarn export-types\"",
     "export-types": "rm -rf types && rm -rf ../sdk/src/generated/types/relayer && tsc --declaration --outDir types && cp -r types/src/trpc ../sdk/src/generated/types/relayer && rm -rf types",
     "start": "node build/src/index.js",
     "lint": "eslint --max-warnings 0 .",

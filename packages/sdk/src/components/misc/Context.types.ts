@@ -18,7 +18,7 @@ export type TargecyContextType = {
   userIdentity?: UserIdentityType;
 };
 
-export interface TargecyComponentProps {
+export interface TargecyContextProps {
   children?: ReactNode;
 }
 

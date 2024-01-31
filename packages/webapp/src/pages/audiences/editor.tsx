@@ -140,14 +140,12 @@ export const AudienceEditorComponent = (id?: string) => {
   useEffect(() => {
     if (!currentSegments || currentSegments.length === 0) return;
 
-    backendTrpcClient.segment.getSegmentPotentialReachByIds
+    backendTrpcClient.reach.getSegmentReachByIds
       .query({
         ids: currentSegments.map((id) => id.toString()),
       })
       .catch((error) => console.log(error))
-      .then((response) =>
-        setPotentialReach(typeof response === 'object' && 'count' in response ? response.count : undefined)
-      );
+      .then((response) => setPotentialReach(response?.count));
   }, [currentSegments]);
 
   const [segmentsMetadata, setSegmentsMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>(
@@ -322,12 +320,10 @@ export const AudienceEditorComponent = (id?: string) => {
               )}
             </Formik>
 
-            <div
-              hidden={potentialReach === undefined}
-              className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+            <div className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
               <label className="m-5 text-secondary">Potential Reach</label>
               <div className="h-full w-full">
-                <label className="text-center align-middle text-9xl">{potentialReach}</label>
+                <label className="text-center align-middle text-9xl">{potentialReach ?? '?'}</label>
               </div>
             </div>
           </div>
