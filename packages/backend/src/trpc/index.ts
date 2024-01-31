@@ -52,7 +52,7 @@ const logger = t.middleware(async ({ path, type, rawInput, next }) => {
   const result = await next();
 
   if (result.ok) {
-    console.info(`Ok: ${JSON.stringify({ path })}`);
+    console.info(`Ok: ${JSON.stringify({ path, timestamp: new Date() })}`);
   } else {
     console.error(`Error`, { path, rawInput, type, error: result.error });
   }

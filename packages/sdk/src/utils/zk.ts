@@ -377,11 +377,6 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
   ]);
 
   try {
-    // const response = await relayerTrpcClient.txs.send.mutate({
-    //   signature: '',
-    //   _data,
-    // });
-
     await Swal.mixin({
       toast: true,
       position: 'top',

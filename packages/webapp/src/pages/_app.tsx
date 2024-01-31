@@ -20,6 +20,8 @@ import { datadogLogs } from '@datadog/browser-logs';
 import { env } from '~/env.mjs';
 import { withProviders } from '~/lib/withProviders';
 
+import { TargecyTracker } from '@targecy/sdk';
+
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -59,21 +61,23 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   return (
-    <Provider store={store}>
-      <Head>
-        <title>Targecy</title>
-        <meta charSet="UTF-8" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-          name="description"
-          content="A decentralized and transparent advertising solution ready to empower the next generation of web3 protocols."
-        />
-        <link rel="icon" href="/images/logo.svg" />
-      </Head>
+    <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV}>
+      <Provider store={store}>
+        <Head>
+          <title>Targecy</title>
+          <meta charSet="UTF-8" />
+          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta
+            name="description"
+            content="A decentralized and transparent advertising solution ready to empower the next generation of web3 protocols."
+          />
+          <link rel="icon" href="/images/logo.svg" />
+        </Head>
 
-      {getLayout(<Component {...pageProps} />)}
-    </Provider>
+        {getLayout(<Component {...pageProps} />)}
+      </Provider>
+    </TargecyTracker>
   );
 };
 

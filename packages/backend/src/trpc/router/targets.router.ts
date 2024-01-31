@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
 import { getSegmentForAudience } from '../services/external/targecy.service';
-import { getPrismaPredicateForCredentialsFromSegments } from '../services/Segments/segments.service';
+import { getPrismaPredicateForSegments } from '../services/segments/segments.service';
 
 // @todo move logic to service layer and db connections to repository layer
 
@@ -20,10 +20,10 @@ export const targetsRouter = router({
           const segments = await getSegmentForAudience(id);
 
           // Generate database conditions to look for issued credentials
-          const predicate = getPrismaPredicateForCredentialsFromSegments(segments);
+          const predicate = getPrismaPredicateForSegments(segments);
 
           // Compare Segments to Issued Credentials
-          const count = await ctx.prisma.credential.count({
+          const count = await ctx.prisma.reach.count({
             where: predicate,
           });
 

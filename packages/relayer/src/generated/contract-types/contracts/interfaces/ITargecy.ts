@@ -177,10 +177,10 @@ export interface ITargecyInterface extends Interface {
       | "setDefaultImpressionPrice"
       | "setDefaultIssuer"
       | "setPublisher"
+      | "setRelayer"
       | "setSegment"
-      | "setrelayer"
-      | "setvalidator"
-      | "setvault"
+      | "setValidator"
+      | "setVault"
       | "unpauseAd"
       | "unpausePublisher"
       | "withdrawAdvertiserBudget"
@@ -277,19 +277,19 @@ export interface ITargecyInterface extends Interface {
     values: [DataTypes.PublisherSettingsStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "setRelayer",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setSegment",
     values: [BigNumberish, DataTypes.SegmentStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "setrelayer",
+    functionFragment: "setValidator",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setvalidator",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setvault",
+    functionFragment: "setVault",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -374,13 +374,13 @@ export interface ITargecyInterface extends Interface {
     functionFragment: "setPublisher",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setRelayer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setSegment", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setrelayer", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setvalidator",
+    functionFragment: "setValidator",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setvault", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "setVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpauseAd", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "unpausePublisher",
@@ -570,25 +570,25 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
 
+  setRelayer: TypedContractMethod<
+    [_relayer: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setSegment: TypedContractMethod<
     [audienceIdReceived: BigNumberish, _segment: DataTypes.SegmentStruct],
     [void],
     "nonpayable"
   >;
 
-  setrelayer: TypedContractMethod<
-    [_relayer: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  setvalidator: TypedContractMethod<
+  setValidator: TypedContractMethod<
     [_validator: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  setvault: TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
+  setVault: TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
 
   unpauseAd: TypedContractMethod<[adId: BigNumberish], [void], "nonpayable">;
 
@@ -727,6 +727,9 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setRelayer"
+  ): TypedContractMethod<[_relayer: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setSegment"
   ): TypedContractMethod<
     [audienceIdReceived: BigNumberish, _segment: DataTypes.SegmentStruct],
@@ -734,13 +737,10 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setrelayer"
-  ): TypedContractMethod<[_relayer: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setvalidator"
+    nameOrSignature: "setValidator"
   ): TypedContractMethod<[_validator: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setvault"
+    nameOrSignature: "setVault"
   ): TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "unpauseAd"

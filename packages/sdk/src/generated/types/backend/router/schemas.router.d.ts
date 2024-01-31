@@ -44,7 +44,13 @@ export declare const schemasRouter: import("@trpc/server").CreateRouterInner<imp
         _input_out: typeof import("@trpc/server").unsetMarker;
         _output_in: typeof import("@trpc/server").unsetMarker;
         _output_out: typeof import("@trpc/server").unsetMarker;
-    }, Record<"ProtocolUsedTargecySchema" | "TokenHolderTargecySchema" | "ActiveOnChainTargecySchema", import("../../constants/schemas/schemas.constant").SCHEMA>>;
+    }, {
+        ProtocolUsedTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"ProtocolUsedTargecySchema">;
+        TokenHolderTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"TokenHolderTargecySchema">;
+        ActiveOnChainTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"ActiveOnChainTargecySchema">;
+        PageViewTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"PageViewTargecySchema">;
+        CustomEventTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"CustomEventTargecySchema">;
+    }>;
     getSchemaByType: import("@trpc/server").BuildProcedure<"query", {
         _config: import("@trpc/server").RootConfig<{
             ctx: {
@@ -80,5 +86,5 @@ export declare const schemasRouter: import("@trpc/server").CreateRouterInner<imp
         };
         _output_in: typeof import("@trpc/server").unsetMarker;
         _output_out: typeof import("@trpc/server").unsetMarker;
-    }, import("../../constants/schemas/schemas.constant").SCHEMA>;
+    }, import("../../constants/schemas/schemas.constant").SCHEMA<"ProtocolUsedTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"TokenHolderTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"ActiveOnChainTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"PageViewTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"CustomEventTargecySchema">>;
 }>;

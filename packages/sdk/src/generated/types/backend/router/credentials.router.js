@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.credentialsRouter = void 0;
 const js_iden3_core_1 = require("@iden3/js-iden3-core");
 const server_1 = require("@trpc/server");
+const segments_service_1 = require("trpc/services/segments/segments.service");
 const viem_1 = require("viem");
 const zod_1 = require("zod");
 const __1 = require("..");
@@ -106,6 +107,13 @@ exports.credentialsRouter = (0, __1.router)({
                 identifier: (0, credentials_utils_1.getCredentialIdentifier)(credential),
             })),
         });
+        await Promise.all(credentials.map(async (credential) => {
+            await (0, segments_service_1.updateSegment)(ctx.prisma, {
+                type: credential.type.length > 1 ? credential.type[1] : credential.type[0],
+                issuer: credential.issuer,
+                subject: credential.credentialSubject,
+            });
+        }));
         console.debug('saved', saved);
         if (saved.count !== credentials.length)
             throw new server_1.TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Credentials not saved' });
