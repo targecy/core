@@ -2,8 +2,8 @@ import { CreateTRPCProxyClient, createTRPCProxyClient, httpBatchLink } from '@tr
 import superjson from 'superjson';
 
 import { environment } from './context';
-import { appRouter as RelayerAppRouter } from '../generated/types/relayer/router';
-import { appRouter as BackendAppRouter } from '../generated/types/backend/router';
+import { appRouter as RelayerAppRouter } from '../generated/types/relayer/routers';
+import { appRouter as BackendAppRouter } from '../generated/types/backend/routers';
 
 export const getBackendUrl = (env: environment) => {
   switch (env) {

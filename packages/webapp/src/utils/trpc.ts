@@ -2,7 +2,7 @@ import { getBackendUrl } from '@targecy/sdk';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 
-import type { AppRouter as backendAppRouter } from '../../../backend/src/trpc/router/index';
+import type { AppRouter as backendAppRouter } from '../../../backend/src/trpc/routers/index';
 
 import { env } from '~/env.mjs';
 

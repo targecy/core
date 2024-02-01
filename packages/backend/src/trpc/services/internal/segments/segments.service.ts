@@ -1,9 +1,9 @@
-import { sha256 } from '@iden3/js-crypto';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
-import { SCHEMAS } from '../../../constants/schemas/schemas.constant';
-import { Segment } from '../../../generated/targecy.types';
+import { SCHEMAS } from '../../../../constants/schemas/schemas.constant';
+import { Segment } from '../../../../generated/targecy.types';
+import { getSubjectHash } from '../credentials/credentials.service';
 
 /**
  * This function takes a Segments and returns a Prisma predicate to filter segments.
@@ -75,10 +75,6 @@ export const getPrismaPredicateForSegments = (segments: Segment[]): Prisma.Reach
   };
 
   return predicate;
-};
-
-export const getSubjectHash = (subject: any) => {
-  return sha256(new TextEncoder().encode(JSON.stringify(subject))).toString();
 };
 
 export const updateSegment = async (

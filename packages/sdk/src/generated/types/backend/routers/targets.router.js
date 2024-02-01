@@ -4,7 +4,7 @@ exports.targetsRouter = void 0;
 const zod_1 = require("zod");
 const __1 = require("..");
 const targecy_service_1 = require("../services/external/targecy.service");
-const segments_service_1 = require("../services/segments/segments.service");
+const segments_service_1 = require("../services/internal/segments/segments.service");
 // @todo move logic to service layer and db connections to repository layer
 exports.targetsRouter = (0, __1.router)({
     getAudiencesReach: __1.publicProcedure

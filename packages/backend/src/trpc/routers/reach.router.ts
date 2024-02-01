@@ -7,7 +7,7 @@ import {
   getPrismaPredicateForSegment,
   getPrismaPredicateForSegments,
   updateSegment,
-} from '../services/segments/segments.service';
+} from '../services/internal/segments/segments.service';
 
 // @todo move logic to service layer and db connections to repository layer
 

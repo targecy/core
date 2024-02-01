@@ -30,10 +30,10 @@ const viem_1 = require("viem");
 const zod_1 = require("zod");
 const __1 = require("..");
 const default_issuer_1 = require("../../constants/issuers/default/default.issuer");
-const credentialsService = __importStar(require("../../trpc/services/credentials/credentials.service"));
-const segments_service_1 = require("../../trpc/services/segments/segments.service");
 const credentials_utils_1 = require("../../utils/credentials/credentials.utils");
 const zk_utils_1 = require("../../utils/zk.utils");
+const credentialsService = __importStar(require("../services/internal/credentials/credentials.service"));
+const segments_service_1 = require("../services/internal/segments/segments.service");
 // @todo move logic to service layer and db connections to repository layer
 exports.credentialsRouter = (0, __1.router)({
     getTotalAmountOfCredentialsIssued: __1.publicProcedure.query(async ({ ctx }) => {

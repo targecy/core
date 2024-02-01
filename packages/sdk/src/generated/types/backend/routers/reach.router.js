@@ -5,7 +5,7 @@ const server_1 = require("@trpc/server");
 const zod_1 = require("zod");
 const __1 = require("..");
 const targecy_service_1 = require("../services/external/targecy.service");
-const segments_service_1 = require("../services/segments/segments.service");
+const segments_service_1 = require("../services/internal/segments/segments.service");
 // @todo move logic to service layer and db connections to repository layer
 exports.reachRouter = (0, __1.router)({
     getSegmentReachByIds: __1.publicProcedure

@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { Segment } from '../../../generated/targecy.types';
+import { Segment } from '../../../../generated/targecy.types';
 /**
  * This function takes a Segments and returns a Prisma predicate to filter segments.
  * Each Segment contains a slotIndex, an operator and a value.
@@ -13,7 +13,6 @@ export declare const getPrismaPredicateForSegment: (segment: Segment) => Prisma.
  * All Segments are combined with an AND operator.
  */
 export declare const getPrismaPredicateForSegments: (segments: Segment[]) => Prisma.ReachWhereInput;
-export declare const getSubjectHash: (subject: any) => string;
 export declare const updateSegment: (prisma: PrismaClient, input: {
     type: string;
     issuer: string;

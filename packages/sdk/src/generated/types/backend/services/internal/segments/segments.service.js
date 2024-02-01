@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateSegment = exports.getSubjectHash = exports.getPrismaPredicateForSegments = exports.getPrismaPredicateForSegment = void 0;
-const js_crypto_1 = require("@iden3/js-crypto");
+exports.updateSegment = exports.getPrismaPredicateForSegments = exports.getPrismaPredicateForSegment = void 0;
 const server_1 = require("@trpc/server");
-const schemas_constant_1 = require("../../../constants/schemas/schemas.constant");
+const schemas_constant_1 = require("../../../../constants/schemas/schemas.constant");
+const credentials_service_1 = require("../credentials/credentials.service");
 /**
  * This function takes a Segments and returns a Prisma predicate to filter segments.
  * Each Segment contains a slotIndex, an operator and a value.
@@ -72,12 +72,8 @@ const getPrismaPredicateForSegments = (segments) => {
     return predicate;
 };
 exports.getPrismaPredicateForSegments = getPrismaPredicateForSegments;
-const getSubjectHash = (subject) => {
-    return (0, js_crypto_1.sha256)(new TextEncoder().encode(JSON.stringify(subject))).toString();
-};
-exports.getSubjectHash = getSubjectHash;
 const updateSegment = async (prisma, input) => {
-    const hash = (0, exports.getSubjectHash)(input.subject);
+    const hash = (0, credentials_service_1.getSubjectHash)(input.subject);
     const existingSegment = await prisma.reach.findUnique({
         where: {
             hash_type_issuer: {

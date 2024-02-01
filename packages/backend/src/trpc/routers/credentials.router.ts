@@ -7,8 +7,8 @@ import { router, publicProcedure } from '..';
 import { getThirdPartyIssuerProfile } from '../../constants/issuers/default/default.issuer';
 import { getCredentialIdentifier } from '../../utils/credentials/credentials.utils';
 import { createCredentialRequest, storages } from '../../utils/zk.utils';
-import * as credentialsService from '../services/credentials/credentials.service';
-import { updateSegment } from '../services/segments/segments.service';
+import * as credentialsService from '../services/internal/credentials/credentials.service';
+import { updateSegment } from '../services/internal/segments/segments.service';
 
 // @todo move logic to service layer and db connections to repository layer
 

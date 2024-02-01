@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { router, publicProcedure } from '..';
 import { getSegmentForAudience } from '../services/external/targecy.service';
-import { getPrismaPredicateForSegments } from '../services/segments/segments.service';
+import { getPrismaPredicateForSegments } from '../services/internal/segments/segments.service';
 
 // @todo move logic to service layer and db connections to repository layer
 

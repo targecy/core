@@ -5,9 +5,14 @@ import {
   createActiveOnChainCredential,
   createTokenHoldingCredentialRequest,
   createUsedProtocolCredentialRequest,
-} from '../../../constants/credentials/public.credentials';
-import { storages } from '../../../utils/zk.utils';
-import { getIsActiveOnChainByAddress, getTokenHoldings, getUsedContractsbyAddress } from '../external/bitquery.service';
+} from '../../../../constants/credentials/public.credentials';
+import { storages } from '../../../../utils/zk.utils';
+import {
+  getIsActiveOnChainByAddress,
+  getTokenHoldings,
+  getUsedContractsbyAddress,
+} from '../../external/bitquery.service';
+import { sha256 } from '@iden3/js-crypto';
 
 /**
  * Analyzes public on-chain data and issues credentials
@@ -27,6 +32,10 @@ export const getPublicCredentials = async (wallet: string, claimerDid: DID, from
       getActiveOnChainCredentials(wallet, claimerDid, issuer.did, from),
     ])
   ).flat();
+};
+
+export const getSubjectHash = (subject: any) => {
+  return sha256(new TextEncoder().encode(JSON.stringify(subject))).toString();
 };
 
 export async function getContractInteractionsCredentials(

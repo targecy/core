@@ -3,7 +3,7 @@ import cors from 'cors';
 import express from 'express';
 
 import { createContext } from './trpc';
-import { appRouter } from './trpc/router';
+import { appRouter } from './trpc/routers';
 
 const app = express();
 
