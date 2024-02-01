@@ -9,7 +9,7 @@ import { utils } from 'ethers';
 import React, { FC, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { IScaffoldAppProviders } from '~common/models/IScaffoldAppProviders';
+import { IScaffoldAppProviders } from '~/models/IScaffoldAppProviders';
 
 /**
  * Is Faucet available?
@@ -84,7 +84,6 @@ export const FaucetHintButton: FC<IFaucetButton> = (props) => {
     } else {
       return <></>;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yourLocalBalance, faucetAvailable, ethersAppContext?.account, faucetTx]);
 
   return <> {faucetHint} </>;

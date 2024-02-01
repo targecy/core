@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,12 +10,12 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { Segment, useGetAllSegmentsQuery, useGetAudienceQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { fetchMetadata } from '~~/utils/metadata';
-import { backendTrpcClient } from '~~/utils/trpc';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Segment, useGetAllSegmentsQuery, useGetAudienceQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { fetchMetadata } from '~/utils/metadata';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -47,7 +48,7 @@ export const AudienceEditorComponent = (id?: string) => {
   const audience = audienceData?.audience;
   useAsync(async () => {
     if (audience) {
-      const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
       const json = await newMetadata.json();
       setCurrentMetadata({ title: json.title, description: json.description });
     }
@@ -139,14 +140,12 @@ export const AudienceEditorComponent = (id?: string) => {
   useEffect(() => {
     if (!currentSegments || currentSegments.length === 0) return;
 
-    backendTrpcClient.segment.getSegmentPotentialReachByIds
+    backendTrpcClient.reach.getSegmentReachByIds
       .query({
         ids: currentSegments.map((id) => id.toString()),
       })
       .catch((error) => console.log(error))
-      .then((response) =>
-        setPotentialReach(typeof response === 'object' && 'count' in response ? response.count : undefined)
-      );
+      .then((response) => setPotentialReach(response?.count));
   }, [currentSegments]);
 
   const [segmentsMetadata, setSegmentsMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>(
@@ -159,7 +158,7 @@ export const AudienceEditorComponent = (id?: string) => {
         (
           await Promise.all(
             segments.map(async (s) => {
-              const newMetadata = await fetch(`https://${s.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(s.metadataURI));
               const json = await newMetadata.json();
               return {
                 id: s.id,
@@ -321,12 +320,10 @@ export const AudienceEditorComponent = (id?: string) => {
               )}
             </Formik>
 
-            <div
-              hidden={potentialReach === undefined}
-              className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+            <div className="m-8 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
               <label className="m-5 text-secondary">Potential Reach</label>
               <div className="h-full w-full">
-                <label className="text-center align-middle text-9xl">{potentialReach}</label>
+                <label className="text-center align-middle text-9xl">{potentialReach ?? '?'}</label>
               </div>
             </div>
           </div>

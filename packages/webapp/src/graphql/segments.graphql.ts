@@ -4,10 +4,7 @@ export const Segments = gql`
   fragment SegmentFragment on Segment {
     id
     metadataURI
-    issuer {
-      id
-    }
-    validator
+    issuer
     querySchema
     querySlotIndex
     queryOperator

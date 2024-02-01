@@ -1,7 +1,9 @@
 
 !generated/.gitignore
 /generated/**/*
+!generated/config
 .openzeppelin
 scripts/addresses
+tests/hardhat-tests/addresses.json
 
-!generated/config/config.json
+deployments/localhost

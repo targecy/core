@@ -1,3 +1,4 @@
 export * from './zk';
+export * from './credential';
 export * from './sharedStorage';
 export * from './trpc';

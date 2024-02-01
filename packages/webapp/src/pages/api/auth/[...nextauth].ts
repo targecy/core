@@ -3,13 +3,14 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 
-import { isVercelDevelopment } from '~~/constants/app.constants';
-import { env } from '~~/env.mjs';
+import { isVercelDevelopment } from '~/constants/app.constants';
+import { env } from '~/env.mjs';
 
 const WHITELISTED_ADDRESSES = [
   '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
   '0xc8e4fcff013b61bea893d54427f1a72691ffe7a2',
   '0xE86ce0450be5bCAb5302d381EB3e6297F874fBd6', // Benja Farres
+  '0x0263C341D1788174aC51B110aB99016d5a642651',
 ];
 const isBetaUser = (address: string) => WHITELISTED_ADDRESSES.includes(address) || isVercelDevelopment;
 

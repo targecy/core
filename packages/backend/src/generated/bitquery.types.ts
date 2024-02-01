@@ -243,6 +243,7 @@ export type Algorand_CoinpathArgs = {
   currency?: InputMaybe<Array<AlgorandCurrencySelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -3189,6 +3190,7 @@ export type Bitcoin_CoinpathArgs = {
   amountInUSD?: InputMaybe<Array<AmountSelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -3278,12 +3280,12 @@ export type Bitcoin_TransactionsArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
   options?: InputMaybe<QueryOptions>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4264,11 +4266,11 @@ export type BitcoinTransaction_CountArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4289,11 +4291,11 @@ export type BitcoinTransaction_CountBigIntArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4322,11 +4324,11 @@ export type BitcoinTransaction_FeeValueArgs = {
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
   in?: InputMaybe<BaseCurrencyEnum>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4347,11 +4349,11 @@ export type BitcoinTransaction_FeeValueDecimalArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4384,11 +4386,11 @@ export type BitcoinTransaction_InputCountArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4409,11 +4411,11 @@ export type BitcoinTransaction_InputCountBigIntArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4435,11 +4437,11 @@ export type BitcoinTransaction_InputValueArgs = {
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
   in?: InputMaybe<BaseCurrencyEnum>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4460,11 +4462,11 @@ export type BitcoinTransaction_InputValueDecimalArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4493,11 +4495,11 @@ export type BitcoinTransaction_MinedValueArgs = {
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
   in?: InputMaybe<BaseCurrencyEnum>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4518,11 +4520,11 @@ export type BitcoinTransaction_MinedValueDecimalArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4550,11 +4552,11 @@ export type BitcoinTransaction_OutputCountArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4575,11 +4577,11 @@ export type BitcoinTransaction_OutputCountBigIntArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4601,11 +4603,11 @@ export type BitcoinTransaction_OutputValueArgs = {
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
   in?: InputMaybe<BaseCurrencyEnum>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4626,11 +4628,11 @@ export type BitcoinTransaction_OutputValueDecimalArgs = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -4684,11 +4686,11 @@ export type BitcoinTransactionFilter = {
   date?: InputMaybe<DateSelector>;
   feeValue?: InputMaybe<FloatSelector>;
   height?: InputMaybe<BlockSelector>;
-  inputAddress?: InputMaybe<AddressSelectorIn>;
+  inputAddress?: InputMaybe<AddressSelector>;
   inputCount?: InputMaybe<IntegerSelector>;
   inputValue?: InputMaybe<FloatSelector>;
   minedValue?: InputMaybe<FloatSelector>;
-  outputAddress?: InputMaybe<AddressSelectorIn>;
+  outputAddress?: InputMaybe<AddressSelector>;
   outputCount?: InputMaybe<IntegerSelector>;
   outputValue?: InputMaybe<FloatSelector>;
   time?: InputMaybe<DateTimeSelector>;
@@ -7089,6 +7091,7 @@ export type Conflux_CoinpathArgs = {
   currency?: InputMaybe<Array<ConfluxCurrencySelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<ConfluxAddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -9331,6 +9334,7 @@ export type Cosmos_CoinpathArgs = {
   currency?: InputMaybe<Array<CosmosCurrencySelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -10630,6 +10634,8 @@ export type Elrond = {
   blocks?: Maybe<Array<ElrondBlock>>;
   /** Information about calls */
   callResults?: Maybe<Array<ElrondCallResult>>;
+  /** Money flow using Coinpath technology */
+  coinpath?: Maybe<Array<ElrondCoinpath>>;
   /** Information about Event */
   events?: Maybe<Array<ElrondEvent>>;
   /** Information about miniblocks */
@@ -10745,6 +10751,23 @@ export type Elrond_CallResultsArgs = {
   txSender?: InputMaybe<HashSelector>;
   txSenderShard?: InputMaybe<BigIntIdSelector>;
   type?: InputMaybe<StringSelector>;
+};
+
+
+/** Elrond Chain */
+export type Elrond_CoinpathArgs = {
+  amountInUSD?: InputMaybe<Array<AmountSelector>>;
+  currency?: InputMaybe<CurrencySelector>;
+  date?: InputMaybe<DateSelector>;
+  depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
+  initialAddress?: InputMaybe<AddressSelector>;
+  initialDate?: InputMaybe<DateSelector>;
+  initialTime?: InputMaybe<DateTimeSelector>;
+  options?: InputMaybe<CoinpathOptions>;
+  receiver?: InputMaybe<AddressSelector>;
+  sender?: InputMaybe<AddressSelector>;
+  time?: InputMaybe<DateTimeSelector>;
 };
 
 
@@ -11735,6 +11758,72 @@ export type ElrondCallResultsMeasureable =
   /** Type of miniblock */
   | 'type';
 
+/** Elrond Coinpath */
+export type ElrondCoinpath = {
+  __typename?: 'ElrondCoinpath';
+  /** Summary of transfered value */
+  amount?: Maybe<Scalars['Float']>;
+  any?: Maybe<Scalars['String']>;
+  /** Block where transaction is included */
+  block?: Maybe<Block>;
+  /** Count of transfers */
+  count?: Maybe<Scalars['Int']>;
+  /** Count of transfers */
+  countBigInt?: Maybe<Scalars['BigInt']>;
+  /** Currency of transfer */
+  currency?: Maybe<Currency>;
+  /** 1-based hop depth of the graph */
+  depth?: Maybe<Scalars['Int']>;
+  maximum?: Maybe<Scalars['String']>;
+  minimum?: Maybe<Scalars['String']>;
+  /** Receiver address */
+  receiver?: Maybe<Address>;
+  /** Sender address */
+  sender?: Maybe<Address>;
+  /** Transaction of transfer happened */
+  transaction?: Maybe<ElrondTransactionValueDimension>;
+};
+
+
+/** Elrond Coinpath */
+export type ElrondCoinpath_AmountArgs = {
+  in?: InputMaybe<BaseCurrencyEnum>;
+};
+
+
+/** Elrond Coinpath */
+export type ElrondCoinpath_AnyArgs = {
+  of: ElrondCoinpathMeasureable;
+};
+
+
+/** Elrond Coinpath */
+export type ElrondCoinpath_MaximumArgs = {
+  get?: InputMaybe<ElrondCoinpathMeasureable>;
+  of: ElrondCoinpathMeasureable;
+};
+
+
+/** Elrond Coinpath */
+export type ElrondCoinpath_MinimumArgs = {
+  get?: InputMaybe<ElrondCoinpathMeasureable>;
+  of: ElrondCoinpathMeasureable;
+};
+
+export type ElrondCoinpathMeasureable =
+  /** Block */
+  | 'block'
+  /** Depth */
+  | 'depth'
+  /** Receiver */
+  | 'receiver'
+  /** Sender */
+  | 'sender'
+  /** Time */
+  | 'time'
+  /** Version */
+  | 'tx_hash';
+
 /** Events in Elrond blockchain */
 export type ElrondEvent = {
   __typename?: 'ElrondEvent';
@@ -12717,6 +12806,15 @@ export type ElrondTransactionUniq =
   | 'height'
   /** Unique time */
   | 'times';
+
+/** Blockchain transaction with value */
+export type ElrondTransactionValueDimension = {
+  __typename?: 'ElrondTransactionValueDimension';
+  /** Transaction hash */
+  hash: Scalars['String'];
+  /** Transaction value */
+  value: Scalars['Float'];
+};
 
 export type ElrondTransactionsMeasureable =
   /** Action Category */
@@ -16819,9 +16917,11 @@ export type EthereumDexTrades = {
   price?: Maybe<Scalars['Float']>;
   /** Protocol name of the smart contract */
   protocol?: Maybe<Scalars['String']>;
+  /** For this metric works you need use "quoteCurrency{ tokenId }" dimension */
   quoteAmount?: Maybe<Scalars['Float']>;
   /** Quote currency */
   quoteCurrency?: Maybe<Currency>;
+  /** For this metric works you need use "quoteCurrency{ tokenId }" dimension */
   quotePrice?: Maybe<Scalars['Float']>;
   sellAmount?: Maybe<Scalars['Float']>;
   /** Maker sells this currency */
@@ -18698,6 +18798,7 @@ export type Everscale_CoinpathArgs = {
   currency?: InputMaybe<CurrencySelector>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -21576,6 +21677,7 @@ export type Filecoin_CoinpathArgs = {
   amountInUSD?: InputMaybe<Array<AmountSelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -22993,6 +23095,7 @@ export type Flow_CoinpathArgs = {
   currency?: InputMaybe<CurrencySelector>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -27070,6 +27173,7 @@ export type Hedera_CoinpathArgs = {
   amountInUSD?: InputMaybe<Array<AmountSelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -28683,6 +28787,7 @@ export type Libra_CoinpathArgs = {
   currency?: InputMaybe<Array<LibraCurrencySelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -29785,7 +29890,7 @@ export type MiniblockElrond = {
 export type NameWithId = {
   __typename?: 'NameWithId';
   /** ID */
-  id?: Maybe<Scalars['Int']>;
+  id?: Maybe<Scalars['BigInt']>;
   /** Name */
   name?: Maybe<Scalars['String']>;
 };
@@ -30469,6 +30574,7 @@ export type Ripple_CoinpathArgs = {
   currencyTo?: InputMaybe<CurrencySelector>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -33884,6 +33990,7 @@ export type Solana_CoinpathArgs = {
   currency?: InputMaybe<CurrencySelector>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -35501,6 +35608,7 @@ export type Stellar_CoinpathArgs = {
   currencyTo?: InputMaybe<CurrencySelector>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;
@@ -38880,6 +38988,7 @@ export type Tezos_CoinpathArgs = {
   amountInUSD?: InputMaybe<Array<AmountSelector>>;
   date?: InputMaybe<DateSelector>;
   depth?: InputMaybe<IntegerLimitedSelector>;
+  finalAddress?: InputMaybe<AddressSelectorIn>;
   initialAddress?: InputMaybe<AddressSelector>;
   initialDate?: InputMaybe<DateSelector>;
   initialTime?: InputMaybe<DateTimeSelector>;

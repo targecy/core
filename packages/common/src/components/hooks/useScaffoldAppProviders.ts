@@ -4,11 +4,11 @@ import { EthersModalConnector, TEthersModalConnector, useEthersAppContext } from
 import { useEffect } from 'react';
 import { useThemeSwitcher } from 'react-css-theme-switcher';
 
-import { useGetCreateLoginConnector } from '~common/components/hooks/useGetLoginConnector';
-import { useGetWeb3ModalConfig } from '~common/components/hooks/useGetWeb3ModalConfig';
-import { customWeb3ModalProviders } from '~common/config/web3Modal.config';
-import { TNetworkDefinition } from '~common/constants';
-import { IScaffoldAppProviders } from '~common/models/IScaffoldAppProviders';
+import { useGetCreateLoginConnector } from '~/components/hooks/useGetLoginConnector';
+import { useGetWeb3ModalConfig } from '~/components/hooks/useGetWeb3ModalConfig';
+import { customWeb3ModalProviders } from '~/config/web3Modal.config';
+import { TNetworkDefinition } from '~/constants';
+import { IScaffoldAppProviders } from '~/models/IScaffoldAppProviders';
 
 export const useScaffoldAppProviders = (config: {
   mainnetProvider: StaticJsonRpcProvider | undefined;
@@ -55,7 +55,6 @@ export const useScaffoldAppProviders = (config: {
       connector = autoConnectToBurner(connector);
       if (connector) void ethersAppContext.activate(connector);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [web3Config, config.connectToBurnerAutomatically, createLoginConnector]);
 
   const currentTargetNetwork =

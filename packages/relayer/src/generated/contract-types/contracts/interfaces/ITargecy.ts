@@ -41,32 +41,18 @@ export declare namespace DataTypes {
     c: [bigint, bigint][];
   };
 
-  export type EIP712SignatureStruct = {
-    v: BigNumberish;
-    r: BytesLike;
-    s: BytesLike;
-    deadline: BigNumberish;
-    nonce: BigNumberish;
-  };
-
-  export type EIP712SignatureStructOutput = [
-    v: bigint,
-    r: string,
-    s: string,
-    deadline: bigint,
-    nonce: bigint
-  ] & { v: bigint; r: string; s: string; deadline: bigint; nonce: bigint };
-
   export type NewAdStruct = {
     metadataURI: string;
     attribution: BigNumberish;
     active: boolean;
+    abi: string;
+    target: AddressLike;
     startingTimestamp: BigNumberish;
     endingTimestamp: BigNumberish;
     audienceIds: BigNumberish[];
     blacklistedPublishers: AddressLike[];
     blacklistedWeekdays: BigNumberish[];
-    budget: BigNumberish;
+    maxBudget: BigNumberish;
     maxPricePerConsumption: BigNumberish;
     maxConsumptionsPerDay: BigNumberish;
   };
@@ -75,42 +61,30 @@ export declare namespace DataTypes {
     metadataURI: string,
     attribution: bigint,
     active: boolean,
+    abi: string,
+    target: string,
     startingTimestamp: bigint,
     endingTimestamp: bigint,
     audienceIds: bigint[],
     blacklistedPublishers: string[],
     blacklistedWeekdays: bigint[],
-    budget: bigint,
+    maxBudget: bigint,
     maxPricePerConsumption: bigint,
     maxConsumptionsPerDay: bigint
   ] & {
     metadataURI: string;
     attribution: bigint;
     active: boolean;
+    abi: string;
+    target: string;
     startingTimestamp: bigint;
     endingTimestamp: bigint;
     audienceIds: bigint[];
     blacklistedPublishers: string[];
     blacklistedWeekdays: bigint[];
-    budget: bigint;
+    maxBudget: bigint;
     maxPricePerConsumption: bigint;
     maxConsumptionsPerDay: bigint;
-  };
-
-  export type SegmentStruct = {
-    query: ICircuitValidator.CircuitQueryStruct;
-    metadataURI: string;
-    issuer: BigNumberish;
-  };
-
-  export type SegmentStructOutput = [
-    query: ICircuitValidator.CircuitQueryStructOutput,
-    metadataURI: string,
-    issuer: bigint
-  ] & {
-    query: ICircuitValidator.CircuitQueryStructOutput;
-    metadataURI: string;
-    issuer: bigint;
   };
 
   export type PublisherSettingsStruct = {
@@ -136,6 +110,22 @@ export declare namespace DataTypes {
     cpi: bigint;
     cpc: bigint;
     cpa: bigint;
+  };
+
+  export type SegmentStruct = {
+    query: ICircuitValidator.CircuitQueryStruct;
+    metadataURI: string;
+    issuer: BigNumberish;
+  };
+
+  export type SegmentStructOutput = [
+    query: ICircuitValidator.CircuitQueryStructOutput,
+    metadataURI: string,
+    issuer: bigint
+  ] & {
+    query: ICircuitValidator.CircuitQueryStructOutput;
+    metadataURI: string;
+    issuer: bigint;
   };
 }
 
@@ -169,31 +159,31 @@ export interface ITargecyInterface extends Interface {
       | "changePublisherAddress"
       | "consumeAd"
       | "consumeAdViaRelayer"
-      | "createAd"
-      | "createAudience"
       | "deleteAd"
       | "deleteAudience"
       | "deleteSegment"
-      | "editAd"
-      | "editAudience"
-      | "editSegment"
+      | "fundAdvertiserBudget"
       | "getAdAudiences"
       | "getAudienceSegments"
       | "pauseAd"
       | "pausePublisher"
       | "removeAdmin"
       | "removePublisher"
+      | "setAd"
       | "setAdmin"
+      | "setAudience"
       | "setDefaultClickPrice"
       | "setDefaultConversionPrice"
       | "setDefaultImpressionPrice"
       | "setDefaultIssuer"
-      | "setProtocolVault"
       | "setPublisher"
+      | "setRelayer"
       | "setSegment"
-      | "setZKProofsValidator"
+      | "setValidator"
+      | "setVault"
       | "unpauseAd"
       | "unpausePublisher"
+      | "withdrawAdvertiserBudget"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -202,24 +192,17 @@ export interface ITargecyInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAd",
-    values: [
-      BigNumberish,
-      AddressLike,
-      DataTypes.ZKProofsStruct,
-      DataTypes.EIP712SignatureStruct
-    ]
+    values: [BigNumberish, AddressLike, DataTypes.ZKProofsStruct, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "consumeAdViaRelayer",
-    values: [AddressLike, BigNumberish, AddressLike, DataTypes.ZKProofsStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createAd",
-    values: [DataTypes.NewAdStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "createAudience",
-    values: [string, BigNumberish[]]
+    values: [
+      AddressLike,
+      BigNumberish,
+      AddressLike,
+      DataTypes.ZKProofsStruct,
+      BytesLike
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "deleteAd",
@@ -234,16 +217,8 @@ export interface ITargecyInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "editAd",
-    values: [BigNumberish, DataTypes.NewAdStruct]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "editAudience",
-    values: [BigNumberish, string, BigNumberish[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "editSegment",
-    values: [BigNumberish, DataTypes.SegmentStruct]
+    functionFragment: "fundAdvertiserBudget",
+    values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getAdAudiences",
@@ -270,8 +245,16 @@ export interface ITargecyInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "setAd",
+    values: [BigNumberish, DataTypes.NewAdStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setAdmin",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setAudience",
+    values: [BigNumberish, string, BigNumberish[]]
   ): string;
   encodeFunctionData(
     functionFragment: "setDefaultClickPrice",
@@ -290,19 +273,23 @@ export interface ITargecyInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setProtocolVault",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setPublisher",
     values: [DataTypes.PublisherSettingsStruct]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSegment",
-    values: [DataTypes.SegmentStruct]
+    functionFragment: "setRelayer",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setZKProofsValidator",
+    functionFragment: "setSegment",
+    values: [BigNumberish, DataTypes.SegmentStruct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setValidator",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setVault",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -312,6 +299,10 @@ export interface ITargecyInterface extends Interface {
   encodeFunctionData(
     functionFragment: "unpausePublisher",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawAdvertiserBudget",
+    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -323,11 +314,6 @@ export interface ITargecyInterface extends Interface {
     functionFragment: "consumeAdViaRelayer",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "createAd", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "createAudience",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "deleteAd", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "deleteAudience",
@@ -337,13 +323,8 @@ export interface ITargecyInterface extends Interface {
     functionFragment: "deleteSegment",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "editAd", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "editAudience",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "editSegment",
+    functionFragment: "fundAdvertiserBudget",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -367,7 +348,12 @@ export interface ITargecyInterface extends Interface {
     functionFragment: "removePublisher",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setAd", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setAdmin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setAudience",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "setDefaultClickPrice",
     data: BytesLike
@@ -385,21 +371,23 @@ export interface ITargecyInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setProtocolVault",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setPublisher",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setRelayer", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setSegment", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setZKProofsValidator",
+    functionFragment: "setValidator",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setVault", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "unpauseAd", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "unpausePublisher",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawAdvertiserBudget",
     data: BytesLike
   ): Result;
 }
@@ -460,10 +448,10 @@ export interface ITargecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      targecySig: DataTypes.EIP712SignatureStruct
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
+    "payable"
   >;
 
   consumeAdViaRelayer: TypedContractMethod<
@@ -471,18 +459,11 @@ export interface ITargecy extends BaseContract {
       viewer: AddressLike,
       adId: BigNumberish,
       publisher: AddressLike,
-      zkProofs: DataTypes.ZKProofsStruct
+      zkProofs: DataTypes.ZKProofsStruct,
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
-  >;
-
-  createAd: TypedContractMethod<[ad: DataTypes.NewAdStruct], [void], "payable">;
-
-  createAudience: TypedContractMethod<
-    [metadataURI: string, audienceIds: BigNumberish[]],
-    [void],
-    "nonpayable"
+    "payable"
   >;
 
   deleteAd: TypedContractMethod<[adId: BigNumberish], [void], "nonpayable">;
@@ -499,24 +480,8 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
 
-  editAd: TypedContractMethod<
-    [adId: BigNumberish, ad: DataTypes.NewAdStruct],
-    [void],
-    "payable"
-  >;
-
-  editAudience: TypedContractMethod<
-    [
-      audienceId: BigNumberish,
-      metadataURI: string,
-      audienceIds: BigNumberish[]
-    ],
-    [void],
-    "nonpayable"
-  >;
-
-  editSegment: TypedContractMethod<
-    [audienceId: BigNumberish, _segment: DataTypes.SegmentStruct],
+  fundAdvertiserBudget: TypedContractMethod<
+    [advertiser: AddressLike, amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -553,8 +518,24 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
 
+  setAd: TypedContractMethod<
+    [adIdReceived: BigNumberish, ad: DataTypes.NewAdStruct],
+    [void],
+    "payable"
+  >;
+
   setAdmin: TypedContractMethod<
     [targecyAdmin: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setAudience: TypedContractMethod<
+    [
+      audienceIdReceived: BigNumberish,
+      metadataURI: string,
+      audienceIds: BigNumberish[]
+    ],
     [void],
     "nonpayable"
   >;
@@ -583,34 +564,42 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
 
-  setProtocolVault: TypedContractMethod<
-    [_protocolVault: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   setPublisher: TypedContractMethod<
     [publisher: DataTypes.PublisherSettingsStruct],
     [void],
     "nonpayable"
   >;
 
-  setSegment: TypedContractMethod<
-    [_segment: DataTypes.SegmentStruct],
+  setRelayer: TypedContractMethod<
+    [_relayer: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  setZKProofsValidator: TypedContractMethod<
-    [_zkProofsValidator: AddressLike],
+  setSegment: TypedContractMethod<
+    [audienceIdReceived: BigNumberish, _segment: DataTypes.SegmentStruct],
     [void],
     "nonpayable"
   >;
+
+  setValidator: TypedContractMethod<
+    [_validator: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setVault: TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
 
   unpauseAd: TypedContractMethod<[adId: BigNumberish], [void], "nonpayable">;
 
   unpausePublisher: TypedContractMethod<
     [publisher: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  withdrawAdvertiserBudget: TypedContractMethod<
+    [amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -633,10 +622,10 @@ export interface ITargecy extends BaseContract {
       adId: BigNumberish,
       publisher: AddressLike,
       zkProofs: DataTypes.ZKProofsStruct,
-      targecySig: DataTypes.EIP712SignatureStruct
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "consumeAdViaRelayer"
@@ -645,20 +634,11 @@ export interface ITargecy extends BaseContract {
       viewer: AddressLike,
       adId: BigNumberish,
       publisher: AddressLike,
-      zkProofs: DataTypes.ZKProofsStruct
+      zkProofs: DataTypes.ZKProofsStruct,
+      actionParams: BytesLike
     ],
     [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "createAd"
-  ): TypedContractMethod<[ad: DataTypes.NewAdStruct], [void], "payable">;
-  getFunction(
-    nameOrSignature: "createAudience"
-  ): TypedContractMethod<
-    [metadataURI: string, audienceIds: BigNumberish[]],
-    [void],
-    "nonpayable"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "deleteAd"
@@ -670,27 +650,9 @@ export interface ITargecy extends BaseContract {
     nameOrSignature: "deleteSegment"
   ): TypedContractMethod<[audienceId: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "editAd"
+    nameOrSignature: "fundAdvertiserBudget"
   ): TypedContractMethod<
-    [adId: BigNumberish, ad: DataTypes.NewAdStruct],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "editAudience"
-  ): TypedContractMethod<
-    [
-      audienceId: BigNumberish,
-      metadataURI: string,
-      audienceIds: BigNumberish[]
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "editSegment"
-  ): TypedContractMethod<
-    [audienceId: BigNumberish, _segment: DataTypes.SegmentStruct],
+    [advertiser: AddressLike, amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -713,8 +675,26 @@ export interface ITargecy extends BaseContract {
     nameOrSignature: "removePublisher"
   ): TypedContractMethod<[publisher: AddressLike], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setAd"
+  ): TypedContractMethod<
+    [adIdReceived: BigNumberish, ad: DataTypes.NewAdStruct],
+    [void],
+    "payable"
+  >;
+  getFunction(
     nameOrSignature: "setAdmin"
   ): TypedContractMethod<[targecyAdmin: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setAudience"
+  ): TypedContractMethod<
+    [
+      audienceIdReceived: BigNumberish,
+      metadataURI: string,
+      audienceIds: BigNumberish[]
+    ],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "setDefaultClickPrice"
   ): TypedContractMethod<
@@ -740,9 +720,6 @@ export interface ITargecy extends BaseContract {
     nameOrSignature: "setDefaultIssuer"
   ): TypedContractMethod<[_defaultIssuer: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setProtocolVault"
-  ): TypedContractMethod<[_protocolVault: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "setPublisher"
   ): TypedContractMethod<
     [publisher: DataTypes.PublisherSettingsStruct],
@@ -750,25 +727,30 @@ export interface ITargecy extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setRelayer"
+  ): TypedContractMethod<[_relayer: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setSegment"
   ): TypedContractMethod<
-    [_segment: DataTypes.SegmentStruct],
+    [audienceIdReceived: BigNumberish, _segment: DataTypes.SegmentStruct],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "setZKProofsValidator"
-  ): TypedContractMethod<
-    [_zkProofsValidator: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+    nameOrSignature: "setValidator"
+  ): TypedContractMethod<[_validator: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setVault"
+  ): TypedContractMethod<[_vault: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "unpauseAd"
   ): TypedContractMethod<[adId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "unpausePublisher"
   ): TypedContractMethod<[publisher: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "withdrawAdvertiserBudget"
+  ): TypedContractMethod<[amount: BigNumberish], [void], "nonpayable">;
 
   filters: {};
 }

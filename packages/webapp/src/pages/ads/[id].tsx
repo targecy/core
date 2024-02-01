@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -5,9 +6,9 @@ import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAdQuery } from '~~/generated/graphql.types';
-import { weekdayToNumber } from '~~/utils';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetAdQuery } from '~/generated/graphql.types';
+import { weekdayToNumber } from '~/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -18,12 +19,14 @@ const AdDetailPage = () => {
   const { data, isLoading } = useGetAdQuery({ id });
   const ad = data?.ad;
 
-  const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }>({});
+  const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string; imageUrl?: string }>(
+    {}
+  );
   useAsync(async () => {
     if (ad) {
-      const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
-      const json = await newMetadata.json();
-      setMetadata({ title: json.title, description: json.description, image: json.imageUrl });
+      const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
+      const { title, description, image, imageUrl } = await newMetadata.json();
+      setMetadata({ title, description, image: image || imageUrl });
     }
   }, [ad]);
   const { writeAsync: deleteAdAsync } = useContractWrite({
@@ -45,7 +48,7 @@ const AdDetailPage = () => {
       const newAudiencesMetadata = (
         await Promise.all(
           ad.audiences.map(async (s) => {
-            const newMetadata = await fetch(`https://${s.metadataURI}.ipfs.nftstorage.link`);
+            const newMetadata = await fetch(getIPFSStorageUrl(s.metadataURI));
             const json = await newMetadata.json();
             return { id: s.id, metadata: { title: json.title, description: json.description } };
           })
@@ -217,22 +220,12 @@ const AdDetailPage = () => {
               <label className="text-md text-dark dark:text-white"> Budget</label>
               <div className="space-between flex w-full flex-row gap-5">
                 <div className="flex-col">
-                  <label className="mb-3 text-xl text-secondary"> Total Budget </label>
+                  <label className="mb-3 text-xl text-secondary"> Maximum Budget </label>
                 </div>
                 <div className="flex-col">
-                  <label className="mb-3 text-xl text-black dark:text-white">{ad?.totalBudget}</label>
+                  <label className="mb-3 text-xl text-black dark:text-white">{ad?.maxBudget}</label>
                 </div>
               </div>
-
-              <div className="space-between flex w-full flex-row gap-5">
-                <div className="flex-col">
-                  <label className="mb-3 text-xl text-secondary"> Remaining Budget </label>
-                </div>
-                <div className="flex-col">
-                  <label className="mb-3 text-xl text-black dark:text-white">{ad?.remainingBudget}</label>
-                </div>
-              </div>
-
               <div className="space-between flex w-full flex-row gap-5">
                 <div className="flex-col">
                   <label className="mb-3 text-xl text-secondary"> Maximum {attributionLabel}s per day </label>
@@ -281,16 +274,6 @@ const AdDetailPage = () => {
                 </div>
                 <div className="flex-col">
                   <label className="mb-1 text-xl text-black dark:text-white">{ad?.consumptions}</label>
-                </div>
-              </div>
-              <div className="space-between flex w-full flex-row gap-5">
-                <div className="flex-col">
-                  <label className="mb-1 text-xl text-secondary"> Cost per {attributionLabel} </label>
-                </div>
-                <div className="flex-col">
-                  <label className="mb-1 text-xl text-black dark:text-white">
-                    {Number(Number(ad?.totalBudget) - Number(ad?.remainingBudget)) / Number(ad?.consumptions) || '-'}
-                  </label>
                 </div>
               </div>
 

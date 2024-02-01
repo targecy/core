@@ -29,12 +29,16 @@ const nextConfig = {
       react: resolve(__dirname, './node_modules/react'),
       'react-dom': resolve(__dirname, './node_modules/react-dom'),
       // -------------------------------------------
+      '@common': resolve(__dirname, '../common/src'),
     };
 
     config.experiments = {
       topLevelAwait: true,
       layers: true,
     };
+
+    // @todo(kevin) remove after knowing that most of dependencies has the last version of node-gyp-build
+    config.module.unknownContextCritical = false;
 
     return config;
   },

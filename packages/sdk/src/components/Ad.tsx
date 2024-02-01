@@ -1,32 +1,38 @@
-import { BaseAd, BaseAdStyling } from './BaseAd';
-import { Address, Config } from 'wagmi';
-import { useAd } from '../hooks/useAd';
-import { useContext } from 'react';
-import { TargecyComponent, TargecyServicesContext } from './misc';
-import { ethers } from 'ethers';
 import { Skeleton } from 'antd';
-import { environment } from '../utils/context';
+import { ZeroAddress, ethers } from 'ethers';
+import { useContext } from 'react';
+import { Address } from 'wagmi';
 
-const defaultStyling: BaseAdStyling = {
+import { useAd } from '../hooks/useAd';
+import { environment } from '../utils/context';
+import { relayerTrpcClient } from '..';
+import { useDispatch } from 'react-redux';
+import { setEnvironment } from '../utils/environent.state';
+
+import { AdStyling } from './AdLayout';
+import { BaseAd } from './BaseAd';
+import { TargecyContext, TargecyServicesContext } from './misc';
+
+export const defaultStyling: AdStyling = {
   width: '500px',
-  height: '400px',
+  height: '300px',
   backgroundColor: '#212121',
   titleColor: '#ffffff',
   subtitleColor: '#ffffff',
-  borderRadius: '0px',
+  borderRadius: '15px',
+  boxShadow: 'gray 0px 5px 15px',
+  border: '1px solid #212121',
 };
 
-type SharedAdParams = {
+type SharedAdProps = {
   isDemo?: boolean;
   publisher: Address;
   env?: environment;
 };
 
-type BaseAdParams = {
-  styling?: BaseAdStyling;
-} & SharedAdParams;
-
-export type AdParams = BaseAdParams;
+export type AdProps = {
+  styling?: AdStyling;
+} & SharedAdProps;
 
 const validateMinWidth = (width: string) => {
   if (width.includes('px')) {
@@ -46,14 +52,14 @@ const validateMinHeight = (height: string) => {
   return false;
 };
 
-const isValidStyling = (styling?: BaseAdStyling): boolean =>
+const isValidStyling = (styling?: AdStyling): boolean =>
   (!styling?.width || validateMinWidth(styling.width)) && (!styling?.height || validateMinHeight(styling.height));
 
-export const AdComponent = (params: AdParams) => {
+export const AdComponent = (props: AdProps) => {
   const context = useContext(TargecyServicesContext);
   let { ad, isLoading } = useAd(context);
 
-  if (params.isDemo) {
+  if (props.isDemo) {
     ad = {
       ad: {
         advertiser: {
@@ -61,12 +67,18 @@ export const AdComponent = (params: AdParams) => {
           impressions: 0,
           clicks: 0,
           conversions: 0,
-          totalBudget: 0,
-          remainingBudget: 0,
           adsQuantity: 0,
+          budget: {
+            totalBudget: 0,
+            remainingBudget: 0,
+            id: ZeroAddress,
+          },
         },
         id: '0',
         attribution: 0,
+        maxBudget: 0,
+        currentBudget: 0,
+        active: true,
         blacklistedPublishers: [],
         blacklistedWeekdays: [],
         consumptions: 0,
@@ -76,9 +88,7 @@ export const AdComponent = (params: AdParams) => {
         maxPricePerConsumption: 0,
         metadataURI: '',
         startingTimestamp: 0,
-        remainingBudget: 0,
         audiences: [],
-        totalBudget: 0,
       },
       metadata: {
         title: 'Are you looking for the best yield!',
@@ -90,33 +100,40 @@ export const AdComponent = (params: AdParams) => {
     isLoading = false;
   }
 
-  if (isLoading) return <Skeleton style={{ width: params.styling?.width, height: params.styling?.height }}></Skeleton>;
+  if (isLoading) return <Skeleton style={{ width: props.styling?.width, height: props.styling?.height }}></Skeleton>;
 
-  if (!ad) return undefined;
+  if (!ad) return <p>No ads were found for you. Try again later.</p>;
 
-  return BaseAd({
-    id: ad.ad.id,
-    title: ad.metadata.title,
-    description: ad.metadata.description,
-    image: ad.metadata.image,
-    isLoading,
-    env: params.env || 'production',
-    styling: params.styling,
-  });
+  const {
+    ad: { id },
+    metadata: { title, description, image },
+  } = ad;
+
+  return (
+    <BaseAd
+      id={id}
+      title={title}
+      description={description}
+      image={image}
+      isLoading={isLoading}
+      env={props.env || 'production'}
+      styling={props.styling}
+    />
+  );
 };
 
-export const Ad = (params: AdParams) => {
-  if (!isValidStyling(params.styling)) {
+export const Ad = (props: AdProps) => {
+  if (!isValidStyling(props.styling)) {
     console.error('Invalid styling. Please review requirements.');
 
-    return <label>Invalid Configuration</label>;
+    return <p>Invalid Configuration</p>;
   }
 
   const style = { ...defaultStyling };
-  if (params.styling) Object.assign(style, params.styling);
+  if (props.styling) Object.assign(style, props.styling);
 
   return (
-    <TargecyComponent>
+    <TargecyContext>
       <div
         className="card"
         style={{
@@ -125,9 +142,11 @@ export const Ad = (params: AdParams) => {
           overflow: 'hidden',
           backgroundColor: style?.backgroundColor,
           borderRadius: style?.borderRadius,
+          boxShadow: style?.boxShadow,
+          border: style?.border,
         }}>
-        <AdComponent env={params.env} publisher={params.publisher} isDemo={params.isDemo} styling={style} />
+        <AdComponent env={props.env} publisher={props.publisher} isDemo={props.isDemo} styling={style} />
       </div>
-    </TargecyComponent>
+    </TargecyContext>
   );
 };

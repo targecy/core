@@ -1,6 +1,5 @@
 import path from 'path';
 
-import Swal from 'sweetalert2';
 import {
   BjjProvider,
   CredentialStorage,
@@ -31,36 +30,25 @@ import {
   CredentialStatusType,
   CircuitStorage,
   type CircuitData,
+  CircuitId,
+  core,
+  W3CCredential,
 } from '@0xpolygonid/js-sdk';
 import { Hex, getRandomBytes } from '@iden3/js-crypto';
 import { SchemaHash } from '@iden3/js-iden3-core';
 import { keccak256 } from '@lumeweb/js-sha3-browser';
+import Swal from 'sweetalert2';
 
 export type StoragesSide = 'server' | 'client';
 
-const userSeed = 'userseedseedseedseedseedseedseed';
+const _userSeed = 'userseedseedseedseedseedseedseed';
 
-import { CircuitId, core, W3CCredential } from '@0xpolygonid/js-sdk';
-
-import { TargecyContextType } from '../components/misc/Context';
+import { TargecyContextType, UserIdentityType, ZkServicesType } from '../components/misc/Context.types';
 import { addressZero, BigNumberZero } from '../constants/chain';
 import { Ad, Segment } from '../generated/graphql.types';
 
-import { ZkServicesType } from './context';
 import { getSeed, saveSeed } from './sharedStorage';
 import { base64StringToUint8Array, uint8ArrayToBase64String } from './string';
-
-export function cloneCredential(credential: W3CCredential) {
-  const cloned = new W3CCredential();
-
-  const keys = Object.keys(credential) as (keyof W3CCredential)[];
-  for (const key of keys) {
-    if (credential[key]) {
-      cloned[key] = credential[key] as any;
-    }
-  }
-  return cloned;
-}
 
 const operatorKeyByNumber: Record<number, string> = {
   1: '$eq',
@@ -108,7 +96,7 @@ export async function generateZKProof(
   proof.proof.pi_c = proof.proof.pi_c.slice(0, 2);
 
   // Check Proof
-  const proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
+  const _proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
 
   return proof;
 }
@@ -147,9 +135,7 @@ export function initializeStorages() {
   return { credWallet, identityWallet, dataStorage };
 }
 
-export type UserIdentityType = Awaited<ReturnType<typeof createUserIdentity>>;
-
-export async function createUserIdentity(identityWallet: IdentityWallet) {
+export async function createUserIdentity(identityWallet: IdentityWallet): Promise<UserIdentityType> {
   const savedSeed = await getSeed();
   let seed: Uint8Array;
 
@@ -225,7 +211,7 @@ export function initProofService(
 }
 
 async function fetchBinaryFile(side: StoragesSide, file: string) {
-  const prefix = side === 'server' ? path.resolve(__dirname + '../../public/') : '/';
+  const prefix: string = side === 'server' ? path.resolve(__dirname + '../../public/') : '/';
 
   const response = await fetch(prefix + file); // Change this to your url
 
@@ -375,7 +361,7 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
 export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generateProof>, ad: Ad) => {
   const awaitedProofs = await proofs;
 
-  const data = JSON.stringify([
+  const _data = JSON.stringify([
     BigInt(ad.id),
     {
       percentage: BigNumberZero,
@@ -391,11 +377,6 @@ export const consumeAdThroughRelayer = async (proofs: ReturnType<typeof generate
   ]);
 
   try {
-    // const response = await relayerTrpcClient.txs.send.mutate({
-    //   signature: '',
-    //   data,
-    // });
-
     await Swal.mixin({
       toast: true,
       position: 'top',
@@ -442,7 +423,7 @@ export const consumeAd = async (proofs: ReturnType<typeof generateProof>, ad: Ad
       ],
     });
 
-    const tx = await waitTxFn({ hash: consumeAdResponse.hash });
+    const _tx = await waitTxFn({ hash: consumeAdResponse.hash });
 
     await Swal.mixin({
       toast: true,

@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["dom", "dom.iterable", "esnext", "es2020"],
     "sourceMap": true,
     "allowJs": true,
     "esModuleInterop": true,
@@ -18,9 +18,9 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "paths": {
-      "~/*": ["./src/*"],
       "@backend/*": ["../backend/src/*"],
-      "@relayer/*": ["../relayer/src/*"]
+      "@relayer/*": ["../relayer/src/*"],
+      "@common/*": ["../common/src/*"],
     }
   },
   "include": ["src", "codegen.ts", "apollo.config.js"],

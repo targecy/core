@@ -2,10 +2,8 @@ import * as trpcExpress from '@trpc/server/adapters/express';
 import cors from 'cors';
 import express from 'express';
 
-import { homePage } from './utils';
-
 import { createContext } from './trpc';
-import { appRouter } from './trpc/router';
+import { appRouter } from './trpc/routers';
 
 const app = express();
 
@@ -19,11 +17,9 @@ app.use(
   })
 );
 
-app.use('/', (_req, res) => {
-  return res.type('html').send(homePage);
-});
-
 const PORT = process.env.PORT ?? 4000;
+
+// @todo (Martin): Test DB Connection on startup
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}.`);

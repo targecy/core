@@ -2,7 +2,6 @@ import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 import { BaseQueryFn, FetchBaseQueryError, FetchBaseQueryMeta, createApi } from '@reduxjs/toolkit/query/react';
 import { TRPCClientError } from '@trpc/client';
 import { HYDRATE } from 'next-redux-wrapper';
-import { relayerTrpcClient } from '../utils/trpc';
 
 const relayerApiTagTypes = [] as const;
 const trpcBaseQuery = (): BaseQueryFn => () => ({ data: '' });
@@ -27,7 +26,7 @@ const handleTrpcOperationError = (error: any) => {
   return { error: 'message' in e ? e.message : 'Unknown error.' };
 };
 
-const trpcOperation = async <Operation extends (...args: any) => any, Input extends Parameters<Operation>[0]>(
+const _trpcOperation = async <Operation extends (...args: any) => any, Input extends Parameters<Operation>[0]>(
   operation: Operation,
   input: Input
 ): Promise<QueryReturnValue<ReturnType<typeof operation>, FetchBaseQueryError, FetchBaseQueryMeta>> => {
@@ -44,25 +43,14 @@ export const relayerApi = createApi({
   baseQuery: trpcBaseQuery(),
   reducerPath: relayerApiReducerPath,
   tagTypes: relayerApiTagTypes,
-  // eslint-disable-next-line consistent-return
+
   extractRehydrationInfo(action, { reducerPath }) {
     if (action.type === HYDRATE) {
       return action.payload[reducerPath];
     }
   },
-  endpoints: (build) => ({
-    // listTxs: build.query({
-    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.list.query>[0]) =>
-    //     trpcOperation(relayerTrpcClient.txs.list.query, input),
-    // }),
-    // deleteTx: build.mutation({
-    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.delete.mutate>[0]) =>
-    //     trpcOperation(relayerTrpcClient.txs.delete.mutate, input),
-    // }),
-    // sendTx: build.mutation({
-    //   queryFn: async (input: Parameters<typeof relayerTrpcClient.txs.send.mutate>[0]) =>
-    //     trpcOperation(relayerTrpcClient.txs.send.mutate, input),
-    // }),
+  endpoints: (_build) => ({
+
   }),
 });
 

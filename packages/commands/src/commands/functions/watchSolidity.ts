@@ -7,7 +7,7 @@ import { invariant } from 'ts-invariant';
 
 import { deploySolidity, compileSolidity } from './launchSolidity';
 
-import { load, printConfig } from '~~/helpers/configManager';
+import { load, printConfig } from '~/helpers/configManager';
 
 export const watchSolidity = (minWatchTime: number): void => {
   const config = load();

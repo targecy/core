@@ -1,4 +1,4 @@
-import PublishersList from "./list";
+import PublishersList from './list';
 
 const Publishers = PublishersList;
 

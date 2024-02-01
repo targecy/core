@@ -3,8 +3,7 @@ import cors from 'cors';
 import express from 'express';
 
 import { createContext } from './trpc';
-import { appRouter } from './trpc/router';
-import { homePage } from './utils';
+import { appRouter } from './trpc/routers';
 
 const app = express();
 
@@ -17,10 +16,6 @@ app.use(
     createContext,
   })
 );
-
-app.use('/', (_req, res) => {
-  return res.type('html').send(homePage);
-});
 
 const PORT = process.env.PORT ?? 4001;
 

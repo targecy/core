@@ -1,23 +1,27 @@
+/* eslint-disable @typescript-eslint/await-thenable */
+import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
+import { trackCustomEvent } from '@targecy/sdk/src/utils/tracking';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useAsync } from 'react-use';
 import { useContractRead } from 'wagmi';
 
-import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
-import * as abi from '../generated/abis/Targecy.json';
+import abi from '../generated/abis/Targecy.json';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { env } from '~~/env.mjs';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { env } from '~/env.mjs';
 import {
   useGetAdvertiserQuery,
+  useGetBudgetQuery,
   useGetLastAdsQuery,
   useGetLastAudiencesQuery,
   useGetLastSegmentsQuery,
-} from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { backendTrpcClient } from '~~/utils';
+} from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { backendTrpcClient } from '~/utils';
 
 const scannerUrl: Record<typeof env.NEXT_PUBLIC_VERCEL_ENV, string> = {
   development: `http://localhost:8090`,
@@ -67,7 +71,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastAds.ads.map(async (ad) => {
-              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
               const json = await newMetadata.json();
               return { id: ad.id, metadata: { title: json.title, description: json.description } };
             })
@@ -90,7 +94,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastAudiences.audiences.map(async (audience) => {
-              const newMetadata = await fetch(`https://${audience.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(audience.metadataURI));
               const json = await newMetadata.json();
               return { id: audience.id, metadata: { title: json.title, description: json.description } };
             })
@@ -113,7 +117,7 @@ export const Home = () => {
         (
           await Promise.all(
             lastSegments.segments.map(async (segment) => {
-              const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+              const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
               const json = await newMetadata.json();
               return { id: segment.id, metadata: { title: json.title, description: json.description } };
             })
@@ -126,7 +130,7 @@ export const Home = () => {
     }
   }, [lastSegments]);
 
-  const [schemas, setSchemas] = useState<SCHEMA[]>([]);
+  const [schemas, setSchemas] = useState<SCHEMA<any>[]>([]);
   useAsync(async () => {
     const response = await backendTrpcClient.schemas.getAllSchemas.query();
     setSchemas(Object.entries(response).map(([, schema]) => schema));
@@ -141,6 +145,23 @@ export const Home = () => {
     (Number(advertiserData?.advertiser?.impressions) || 0) +
     (Number(advertiserData?.advertiser?.clicks) || 0) +
     (Number(advertiserData?.advertiser?.conversions) || 0);
+
+  const { data: budget } = useGetBudgetQuery({
+    id: wallet.address || '',
+  });
+
+  useAsync(async () => {
+    await trackCustomEvent(
+      {
+        id: 'purchase',
+        params: {
+          currency: 'USD',
+          value: 42,
+        },
+      },
+      env.NEXT_PUBLIC_VERCEL_ENV
+    );
+  }, []);
 
   if (!mounted) return <></>;
 
@@ -326,8 +347,8 @@ export const Home = () => {
 
                     <div>
                       <div>
-                        <div>Total</div>
-                        <div className="text-lg text-success ">{credentialsStatistics.total} </div>
+                        <div>Configuration Credentials</div>
+                        <div className="text-lg text-primary ">{credentialsStatistics.configuration} </div>
                       </div>
                     </div>
                   </div>
@@ -348,7 +369,7 @@ export const Home = () => {
                     <div>
                       <div>
                         <div>Remaining Budget</div>
-                        <div className="text-lg text-secondary">{advertiserData?.advertiser?.remainingBudget || 0}</div>
+                        <div className="text-lg text-secondary">{budget?.budget?.remainingBudget || 0}</div>
                       </div>
                     </div>
 
@@ -367,8 +388,7 @@ export const Home = () => {
                         <div>Cost per any interaction</div>
                         <div className="text-lg text-white dark:text-white ">
                           {totalInteractions > 0
-                            ? (Number(advertiserData?.advertiser?.totalBudget) -
-                                Number(advertiserData?.advertiser?.remainingBudget)) /
+                            ? (Number(budget?.budget?.totalBudget) - Number(budget?.budget?.remainingBudget)) /
                               totalInteractions
                             : '-'}{' '}
                         </div>

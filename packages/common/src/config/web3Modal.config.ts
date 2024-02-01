@@ -1,6 +1,6 @@
 import { ICoreOptions } from 'web3modal';
 
-import { networkDefinitions } from '~common/constants/networkDefinitions';
+import { networkDefinitions } from '~/constants/networkDefinitions';
 
 export const customWeb3ModalProviders = {
   coinbaseKey: 'custom-walletlink',

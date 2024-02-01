@@ -20,9 +20,10 @@
     "jsx": "preserve",
     "jsxImportSource": "@emotion/react",
     "paths": {
-      "~~/*": ["./src/*"],
       "~/*": ["./src/*"],
-      "@targecy/sdk": ["../sdk/src"]
+      "@targecy/sdk": ["../sdk/src"],
+      "@common/*": ["../common/src/*"],
+      "@backend/*": ["../backend/src/*"],
     }
   },
   "include": ["src", "codegen.ts", "apollo.config.js"],

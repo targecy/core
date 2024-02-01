@@ -1,14 +1,14 @@
 // import { useConfig } from 'wagmi';
 
 import { CopyOutlined } from '@ant-design/icons';
-import { Ad, AdParams } from '@targecy/sdk';
+import { Ad, AdProps } from '@targecy/sdk';
 import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { env } from '~~/env.mjs';
+import { env } from '~/env.mjs';
 
 const schema = z.object({
   width: z.string().describe('Please fill the width'),
@@ -17,6 +17,8 @@ const schema = z.object({
   titleColor: z.string().describe('Please fill the title color'),
   subtitleColor: z.string().describe('Please fill the subtitle color'),
   borderRadius: z.string().describe('Please fill the border radius'),
+  boxShadow: z.string().describe('Please fill the box shadow'),
+  border: z.string().describe('Please fill the border'),
   publisher: z.string(),
 });
 
@@ -24,24 +26,24 @@ const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text).catch((err) => console.error(err));
 };
 
-const getCode = (params: AdParams) =>
-  `<Ad publisher="${params.publisher}" ${
-    params?.styling && Object.keys(params.styling).length > 0
-      ? `\n          styling={{${Object.entries(params.styling)
+const getCode = (props: AdProps) =>
+  `<Ad publisher="${props.publisher}" ${
+    props?.styling && Object.keys(props.styling).length > 0
+      ? `\n          styling={{${Object.entries(props.styling)
           .map(([key, value]) => `\n              ${key}: '${value}'`)
           .join(',')}\n          }}\n      `
       : ''
   }/>    `;
 
 const Demo = () => {
-  const [params, setParams] = useState<AdParams>({
+  const [props, setProps] = useState<AdProps>({
     publisher: ethers.constants.AddressZero,
   });
   const [code, setCode] = useState<string>('');
 
   useEffect(() => {
-    setCode(getCode(params));
-  }, []);
+    setCode(getCode(props));
+  }, [props]);
 
   return (
     <div className="space-y-8">
@@ -51,13 +53,15 @@ const Demo = () => {
           <div className="col-span-1">
             <Formik
               initialValues={{
-                width: params.styling?.width,
-                height: params.styling?.height,
-                backgroundColor: params.styling?.backgroundColor,
-                titleColor: params.styling?.titleColor,
-                subtitleColor: params.styling?.subtitleColor,
-                borderRadius: params.styling?.borderRadius,
+                width: props.styling?.width,
+                height: props.styling?.height,
+                backgroundColor: props.styling?.backgroundColor,
+                titleColor: props.styling?.titleColor,
+                subtitleColor: props.styling?.subtitleColor,
+                borderRadius: props.styling?.borderRadius,
                 publisher: ethers.constants.AddressZero,
+                boxShadow: props.styling?.boxShadow,
+                border: props.styling?.border,
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -74,12 +78,12 @@ const Demo = () => {
                         placeholder="Enter Width"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.width = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
@@ -102,12 +106,12 @@ const Demo = () => {
                         placeholder="Enter Height"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.height = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
@@ -133,12 +137,12 @@ const Demo = () => {
                         placeholder="Enter Width"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.backgroundColor = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
@@ -161,12 +165,12 @@ const Demo = () => {
                         placeholder="Enter Border Radius"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.borderRadius = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
@@ -192,12 +196,12 @@ const Demo = () => {
                         placeholder="Enter Title Color"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.titleColor = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
@@ -220,18 +224,78 @@ const Demo = () => {
                         placeholder="Enter Subtitle Color"
                         className="form-input"
                         onChange={(e: any) => {
-                          const current = params;
+                          const current = props;
                           if (!current.styling) current.styling = {};
                           current.styling.subtitleColor = e.target.value;
-                          setParams(current);
+                          setProps(current);
                           handleChange(e);
-                          setCode(getCode(params));
+                          setCode(getCode(props));
                         }}
                       />
 
                       {submitCount ? (
                         errors.subtitleColor ? (
                           <div className="mt-1 text-danger">{errors.subtitleColor}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-10">
+                    <div className={submitCount ? (errors.boxShadow ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="titleColor">Box Shadow</label>
+                      <Field
+                        validate={validateField}
+                        name="boxShadow"
+                        type="text"
+                        id="boxShadow"
+                        placeholder="Enter Box Shadow"
+                        className="form-input"
+                        onChange={(e: any) => {
+                          const current = props;
+                          if (!current.styling) current.styling = {};
+                          current.styling.boxShadow = e.target.value;
+                          setProps(current);
+                          handleChange(e);
+                          setCode(getCode(props));
+                        }}
+                      />
+
+                      {submitCount ? (
+                        errors.boxShadow ? (
+                          <div className="mt-1 text-danger">{errors.boxShadow}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={submitCount ? (errors.border ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="border">Border</label>
+                      <Field
+                        validate={validateField}
+                        name="border"
+                        type="text"
+                        id="border"
+                        placeholder="Enter Border"
+                        className="form-input"
+                        onChange={(e: any) => {
+                          const current = props;
+                          if (!current.styling) current.styling = {};
+                          current.styling.border = e.target.value;
+                          setProps(current);
+                          handleChange(e);
+                          setCode(getCode(props));
+                        }}
+                      />
+
+                      {submitCount ? (
+                        errors.border ? (
+                          <div className="mt-1 text-danger">{errors.border}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -249,11 +313,11 @@ const Demo = () => {
                       placeholder="Enter publisher address"
                       className="form-input"
                       onChange={(e: any) => {
-                        const current = params;
+                        const current = props;
                         current.publisher = e.target.value;
-                        setParams(current);
+                        setProps(current);
                         handleChange(e);
-                        setCode(getCode(params));
+                        setCode(getCode(props));
                       }}
                     />
 
@@ -278,15 +342,15 @@ const Demo = () => {
                 <code>{''}</code>
               </pre>
               <CopyOutlined
-                className="float-right mr-5 active:hidden"
+                className="float-right mr-5 active:opacity-50"
                 onClick={() => copyToClipboard(code)}></CopyOutlined>
               <pre data-prefix="3. " className="max-w-full break-words  pl-3">
                 <code>{code}</code>
               </pre>
             </div>
           </div>
-          <div className="flex place-items-center  justify-center">
-            <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={params.publisher} styling={params.styling} />{' '}
+          <div className="flex place-items-center justify-center">
+            <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={props.publisher} styling={props.styling} />
           </div>
         </div>
       </div>

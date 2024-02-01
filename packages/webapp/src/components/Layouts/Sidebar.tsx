@@ -22,8 +22,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { toggleSidebar } from '../../store/themeConfigSlice';
 
-import { useGetAdminQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
+import { useGetAdminQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
 
 const Sidebar = () => {
   const router = useRouter();
@@ -76,7 +76,7 @@ const Sidebar = () => {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const { address } = useWallet();
-  const { data: isAdminData } = useGetAdminQuery({ id: address?.toLowerCase() as string });
+  const { data: isAdminData } = useGetAdminQuery({ id: (address?.toLowerCase() as string) ?? '' });
   useEffect(() => {
     if (isAdminData?.admin) {
       setIsAdmin(true);

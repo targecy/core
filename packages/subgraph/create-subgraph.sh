@@ -13,9 +13,20 @@ network=${1:-localhost}
 echo "Network: $network"
 
 cd $script_dir
+hostname=$(hostname)
+echo "hostname: $hostname"
 
-# Extract the address from config.json relative to the script location
-address=$(jq -r ".${network}_targecyProxy" "../solidity-ts/generated/config/config.json")
+echo "File:"
+cat "../solidity-ts/generated/config/${network}.json"
+
+# Extract the address from config relative to the script location
+# If network is localhost, use localhost.json, and fetch hostname  if mumbai, use mumbai.json, etc.
+
+if [ $network == "localhost" ]; then
+  address=$(jq -r ".[\"$hostname\"]" "../solidity-ts/generated/config/${network}.json")
+else
+  address=$(jq -r ".address" "../solidity-ts/generated/config/${network}.json")
+fi
 
 echo "address: $address"
 
@@ -38,7 +49,7 @@ dataSources:
     network: $network
     source:
       address: "$address"
-      abi: Targecy
+      abi: TargecyEvents
       startBlock: $startBlock
     mapping:
       kind: ethereum/events
@@ -51,25 +62,23 @@ dataSources:
         - User
         - Publisher
       abis:
-        - name: Targecy
-          file: ./abis/Targecy.json
+        - name: TargecyEvents
+          file: ./abis/TargecyEvents.json
       eventHandlers:
-        - event: AdConsumed(indexed uint256,(address,string,uint8,bool,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),(uint256,address,bool,uint256,uint256,uint256),uint256)
+        - event: AdConsumed(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),(uint256,address,bool,uint256,uint256,uint256),uint256)
           handler: handleAdConsumed
-        - event: AdCreated(indexed uint256,indexed address,(string,uint8,bool,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256))
-          handler: handleAdCreated
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted
-        - event: AdEdited(indexed uint256,(address,string,uint8,bool,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
+        - event: AdEdited(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
           handler: handleAdEdited
-        - event: AudienceCreated(indexed uint256,string,uint256[])
-          handler: handleAudienceCreated
         - event: AudienceDeleted(indexed uint256)
           handler: handleAudienceDeleted
         - event: AudienceEdited(indexed uint256,string,uint256[])
           handler: handleAudienceEdited
-        - event: SegmentCreated(indexed uint256,indexed address,(uint256,uint256,uint256,uint256[],string),string,uint256)
-          handler: handleSegmentCreated
+        - event: SegmentEdited(indexed uint256,uint256,(uint256,uint256,uint256,uint256[],string),string)
+          handler: handleSegmentEdited
+        - event: SegmentDeleted(indexed uint256)
+          handler: handleSegmentDeleted
         - event: PublisherWhitelisted(indexed address,(uint256,address,bool,uint256,uint256,uint256))
           handler: handlePublisherWhitelisted
         - event: PublisherRemovedFromWhitelist(indexed address)
@@ -82,6 +91,10 @@ dataSources:
           handler: handleAdminSet
         - event: AdminRemoved(indexed address)
           handler: handleAdminRemoved
+        - event: AdvertiserBudgetFunded(indexed address,uint256) 
+          handler: handleAdvertiserBudgetFunded
+        - event: AdvertiserBudgetWithdrawn(indexed address,uint256)
+          handler: handleAdvertiserBudgetWithdrawn
       file: ./src/targecy.ts
 EOL
 

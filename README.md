@@ -1,6 +1,6 @@
 # Targecy
 
-This monorepo contains the code for all the services that make up the Targecy platform. Please review the [whitepaper](./docs/whitepaper.pdf) (see docs folder) for context.
+This monorepo contains the code for all the services that make up the Targecy platform. Please review the [BACKGROUND.md](./BACKGROUND.md) to understand the context, the [whitepaper](./docs/whitepaper.pdf) (see docs folder) for more details or [ARCHITECTURE.md](./ARCHITECTURE.md) for a high-level overview of how the platform is structured.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ This monorepo contains the code for all the services that make up the Targecy pl
 - [Doppler](https://doppler.com)
 
 ```bash
-$ brew install yarn node docker jq gnupg dopplerhq/cli/doppler
+ brew install yarn node docker jq gnupg dopplerhq/cli/doppler
 ```
 
 _Note: It is recommended to use a computer with 16GB (RAM) or just run essential services._
@@ -23,7 +23,7 @@ _Note: It is recommended to use a computer with 16GB (RAM) or just run essential
 1. Clone the repo
 
 ```bash
-$ git clone git@github.com:targecy/core.git
+ git clone git@github.com:targecy/core.git
 ```
 
 2. Fetch secrets from [Doppler](https://www.doppler.com/)
@@ -32,16 +32,16 @@ $ git clone git@github.com:targecy/core.git
 # Ask to the team for access to Doppler!
 
 # Login to Doppler following the instructions in the CLI
-$ doppler login
+ doppler login
 
 # Fetch secrets from Doppler for each project
-$ yarn download-env-vars
+ yarn download-env-vars
 ```
 
 To install dependencies and spin up the services, just run the following command:
 
 ```bash
-$ yarn install && yarn start-services
+ yarn install && yarn start-services
 ```
 
 _Note: if you want to run the blockchain explorer (a Blockscout instance) as well, which is not essential, run yarn start-explorer_
@@ -49,13 +49,19 @@ _Note: if you want to run the blockchain explorer (a Blockscout instance) as wel
 Once all services are running, in order to initialize the contracts, the subgraph and the backend, please execute:
 
 ```bash
-$ yarn setup
+ yarn setup
 ```
 
 If you want to seed Targecy with some data, run:
 
 ```bash
-$ yarn seed
+ yarn seed
+```
+
+Help: If you want to see the available commands, in root or in any package, run:
+
+```bash
+$ yarn run
 ```
 
 ## Running the Dapp
@@ -63,12 +69,20 @@ $ yarn seed
 Check that the services are running, and then execute the following in different terminals:
 
 ```bash
-$ yarn dev-dapp
-$ yarn start-backend
-$ yarn start-relayer
+ yarn dev-dapp
+ yarn start-backend
+ yarn start-relayer
 ```
 
 Now you have all the services (a local blockchain, The Graph Node, databases, backend, relayer and the main DApp) running locally.
+
+## Reset
+
+In case you want to reset the entire local environment, you can run these commands in less than 3 minutes.
+
+```bash
+yarn reset-services && yarn setup
+```
 
 ## Ports and Services
 
@@ -90,19 +104,19 @@ Also, this repo provides local instances of the following services:
 
 The following table shows the ports used by each service:
 
-| Port     | Description                                         |
-| -------- | --------------------------------------------------- |
-| **3090** | [Main Dapp](http://localhost:3090)                  |
-| **4000** | Relayer                                             |
-| **4001** | Backend                                             |
-| **5001** | Subgraph IPFS                                       |
-| **5432** | Subgraph Postgres                                   |
-| **5435** | Backend Postgres                                    |
-| **5436** | Relayer Postgres                                    |
-| **7432** | Explorer Postgres                                   |
-| **8000** | [Subgraph Node & GraphQL UI](http://localhost:8000) |
-| **8090** | [Local Chain Explorer](http://localhost:8090)       |
-| **8545** | Local Blockchain RPC                                |
+| Port     | Description                                                                        |
+| -------- | ---------------------------------------------------------------------------------- |
+| **3090** | [Main Dapp](http://localhost:3090)                                                 |
+| **4000** | Relayer                                                                            |
+| **4001** | Backend                                                                            |
+| **5001** | Subgraph IPFS                                                                      |
+| **5432** | Subgraph Postgres                                                                  |
+| **5435** | Backend Postgres                                                                   |
+| **5436** | Relayer Postgres                                                                   |
+| **7432** | Explorer Postgres                                                                  |
+| **8000** | [Subgraph Node & GraphQL UI](http://localhost:8000/subgraphs/name/targecy/graphql) |
+| **8090** | [Local Chain Explorer](http://localhost:8090)                                      |
+| **8545** | Local Blockchain RPC                                                               |
 
 _Note: Each service has its own README.md file with specific information._
 
@@ -116,4 +130,4 @@ Some comments:
 
 ## Contact
 
-In case you have any questions, please contact us [here](mailto:martin@targecy.xyz)
+In case you have any questions, please contact us [here](mailto:martin@targecy.xyz).

@@ -1,15 +1,22 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
-import deployedAddresses from './generated/config/config.json' assert { type: 'json' };
+import localhostConfig from './generated/config/localhost.json' assert { type: 'json' };
+import mumbaiConfig from './generated/config/mumbai.json' assert { type: 'json' };
+import maticConfig from './generated/config/matic.json' assert { type: 'json' };
+import { hostname } from './config/hostname.mjs';
 
 const deployedAddressByEnv = (env) => {
   switch (env) {
     case 'development':
-      return deployedAddresses['localhost_targecyProxy'];
+      if (!hostname)
+        throw new Error(
+          'Hostname not found. Please check hostname.mjs file. You can set it up by running "yarn generate:config:hostname"'
+        );
+      return localhostConfig[hostname];
     case 'preview':
-      return deployedAddresses['mumbai_targecyProxy'];
+      return mumbaiConfig.address;
     case 'production':
-      return deployedAddresses['matic_targecyProxy'];
+      return maticConfig.address;
     default:
       throw new Error(`Unknown env ${env}`);
   }
@@ -42,8 +49,13 @@ export const env = createEnv({
       .default('development'),
 
     // Custom
-    NEXT_PUBLIC_SUBGRAPH_URL: z.string().url(),
-    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: z.string().min(1),
+    NEXT_PUBLIC_TARGECY_SUBGRAPH_URL: z.string().url(),
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: z
+      .string()
+      .min(1)
+      .describe(
+        'Targency contract address. If working locally, you can use localhost config and hostname properly load on hostname.ts file.'
+      ),
     NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: z.string().min(1).default('localhost'),
   },
   // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
@@ -68,9 +80,8 @@ export const env = createEnv({
     NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
 
     // Custom
-    NEXT_PUBLIC_SUBGRAPH_URL: process.env.NEXT_PUBLIC_SUBGRAPH_URL,
-    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS:
-      deployedAddressByEnv(process.env.NEXT_PUBLIC_VERCEL_ENV || 'development') || 'asdasdasdas',
+    NEXT_PUBLIC_TARGECY_SUBGRAPH_URL: `${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_URL}/${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_VERSION}`,
+    NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: deployedAddressByEnv(process.env.NEXT_PUBLIC_VERCEL_ENV || 'development'),
 
     CIRCUITS_PATH: process.env.CIRCUITS_PATH,
     NFT_STORAGE_TOKEN: process.env.NFT_STORAGE_TOKEN,

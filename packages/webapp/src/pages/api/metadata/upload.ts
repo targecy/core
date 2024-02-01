@@ -1,21 +1,28 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import fs from 'fs';
+
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
+import { IncomingForm } from 'formidable';
+import { firstValues } from 'formidable/src/helpers/firstValues.js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { NFTStorage } from 'nft.storage'; // @todo (Martin, before january 2024): check if need to upgrade to v2
-import { z } from 'zod';
 
-import { env } from '~~/env.mjs';
+import { env } from '~/env.mjs';
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export type UploadMetadataResponse = {
   uri: string;
 };
 
-const inputSchema = z.object({
-  json: z.any(),
-});
-type Input = z.infer<typeof inputSchema>;
+type Metadata = any;
 
 // See https://nft.storage/docs/client/js/
-const NFT_STORAGE_TOKEN = env.NFT_STORAGE_TOKEN || '';
+const NFT_STORAGE_TOKEN = env.NFT_STORAGE_TOKEN;
 const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataResponse | Error>) => {
@@ -24,24 +31,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<UploadMetadataR
     return;
   }
 
-  let json;
+  const form = new IncomingForm({
+    filter: ({ mimetype }) => !!mimetype && mimetype.includes('image'),
+  });
+
   try {
-    const parsed = inputSchema.parse(JSON.parse(req.body));
-    json = parsed.json;
-  } catch (error) {
-    res.status(400).json(error as any);
-    return;
+    const [fields, files] = await form.parse(req);
+    const metadata: Metadata = firstValues(form, fields);
+
+    for (const key in files) {
+      const fileArray = files[key];
+      if (fileArray && fileArray.length > 0) {
+        const file = fileArray[0]; // This is an array because HTML allows selecting multiple files in one input. We only allow the user to upload one image.
+
+        if (!file.mimetype) {
+          res.status(400).json(new Error('File mimetype is not defined'));
+          return;
+        }
+
+        const fileData = fs.readFileSync(file.filepath);
+        const fileBlob = new Blob([fileData], { type: file.mimetype }); // The filter option above should ensure that mimetype is defined.
+        const fileURI = await client.storeBlob(fileBlob);
+        metadata[key] = getIPFSStorageUrl(fileURI);
+      }
+    }
+
+    const metadataBlob = new Blob([JSON.stringify(metadata, null, 2)], { type: 'application/json' });
+    const metadataURI = await client.storeBlob(metadataBlob);
+
+    res.status(200).json({ uri: metadataURI });
+  } catch (error: any) {
+    res.status(500).json(error);
   }
-
-  if (!json) {
-    res.status(400).json(new Error('No JSON provided'));
-    return;
-  }
-
-  const blob = new Blob([JSON.stringify(json, null, 2)], { type: 'application/json' });
-  const URI = await client.storeBlob(blob);
-
-  res.status(200).json({ uri: URI });
 };
 
 export default handler;

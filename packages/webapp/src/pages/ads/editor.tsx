@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
+import { defaultStyling } from '@targecy/sdk/src/components/Ad';
+import AdLayout from '@targecy/sdk/src/components/AdLayout';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,12 +13,13 @@ import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { NoWalletConnected } from '~~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~~/generated/graphql.types';
-import { useWallet } from '~~/hooks';
-import { fetchMetadata } from '~~/utils/metadata';
-import { backendTrpcClient } from '~~/utils/trpc';
+import DatePicker from '~/components/DatePicker';
+import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
+import { fetchMetadata } from '~/utils/metadata';
+import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -46,7 +50,7 @@ export const AdEditorComponent = (id?: string) => {
   const { data: audiences } = useGetAllAudiencesQuery();
   const { data: publishers } = useGetAllPublishersQuery();
 
-  const [procesingAd, setProcesingAd] = useState(false);
+  const [processingAd, setProcessingAd] = useState(false);
   const { writeAsync: createAdAsync } = useContractWrite({
     address: targecyContractAddress,
     abi,
@@ -62,21 +66,21 @@ export const AdEditorComponent = (id?: string) => {
   const { isConnected } = useWallet();
 
   const submitForm = async (data: FormValues) => {
-    setProcesingAd(true);
+    setProcessingAd(true);
 
-    const adMetadata = {
-      title: data.title,
-      description: data.description,
-      image: data.image,
-    };
+    const adMetadataFormData = new FormData();
+
+    adMetadataFormData.append('title', data.title);
+    adMetadataFormData.append('description', data.description);
+    adMetadataFormData.append('image', data.imageFile || data.imageUrl); // To avoid removing the image when editing
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
-      body: JSON.stringify({ json: adMetadata }),
+      body: adMetadataFormData,
     });
 
     if (!metadataUploadResponse.ok) {
-      const toast = Swal.mixin({
+      Swal.mixin({
         toast: true,
         position: 'top',
         showConfirmButton: false,
@@ -86,7 +90,8 @@ export const AdEditorComponent = (id?: string) => {
         title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
         padding: '10px 20px',
       });
-      setProcesingAd(false);
+
+      setProcessingAd(false);
       return;
     }
 
@@ -99,12 +104,11 @@ export const AdEditorComponent = (id?: string) => {
         metadataURI,
         attribution: data.attribution,
         active: data.active,
-        startingTimestamp: data.startingTimestamp,
-        endingTimestamp: data.endingTimestamp,
+        startingTimestamp: data.startingDate.getTime(),
+        endingTimestamp: data.endingDate.getTime(),
         audienceIds: data.audienceIds,
         blacklistedPublishers: data.blacklistedPublishers,
         blacklistedWeekdays: data.blacklistedWeekdays,
-        budget: data.budget,
         maxPricePerConsumption: data.maxPricePerConsumption,
         maxConsumptionsPerDay: data.maxConsumptionsPerDay,
       };
@@ -114,7 +118,6 @@ export const AdEditorComponent = (id?: string) => {
         hash = (
           await editAdAsync({
             args: [id, newAdArgs],
-            value: BigInt(data.budget),
           })
         ).hash;
       } else {
@@ -122,7 +125,6 @@ export const AdEditorComponent = (id?: string) => {
         hash = (
           await createAdAsync({
             args: [newAdArgs],
-            value: BigInt(data.budget),
           })
         ).hash;
       }
@@ -151,23 +153,23 @@ export const AdEditorComponent = (id?: string) => {
         padding: '10px 20px',
       });
 
-      setProcesingAd(false);
+      setProcessingAd(false);
     }
   };
 
   const schema = z.object({
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
-    image: z.string().describe('Please provide an image URL'),
+    imageUrl: z.string().describe('Please provide an image URL'),
+    imageFile: z.custom<File>().describe('Please provide an image'),
     attribution: z.number().describe('Please provide an attribution'),
     active: z.boolean().describe('Please provide an active'),
     blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
     blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
-    budget: z.number().describe('Please choose a budget'),
     maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
     maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
-    startingTimestamp: z.number().describe('Please provide a starting timestamp'),
-    endingTimestamp: z.number().describe('Please provide a ending timestamp'),
+    startingDate: z.date().describe('Please provide a starting date'),
+    endingDate: z.date().describe('Please provide an ending date'),
     audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
   });
 
@@ -177,6 +179,7 @@ export const AdEditorComponent = (id?: string) => {
 
   const [currentAudiences, setCurrentAudiences] = useState<number[] | undefined>(undefined);
   const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
+
   useEffect(() => {
     if (!currentAudiences || currentAudiences.length === 0) return;
 
@@ -227,6 +230,7 @@ export const AdEditorComponent = (id?: string) => {
   >(undefined);
   const { data: adData } = useGetAdQuery({ id: id ?? '' });
   const ad = adData?.ad;
+
   useAsync(async () => {
     if (ad) {
       const initialAudiences = ad?.audiences.map((a) => Number(a.id)) ?? [];
@@ -249,14 +253,19 @@ export const AdEditorComponent = (id?: string) => {
       )
         setCurrentBlacklistedWeekdays(ad.blacklistedWeekdays);
 
-      const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
-      setCurrentMetadata({ title: json.title, description: json.description, image: json.imageUrl });
+
+      if (!json) return;
+
+      const { title, description, image, imageUrl } = json;
+
+      setCurrentMetadata({ title, description, image: image || imageUrl });
 
       setPreviewValues({
-        title: json?.title,
-        description: json?.description,
-        image: json?.imageUrl,
+        title: title,
+        description: description,
+        imageUrl: image || imageUrl,
       });
     }
   }, [ad]);
@@ -287,13 +296,13 @@ export const AdEditorComponent = (id?: string) => {
               initialValues={{
                 title: currentMetadata?.title ?? '',
                 description: currentMetadata?.description ?? '',
-                image: currentMetadata?.image ?? '',
-                budget: Number(ad?.remainingBudget),
-                maxPricePerConsumption: Number(ad?.maxPricePerConsumption),
-                maxConsumptionsPerDay: Number(ad?.maxConsumptionsPerDay),
-                startingTimestamp: Number(ad?.startingTimestamp),
-                endingTimestamp: Number(ad?.endingTimestamp),
-                attribution: Number(ad?.attribution),
+                image: undefined,
+                imageUrl: currentMetadata?.image ?? '',
+                maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
+                maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
+                startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
+                endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : undefined,
+                attribution: ad?.attribution ? Number(ad.attribution) : undefined,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
                 blacklistedWeekdays: ad?.blacklistedWeekdays ?? [],
@@ -302,7 +311,7 @@ export const AdEditorComponent = (id?: string) => {
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
-              {({ errors, submitCount, touched, values, handleChange }) => (
+              {({ errors, submitCount, touched, values, handleChange, setFieldValue }) => (
                 <Form className="space-y-5 text-secondary">
                   <div className={submitCount ? (errors.title ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="title">Title </label>
@@ -357,44 +366,29 @@ export const AdEditorComponent = (id?: string) => {
                       <label htmlFor="fullName">Image URL </label>
                       <Field
                         name="image"
-                        type="text"
+                        type="file"
                         id="image"
-                        placeholder="Enter Image URL"
                         className="form-input"
-                        onChange={(e: any) => {
-                          setPreviewValues((prevState) => ({ ...prevState, image: e.target.value }));
+                        accept="image/*"
+                        placeholder="Enter Image URL"
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setPreviewValues((prevState) => ({ ...prevState, imageUrl: reader.result as string }));
+                            };
+                            reader.readAsDataURL(file);
+
+                            setFieldValue('imageFile', file);
+                          }
                           handleChange(e);
                         }}
                       />
 
                       {submitCount ? (
-                        errors.description ? (
+                        errors.image ? (
                           <div className="mt-1 text-danger">{errors.description}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div className={submitCount ? (errors.budget ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="budget">{editingMode ? 'Remaining Budget' : 'Budget'}</label>
-                      <div className="flex">
-                        <div className="flex items-center justify-center border border-white-light bg-[#eee] px-3 font-semibold ltr:rounded-l-md ltr:border-r-0 rtl:rounded-r-md rtl:border-l-0 dark:border-[#17263c] dark:bg-[#1b2e4b]">
-                          MATIC
-                        </div>
-                        <Field
-                          name="budget"
-                          type="number"
-                          id="budget"
-                          placeholder="Enter budget"
-                          className="form-input ltr:rounded-l-none rtl:rounded-r-none"
-                        />
-                      </div>
-                      {submitCount ? (
-                        errors.budget ? (
-                          <div className="mt-1 text-danger">{errors.budget.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -405,7 +399,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Bidding Strategy</label>
+                      <label htmlFor="attribution">Bidding Strategy</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -477,18 +471,20 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.startingTimestamp ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Starting Timestamp</label>
-                      <Field
-                        name="startingTimestamp"
-                        type="number"
-                        id="startingTimestamp"
-                        placeholder="Enter min timestamp"
+                    <div className={submitCount ? (errors.startingDate ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="startingDate">Starting Date</label>
+                      <DatePicker
+                        name="startingDate"
+                        id="startingDate"
+                        placeholderText="Enter starting Date"
                         className="form-input"
+                        todayButton="Today"
+                        dateFormat="MMMM d, yyyy h:mm aa"
+                        showTimeSelect
                       />
                       {submitCount ? (
-                        errors.startingTimestamp ? (
-                          <div className="mt-1 text-danger">{errors.startingTimestamp.toString()}</div>
+                        errors.startingDate ? (
+                          <div className="mt-1 text-danger">{errors.startingDate.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -497,18 +493,20 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
 
-                    <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="endingTimestamp">Ending Timestamp</label>
-                      <Field
-                        name="endingTimestamp"
-                        type="number"
-                        id="endingTimestamp"
-                        placeholder="Enter max timestamp"
+                    <div className={submitCount ? (errors.endingDate ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="endingDate">Ending Date</label>
+                      <DatePicker
+                        name="endingDate"
+                        id="endingDate"
+                        placeholderText="Enter ending Date"
                         className="form-input"
+                        todayButton="Today"
+                        dateFormat="MMMM d, yyyy h:mm aa"
+                        showTimeSelect
                       />
                       {submitCount ? (
-                        errors.endingTimestamp ? (
-                          <div className="mt-1 text-danger">{errors.endingTimestamp.toString()}</div>
+                        errors.endingDate ? (
+                          <div className="mt-1 text-danger">{errors.endingDate.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -561,7 +559,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingTimestamp">Placement Exclusion</label>
+                      <label htmlFor="blacklistedPublishers">Placement Exclusion</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -626,8 +624,8 @@ export const AdEditorComponent = (id?: string) => {
                         isSearchable={true}
                       />
                       {submitCount ? (
-                        errors.active ? (
-                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
+                        errors.blacklistedWeekdays ? (
+                          <div className="mt-1 text-danger">{errors.blacklistedWeekdays.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -636,7 +634,7 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
-                  <div className={submitCount ? (errors.endingTimestamp ? 'has-error' : 'has-success') : ''}>
+                  <div className={submitCount ? (errors.audienceIds ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="audienceIds">Audiences</label>
                     <Select
                       classNames={{
@@ -675,7 +673,7 @@ export const AdEditorComponent = (id?: string) => {
                   {isConnected ? (
                     <button
                       type="submit"
-                      disabled={procesingAd || Object.keys(touched).length === 0}
+                      disabled={processingAd || Object.keys(touched).length === 0}
                       className={`btn btn-primary !mt-6 `}
                       onClick={() => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
@@ -689,10 +687,10 @@ export const AdEditorComponent = (id?: string) => {
                           console.error(errors);
                         }
                       }}>
-                      {editingMode && procesingAd && 'Editing Ad...'}
-                      {editingMode && !procesingAd && 'Edit'}
-                      {!editingMode && procesingAd && 'Creating Ad...'}
-                      {!editingMode && !procesingAd && 'Create'}
+                      {editingMode && processingAd && 'Editing Ad...'}
+                      {editingMode && !processingAd && 'Edit'}
+                      {!editingMode && processingAd && 'Creating Ad...'}
+                      {!editingMode && !processingAd && 'Create'}
                     </button>
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
@@ -700,30 +698,28 @@ export const AdEditorComponent = (id?: string) => {
                 </Form>
               )}
             </Formik>
-            <div className="flex flex-col ">
-              {/* Preview  */}
-              <label className="ml-8 mr-8 mt-8 text-2xl text-secondary">Preview </label>
-              <div className="mb-4 ml-8 mr-8 mt-4">
-                <div className="card flex flex-row items-center rounded border border-white-light bg-white p-2 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                  <div className="h-40 w-40 overflow-hidden rounded">
-                    <img
-                      className="h-full w-full object-scale-down"
-                      src={
-                        previewValues.image || 'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
+
+            <div className="flex flex-col items-center">
+              <div className="flex w-full justify-center">
+                <div className="flex w-full max-w-lg flex-col items-start">
+                  <label className="text-2xl text-secondary">Preview</label>
+                  <div className="card" style={{ ...defaultStyling, width: '100%' }}>
+                    <AdLayout
+                      title={previewValues.title || 'Title'}
+                      description={previewValues.description || 'Description'}
+                      image={
+                        previewValues.imageUrl ||
+                        'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
                       }
                     />
                   </div>
-                  <div className="card-body m-2">
-                    <h1 className="card-title">{previewValues.title || 'Title'}</h1>
-                    <p>{previewValues.description || 'Description'}</p>
-                  </div>
                 </div>
               </div>
-              <div
-                hidden={potentialReach === undefined}
-                className="mb-8 ml-8 mr-8 mt-4 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
-                <label className="float-left m-5 text-2xl text-secondary">Potential Reach</label>
-                <label className="float-right m-5 text-2xl text-primary">{potentialReach}</label>
+              <div hidden={potentialReach === undefined} className="mb-8 mt-4 flex w-full max-w-lg justify-center">
+                <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                  <label className="text-2xl text-secondary">Potential Reach</label>
+                  <label className="text-2xl text-primary">{potentialReach}</label>
+                </div>
               </div>
             </div>
           </div>

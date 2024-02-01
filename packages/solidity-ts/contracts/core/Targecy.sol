@@ -4,8 +4,10 @@ pragma solidity 0.8.10;
 
 import { Initializable } from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import { PausableUpgradeable } from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { ITargecy } from "../interfaces/ITargecy.sol";
 import { TargecyStorage } from "./storage/TargecyStorage.sol";
@@ -14,16 +16,17 @@ import { DataTypes } from "../libraries/DataTypes.sol";
 import { Constants } from "../libraries/Constants.sol";
 import { Helpers } from "../libraries/Helpers.sol";
 import { Errors } from "../libraries/Errors.sol";
-import { ICircuitValidator } from "../interfaces/ICircuitValidator.sol";
 
-contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, TargecyStorage, TargecyEvents, ITargecy {
-  function initialize(address _zkProofsValidator, address _protocolVault, address targecyAdmin, uint256 _defaultIssuer) external initializer {
+contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable, TargecyStorage, ITargecy {
+  function initialize(address _validator, address _vault, address targecyAdmin, uint256 _defaultIssuer, address _relayer, address _erc20) external initializer {
     __AccessControl_init();
     __Pausable_init();
 
-    zkProofsValidator = _zkProofsValidator;
-    protocolVault = _protocolVault;
+    validator = _validator;
+    vault = _vault;
     defaultIssuer = _defaultIssuer;
+    relayer = _relayer;
+    erc20 = _erc20;
 
     defaultImpressionPrice = 10000;
     defaultClickPrice = 100000;
@@ -32,30 +35,30 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _adId = 1;
     _segmentId = 1;
     _audienceId = 1;
-    totalconsumptions = 0;
+    totalConsumptions = 0;
 
     _grantRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
-    emit AdminSet(targecyAdmin);
+    emit TargecyEvents.AdminSet(targecyAdmin);
   }
 
   function setAdmin(address targecyAdmin) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     _setupRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
 
-    emit AdminSet(targecyAdmin);
+    emit TargecyEvents.AdminSet(targecyAdmin);
   }
 
   function removeAdmin(address targecyAdmin) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     revokeRole(DEFAULT_ADMIN_ROLE, targecyAdmin);
 
-    emit AdminRemoved(targecyAdmin);
+    emit TargecyEvents.AdminRemoved(targecyAdmin);
   }
 
-  function setZKProofsValidator(address _zkProofsValidator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    zkProofsValidator = _zkProofsValidator;
+  function setValidator(address _validator) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    validator = _validator;
   }
 
-  function setProtocolVault(address _protocolVault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    protocolVault = _protocolVault;
+  function setVault(address _vault) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    vault = _vault;
   }
 
   function setDefaultImpressionPrice(uint256 _defaultImpressionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
@@ -66,6 +69,10 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultClickPrice = _defaultClickPrice;
   }
 
+  function setRelayer(address _relayer) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    relayer = _relayer;
+  }
+
   function setDefaultConversionPrice(uint256 _defaultConversionPrice) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     defaultConversionPrice = _defaultConversionPrice;
   }
@@ -74,74 +81,118 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     defaultIssuer = _defaultIssuer;
   }
 
-  function setSegment(DataTypes.Segment calldata _segment) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    requestQueries[_segmentId].query.value = _segment.query.value;
-    requestQueries[_segmentId].query.operator = _segment.query.operator;
-    requestQueries[_segmentId].query.circuitId = _segment.query.circuitId;
-    requestQueries[_segmentId].query.slotIndex = _segment.query.slotIndex;
-    requestQueries[_segmentId].query.schema = _segment.query.schema;
+  function setSegment(uint256 idReceived, DataTypes.Segment calldata _segment) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    uint256 idToUse = idReceived;
+    if (idToUse == 0) {
+      idToUse = _segmentId;
+      _segmentId += 1;
+    }
 
-    requestQueries[_segmentId].metadataURI = _segment.metadataURI;
+    segments[idToUse] = _segment;
 
     // Use given issuer or default issuer
     if (_segment.issuer == 0) {
-      requestQueries[_segmentId].issuer = defaultIssuer;
+      segments[idToUse].issuer = defaultIssuer;
     } else {
-      requestQueries[_segmentId].issuer = _segment.issuer;
+      segments[idToUse].issuer = _segment.issuer;
     }
 
-    emit SegmentCreated(_segmentId, address(zkProofsValidator), _segment.query, _segment.metadataURI, _segment.issuer);
-    _segmentId += 1;
+    emit TargecyEvents.SegmentEdited(idToUse, segments[idToUse].issuer, _segment.query, _segment.metadataURI);
   }
 
-  function editSegment(uint256 id, DataTypes.Segment calldata _segment) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    requestQueries[id].query.value = _segment.query.value;
-    requestQueries[id].query.operator = _segment.query.operator;
-    requestQueries[id].query.circuitId = _segment.query.circuitId;
-    requestQueries[id].query.slotIndex = _segment.query.slotIndex;
-    requestQueries[id].query.schema = _segment.query.schema;
+  function fundAdvertiserBudget(address advertiser, uint256 amount) external override {
+    require(IERC20(erc20).transferFrom(msg.sender, address(this), amount), "Transfer failed. Please check your allowance.");
 
-    requestQueries[id].query.circuitId = _segment.query.circuitId;
+    DataTypes.Budget storage budget = budgets[advertiser];
+    budget.advertiser = advertiser;
+    budget.totalBudget = budget.totalBudget + amount;
+    budget.remainingBudget = budget.remainingBudget + amount;
 
-    emit SegmentEdited(id, address(zkProofsValidator), _segment.query, _segment.metadataURI);
+    emit TargecyEvents.AdvertiserBudgetFunded(advertiser, amount);
   }
 
-  function deleteSegment(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    delete requestQueries[id];
+  function withdrawAdvertiserBudget(uint256 amount) external override {
+    DataTypes.Budget storage budget = budgets[_msgSender()];
 
-    emit SegmentDeleted(id);
-  }
-
-  function createAd(DataTypes.NewAd calldata ad) external payable override {
-    if (msg.value < ad.budget) {
+    if (budget.remainingBudget < amount) {
       revert Errors.InsufficientFunds();
     }
 
-    require(ad.attribution != DataTypes.Attribution.Conversion, "Targecy: Conversion ads are not allowed yet.");
+    budget.remainingBudget = budget.remainingBudget - amount;
+    budget.totalBudget = budget.totalBudget - amount;
 
-    ads[_adId] = DataTypes.Ad(
-      // Properties
-      _msgSender(),
-      ad.metadataURI,
-      ad.attribution,
-      ad.active,
-      // Conditions
-      ad.startingTimestamp,
-      ad.endingTimestamp,
-      ad.audienceIds,
-      ad.blacklistedPublishers,
-      ad.blacklistedWeekdays,
-      // Budget
-      ad.budget,
-      ad.budget,
-      ad.maxConsumptionsPerDay,
-      ad.maxPricePerConsumption,
-      // Stats
-      0
-    );
+    require(IERC20(erc20).transfer(msg.sender, amount), "Transfer failed");
 
-    emit AdCreated(_adId, _msgSender(), ad);
-    _adId += 1;
+    emit TargecyEvents.AdvertiserBudgetWithdrawn(budget.advertiser, amount);
+  }
+
+  function deleteSegment(uint256 id) external override onlyRole(DEFAULT_ADMIN_ROLE) {
+    delete segments[id];
+
+    emit TargecyEvents.SegmentDeleted(id);
+  }
+
+  function setAd(uint256 adIdReceived, DataTypes.NewAd calldata ad) external payable override whenNotPaused {
+    uint256 adId = adIdReceived;
+    if (adId == 0) {
+      adId = _adId;
+      _adId += 1;
+    }
+
+    DataTypes.Ad storage adStorage = ads[adId];
+
+    if (adStorage.maxBudget > 0) {
+      // Edit
+      if (adStorage.advertiser != _msgSender()) {
+        revert Errors.NotAdvertiser();
+      }
+
+      if (ad.maxBudget > 0) {
+        if (ad.maxBudget <= adStorage.currentBudget) {
+          // Already spent
+          revert Errors.InvalidNewBudget();
+        }
+
+        adStorage.maxBudget = ad.maxBudget;
+      }
+
+      adStorage.metadataURI = ad.metadataURI;
+      adStorage.audienceIds = ad.audienceIds;
+
+      adStorage.blacklistedPublishers = ad.blacklistedPublishers;
+      adStorage.blacklistedWeekdays = ad.blacklistedWeekdays;
+      adStorage.startingTimestamp = ad.startingTimestamp;
+      adStorage.endingTimestamp = ad.endingTimestamp;
+      adStorage.maxConsumptionsPerDay = ad.maxConsumptionsPerDay;
+      adStorage.maxPricePerConsumption = ad.maxPricePerConsumption;
+      adStorage.attribution = ad.attribution;
+    } else {
+      ads[adId] = DataTypes.Ad(
+        // Properties
+        _msgSender(),
+        ad.metadataURI,
+        ad.attribution,
+        ad.active,
+        // Action
+        ad.abi,
+        ad.target,
+        // Conditions
+        ad.startingTimestamp,
+        ad.endingTimestamp,
+        ad.audienceIds,
+        ad.blacklistedPublishers,
+        ad.blacklistedWeekdays,
+        // Budget
+        ad.maxBudget,
+        0,
+        ad.maxConsumptionsPerDay,
+        ad.maxPricePerConsumption,
+        // Stats
+        0
+      );
+    }
+
+    emit TargecyEvents.AdEdited(adId, adStorage);
   }
 
   function pauseAd(uint256 adId) external override whenNotPaused {
@@ -153,7 +204,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     adStorage.active = false;
 
-    emit AdPaused(adId);
+    emit TargecyEvents.AdPaused(adId);
   }
 
   function unpauseAd(uint256 adId) external override whenNotPaused {
@@ -165,173 +216,85 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     adStorage.active = true;
 
-    emit AdUnpaused(adId);
-  }
-
-  function editAd(uint256 adId, DataTypes.NewAd calldata ad) external payable override whenNotPaused {
-    DataTypes.Ad storage adStorage = ads[adId];
-
-    if (adStorage.advertiser != _msgSender()) {
-      revert Errors.NotAdvertiser();
-    }
-
-    if (ad.budget > 0) {
-      if (ad.budget < (adStorage.totalBudget - adStorage.remainingBudget)) {
-        // Already spent
-        revert Errors.InvalidNewBudget();
-      } else if (ad.budget < adStorage.totalBudget) {
-        // Lowering budget
-        payable(_msgSender()).transfer(adStorage.totalBudget - ad.budget);
-      } else if (ad.budget > adStorage.totalBudget) {
-        // Increasing budget
-        if (msg.value != (adStorage.totalBudget - ad.budget)) {
-          revert Errors.InsufficientFunds();
-        }
-      }
-
-      uint256 alreadyConsumed = adStorage.totalBudget - adStorage.remainingBudget;
-      adStorage.remainingBudget = ad.budget - alreadyConsumed;
-      adStorage.totalBudget = ad.budget;
-    }
-
-    adStorage.metadataURI = ad.metadataURI;
-    adStorage.audienceIds = ad.audienceIds;
-
-    adStorage.blacklistedPublishers = ad.blacklistedPublishers;
-    adStorage.blacklistedWeekdays = ad.blacklistedWeekdays;
-    adStorage.startingTimestamp = ad.startingTimestamp;
-    adStorage.endingTimestamp = ad.endingTimestamp;
-    adStorage.maxConsumptionsPerDay = ad.maxConsumptionsPerDay;
-    adStorage.maxPricePerConsumption = ad.maxPricePerConsumption;
-    adStorage.attribution = ad.attribution;
-
-    emit AdEdited(adId, adStorage);
+    emit TargecyEvents.AdUnpaused(adId);
   }
 
   function deleteAd(uint256 adId) external override whenNotPaused {
-    DataTypes.Ad storage adStorage = ads[adId];
+    DataTypes.Ad storage ad = ads[adId];
 
-    if (adStorage.advertiser != _msgSender()) {
+    if (ad.advertiser != _msgSender()) {
       revert Errors.NotAdvertiser();
     }
 
-    payable(_msgSender()).transfer(adStorage.remainingBudget);
-
     delete ads[adId];
 
-    emit AdDeleted(adId);
+    emit TargecyEvents.AdDeleted(adId);
   }
 
-  function createAudience(string calldata metadataURI, uint256[] calldata audienceIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    audiences[_audienceId] = DataTypes.Audience(metadataURI, audienceIds, 0);
-
-    emit AudienceCreated(_audienceId, metadataURI, audienceIds);
-    _audienceId += 1;
-  }
-
-  function editAudience(uint256 audienceId, string calldata metadataURI, uint256[] calldata segmentIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    DataTypes.Audience storage audienceStorage = audiences[audienceId];
-
+  function setAudience(uint256 audienceIdReceived, string calldata metadataURI, uint256[] calldata segmentIds) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     if (segmentIds.length == 0) {
-      revert Errors.InvalidZKProofsLength();
+      revert Errors.AudiencesMustHaveAtLeastOneSegment();
     }
 
-    audienceStorage.metadataURI = metadataURI;
-    audienceStorage.segmentIds = segmentIds;
+    uint256 idToUse = audienceIdReceived;
+    if (idToUse == 0) {
+      idToUse = _audienceId;
+      _audienceId += 1;
+    }
 
-    emit AudienceEdited(audienceId, metadataURI, segmentIds);
+    DataTypes.Audience storage audience = audiences[audienceIdReceived];
+    if (audience.segmentIds.length == 0) {
+      // Create
+      audiences[idToUse] = DataTypes.Audience(metadataURI, segmentIds, 0);
+    } else {
+      audience.metadataURI = metadataURI;
+      audience.segmentIds = segmentIds;
+    }
+
+    emit TargecyEvents.AudienceEdited(idToUse, metadataURI, segmentIds);
   }
 
   function deleteAudience(uint256 audienceId) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     delete audiences[audienceId];
 
-    emit AudienceDeleted(audienceId);
-  }
-
-  function verifyZKProof(
-    uint256 requestId,
-    uint256[] memory inputs,
-    uint256[2] memory a,
-    uint256[2][2] memory b,
-    uint256[2] memory c
-  ) public view returns (bool) {
-    // sig circuit has 8th public signal as issuer id
-    require(inputs.length > 7 && inputs[7] == requestQueries[requestId].issuer, "ZKProofs has an invalid issuer.");
-
-    return ICircuitValidator(zkProofsValidator).verify(inputs, a, b, c, requestQueries[requestId].query);
-  }
-
-  function _bulkVerifyZKProofs(
-    uint256[] memory audienceIds,
-    uint256[][] memory inputs,
-    uint256[2][] memory a,
-    uint256[2][2][] memory b,
-    uint256[2][] memory c
-  ) internal view returns (bool) {
-    if (audienceIds.length != inputs.length || audienceIds.length != a.length || audienceIds.length != b.length || audienceIds.length != c.length) {
-      return false;
-    }
-
-    for (uint256 i = 0; i < audienceIds.length; i++) {
-      if (!verifyZKProof(audienceIds[i], inputs[i], a[i], b[i], c[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  function getConsumptionPrice(
-    DataTypes.Attribution attribution,
-    DataTypes.PublisherSettings memory publisher
-  ) internal view returns (uint256 consumptionPrice) {
-    if (attribution == DataTypes.Attribution.Impression) {
-      consumptionPrice = publisher.cpi;
-      if (consumptionPrice == 0) {
-        consumptionPrice = defaultImpressionPrice;
-      }
-    } else if (attribution == DataTypes.Attribution.Click) {
-      consumptionPrice = publisher.cpc;
-      if (consumptionPrice == 0) {
-        consumptionPrice = defaultClickPrice;
-      }
-    } else if (attribution == DataTypes.Attribution.Conversion) {
-      consumptionPrice = publisher.cpa;
-      if (consumptionPrice == 0) {
-        consumptionPrice = defaultConversionPrice;
-      }
-    } else {
-      revert Errors.InvalidAttribution();
-    }
+    emit TargecyEvents.AudienceDeleted(audienceId);
   }
 
   function distributeRewards(uint256 adId, address user, DataTypes.Ad storage ad, DataTypes.PublisherSettings memory publisher) internal {
-    uint256 consumptionPrice = getConsumptionPrice(ad.attribution, publisher);
+    uint256 consumptionPrice = Helpers.getConsumptionPrice(ad.attribution, publisher, defaultImpressionPrice, defaultClickPrice, defaultConversionPrice);
 
+    // Ad Budget's limitations
     if (consumptionPrice > ad.maxPricePerConsumption) {
-      revert Errors.ConsumptionPriceTooHigh();
+      revert Errors.ConsumptionPriceTooHigh(); // Advertiser does not agree with the price
     }
-
-    if (consumptionPrice > ad.remainingBudget) {
-      revert Errors.InsufficientFunds();
+    uint256 adRemainingBudget = ad.maxBudget - ad.currentBudget;
+    if (consumptionPrice > adRemainingBudget) {
+      revert Errors.InsufficientFunds(); // Ad's max budget has been reached
     }
-
-    ad.remainingBudget = ad.remainingBudget - consumptionPrice;
+    ad.currentBudget = ad.currentBudget + consumptionPrice;
     ad.consumptions = ad.consumptions + 1;
 
+    // Advertiser's Core Budget
+    DataTypes.Budget storage budget = budgets[ad.advertiser];
+    if (consumptionPrice > budget.remainingBudget) {
+      revert Errors.InsufficientFunds(); // Advertiser's core budget limit has been reached
+    }
+    budget.remainingBudget = budget.remainingBudget - consumptionPrice;
+
     // Protocol Fee
-    uint256 protocolFee = calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
-    payable(protocolVault).transfer(protocolFee);
+    uint256 protocolFee = Helpers.calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
+    require(IERC20(erc20).transfer(vault, protocolFee), "Transfer to protocol vault failed.");
 
     // User Rewards
-    uint256 userRewards = publisher.userRewardsPercentage > 0 ? calculatePercentage(consumptionPrice, publisher.userRewardsPercentage) : 0;
-    payable(user).transfer(userRewards);
+    uint256 userRewards = Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage);
+    require(IERC20(erc20).transfer(user, userRewards), "Transfer to user failed.");
 
     // User Rewards
     uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
-    payable(publisher.vault).transfer(publisherFee);
+    require(IERC20(erc20).transfer(publisher.vault, publisherFee), "Transfer to publisher failed.");
 
-    emit AdConsumed(adId, ad, publisher, consumptionPrice);
+    emit TargecyEvents.RewardsDistributed(adId, DataTypes.RewardsDistribution(publisher.vault, publisherFee, user, userRewards, vault, protocolFee));
+    emit TargecyEvents.AdConsumed(adId, ad, publisher, consumptionPrice);
   }
 
   /// @notice Sets the pause state to true in case of emergency, triggered by an authorized account.
@@ -344,10 +307,16 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     _unpause();
   }
 
-  function _consumeAd(address viewer, uint64 adId, address publisherVault, DataTypes.ZKProofs calldata zkProofs) internal {
+  function _consumeAd(
+    address viewer,
+    uint256 adId,
+    address publisherVault,
+    DataTypes.ZKProofs calldata zkProofs,
+    bytes calldata actionParams
+  ) internal nonReentrant {
     DataTypes.Ad storage ad = ads[adId];
 
-    if (ad.remainingBudget == 0) {
+    if (ad.currentBudget == ad.maxBudget) {
       revert Errors.AdConsumed();
     }
 
@@ -355,7 +324,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       revert Errors.AdNotAvailable();
     }
 
-    DataTypes.PublisherSettings memory publisher = whitelistedPublishers[publisherVault];
+    DataTypes.PublisherSettings memory publisher = publishers[publisherVault];
 
     for (uint256 i = 0; i < ad.blacklistedPublishers.length; i++) {
       if (ad.blacklistedPublishers[i] == publisher.vault) {
@@ -380,35 +349,20 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     }
     consumptionsPerDay[adId][dayFromEpoch] = consumptionsPerDay[adId][dayFromEpoch] + 1;
 
-    // Verify ZKProofs - At least one Audience must be valid
-    bool audienceValidated;
-    for (uint256 i = 0; i < ad.audienceIds.length; i++) {
-      DataTypes.Audience memory audience = audiences[ad.audienceIds[i]];
+    if (!Helpers.verifyAudiences(ad, zkProofs, audiences, segments, validator)) revert Errors.InvalidZKProofsInput();
 
-      if (audience.segmentIds.length == 0) {
-        // Audience does not exists.
-        continue;
-      }
+    totalConsumptions += 1;
 
-      if (_bulkVerifyZKProofs(audience.segmentIds, zkProofs.inputs, zkProofs.a, zkProofs.b, zkProofs.c)) {
-        audienceValidated = true;
-        audience.consumptions = audience.consumptions + 1;
-        break;
+    if (ad.attribution == DataTypes.Attribution.Conversion) {
+      (bool success, bytes memory result) = address(ad.target).call{ value: msg.value }(abi.encodeWithSignature(ad.abi, actionParams));
+      if (success == false) {
+        // Redirect revert message
+        assembly {
+          revert(add(result, 32), mload(result))
+        }
       }
     }
-    if (!audienceValidated) {
-      revert Errors.InvalidZKProofsInput();
-    }
 
-    // TODO: Missing security validations:
-    // Avoid spoofing (limit ads per wallet per block range?)
-    // Avoid reutilization of proofs (wallet signature?)
-    // Accept user's signature (for gasless txs)
-    // TODO: Validate publisher's signature to avoid calls from code.
-
-    totalconsumptions += 1;
-
-    // Proofs verified, distribute rewards
     distributeRewards(adId, viewer, ad, publisher);
   }
 
@@ -419,10 +373,16 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    * @param publisher   The publisher that has shown the ad.
    * @param zkProofs    The zk proofs.
    */
-  function consumeAdViaRelayer(address viewer, uint64 adId, address publisher, DataTypes.ZKProofs calldata zkProofs) external override whenNotPaused {
-    require(msg.sender == relayerAddress, "Targecy: Only relayer can call this function");
+  function consumeAdViaRelayer(
+    address viewer,
+    uint256 adId,
+    address publisher,
+    DataTypes.ZKProofs calldata zkProofs,
+    bytes calldata actionParams
+  ) external payable override whenNotPaused {
+    require(msg.sender == relayer, "Targecy: Only relayer can call this function");
 
-    _consumeAd(viewer, adId, publisher, zkProofs);
+    _consumeAd(viewer, adId, publisher, zkProofs, actionParams);
   }
 
   /**
@@ -431,63 +391,58 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
    * @param adId        The id of the ad to be consumed.
    * @param publisher   The publisher that has shown the ad.
    * @param zkProofs    The zk proofs.
-   * @param targecySig  Targecy's signature validating that the ad has been seen.
    */
   function consumeAd(
-    uint64 adId,
+    uint256 adId,
     address publisher,
     DataTypes.ZKProofs calldata zkProofs,
-    DataTypes.EIP712Signature calldata targecySig
-  ) external override whenNotPaused {
-    // Validates Targecy's signature
-    require(!usedSigNonces[targecySig.nonce], "Targecy: Signature nonce already used");
-    unchecked {
-      Helpers._validateRecoveredAddress(
-        Helpers._calculateDigest(keccak256(abi.encode(Constants.CONSUME_AD_VERIFICATION_SIG_TYPEHASH, adId, targecySig.nonce, targecySig.deadline))),
-        relayerAddress,
-        targecySig
-      );
-    }
-    usedSigNonces[targecySig.nonce] = true;
+    bytes calldata actionParams
+  ) external payable override whenNotPaused {
+    DataTypes.Ad storage ad = ads[adId];
 
-    _consumeAd(msg.sender, adId, publisher, zkProofs);
+    if (ad.attribution != DataTypes.Attribution.Conversion) {
+      // Only conversions can be consumed directly by the user until we can ensure that the user is not spoofing the call.
+      revert Errors.ImpressionOrClickOnlyAvailableThroughRelayer();
+    }
+
+    _consumeAd(msg.sender, adId, publisher, zkProofs, actionParams);
   }
 
   function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher.vault] = publisher;
+    publishers[publisher.vault] = DataTypes.PublisherSettings(
+      publisher.userRewardsPercentage,
+      publisher.vault,
+      publisher.active,
+      publisher.cpi,
+      publisher.cpc,
+      publisher.cpa
+    );
 
-    emit PublisherWhitelisted(publisher.vault, publisher);
+    emit TargecyEvents.PublisherWhitelisted(publisher.vault, publisher);
   }
 
   function removePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    delete whitelistedPublishers[publisher];
+    delete publishers[publisher];
 
-    emit PublisherRemovedFromWhitelist(publisher);
+    emit TargecyEvents.PublisherRemovedFromWhitelist(publisher);
   }
 
   function changePublisherAddress(address oldAddress, address newAddress) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    DataTypes.PublisherSettings memory publisher = whitelistedPublishers[oldAddress];
-    delete whitelistedPublishers[oldAddress];
-    whitelistedPublishers[newAddress] = publisher;
+    DataTypes.PublisherSettings memory publisher = publishers[oldAddress];
+    delete publishers[oldAddress];
+    publishers[newAddress] = publisher;
   }
 
   function pausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher].active = false;
+    publishers[publisher].active = false;
 
-    emit PausePublisher(publisher);
+    emit TargecyEvents.PausePublisher(publisher);
   }
 
   function unpausePublisher(address publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
-    whitelistedPublishers[publisher].active = true;
+    publishers[publisher].active = true;
 
-    emit UnpausePublisher(publisher);
-  }
-
-  function calculatePercentage(uint256 total, uint256 percentage) public pure returns (uint256) {
-    // if (total < Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTotalTooSmall();
-    if (percentage > Constants.PERCENTAGES_PRECISION) revert Errors.PercentageTooBig();
-
-    return (total * percentage) / Constants.PERCENTAGES_PRECISION;
+    emit TargecyEvents.UnpausePublisher(publisher);
   }
 
   function getAudienceSegments(uint256 audienceId) external view override returns (uint256[] memory) {

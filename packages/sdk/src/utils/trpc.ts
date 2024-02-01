@@ -1,38 +1,9 @@
-import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import { CreateTRPCProxyClient, createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
+
 import { environment } from './context';
-
-export const relayerTrpcClient: any = (env: environment) =>
-  createTRPCProxyClient({
-    links: [
-      httpBatchLink({
-        url: getRelayerUrl(env),
-        fetch(url, options) {
-          return fetch(url, {
-            ...options,
-            mode: 'cors',
-          });
-        },
-      }),
-    ],
-    transformer: superjson as any,
-  });
-
-export const backendTrpcClient: any = (env: environment) =>
-  createTRPCProxyClient({
-    links: [
-      httpBatchLink({
-        url: getBackendUrl(env),
-        fetch(url, options) {
-          return fetch(url, {
-            ...options,
-            mode: 'cors',
-          });
-        },
-      }),
-    ],
-    transformer: superjson as any,
-  });
+import { appRouter as RelayerAppRouter } from '../generated/types/relayer/routers';
+import { appRouter as BackendAppRouter } from '../generated/types/backend/routers';
 
 export const getBackendUrl = (env: environment) => {
   switch (env) {
@@ -59,3 +30,35 @@ export const getRelayerUrl = (env: environment) => {
       throw new Error('Invalid environment');
   }
 };
+
+export const relayerTrpcClient = (env: environment) =>
+  createTRPCProxyClient<typeof RelayerAppRouter>({
+    links: [
+      httpBatchLink({
+        url: getRelayerUrl(env),
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            mode: 'cors',
+          });
+        },
+      }),
+    ],
+    transformer: superjson as any,
+  });
+
+export const backendTrpcClient = (env: environment) =>
+  createTRPCProxyClient<typeof BackendAppRouter>({
+    links: [
+      httpBatchLink({
+        url: getBackendUrl(env),
+        fetch(url, options) {
+          return fetch(url, {
+            ...options,
+            mode: 'cors',
+          });
+        },
+      }),
+    ],
+    transformer: superjson as any,
+  });

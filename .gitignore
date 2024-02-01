@@ -2,6 +2,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 **/node_modules
 
+# Addresses
+
+**/config/config.json
+**/generated/config/localhost.json
+
 #build
 *.tsbuildinfo
 *.stackdump
@@ -18,7 +23,6 @@ packages/common/src/generated
 cache
 artifacts
 tenderly.yaml
-
 
 # secrets / env
 **/.env
@@ -70,3 +74,7 @@ yarn-error.log*
 # misc
 .DS_Store
 *.pem
+packages/webapp/src/config/hostname.mjs
+
+# node
+.nvmrc

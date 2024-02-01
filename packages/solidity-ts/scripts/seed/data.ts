@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { prepareCircuitArrayValues } from '@0xpolygonid/js-sdk';
+import { KNOWN_PROTOCOLS, KNOWN_TOKENS } from '@backend/constants/contracts.constants';
+import { SCHEMAS } from '@backend/constants/schemas/schemas.constant';
 import { MtValue, PoseidonHasher } from '@iden3/js-jsonld-merklization';
-
-import { KNOWN_PROTOCOLS, KNOWN_TOKENS } from '~backend/constants/contracts.constants';
-import { SCHEMAS } from '~backend/constants/schemas/schemas.constant';
 
 const Operators = {
   NOOP: 0n, // No operation, skip query verification in circuit
@@ -18,8 +17,6 @@ const Operators = {
 
 const stringToBigInt = async (str: string): Promise<bigint> => await MtValue.mkValueString(new PoseidonHasher(), str);
 const stringToBigIntArray = async (str: string, padding: number): Promise<bigint[]> => prepareCircuitArrayValues([await stringToBigInt(str)], padding);
-
-// @todo (martin): hash title to set custom id easy to find?
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const initializeData = async () => {
@@ -285,7 +282,7 @@ export const initializeData = async () => {
     metadata: {
       title: string;
       description: string;
-      imageUrl: string;
+      image: string;
     };
     metadataURI?: string;
     attribution: number;
@@ -302,7 +299,7 @@ export const initializeData = async () => {
       metadata: {
         title: 'Explore Ethereum Ecosystem',
         description: 'Ethereum is the most actively used blockchain.',
-        imageUrl:
+        image:
           'https://statics.ambcrypto.com/wp-content/uploads/2023/08/ambcrypto_Prompt_Enter_the_Crypto_Skies_Ethereum_Soars_Above_Si_014291ef-850a-4bce-ad0c-67624525fbca.jpg',
       },
       audiencesIds: [audiences.findIndex((group) => group.metadata.title === 'Active on ethereum') + 1],

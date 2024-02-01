@@ -1,13 +1,13 @@
-import chalk from 'chalk';
-
 import {
   TSolidityToolkits,
   TReactBuilds,
   TNetworkNamesList,
   scaffoldConfigSchema,
   TScaffoldConfig,
-} from '~common/models';
-import { set, editor, load } from '~~/helpers/configManager';
+} from '@common/models';
+import chalk from 'chalk';
+
+import { set, editor, load } from '~/helpers/configManager';
 
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;

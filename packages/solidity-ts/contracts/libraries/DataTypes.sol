@@ -23,15 +23,18 @@ library DataTypes {
   }
 
   enum Attribution {
-    Impression,
-    Click,
-    Conversion
+    Impression, // 0
+    Click, // 1
+    Conversion // 2
   }
   struct NewAd {
     // Properties
     string metadataURI;
     Attribution attribution; // 0: impression, 1: click, 2: conversion
     bool active;
+    // Action
+    string abi;
+    address target;
     // Conditions
     uint256 startingTimestamp;
     uint256 endingTimestamp;
@@ -39,7 +42,7 @@ library DataTypes {
     address[] blacklistedPublishers;
     uint8[] blacklistedWeekdays;
     // Budget
-    uint256 budget;
+    uint256 maxBudget;
     uint256 maxPricePerConsumption;
     uint256 maxConsumptionsPerDay;
   }
@@ -50,6 +53,9 @@ library DataTypes {
     string metadataURI;
     Attribution attribution; // 0: impression, 1: click, 2: conversion
     bool active;
+    // Action
+    string abi;
+    address target;
     // Conditions
     uint256 startingTimestamp;
     uint256 endingTimestamp;
@@ -57,12 +63,18 @@ library DataTypes {
     address[] blacklistedPublishers;
     uint8[] blacklistedWeekdays;
     // Budget
-    uint256 totalBudget;
-    uint256 remainingBudget;
+    uint256 maxBudget;
+    uint256 currentBudget;
     uint256 maxConsumptionsPerDay;
     uint256 maxPricePerConsumption;
     // Stats
     uint256 consumptions;
+  }
+
+  struct Budget {
+    address advertiser;
+    uint256 totalBudget;
+    uint256 remainingBudget;
   }
 
   struct Segment {
@@ -91,5 +103,14 @@ library DataTypes {
     uint256 cpi;
     uint256 cpc;
     uint256 cpa;
+  }
+
+  struct RewardsDistribution {
+    address publisher;
+    uint256 publisherAmount;
+    address user;
+    uint256 userAmount;
+    address vault;
+    uint256 protocolAmount;
   }
 }

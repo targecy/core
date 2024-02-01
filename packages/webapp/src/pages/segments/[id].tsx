@@ -1,3 +1,4 @@
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -5,9 +6,9 @@ import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { useGetSegmentQuery } from '~~/generated/graphql.types';
-import { shortString } from '~~/utils';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { useGetSegmentQuery } from '~/generated/graphql.types';
+import { shortString } from '~/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
@@ -21,7 +22,7 @@ const SegmentDetailPage = () => {
   const [metadata, setMetadata] = useState<{ title?: string; description?: string; image?: string }>({});
   useAsync(async () => {
     if (segment) {
-      const newMetadata = await fetch(`https://${segment.metadataURI}.ipfs.nftstorage.link`);
+      const newMetadata = await fetch(getIPFSStorageUrl(segment.metadataURI));
       const json = await newMetadata.json();
       setMetadata({ title: json.title, description: json.description });
     }

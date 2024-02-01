@@ -1,30 +1,28 @@
 import { EditOutlined, DeleteOutlined, PauseOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
-import { useContractRead, useContractWrite } from 'wagmi';
+import { useContractWrite } from 'wagmi';
 
-import { targecyContractAddress } from '~~/constants/contracts.constants';
-import { GetAllAdsQuery, useGetAllAdsQuery } from '~~/generated/graphql.types';
+import { targecyContractAddress } from '~/constants/contracts.constants';
+import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~/generated/graphql.types';
+import { useWallet } from '~/hooks';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
 
 const AdsList = () => {
   const router = useRouter();
-  const data = useGetAllAdsQuery();
-  const { data: adsQuantity } = useContractRead({
-    address: targecyContractAddress,
-    abi,
-    functionName: '_adId',
-  });
+  const { address } = useWallet();
+  const data = useGetAdsByAdvertiserQuery({ advertiserId: address?.toLowerCase() ?? '' });
 
   useInterval(() => {
     data.refetch();
-  }, 3000);
+  }, 2000);
 
   const ads = data?.data?.ads;
 
@@ -37,11 +35,11 @@ const AdsList = () => {
         (
           await Promise.all(
             ads.map(async (ad) => {
-              const newMetadata = await fetch(`https://${ad.metadataURI}.ipfs.nftstorage.link`);
-              const json = await newMetadata.json();
+              const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
+              const { title, description, image, imageUrl } = await newMetadata.json();
               return {
                 id: ad.id,
-                metadata: { title: json.title, description: json.description, image: json.imageUrl },
+                metadata: { title, description, image: image || imageUrl },
               };
             })
           )
@@ -90,11 +88,11 @@ const AdsList = () => {
     { title: 'Id', accessor: 'id' },
     {
       title: 'Image',
-      accessor: 'id',
+      accessor: 'image',
       render: (ad) => <img src={metadata[ad.id]?.image} className="h-[75px] w-[75px] object-contain"></img>,
     },
-    { title: 'Title', accessor: 'id', render: (ad) => metadata[ad.id]?.title },
-    { title: 'Description', accessor: 'id', render: (ad) => metadata[ad.id]?.description },
+    { title: 'Title', accessor: 'title', render: (ad) => metadata[ad.id]?.title },
+    { title: 'Description', accessor: 'description', render: (ad) => metadata[ad.id]?.description },
     {
       title: 'Attribution',
       accessor: 'attribution',
@@ -112,8 +110,6 @@ const AdsList = () => {
       },
     },
     { title: 'Consumptions', accessor: 'consumptions', render: (value) => value.consumptions },
-    { title: 'Remaining Budget', accessor: 'remainingBudget' },
-    { title: 'Total Budget', accessor: 'totalBudget' },
     {
       accessor: 'actions',
       title: '',
@@ -250,7 +246,6 @@ const AdsList = () => {
           borderColor="grey"
           noRecordsIcon={<div></div>}
           rowClassName="bg-white dark:bg-black dark:text-white text-black"
-          noRecordsText="No results match your search query"
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
           records={ads || []}
           onRowClick={(row) => {
@@ -258,7 +253,9 @@ const AdsList = () => {
           }}
           highlightOnHover={true}
           minHeight={100}
-          columns={columns}></DataTable>
+          columns={columns}
+          idAccessor="id"
+        />
       </div>
     </div>
   );

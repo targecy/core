@@ -37,6 +37,7 @@ import {
   CircuitStorage,
   type CircuitData,
 } from '@0xpolygonid/js-sdk';
+import { isolatedEnv } from 'hardhat.config';
 
 export type StoragesSide = 'server' | 'client';
 
@@ -45,7 +46,7 @@ const issuerSeed = 'issuseedseedseedseedseedseedseed';
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_mumbai';
+  ethConnectionConfig.url = Boolean(isolatedEnv) ? 'http://localhost:8545' : 'https://rpc.ankr.com/polygon_mumbai';
   ethConnectionConfig.chainId = 80001;
   ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
 
@@ -157,8 +158,9 @@ function fetchBinaryFile(file: string) {
 
   const prefix = path.resolve(__dirname);
 
-  const data = fs.readFileSync(prefix + file); // Change this to your url
+  const data = fs.readFileSync(`${prefix}${file}`); // Change this to your url
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const uint8Array = new Uint8Array(data.buffer);
 
   return uint8Array;

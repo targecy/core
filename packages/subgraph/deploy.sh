@@ -13,13 +13,13 @@ fi
 source "$env_file"
 
 # Check if a network argument is provided, default to 'localhost'
-subgraph=${1:-targecy_test}
+subgraph=${1:-"targecy-mumbai"}
 echo "Subgraph: $subgraph"
 
 key=${2:-$TEST_SUBGRAPH_KEY}
 echo "Key: $key"
 
-version=${3:-1.1.0}
+version=${3:-1.2.0}
 echo "Version: $version"
 
 yarn dlx @graphprotocol/graph-cli@0.62.0 deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml

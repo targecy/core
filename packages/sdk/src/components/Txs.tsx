@@ -1,4 +1,4 @@
-// import { TargecyComponent } from './misc/Context';
+// import { TargecyContext } from './misc/Context';
 // import { useAccount, useWalletClient } from 'wagmi';
 // import { useEffect, useState } from 'react';
 // import { NoWalletConnected } from './misc/NoWalletConnected';
@@ -28,7 +28,7 @@
 //   }, [fetchTxsTrigger]);
 
 //   return (
-//     <TargecyComponent>
+//     <TargecyContext>
 //       {isConnected ? (
 //         <button
 //           className="btn btn-secondary w-full"
@@ -44,14 +44,14 @@
 //       {txs?.map((tx: any) => (
 //         <div>{tx.hash}</div>
 //       ))}
-//     </TargecyComponent>
+//     </TargecyContext>
 //   );
 // };
 
 // export const TargecyTransactions = () => {
 //   return (
-//     <TargecyComponent>
+//     <TargecyContext>
 //       <Txs />
-//     </TargecyComponent>
+//     </TargecyContext>
 //   );
 // };

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { IRootState } from '../../store';
 import { toggleTheme, toggleSidebar, toggleRTL } from '../../store/themeConfigSlice';
+import { Budget } from '../Budget';
 import { HeaderWalletManager } from '../shared/Wallet';
 
 const Header = () => {
@@ -210,6 +211,8 @@ const Header = () => {
                 </svg>
               </button>
             </div> */}
+
+            <Budget></Budget>
 
             <div>
               {themeConfig.theme === 'light' ? (
