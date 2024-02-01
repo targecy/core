@@ -9,6 +9,7 @@ export type AdMetadata = {
   title: string;
   description: string;
   image: string;
+  link: string;
 };
 
 export type AdWithMetadata = {
@@ -30,7 +31,7 @@ export const useAds = (context: TargecyContextType) => {
     ) || [];
 
   const [completeAds, setCompleteAds] = useState<
-    { ad: Ad; metadata: { title: string; description: string; image: string } }[]
+    { ad: Ad; metadata: { title: string; description: string; image: string ; link: string; } }[]
   >([]);
 
   useAsync(async () => {
@@ -41,6 +42,7 @@ export const useAds = (context: TargecyContextType) => {
           title: string;
           description: string;
           image: string;
+          link: string;
         };
       }[] = [];
       for (const ad of validAds) {
@@ -54,6 +56,7 @@ export const useAds = (context: TargecyContextType) => {
               title: json.title,
               description: json.description,
               image: json.image,
+              link: json.link,
             },
           });
       }

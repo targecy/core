@@ -61,7 +61,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   return (
-    <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV}>
+    <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV} pathsToIgnore={['/storage']}>
       <Provider store={store}>
         <Head>
           <title>Targecy</title>

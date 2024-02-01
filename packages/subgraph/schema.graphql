@@ -5,6 +5,8 @@ type Ad @entity {
   metadataURI: String! # string TODO
   attribution: Int8! # 0 = impressions, 1 = clicks, 2 = conversions
   active: Boolean! # bool
+  abi: String! # string
+  target: String! # string
   # Conditions
   startingTimestamp: BigInt! # uint256
   endingTimestamp: BigInt! # uint256

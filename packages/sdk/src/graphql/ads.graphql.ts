@@ -9,6 +9,8 @@ export const Ads = gql`
     metadataURI
     attribution
     active
+    abi
+    target
     maxBudget
     currentBudget
     startingTimestamp
