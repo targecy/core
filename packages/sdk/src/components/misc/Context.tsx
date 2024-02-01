@@ -6,14 +6,14 @@ import { createUserIdentity } from '../..';
 import { initServices } from '../../utils/context';
 import { store } from '../../utils/store';
 
-import { TargecyContextType, TargecyComponentProps, TargecyBaseProps } from './Context.types';
+import { TargecyContextType, TargecyContextProps, TargecyBaseProps } from './Context.types';
 
 export const TargecyServicesContext = createContext<TargecyContextType>({
   zkServices: undefined,
   userIdentity: undefined,
 });
 
-export const TargecyComponent = ({ children }: TargecyComponentProps & TargecyBaseProps) => {
+export const TargecyContext = ({ children }: TargecyContextProps & TargecyBaseProps) => {
   const [initialized, setInitialized] = useState(false);
 
   const [context, setContext] = useState<TargecyContextType>({

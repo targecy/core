@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/await-thenable */
+import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
+import { trackCustomEvent } from '@targecy/sdk/src/utils/tracking';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useAsync } from 'react-use';
 import { useContractRead } from 'wagmi';
 
-import { SCHEMA } from '../../../backend/src/constants/schemas/schemas.constant';
 import abi from '../generated/abis/Targecy.json';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
@@ -52,7 +54,7 @@ export const Home = () => {
   const { data: totalConsumptionsData } = useContractRead({
     address: targecyContractAddress,
     abi,
-    functionName: 'totalconsumptions',
+    functionName: 'totalConsumptions',
   });
   const totalConsumptions = totalConsumptionsData?.toString() ?? 0;
 
@@ -128,7 +130,7 @@ export const Home = () => {
     }
   }, [lastSegments]);
 
-  const [schemas, setSchemas] = useState<SCHEMA[]>([]);
+  const [schemas, setSchemas] = useState<SCHEMA<any>[]>([]);
   useAsync(async () => {
     const response = await backendTrpcClient.schemas.getAllSchemas.query();
     setSchemas(Object.entries(response).map(([, schema]) => schema));
@@ -147,6 +149,19 @@ export const Home = () => {
   const { data: budget } = useGetBudgetQuery({
     id: wallet.address || '',
   });
+
+  useAsync(async () => {
+    await trackCustomEvent(
+      {
+        id: 'purchase',
+        params: {
+          currency: 'USD',
+          value: 42,
+        },
+      },
+      env.NEXT_PUBLIC_VERCEL_ENV
+    );
+  }, []);
 
   if (!mounted) return <></>;
 
@@ -332,8 +347,8 @@ export const Home = () => {
 
                     <div>
                       <div>
-                        <div>Total</div>
-                        <div className="text-lg text-success ">{credentialsStatistics.total} </div>
+                        <div>Configuration Credentials</div>
+                        <div className="text-lg text-primary ">{credentialsStatistics.configuration} </div>
                       </div>
                     </div>
                   </div>

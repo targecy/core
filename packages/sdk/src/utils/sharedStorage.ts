@@ -1,6 +1,7 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 
 import { cloneCredential } from './credential';
+import { sha256 } from '@iden3/js-crypto';
 
 /**
  * This is a workaround for the fact that the browser doesn't allow us to
@@ -76,20 +77,33 @@ function retrieveItem(key: string): Promise<string | null> {
 }
 
 export async function getSavedCredentials() {
-  const json = JSON.parse((await retrieveItem('credentials')) || '[]');
-  if (!Array.isArray(json)) throw new Error('Invalid credentials');
+  try {
+    const json = JSON.parse((await retrieveItem('credentials')) || '[]');
+    if (!Array.isArray(json)) throw new Error('Invalid credentials');
 
-  return json.map(cloneCredential);
+    return json.map((c) => W3CCredential.fromJSON(c));
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
 }
+
+const hashCredentialSubject = (credential: W3CCredential) => {
+  return sha256(new TextEncoder().encode(JSON.stringify(credential.credentialSubject))).toString();
+};
 
 export async function saveCredentials(credentials: W3CCredential[]) {
   const savedCredentials = await getSavedCredentials();
   const savedCredentialsDids = savedCredentials.map((c) => c.id);
 
   // Filter out credentials that are already saved
+  const savedCredentialsHashed = savedCredentials.map(hashCredentialSubject);
   const newCredentials = credentials
     .filter((c) => !savedCredentialsDids.includes(c.id))
-    .filter((c) => !c.type.includes('AuthBJJ'));
+    .filter((c) => !c.type.toString().includes('AuthBBJ'))
+    .filter((c) => !savedCredentialsHashed.includes(hashCredentialSubject(c)));
+
+  if (newCredentials.length === 0) return;
 
   const json = JSON.stringify(savedCredentials.concat(newCredentials));
   await saveItem('credentials', json);

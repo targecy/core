@@ -1,18 +1,18 @@
 import { TargecyContextType } from '../components/misc/Context.types';
-
-import { useCredentials } from './useCredentials';
+import { useCredentialsByCategory } from './useCredentialsByCategory';
 
 export const useCredentialsStatistics = (context: TargecyContextType) => {
-  const credentials = useCredentials(context);
-
-  const publicCredentialsQuantity = credentials.credentials.length; // currently all are public data credentials;
-  const privateCredentialsQuantity = 0; // currently no private data credentials;
-  const behaviourCredentialsQuantity = 0; // currently no behaviour data credentials;
+  const credentials = useCredentialsByCategory(context);
 
   return {
-    public: publicCredentialsQuantity,
-    behaviour: behaviourCredentialsQuantity,
-    private: privateCredentialsQuantity,
-    total: publicCredentialsQuantity + behaviourCredentialsQuantity + privateCredentialsQuantity,
+    public: credentials.public.length,
+    private: credentials.private.length,
+    behaviour: credentials.behaviour.length,
+    configuration: credentials.configuration.length,
+    total:
+      credentials.public.length +
+      credentials.private.length +
+      credentials.behaviour.length +
+      credentials.configuration.length,
   };
 };

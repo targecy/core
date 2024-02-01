@@ -1,4 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
@@ -7,8 +8,6 @@ import { useState } from 'react';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
-
-import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.constant';
 
 import { operatorOptions } from './editor';
 
@@ -61,7 +60,7 @@ const SegmentsList = () => {
     return undefined;
   };
 
-  const [schemas, setSchemas] = useState<SCHEMA[]>([]);
+  const [schemas, setSchemas] = useState<SCHEMA<any>[]>([]);
   useAsync(async () => {
     const response = await backendTrpcClient.schemas.getAllSchemas.query();
     setSchemas(Object.entries(response).map(([, schema]) => schema));

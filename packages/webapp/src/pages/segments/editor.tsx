@@ -1,3 +1,4 @@
+import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
@@ -9,8 +10,6 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-
-import { SCHEMA } from '../../../../backend/src/constants/schemas/schemas.constant';
 
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~/constants/contracts.constants';
@@ -173,7 +172,7 @@ export const SegmentEditorComponent = (id?: string) => {
 
   type FormValues = z.infer<typeof schema>;
 
-  const [schemas, setSchemas] = useState<SCHEMA[]>([]);
+  const [schemas, setSchemas] = useState<SCHEMA<any>[]>([]);
   useAsync(async () => {
     const response = await backendTrpcClient.schemas.getAllSchemas.query();
     setSchemas(Object.entries(response).map(([, schema]) => schema));
@@ -188,6 +187,7 @@ export const SegmentEditorComponent = (id?: string) => {
   >(undefined);
   const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
+    console.log(currentParams);
     if (
       !currentParams ||
       !currentParams.operator ||
@@ -197,17 +197,17 @@ export const SegmentEditorComponent = (id?: string) => {
     )
       return;
 
-    backendTrpcClient.segment.getSegmentPotentialReachByParams
+    backendTrpcClient.reach.getSegmentReachByParams
       .query({
         operator: currentParams.operator,
         value: currentParams.value,
         slotIndex: currentParams.slotIndex,
         schema: currentParams.schema,
       })
+      .then((response) => setPotentialReach(response.count))
       .catch((error) => {
         console.error(error);
-      })
-      .then((response) => setPotentialReach(typeof response === 'number' ? response : undefined));
+      });
   }, [currentParams]);
 
   const [currentMetadata, setCurrentMetadata] = useState<
@@ -229,6 +229,7 @@ export const SegmentEditorComponent = (id?: string) => {
 
     if (!currentSchema && initialSchema) {
       setCurrentSchema(initialSchema);
+      setCurrentParams({ ...currentParams, schema: initialSchema.toString() });
     }
   }, [currentSchema, segment]);
 
@@ -238,6 +239,7 @@ export const SegmentEditorComponent = (id?: string) => {
 
     if (!currentOperator && initialOperator) {
       setCurrentOperator(initialOperator);
+      setCurrentParams({ ...currentParams, operator: initialOperator });
     }
   }, [currentOperator, segment]);
 
@@ -247,6 +249,7 @@ export const SegmentEditorComponent = (id?: string) => {
 
     if (!currentSlotIndex && initialSlotIndex) {
       setCurrentSlotIndex(initialSlotIndex);
+      setCurrentParams({ ...currentParams, slotIndex: initialSlotIndex });
     }
   }, [currentSlotIndex, segment]);
 
@@ -351,6 +354,7 @@ export const SegmentEditorComponent = (id?: string) => {
                         name="schema"
                         value={schemaOptions?.find((a) => a.value === currentSchema?.toString()) ?? undefined}
                         onChange={(value: any) => {
+                          setCurrentParams((prevState) => ({ ...prevState, schema: value.value }));
                           setCurrentSchema(value.value);
                           values.schema = value;
                         }}
@@ -385,13 +389,14 @@ export const SegmentEditorComponent = (id?: string) => {
                         // eslint-disable-next-line eqeqeq
                         value={slotIndexOptions?.find((a) => a.value == (currentSlotIndex ?? 0) + 1) ?? undefined}
                         onChange={(value: any) => {
+                          setCurrentParams((prevState) => ({ ...prevState, slotIndex: value.value }));
                           setCurrentSlotIndex(value);
-                          values.schema = value;
+                          values.slotIndex = value;
                         }}
                       />
                       {submitCount ? (
-                        errors.schema ? (
-                          <div className="mt-1 text-danger">{errors.schema.toString()}</div>
+                        errors.slotIndex ? (
+                          <div className="mt-1 text-danger">{errors.slotIndex.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -419,6 +424,7 @@ export const SegmentEditorComponent = (id?: string) => {
                         // eslint-disable-next-line eqeqeq
                         value={operatorOptions?.find((a) => a.value == currentOperator) ?? undefined}
                         onChange={(value: any) => {
+                          setCurrentParams((prevState) => ({ ...prevState, operator: value.value }));
                           setCurrentOperator(value);
                           values.operator = value;
                         }}
@@ -487,11 +493,11 @@ export const SegmentEditorComponent = (id?: string) => {
                 </Form>
               )}
             </Formik>
-            <div hidden={potentialReach === undefined} className="col-span-1">
+            <div className="col-span-1">
               <div className="m-7 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="m-5 mb-0 text-secondary">Potential Reach</label>
                 <div className="h-full w-full p-5">
-                  <label className="text-center align-middle text-8xl">{potentialReach}</label>
+                  <label className="text-center align-middle text-8xl">{potentialReach ?? "?"}</label>
                 </div>
               </div>
             </div>

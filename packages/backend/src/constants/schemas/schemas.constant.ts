@@ -2,7 +2,14 @@
  * Schemas are built using https://schema-builder.polygonid.me/builder
  */
 
-export type SCHEMA = {
+/**
+ * To add a schema, please add:
+ * - the SCHEMA_TYPES
+ * - the CredentialSubject, and it to CredentialSubjects
+ * - the SCHEMA
+ */
+
+export type SCHEMA<T extends SCHEMA_TYPE> = {
   title: string;
   description: string;
   type: SCHEMA_TYPE;
@@ -10,20 +17,59 @@ export type SCHEMA = {
   hash: string;
   schemaUrl: string;
   jsonLdContextUrl: string;
-  credentialSubject: { [key: string]: string | number | boolean | object } & { id: string }; // @todo: force these fields when using the schema using TS
+  credentialSubject: CredentialSubjects[T];
 };
 
 export enum SCHEMA_TYPES {
   ProtocolUsedTargecySchema = 'ProtocolUsedTargecySchema',
   TokenHolderTargecySchema = 'TokenHolderTargecySchema',
   ActiveOnChainTargecySchema = 'ActiveOnChainTargecySchema',
+  PageViewTargecySchema = 'PageViewTargecySchema',
+  CustomEventTargecySchema = 'CustomEventTargecySchema',
 }
+
+export type CredentialSubjectBase = { id: string };
+
+export type ProtocolUsedTargecyCredentialSubject = CredentialSubjectBase & {
+  protocol: string;
+  chain: string;
+};
+
+export type TokenHolderTargecyCredentialSubject = CredentialSubjectBase & {
+  token: string;
+  amount: string;
+  tokenId: string;
+  chain: string;
+};
+
+export type ActiveOnChainTargecyCredentialSubject = CredentialSubjectBase & {
+  chain: string;
+};
+
+export type PageViewTargecyCredentialSubject = CredentialSubjectBase & {
+  path: string;
+};
+
+export type CustomEventTargecyCredentialSubject = CredentialSubjectBase & {
+  eventId: string;
+  eventParam: string;
+};
+
+export type CredentialSubjects = {
+  ProtocolUsedTargecySchema: ProtocolUsedTargecyCredentialSubject;
+  TokenHolderTargecySchema: TokenHolderTargecyCredentialSubject;
+  ActiveOnChainTargecySchema: ActiveOnChainTargecyCredentialSubject;
+  PageViewTargecySchema: PageViewTargecyCredentialSubject;
+  CustomEventTargecySchema: CustomEventTargecyCredentialSubject;
+};
 
 export type SCHEMA_TYPE = keyof typeof SCHEMA_TYPES;
 
 export const isSchemaType = (type: string): type is SCHEMA_TYPE => type in SCHEMA_TYPES;
 
-export const SCHEMAS: Record<SCHEMA_TYPE, SCHEMA> = {
+export const SCHEMAS: {
+  [K in SCHEMA_TYPE]: SCHEMA<K>;
+} = {
   ProtocolUsedTargecySchema: {
     title: 'Protocol Used Credential',
     description: 'The detailed protocol was used by the credential subject.',
@@ -68,6 +114,35 @@ export const SCHEMAS: Record<SCHEMA_TYPE, SCHEMA> = {
     credentialSubject: {
       id: '',
       chain: '',
+    },
+  },
+
+  PageViewTargecySchema: {
+    title: 'Page View Credential',
+    description: 'The user saw a page.',
+    type: 'PageViewTargecySchema',
+    bigint: '210142717432887984386775751639490005048',
+    hash: '3888823c5537f3a41b179ecbe403189e',
+    schemaUrl: 'ipfs://QmTBcKA3VTRs4NJU2WhFZ9mnijay1o2kCu6Uuoivj2tk9m',
+    jsonLdContextUrl: 'ipfs://QmdXwnLaZvnp2sbDZfpCWNNNmaTmgCybLTb7eGvxkHR9QJ',
+    credentialSubject: {
+      id: '',
+      path: '',
+    },
+  },
+
+  CustomEventTargecySchema: {
+    title: 'Custom Event Credential',
+    description: 'The user triggered a custom event.',
+    type: 'CustomEventTargecySchema',
+    bigint: '67381080533818057975946438410012284128',
+    hash: 'e0540dc0623ae1e29b8270f4c21fb132',
+    schemaUrl: 'ipfs://QmUQfxJgM4GY4GYYFGgoqt13xpRtGrLiACKBn5jG8oxqEV',
+    jsonLdContextUrl: 'ipfs://QmWY4rnoBkZGqSqwvGm3vmdFMZvisduNTSnMuNBzbFac3C',
+    credentialSubject: {
+      id: '',
+      eventId: '',
+      eventParam: '',
     },
   },
 };
