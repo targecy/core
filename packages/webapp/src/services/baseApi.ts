@@ -2,9 +2,9 @@ import { BaseQueryFn } from '@reduxjs/toolkit/dist/query';
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
-import { HYDRATE } from 'next-redux-wrapper';
 
 import { env } from '~/env.mjs';
+import { isHydrateAction } from '~/utils/reduxToolkit';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
@@ -38,7 +38,7 @@ export const api = createApi({
   reducerPath: baseApiReducerPath,
   tagTypes: baseApiTagTypes,
   extractRehydrationInfo(action, { reducerPath }) {
-    if (action.type === HYDRATE) {
+    if (isHydrateAction(action)) {
       return action.payload[reducerPath];
     }
   },

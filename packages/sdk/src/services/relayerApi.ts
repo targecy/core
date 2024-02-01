@@ -1,7 +1,9 @@
+import { Action, PayloadAction, UnknownAction } from '@reduxjs/toolkit';
 import { QueryReturnValue } from '@reduxjs/toolkit/dist/query/baseQueryTypes';
 import { BaseQueryFn, FetchBaseQueryError, FetchBaseQueryMeta, createApi } from '@reduxjs/toolkit/query/react';
 import { TRPCClientError } from '@trpc/client';
 import { HYDRATE } from 'next-redux-wrapper';
+import { isHydrateAction } from 'src/utils/reduxToolkit';
 
 const relayerApiTagTypes = [] as const;
 const trpcBaseQuery = (): BaseQueryFn => () => ({ data: '' });
@@ -45,7 +47,7 @@ export const relayerApi = createApi({
   tagTypes: relayerApiTagTypes,
 
   extractRehydrationInfo(action, { reducerPath }) {
-    if (action.type === HYDRATE) {
+    if (isHydrateAction(action)) {
       return action.payload[reducerPath];
     }
   },

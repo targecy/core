@@ -4,6 +4,7 @@ import { TRPCClientError } from '@trpc/client';
 import { HYDRATE } from 'next-redux-wrapper';
 
 import { backendTrpcClient } from '../utils';
+import { isHydrateAction } from 'src/utils/reduxToolkit';
 
 // const backendApiTagTypes = [] as const;
 // const trpcBaseQuery = (): BaseQueryFn => () => ({ data: '' });
@@ -47,7 +48,7 @@ export const backendApi = createApi({
   tagTypes: backendApiTagTypes,
 
   extractRehydrationInfo(action, { reducerPath }) {
-    if (action.type === HYDRATE) {
+    if (isHydrateAction(action)) {
       return action.payload[reducerPath];
     }
   },

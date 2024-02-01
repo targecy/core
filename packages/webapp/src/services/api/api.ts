@@ -7,6 +7,7 @@ import {
   type GetLastAudiencesQuery,
   type GetLastSegmentsQuery,
   api as generatedApi,
+  GetAdsByAdvertiserQuery,
 } from '~/generated/graphql.types';
 
 async function mergeWithMetadata<T extends { metadataURI: string }>(
@@ -32,6 +33,12 @@ export const api = generatedApi.enhanceEndpoints<TagTypes, UpdatedDefitions>({
       transformResponse: async ({ ads, ...response }: GetLastAdsQuery) => {
         const adsWithMetadata = await mergeWithMetadata(ads);
         return { ...response, ads: adsWithMetadata };
+      },
+    },
+    GetAdsByAdvertiser: {
+      transformResponse: async ({ ads, ...response }: GetAdsByAdvertiserQuery) => {
+        const adsByAdvertiserWithMetadata = await mergeWithMetadata(ads);
+        return { ...response, ads: adsByAdvertiserWithMetadata };
       },
     },
     GetLastAudiences: {

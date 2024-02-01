@@ -8,6 +8,7 @@ import {
   type GetLastAdsQuery,
   type GetLastAudiencesQuery,
   type GetLastSegmentsQuery,
+  type GetAdsByAdvertiserQuery,
   api,
 } from '~/generated/graphql.types';
 
@@ -21,6 +22,14 @@ export type GetLastAdsWithMetadataQuery = Omit<GetLastAdsQuery, 'ads'> & {
   ads: Array<AdWithMetadata>;
 };
 export type GetLastAdsDefinition = OverrideResultType<Definitions['GetLastAds'], GetLastAdsWithMetadataQuery>;
+
+export type GetAdsByAdvertiserWithMetadataQuery = Omit<GetAdsByAdvertiserQuery, 'ads'> & {
+  ads: Array<AdWithMetadata>;
+};
+export type GetAdsByAdvertiserDefinition = OverrideResultType<
+  Definitions['GetAdsByAdvertiser'],
+  GetAdsByAdvertiserWithMetadataQuery
+>;
 
 export type AudienceWithMetadata = GetLastAudiencesQuery['audiences'][0] & { metadata: Metadata };
 export type GetLastAudiencesWithMetadataQuery = Omit<GetLastAudiencesQuery, 'audiences'> & {
@@ -42,6 +51,7 @@ export type GetLastSegmentsDefinition = OverrideResultType<
 
 export type UpdatedDefitions = Omit<Definitions, 'GetLastAds'> & {
   GetLastAds: GetLastAdsDefinition;
+  GetAdsByAdvertiser: GetAdsByAdvertiserDefinition;
   GetLastAudiences: GetLastAudiencesDefinition;
   GetLastSegments: GetLastSegmentsDefinition;
 };
