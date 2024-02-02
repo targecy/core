@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
-import { defaultStyling } from '@targecy/sdk/src/components/Ad';
+import { defaultStyling } from '@targecy/sdk';
 import AdLayout from '@targecy/sdk/src/components/AdLayout';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';

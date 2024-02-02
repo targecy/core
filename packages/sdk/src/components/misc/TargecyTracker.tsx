@@ -23,19 +23,21 @@ const shouldIgnorePath = (path: string, pathsToIgnore: string[] = [], pathsToTra
 const Tracker = ({ children, env, pathsToIgnore, pathsToTrack }: TargecyTrackerProps) => {
   const path = typeof window === 'undefined' ? undefined : window.location.href;
 
+  
   useEffect(() => {
     if (!path || shouldIgnorePath(new URL(path).pathname, pathsToIgnore, pathsToTrack)) return;
-
+    console.log('tracking', path, pathsToIgnore, pathsToTrack, shouldIgnorePath(new URL(path).pathname, pathsToIgnore, pathsToTrack));
+    
     trackPageView({ path }, env);
   }, [path]);
 
   return children;
 };
 
-export const TargecyTracker = ({ children, env }: TargecyTrackerProps) => {
+export const TargecyTracker = (props: TargecyTrackerProps) => {
   return (
     <TargecyContext>
-      <Tracker env={env}>{children}</Tracker>
+      <Tracker {...props}>{props.children}</Tracker>
     </TargecyContext>
   );
 };
