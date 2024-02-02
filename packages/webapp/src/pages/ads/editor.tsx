@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { Ad } from '@targecy/sdk';
+import { Attribution } from '@targecy/sdk/src/constants/ads';
+import { SolidityTypesNames } from '@targecy/sdk/src/constants/chain';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -22,6 +24,53 @@ import { backendTrpcClient } from '~/utils/trpc';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const abi = require('../../generated/abis/Targecy.json');
+
+const baseSchema = z.object({
+  imageUrl: z.string().describe('Please provide an image URL'),
+  imageFile: z.custom<File>().describe('Please provide an image'),
+  active: z.boolean().describe('Please provide an active'),
+  blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
+  blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
+  maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
+  maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
+  startingDate: z.date().describe('Please provide a starting date'),
+  endingDate: z.date().describe('Please provide an ending date'),
+  audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
+  title: z.string().describe('Please fill the title').optional(),
+  description: z.string().describe('Please fill the description').optional(),
+});
+type BaseSchemaType = z.infer<typeof baseSchema>;
+
+const conversionSchema = z.object({
+  attribution: z
+    .number()
+    .refine((n) => n === Attribution.conversion)
+    .describe('Please provide an conversion attribution'),
+  abi: z.string().describe('Please provide an ABI'),
+  target: z.string().describe('Please provide a target'),
+  paramsSchema: z.record(z.string(), z.enum(SolidityTypesNames)).describe('Please provide a valid params schema'),
+});
+type ConversionSchemaType = z.infer<typeof conversionSchema>;
+const isConversion = (body: any): body is ConversionSchemaType => body.attribution === Attribution.conversion;
+
+const clickSchema = z.object({
+  attribution: z
+    .number()
+    .refine((n) => n === Attribution.click)
+    .describe('Please provide an conversion attribution'),
+});
+type ClickSchemaType = z.infer<typeof clickSchema>;
+
+const impressionSchema = z.object({
+  attribution: z
+    .number()
+    .refine((n) => n === Attribution.impression)
+    .describe('Please provide an conversion attribution'),
+});
+type ImpressionSchemaType = z.infer<typeof impressionSchema>;
+
+const schema = baseSchema.and(conversionSchema.or(clickSchema).or(impressionSchema));
+type FormValues = BaseSchemaType & (ConversionSchemaType | ClickSchemaType | ImpressionSchemaType);
 
 const attributionOptions = [
   { value: 0, label: 'Impression' },
@@ -69,9 +118,11 @@ export const AdEditorComponent = (id?: string) => {
 
     const adMetadataFormData = new FormData();
 
-    adMetadataFormData.append('title', data.title);
-    adMetadataFormData.append('description', data.description);
+    if (data.title) adMetadataFormData.append('title', data.title);
+    if (data.description) adMetadataFormData.append('description', data.description);
     adMetadataFormData.append('image', data.imageFile || data.imageUrl); // To avoid removing the image when editing
+    if (isConversion(data) && data.paramsSchema)
+      adMetadataFormData.append('description', JSON.stringify(data.paramsSchema));
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
@@ -99,12 +150,11 @@ export const AdEditorComponent = (id?: string) => {
     try {
       let hash;
       const newAdArgs = {
-        // @todo (Martin): Type this based on function's args
         metadataURI,
         attribution: data.attribution,
         active: data.active,
-        abi: data.abi,
-        target: data.target,
+        abi: isConversion(data) && data.abi ? data.abi : '',
+        target: isConversion(data) && data.target ? data.target : addressZero,
         startingTimestamp: data.startingDate.getTime(),
         endingTimestamp: data.endingDate.getTime(),
         audienceIds: data.audienceIds,
@@ -157,26 +207,6 @@ export const AdEditorComponent = (id?: string) => {
       setProcessingAd(false);
     }
   };
-
-  const schema = z.object({
-    title: z.string().describe('Please fill the title'),
-    description: z.string().describe('Please fill the description'),
-    imageUrl: z.string().describe('Please provide an image URL'),
-    abi: z.string().describe('Please provide an ABI'),
-    target: z.string().describe('Please provide a target'),
-    imageFile: z.custom<File>().describe('Please provide an image'),
-    attribution: z.number().describe('Please provide an attribution'),
-    active: z.boolean().describe('Please provide an active'),
-    blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
-    blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
-    maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
-    maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
-    startingDate: z.date().describe('Please provide a starting date'),
-    endingDate: z.date().describe('Please provide an ending date'),
-    audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
-  });
-
-  type FormValues = z.infer<typeof schema>;
 
   const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
 
@@ -302,7 +332,8 @@ export const AdEditorComponent = (id?: string) => {
                 image: undefined,
                 imageUrl: currentMetadata?.image ?? '',
                 abi: '',
-                target: '',
+                paramsSchema: {},
+                target: addressZero,
                 maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
                 maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
                 startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
@@ -425,6 +456,7 @@ export const AdEditorComponent = (id?: string) => {
                         onChange={(value) => {
                           setCurrentAttribution(Number(value?.value) ?? 0);
                           values.attribution = Number(value?.value) ?? 0;
+                          setPreviewValues((prevState) => ({ ...prevState, attribution: Number(value?.value) ?? 0 }));
                         }}
                         isSearchable={true}
                       />
@@ -475,23 +507,14 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.abi ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="abi">Abi</label>
-                      <Field name="abi" type="text" id="abi" placeholder="Enter abi" className="form-input" />
-                      {submitCount ? (
-                        errors.abi ? (
-                          <div className="mt-1 text-danger">{errors.abi.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
 
-                    <div className={submitCount ? (errors.target ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="target">Conversion Target</label>
+                  <div
+                    hidden={currentAttribution !== Attribution.conversion}
+                    className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div
+                      hidden={currentAttribution !== Attribution.conversion}
+                      className={submitCount ? (errors.target ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="target">Target Contract Address</label>
                       <Field
                         name="target"
                         type="text"
@@ -509,6 +532,65 @@ export const AdEditorComponent = (id?: string) => {
                         ''
                       )}
                     </div>
+
+                    <div
+                      hidden={currentAttribution !== Attribution.conversion}
+                      className={submitCount ? (errors.abi ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="abi">Abi</label>
+                      <Field name="abi" type="text" id="abi" placeholder="Enter abi" className="form-input" />
+                      {submitCount ? (
+                        errors.abi ? (
+                          <div className="mt-1 text-danger">{errors.abi.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    hidden={currentAttribution !== Attribution.conversion}
+                    className={submitCount ? (errors.paramsSchema ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="paramsSchema">paramsSchema </label>
+                    <Field
+                      name="paramsSchema"
+                      as="textarea"
+                      id="paramsSchema"
+                      placeholder="Enter paramsSchema"
+                      className="form-input"
+                      // Display the object as a string
+                      value={
+                        typeof values.paramsSchema === 'string'
+                          ? values.paramsSchema
+                          : JSON.stringify(values.paramsSchema, null, 2)
+                      }
+                      onChange={(e: any) => {
+                        // Update the field value as a string always
+                        setFieldValue('paramsSchema', e.target.value);
+
+                        try {
+                          // Attempt to parse the edited JSON string back into an object
+                          const parsed = JSON.parse(e.target.value);
+                          // Update preview values or any other state you need
+                          setPreviewValues((prevState) => ({ ...prevState, paramsSchema: parsed }));
+                        } catch (error) {
+                          // Optionally handle JSON parse errors or show an error message
+                          // For example, you could set an error state here
+                        }
+                      }}
+                    />
+
+                    {submitCount ? (
+                      errors.paramsSchema ? (
+                        <div className="mt-1 text-danger">{errors.paramsSchema.toString()}</div>
+                      ) : (
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
@@ -750,7 +832,7 @@ export const AdEditorComponent = (id?: string) => {
               <div hidden={potentialReach === undefined} className="mb-8 mt-4 flex w-full max-w-lg justify-center">
                 <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                   <label className="text-2xl text-secondary">Potential Reach</label>
-                  <label className="text-2xl text-primary">{potentialReach ?? "?"}</label>
+                  <label className="text-2xl text-primary">{potentialReach ?? '?'}</label>
                 </div>
               </div>
             </div>

@@ -32,7 +32,7 @@ export const BaseLayout = (props: PropsWithChildren<LayoutParams>) => {
         boxShadow: props.styling?.boxShadow,
         border: props.styling?.border,
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'auto',
         cursor: props.attribution == Attribution.click ? 'pointer' : 'default',
       }}>
       {props.children}

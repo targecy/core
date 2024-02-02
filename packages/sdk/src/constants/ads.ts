@@ -1,4 +1,6 @@
 import { ZeroAddress, ethers } from 'ethers';
+import { Ad } from 'src/generated/graphql.types';
+import { AdMetadata } from 'src/hooks';
 
 export enum Layouts {
   'banner_large' = 'banner_large',
@@ -34,7 +36,10 @@ export const defaultStyling: AdStyling = {
   border: '1px solid #212121',
 };
 
-export const demoAd = {
+export const demoAd: {
+  ad: Ad;
+  metadata: AdMetadata;
+} = {
   ad: {
     advertiser: {
       id: ethers.ZeroAddress,
@@ -72,5 +77,6 @@ export const demoAd = {
     image:
       'https://cdn.dribbble.com/users/1925451/screenshots/4224926/media/3fec19dcc072afde5c91df61e49cc14e.jpg?resize=400x0',
     link: 'https://targecy.xyz/',
+    paramsSchema: {},
   },
 };

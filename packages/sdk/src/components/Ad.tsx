@@ -11,20 +11,23 @@ import { setEnvironment } from '../utils/environent.state';
 
 import { TargecyContext, TargecyServicesContext } from './misc';
 import { BannerLarge } from './layouts/BannerLarge';
-import { AdStyling, Layouts, demoAd, defaultStyling } from '../constants/ads';
+import { AdStyling, Layouts, demoAd, defaultStyling, Attribution } from '../constants/ads';
 import { LayoutParams } from './layouts/Params';
 import { BannerMedium } from './layouts/BannerMedium';
 import { BannerSmall } from './layouts/BannerSmall';
 import { Square } from './layouts/Square';
 import { ListItem } from './layouts/ListItem';
+import { SolidityTypes, SolidityTypesNames } from 'src/constants/chain';
 
 type SharedAdProps = {
   isDemo?: boolean;
   customDemo?: {
+    attribution?: Attribution;
     title?: string;
     description?: string;
     imageUrl?: string;
     abi?: string;
+    paramsSchema?: Record<string, SolidityTypes>;
   };
   publisher: Address;
   env?: environment;
@@ -62,10 +65,11 @@ export const Ad = (props: AdProps) => {
 
     if (props.customDemo) {
       ad = demoAd;
-      if (props.customDemo.title) ad.metadata.title = props.customDemo.title;
+      if (props.customDemo.attribution != undefined) ad.ad.attribution = props.customDemo.attribution;
       if (props.customDemo.description) ad.metadata.description = props.customDemo.description;
       if (props.customDemo.imageUrl) ad.metadata.image = props.customDemo.imageUrl;
       if (props.customDemo.abi) ad.ad.abi = props.customDemo.abi;
+      if (props.customDemo.paramsSchema) ad.metadata.paramsSchema = props.customDemo.paramsSchema;
     }
   }
 
@@ -84,6 +88,7 @@ export const Ad = (props: AdProps) => {
         link: ad.metadata.link,
         abi: ad.ad.abi,
         attribution: ad.ad.attribution,
+        paramsSchema: ad.metadata.paramsSchema,
         styling,
         env: props.env ?? 'production',
       })}

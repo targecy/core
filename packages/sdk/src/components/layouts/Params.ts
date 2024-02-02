@@ -1,18 +1,13 @@
 import { AdStyling } from 'src/constants';
+import { SolidityTypes } from 'src/constants/chain';
+import { AdMetadata } from 'src/hooks';
 import { environment } from 'src/utils/context';
 
 export type LayoutParams = {
+  env: environment;
   isLoading?: boolean;
-
-  title: string;
-  description: string;
-  image: string;
-  link: string;
+  styling: AdStyling;
 
   attribution: number;
   abi: string;
-
-  styling: AdStyling;
-
-  env: environment;
-};
+} & AdMetadata;
