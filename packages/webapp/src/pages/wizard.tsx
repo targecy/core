@@ -57,8 +57,8 @@ const Demo = () => {
     <div className="space-y-8">
       <div className="panel  min-h-[40em] items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
         <label className="mb-3 text-2xl text-primary"> Customize your ad space</label>
-        <div className="grid grid-cols-2 gap-5">
-          <div className="col-span-1">
+        <div className="flex w-full flex-row gap-5">
+          <div>
             <Formik
               initialValues={{
                 layout: props.styling?.layout,
@@ -338,7 +338,7 @@ const Demo = () => {
               </pre>
             </div>
           </div>
-          <div className="flex place-items-center justify-center">
+          <div className="flex flex-grow place-items-center justify-center">
             <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={props.publisher} styling={props.styling} />
           </div>
         </div>

@@ -20,6 +20,12 @@ import { ListItem } from './layouts/ListItem';
 
 type SharedAdProps = {
   isDemo?: boolean;
+  customDemo?: {
+    title?: string;
+    description?: string;
+    imageUrl?: string;
+    abi?: string;
+  };
   publisher: Address;
   env?: environment;
 };
@@ -53,6 +59,14 @@ export const Ad = (props: AdProps) => {
   if (props.isDemo) {
     ad = demoAd;
     isLoading = false;
+
+    if (props.customDemo) {
+      ad = demoAd;
+      if (props.customDemo.title) ad.metadata.title = props.customDemo.title;
+      if (props.customDemo.description) ad.metadata.description = props.customDemo.description;
+      if (props.customDemo.imageUrl) ad.metadata.image = props.customDemo.imageUrl;
+      if (props.customDemo.abi) ad.ad.abi = props.customDemo.abi;
+    }
   }
 
   if (!ad) return <p>No ads were found for you. Try again later.</p>;

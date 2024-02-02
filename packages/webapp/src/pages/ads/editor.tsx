@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
-import { defaultStyling } from '@targecy/sdk';
-import AdLayout from '@targecy/sdk/src/components/AdLayout';
+import { Ad } from '@targecy/sdk';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -15,7 +14,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import DatePicker from '~/components/DatePicker';
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~/constants/contracts.constants';
+import { addressZero, targecyContractAddress } from '~/constants/contracts.constants';
 import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 import { fetchMetadata } from '~/utils/metadata';
@@ -104,6 +103,8 @@ export const AdEditorComponent = (id?: string) => {
         metadataURI,
         attribution: data.attribution,
         active: data.active,
+        abi: data.abi,
+        target: data.target,
         startingTimestamp: data.startingDate.getTime(),
         endingTimestamp: data.endingDate.getTime(),
         audienceIds: data.audienceIds,
@@ -161,6 +162,8 @@ export const AdEditorComponent = (id?: string) => {
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
     imageUrl: z.string().describe('Please provide an image URL'),
+    abi: z.string().describe('Please provide an ABI'),
+    target: z.string().describe('Please provide a target'),
     imageFile: z.custom<File>().describe('Please provide an image'),
     attribution: z.number().describe('Please provide an attribution'),
     active: z.boolean().describe('Please provide an active'),
@@ -298,6 +301,8 @@ export const AdEditorComponent = (id?: string) => {
                 description: currentMetadata?.description ?? '',
                 image: undefined,
                 imageUrl: currentMetadata?.image ?? '',
+                abi: '',
+                target: '',
                 maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
                 maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
                 startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
@@ -470,6 +475,42 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
+                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div className={submitCount ? (errors.abi ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="abi">Abi</label>
+                      <Field name="abi" type="text" id="abi" placeholder="Enter abi" className="form-input" />
+                      {submitCount ? (
+                        errors.abi ? (
+                          <div className="mt-1 text-danger">{errors.abi.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.target ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="target">Conversion Target</label>
+                      <Field
+                        name="target"
+                        type="text"
+                        id="target"
+                        placeholder="Enter conversion target"
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.target ? (
+                          <div className="mt-1 text-danger">{errors.target.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.startingDate ? 'has-error' : 'has-success') : ''}>
                       <label htmlFor="startingDate">Starting Date</label>
@@ -703,22 +744,13 @@ export const AdEditorComponent = (id?: string) => {
               <div className="flex w-full justify-center">
                 <div className="flex w-full max-w-lg flex-col items-start">
                   <label className="text-2xl text-secondary">Preview</label>
-                  <div className="card" style={{ ...defaultStyling, width: '100%' }}>
-                    <AdLayout
-                      title={previewValues.title || 'Title'}
-                      description={previewValues.description || 'Description'}
-                      image={
-                        previewValues.imageUrl ||
-                        'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
-                      }
-                    />
-                  </div>
+                  <Ad publisher={addressZero} isDemo={true} customDemo={{ ...previewValues }}></Ad>
                 </div>
               </div>
               <div hidden={potentialReach === undefined} className="mb-8 mt-4 flex w-full max-w-lg justify-center">
                 <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                   <label className="text-2xl text-secondary">Potential Reach</label>
-                  <label className="text-2xl text-primary">{potentialReach}</label>
+                  <label className="text-2xl text-primary">{potentialReach ?? "?"}</label>
                 </div>
               </div>
             </div>
