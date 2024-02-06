@@ -10,6 +10,7 @@ import Select from 'react-select';
 import { useConfig } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { addressZero } from '~/constants/contracts.constants';
 
 import { env } from '~/env.mjs';
 
@@ -39,7 +40,7 @@ const getCode = (props: AdProps) =>
 
 const Demo = () => {
   const [props, setProps] = useState<AdProps>({
-    publisher: ethers.constants.AddressZero,
+    publisher: addressZero,
   });
   const [code, setCode] = useState<string>('');
 
@@ -69,7 +70,7 @@ const Demo = () => {
                 titleColor: props.styling?.titleColor,
                 subtitleColor: props.styling?.subtitleColor,
                 borderRadius: props.styling?.borderRadius,
-                publisher: ethers.constants.AddressZero,
+                publisher: addressZero,
                 boxShadow: props.styling?.boxShadow,
                 border: props.styling?.border,
               }}

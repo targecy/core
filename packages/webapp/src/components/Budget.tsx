@@ -12,8 +12,6 @@ import abi from '~/generated/abis/Targecy.json';
 import { useGetBudgetQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 
-// const abi = require('~/generated/abi/Targecy.json');
-
 export const Budget = () => {
   const { address } = useWallet();
 

@@ -36,6 +36,7 @@ export const Ad = (props: AdProps) => {
 
     if (props.customDemo) {
       if (props.customDemo.attribution !== undefined) ad.ad.attribution = props.customDemo.attribution;
+      if (props.customDemo.title) ad.metadata.title = props.customDemo.title;
       if (props.customDemo.description) ad.metadata.description = props.customDemo.description;
       if (props.customDemo.imageUrl) ad.metadata.image = props.customDemo.imageUrl;
       if (props.customDemo.abi) ad.ad.abi = props.customDemo.abi;

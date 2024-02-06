@@ -90,7 +90,7 @@
     "eth-components": "3.6.0-beta04",
     "eth-hooks": "5.0.2-beta27",
     "ethereum-cryptography": "^1.1.2",
-    "ethers": "^5.7.1",
+    "ethers": "^6.9.0",
     "events": "^3.3.0",
     "formidable": "^3.5.1",
     "formik": "^2.2.9",

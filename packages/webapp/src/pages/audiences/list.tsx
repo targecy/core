@@ -9,11 +9,9 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllAudiencesQuery, useGetAllAudiencesQuery } from '~/generated/graphql.types';
 import { fetchMetadata } from '~/utils/metadata';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 const ListAudiences = () => {
   const data = useGetAllAudiencesQuery();
@@ -64,11 +62,11 @@ const ListAudiences = () => {
 
   const { writeAsync: deleteAudienceAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'deleteAudience',
   });
 
-  const deleteAudience = async (id: number) => {
+  const deleteAudience = async (id: bigint) => {
     await deleteAudienceAsync({ args: [id] });
     return undefined;
   };
@@ -99,7 +97,7 @@ const ListAudiences = () => {
             <DeleteOutlined
               rev={undefined}
               onClick={() => {
-                deleteAudience(Number(item.id))
+                deleteAudience(BigInt(item.id))
                   .then(async () => {
                     await Swal.mixin({
                       toast: true,
