@@ -1,23 +1,12 @@
-import { Skeleton } from 'antd';
-import { ZeroAddress, ethers } from 'ethers';
 import React, { useContext } from 'react';
-import { Address } from 'wagmi';
-
+import { BannerLarge, BannerMedium, BannerSmall, Square, ListItem } from './layouts';
+import { TargecyServicesContext } from './misc';
 import { useAd } from '../hooks/useAd';
-import { environment } from '../utils/context';
-import { relayerTrpcClient } from '..';
-import { useDispatch } from 'react-redux';
-import { setEnvironment } from '../utils/environent.state';
-
-import { TargecyContext, TargecyServicesContext } from './misc';
-import { BannerLarge } from './layouts/BannerLarge';
-import { AdStyling, Layouts, demoAd, defaultStyling, Attribution } from '../constants/ads';
+import { demoAd, defaultStyling, Layouts, Attribution, AdStyling } from '../constants/ads';
 import { LayoutParams } from './layouts/Params';
-import { BannerMedium } from './layouts/BannerMedium';
-import { BannerSmall } from './layouts/BannerSmall';
-import { Square } from './layouts/Square';
-import { ListItem } from './layouts/ListItem';
-import { SolidityTypes, SolidityTypesNames } from 'src/constants/chain';
+import { SolidityTypes } from '../constants/chain';
+import { Address, FallbackTransport } from 'viem';
+import { environment } from '../utils/context';
 
 type SharedAdProps = {
   isDemo?: boolean;
@@ -37,35 +26,16 @@ export type AdProps = {
   styling?: AdStyling;
 } & SharedAdProps;
 
-const getLayoutComponent = (layout: Layouts) => {
-  switch (layout) {
-    case Layouts.banner_large:
-      return BannerLarge;
-    case Layouts.banner_medium:
-      return BannerMedium;
-    case Layouts.banner_small:
-      return BannerSmall;
-    case Layouts.square:
-      return Square;
-    case Layouts.list_item:
-      return ListItem;
-
-    default:
-      throw new Error('Invalid layout');
-  }
-};
-
 export const Ad = (props: AdProps) => {
   const context = useContext(TargecyServicesContext);
   let { ad, isLoading } = useAd(context);
 
   if (props.isDemo) {
-    ad = demoAd;
+    ad = { ...demoAd };
     isLoading = false;
 
     if (props.customDemo) {
-      ad = demoAd;
-      if (props.customDemo.attribution != undefined) ad.ad.attribution = props.customDemo.attribution;
+      if (props.customDemo.attribution !== undefined) ad.ad.attribution = props.customDemo.attribution;
       if (props.customDemo.description) ad.metadata.description = props.customDemo.description;
       if (props.customDemo.imageUrl) ad.metadata.image = props.customDemo.imageUrl;
       if (props.customDemo.abi) ad.ad.abi = props.customDemo.abi;
@@ -75,23 +45,33 @@ export const Ad = (props: AdProps) => {
 
   if (!ad) return <p>No ads were found for you. Try again later.</p>;
 
-  const styling = Object.assign({ ...defaultStyling }, props.styling);
-  const adComponent: React.FC<LayoutParams> = getLayoutComponent(styling.layout ?? Layouts.list_item);
+  const styling = { ...defaultStyling, ...props.styling };
+  const layoutProps: LayoutParams = {
+    isLoading,
+    title: ad.metadata.title,
+    description: ad.metadata.description,
+    image: ad.metadata.image,
+    link: ad.metadata.link,
+    abi: ad.ad.abi,
+    target: ad.ad.target as Address,
+    attribution: ad.ad.attribution,
+    paramsSchema: ad.metadata.paramsSchema,
+    styling,
+    env: props.env ?? 'production',
+  };
 
-  return (
-    <TargecyContext>
-      {adComponent({
-        isLoading,
-        title: ad.metadata.title,
-        description: ad.metadata.description,
-        image: ad.metadata.image,
-        link: ad.metadata.link,
-        abi: ad.ad.abi,
-        attribution: ad.ad.attribution,
-        paramsSchema: ad.metadata.paramsSchema,
-        styling,
-        env: props.env ?? 'production',
-      })}
-    </TargecyContext>
-  );
+  switch (styling.layout) {
+    case Layouts.banner_large:
+      return <BannerLarge {...layoutProps} />;
+    case Layouts.banner_medium:
+      return <BannerMedium {...layoutProps} />;
+    case Layouts.banner_small:
+      return <BannerSmall {...layoutProps} />;
+    case Layouts.square:
+      return <Square {...layoutProps} />;
+    case Layouts.list_item:
+      return <ListItem {...layoutProps} />;
+    default:
+      throw new Error('Invalid layout');
+  }
 };

@@ -7,6 +7,7 @@ import { ethers } from 'ethers';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
+import { useConfig } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
@@ -52,6 +53,8 @@ const Demo = () => {
       label: key.toString(),
     };
   });
+
+  const config = useConfig();
 
   return (
     <div className="space-y-8">

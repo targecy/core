@@ -1,6 +1,6 @@
-import { ethers } from 'ethers';
+import { zeroAddress } from 'viem';
 
-export const addressZero = ethers.ZeroAddress;
+export const addressZero = zeroAddress;
 export const BigNumberZero = 0n;
 
 export const SolidityTypesNames = ['bool', 'int', 'uint', 'address', 'bytes', 'string', 'uint256', 'int256'] as const;

@@ -1,4 +1,6 @@
+import { Attribution } from '../../constants/ads';
 import { BaseLayout } from './BaseLayout';
+import { ConversionComponent } from './ConversionComponent';
 import { LayoutParams } from './Params';
 
 export const BannerLarge = (props: LayoutParams) => {
@@ -22,6 +24,9 @@ export const BannerLarge = (props: LayoutParams) => {
           borderRadius: props.styling?.borderRadius,
           opacity: 0,
           transition: 'opacity 0.5s',
+          overflow: 'scroll',
+          height: '100%',
+          maxHeight: '100%',
         }}
         onMouseOver={(e) => {
           e.currentTarget.style.opacity = '1';
@@ -32,6 +37,9 @@ export const BannerLarge = (props: LayoutParams) => {
         <span>{props.title}</span>
         <br />
         <span>{props.description}</span>
+        <br />
+        <br />
+        {props.attribution === Attribution.conversion ? <ConversionComponent {...props} /> : ''}
       </div>
     </BaseLayout>
   );

@@ -1,41 +1,9 @@
-import { HTMLInputTypeAttribute, useState } from 'react';
-import { Attribution } from '../../constants/ads';
-import { NoWalletConnected } from '../misc';
 import { BaseLayout } from './BaseLayout';
 import { LayoutParams } from './Params';
-import { SolidityTypes } from '../../constants/chain';
-
-const getInputType = (type: SolidityTypes): HTMLInputTypeAttribute => {
-  switch (type) {
-    case 'address':
-    case 'bytes':
-    case 'bool':
-    case 'string':
-      return 'text';
-
-    case 'int':
-    case 'uint':
-    case 'int256':
-    case 'uint256':
-      return 'number';
-
-    default:
-      return 'text';
-  }
-};
+import { ConversionComponent } from './ConversionComponent';
+import { Attribution } from '../../constants/ads';
 
 export const ListItem = (props: LayoutParams) => {
-
-  const [processing, setProcessing] = useState(false);
-  const submit = async (data: any) => {
-    setProcessing(true);
-    console.log(data);
-
-    setProcessing(false);
-  };
-
-  const [params, setParams] = useState<Record<string, string>>({});
-
   return (
     <BaseLayout {...props}>
       <div className="grid grid-cols-2 gap-4 h-full w-full">
@@ -80,36 +48,7 @@ export const ListItem = (props: LayoutParams) => {
               }}>
               {props.description}
 
-              {props.attribution == Attribution.conversion && Object.keys(props.paramsSchema ?? {}).length
-                ? Object.entries(props.paramsSchema ?? {}).map(([key, type]) => {
-                    return (
-                      <input
-                        key={key}
-                        onChange={(e) => setParams({ ...params, ...{ [key]: e.target.value } })}
-                        type={getInputType(type)}
-                        id={key}
-                        placeholder={key}
-                        className="form-input mt-1"
-                      />
-                    );
-                  })
-                : ''}
-
-              {props.attribution == Attribution.conversion && Object.keys(props.paramsSchema ?? {}).length ? (
-                <div className="mt-2">
-                  <button
-                  disabled={processing}
-                    type="submit"
-                    className="btn btn-primary"
-                    onClick={() => {
-                      submit(params);
-                    }}>
-                    Confirm
-                  </button>
-                </div>
-              ) : (
-                ''
-              )}
+              {props.attribution === Attribution.conversion ? <ConversionComponent {...props} /> : ''}
             </span>
           </div>
         </div>

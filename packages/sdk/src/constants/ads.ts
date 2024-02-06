@@ -1,6 +1,6 @@
-import { ZeroAddress, ethers } from 'ethers';
 import { Ad } from 'src/generated/graphql.types';
 import { AdMetadata } from 'src/hooks';
+import { zeroAddress } from 'viem';
 
 export enum Layouts {
   'banner_large' = 'banner_large',
@@ -26,7 +26,7 @@ export enum Attribution {
   'conversion', // 2
 }
 
-export const defaultStyling: AdStyling = {
+export const defaultStyling: AdStyling & { layout: Layouts } = {
   layout: Layouts.list_item,
   backgroundColor: '#212121',
   titleColor: '#ffffff',
@@ -42,7 +42,7 @@ export const demoAd: {
 } = {
   ad: {
     advertiser: {
-      id: ethers.ZeroAddress,
+      id: zeroAddress,
       impressions: 0,
       clicks: 0,
       conversions: 0,
@@ -50,13 +50,13 @@ export const demoAd: {
       budget: {
         totalBudget: 0,
         remainingBudget: 0,
-        id: ZeroAddress,
+        id: zeroAddress,
       },
     },
     abi: '',
     target: '',
     id: '0',
-    attribution: 0,
+    attribution: 2,
     maxBudget: 0,
     currentBudget: 0,
     active: true,
@@ -77,6 +77,8 @@ export const demoAd: {
     image:
       'https://cdn.dribbble.com/users/1925451/screenshots/4224926/media/3fec19dcc072afde5c91df61e49cc14e.jpg?resize=400x0',
     link: 'https://targecy.xyz/',
-    paramsSchema: {},
+    paramsSchema: {
+      value: 'uint256',
+    },
   },
 };

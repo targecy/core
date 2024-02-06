@@ -1,6 +1,6 @@
 import { ReactNode, PropsWithChildren } from 'react';
 import { LayoutParams } from './Params';
-import { Attribution, Layouts } from '../../constants/ads';
+import { Attribution, Layouts, defaultStyling } from '../../constants/ads';
 
 const getSizesByLayout = (layout: Layouts) => {
   switch (layout) {
@@ -20,7 +20,7 @@ const getSizesByLayout = (layout: Layouts) => {
 };
 
 export const BaseLayout = (props: PropsWithChildren<LayoutParams>) => {
-  const { width, height } = getSizesByLayout(props.styling?.layout ?? Layouts.list_item);
+  const { width, height } = getSizesByLayout(props.styling?.layout ?? defaultStyling.layout);
 
   return (
     <div
