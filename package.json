@@ -24,6 +24,7 @@
     "restart-services": "yarn workspace @targecy/services restart-all",
     "reset-services": "yarn workspace @targecy/services reset-all",
     "reset": "echo 'RESETING ALL, kill it if you do not want to lose data. You have 10 seconds.' && sleep 10 && yarn reset-services && yarn setup",
+    "compile-contracts": "yarn workspace @targecy/solidity compile",
     "deploy-contracts": "yarn workspace @targecy/solidity clean:deployments && yarn workspace @targecy/solidity deploy && yarn workspace @targecy/solidity deploy:post",
     "deploy-contracts:stg": "yarn workspace @targecy/solidity clean:deployments && yarn workspace @targecy/solidity deploy:mumbai && yarn workspace @targecy/solidity deploy:post",
     "deploy-contracts:prod": "yarn workspace @targecy/solidity clean:deployments && yarn workspace @targecy/solidity deploy:matic && yarn workspace @targecy/solidity deploy:post",
