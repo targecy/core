@@ -21,6 +21,7 @@
     "jsxImportSource": "@emotion/react",
     "paths": {
       "~/*": ["./src/*"],
+      "@targecy/sdk": ["../sdk/src"],
       "@targecy/sdk/*": ["../sdk/src/*"],
       "@common/*": ["../common/src/*"],
       "@backend/*": ["../backend/src/*"]
