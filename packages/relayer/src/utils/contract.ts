@@ -26,7 +26,13 @@ export const getSettings = () => {
         ),
       };
     case 'production':
-      throw new Error('Set up config for mainnet network');
+      return {
+        network: 'mumbai',
+        address: mumbaiConfig.address,
+        provider: new ethers.JsonRpcProvider(
+          'https://rpc-mumbai.maticvigil.com/v1/0e5b8e0c0b3f6e0c5b4f4c0e8f6e0c5b4f4c0e8f/'
+        ),
+      };
     default:
       throw new Error('Invalid environment');
   }

@@ -166,8 +166,8 @@ export const Home = () => {
   return (
     <div>
       <div className="">
-        <div className="m-1 flex h-1/4 flex-row justify-between">
-          <div className="panel h-max-[100px] m-3 w-full">
+        <div className="flex h-1/4 flex-row justify-between">
+          <div className="panel mb-3 h-max-[100px] w-full">
             <div className="flex justify-between gap-5 pr-10 text-sm font-bold text-[#515365] sm:grid-cols-2">
               <div>
                 <h5 className="text-lg font-semibold text-black dark:text-white  ">Network Statistics</h5>
@@ -211,9 +211,9 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        <div className="m-1 flex h-3/4 flex-row justify-between">
+        <div className="flex h-3/4 flex-row justify-between">
           <div className="flex w-full">
-            <div className="m-3 flex w-1/3 flex-col">
+            <div className="mt-3 mr-3 flex w-1/3 flex-col">
               <div className="panel">
                 <div className="-mx-5 mb-5 flex items-start justify-between border-b border-white-light p-5 pt-0  dark:border-[#1b2e4b] dark:text-white-light">
                   <h5 className="text-lg font-semibold ">Activity Log</h5>
@@ -316,7 +316,7 @@ export const Home = () => {
                 </PerfectScrollbar>
               </div>
             </div>
-            <div className="m-3 flex w-2/3 flex-col">
+            <div className="mt-3 ml-3 flex w-2/3 flex-col">
               <div className="mb-3 flex h-1/2 flex-row justify-between">
                 <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
                   <div className="mb-5 flex justify-between dark:text-white-light">
