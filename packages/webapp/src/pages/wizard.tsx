@@ -1,21 +1,25 @@
 // import { useConfig } from 'wagmi';
 
 import { CopyOutlined } from '@ant-design/icons';
-import { Ad, AdProps } from '@targecy/sdk';
-import { Layouts } from '@targecy/sdk/src/constants/ads';
-import { ethers } from 'ethers';
+import { Ad, AdProps, Layouts, isLayout } from '@targecy/sdk';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { useConfig } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { addressZero } from '~/constants/contracts.constants';
 
+import { addressZero } from '~/constants/contracts.constants';
 import { env } from '~/env.mjs';
 
 const schema = z.object({
-  layout: z.nativeEnum(Layouts),
+  layout: z.union([
+    z.literal('banner_large'),
+    z.literal('banner_medium'),
+    z.literal('banner_small'),
+    z.literal('square'),
+    z.literal('list_item'),
+  ]),
   backgroundColor: z.string().describe('Please fill the background color'),
   titleColor: z.string().describe('Please fill the title color'),
   subtitleColor: z.string().describe('Please fill the subtitle color'),
@@ -101,7 +105,8 @@ const Demo = () => {
                         onChange={(value) => {
                           const current = props;
                           if (!current.styling) current.styling = {};
-                          current.styling.layout = Layouts[value?.label as keyof typeof Layouts];
+                          const v = value?.label ?? '';
+                          if (isLayout(v)) current.styling.layout = v;
                           setProps(current);
                           setCode(getCode(props));
                         }}

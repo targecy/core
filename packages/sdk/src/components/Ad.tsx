@@ -62,15 +62,15 @@ export const Ad = (props: AdProps) => {
   };
 
   switch (styling.layout) {
-    case Layouts.banner_large:
+    case 'banner_large':
       return <BannerLarge {...layoutProps} />;
-    case Layouts.banner_medium:
+    case 'banner_medium':
       return <BannerMedium {...layoutProps} />;
-    case Layouts.banner_small:
+    case 'banner_small':
       return <BannerSmall {...layoutProps} />;
-    case Layouts.square:
+    case 'square':
       return <Square {...layoutProps} />;
-    case Layouts.list_item:
+    case 'list_item':
       return <ListItem {...layoutProps} />;
     default:
       throw new Error('Invalid layout');

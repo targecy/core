@@ -2,16 +2,14 @@ import { Ad } from '../generated/graphql.types';
 import { AdMetadata } from '../hooks';
 import { zeroAddress } from 'viem';
 
-export enum Layouts {
-  'banner_large' = 'banner_large',
-  'banner_medium' = 'banner_medium',
-  'banner_small' = 'banner_small',
-  'square' = 'square',
-  'list_item' = 'list_item',
-}
+export const Layouts = ['banner_large', 'banner_medium', 'banner_small', 'square', 'list_item'] as const;
+export type LayoutsType = (typeof Layouts)[number];
+export const isLayout = (layout: string): layout is LayoutsType => {
+  return Layouts.includes(layout as LayoutsType);
+};
 
 export type AdStyling = {
-  layout?: Layouts;
+  layout?: LayoutsType;
   backgroundColor?: string;
   titleColor?: string;
   subtitleColor?: string;
@@ -26,8 +24,8 @@ export enum Attribution {
   'conversion', // 2
 }
 
-export const defaultStyling: AdStyling & { layout: Layouts } = {
-  layout: Layouts.list_item,
+export const defaultStyling: AdStyling & { layout: LayoutsType } = {
+  layout: 'list_item',
   backgroundColor: '#212121',
   titleColor: '#ffffff',
   subtitleColor: '#ffffff',
