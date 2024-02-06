@@ -1,4 +1,5 @@
 import { Attribution } from '../../constants/ads';
+import { AttributionComponent } from './AttributionComponent';
 import { BaseLayout } from './BaseLayout';
 import { ConversionComponent } from './ConversionComponent';
 import { LayoutParams } from './Params';
@@ -34,18 +35,22 @@ export const BannerLarge = (props: LayoutParams) => {
         onMouseOut={(e) => {
           e.currentTarget.style.opacity = '0';
         }}>
-        <span style={{
-          color: props.styling.titleColor
-        }}>{props.title}</span>
-        <br />
-        <span 
+        <span
           style={{
-            color: props.styling.subtitleColor
-          }}
-        >{props.description}</span>
+            color: props.styling.titleColor,
+          }}>
+          {props.title}
+        </span>
+        <br />
+        <span
+          style={{
+            color: props.styling.subtitleColor,
+          }}>
+          {props.description}
+        </span>
         <br />
         <br />
-        {props.attribution === Attribution.conversion ? <ConversionComponent {...props} /> : ''}
+        <AttributionComponent {...props} />
       </div>
     </BaseLayout>
   );

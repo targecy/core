@@ -1,4 +1,5 @@
 import { Attribution } from '../../constants/ads';
+import { AttributionComponent } from './AttributionComponent';
 import { BaseLayout } from './BaseLayout';
 import { ConversionComponent } from './ConversionComponent';
 import { LayoutParams } from './Params';
@@ -39,7 +40,7 @@ export const Square = (props: LayoutParams) => {
         <span>{props.description}</span>
         <br />
         <br />
-        {props.attribution === Attribution.conversion ? <ConversionComponent {...props} /> : ''}
+        <AttributionComponent {...props} />
       </div>
     </BaseLayout>
   );

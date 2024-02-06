@@ -78,7 +78,7 @@ function retrieveItem(key: string): Promise<string | null> {
 
 export async function getSavedCredentials() {
   try {
-    const json = JSON.parse((await retrieveItem('credentials')) || '[]');
+    const json = JSON.parse((await retrieveItem('credentials')) ?? '[]');
     if (!Array.isArray(json)) throw new Error('Invalid credentials');
 
     return json.map((c) => W3CCredential.fromJSON(c));

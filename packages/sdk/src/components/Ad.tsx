@@ -57,8 +57,11 @@ export const Ad = (props: AdProps) => {
     target: ad.ad.target as Address,
     attribution: ad.ad.attribution,
     paramsSchema: ad.metadata.paramsSchema,
+    publisher: props.publisher,
     styling,
+    adId: ad.ad.id,
     env: props.env ?? 'production',
+    isDemo: props.isDemo,
   };
 
   switch (styling.layout) {

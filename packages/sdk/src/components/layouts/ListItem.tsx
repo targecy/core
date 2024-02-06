@@ -2,6 +2,7 @@ import { BaseLayout } from './BaseLayout';
 import { LayoutParams } from './Params';
 import { ConversionComponent } from './ConversionComponent';
 import { Attribution } from '../../constants/ads';
+import { AttributionComponent } from './AttributionComponent';
 
 export const ListItem = (props: LayoutParams) => {
   return (
@@ -48,7 +49,7 @@ export const ListItem = (props: LayoutParams) => {
               }}>
               {props.description}
 
-              {props.attribution === Attribution.conversion ? <ConversionComponent {...props} /> : ''}
+              <AttributionComponent {...props} />
             </span>
           </div>
         </div>

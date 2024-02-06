@@ -136,15 +136,15 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
   return (
     <div className="mt-2">
       {isConnected ? (
-        <button className="btn btn-outline-secondary" onClick={executeTransaction}>
+        <button disabled={props.isDemo} className="btn btn-outline-secondary" onClick={executeTransaction}>
           Execute
         </button>
       ) : (
-        <button className="btn btn-outline-secondary" onClick={connect}>
+        <button disabled={props.isDemo} className="btn btn-outline-secondary" onClick={connect}>
           Connect
         </button>
       )}
-      {address && <span className="mt-2 text-sm">{shortenAddress(address ?? zeroAddress)} connected.</span>}
+      {address && <span className="mt-2 text-xs text-slate-600 dark:text-slate-400		">{shortenAddress(address ?? zeroAddress)} connected.</span>}
     </div>
   );
 };

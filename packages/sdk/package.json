@@ -1,6 +1,6 @@
 {
   "name": "@targecy/sdk",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "description": "The SDK that allows you to interact with the Targecy protocol",
   "keywords": [
     "targecy",
