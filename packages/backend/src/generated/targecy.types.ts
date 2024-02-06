@@ -21,6 +21,7 @@ export type Scalars = {
 
 export type Ad = {
   __typename?: 'Ad';
+  abi: Scalars['String'];
   active: Scalars['Boolean'];
   advertiser: Advertiser;
   attribution: Scalars['Int8'];
@@ -37,6 +38,7 @@ export type Ad = {
   maxPricePerConsumption: Scalars['BigInt'];
   metadataURI: Scalars['String'];
   startingTimestamp: Scalars['BigInt'];
+  target: Scalars['String'];
 };
 
 
@@ -69,6 +71,26 @@ export type AdConsumptionsPerDayArgs = {
 export type Ad_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  abi?: InputMaybe<Scalars['String']>;
+  abi_contains?: InputMaybe<Scalars['String']>;
+  abi_contains_nocase?: InputMaybe<Scalars['String']>;
+  abi_ends_with?: InputMaybe<Scalars['String']>;
+  abi_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  abi_gt?: InputMaybe<Scalars['String']>;
+  abi_gte?: InputMaybe<Scalars['String']>;
+  abi_in?: InputMaybe<Array<Scalars['String']>>;
+  abi_lt?: InputMaybe<Scalars['String']>;
+  abi_lte?: InputMaybe<Scalars['String']>;
+  abi_not?: InputMaybe<Scalars['String']>;
+  abi_not_contains?: InputMaybe<Scalars['String']>;
+  abi_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  abi_not_ends_with?: InputMaybe<Scalars['String']>;
+  abi_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  abi_not_in?: InputMaybe<Array<Scalars['String']>>;
+  abi_not_starts_with?: InputMaybe<Scalars['String']>;
+  abi_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  abi_starts_with?: InputMaybe<Scalars['String']>;
+  abi_starts_with_nocase?: InputMaybe<Scalars['String']>;
   active?: InputMaybe<Scalars['Boolean']>;
   active_in?: InputMaybe<Array<Scalars['Boolean']>>;
   active_not?: InputMaybe<Scalars['Boolean']>;
@@ -215,9 +237,30 @@ export type Ad_Filter = {
   startingTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_not?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  target?: InputMaybe<Scalars['String']>;
+  target_contains?: InputMaybe<Scalars['String']>;
+  target_contains_nocase?: InputMaybe<Scalars['String']>;
+  target_ends_with?: InputMaybe<Scalars['String']>;
+  target_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  target_gt?: InputMaybe<Scalars['String']>;
+  target_gte?: InputMaybe<Scalars['String']>;
+  target_in?: InputMaybe<Array<Scalars['String']>>;
+  target_lt?: InputMaybe<Scalars['String']>;
+  target_lte?: InputMaybe<Scalars['String']>;
+  target_not?: InputMaybe<Scalars['String']>;
+  target_not_contains?: InputMaybe<Scalars['String']>;
+  target_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  target_not_ends_with?: InputMaybe<Scalars['String']>;
+  target_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  target_not_in?: InputMaybe<Array<Scalars['String']>>;
+  target_not_starts_with?: InputMaybe<Scalars['String']>;
+  target_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  target_starts_with?: InputMaybe<Scalars['String']>;
+  target_starts_with_nocase?: InputMaybe<Scalars['String']>;
 };
 
 export type Ad_OrderBy =
+  | 'abi'
   | 'active'
   | 'advertiser'
   | 'advertiser__adsQuantity'
@@ -238,7 +281,8 @@ export type Ad_OrderBy =
   | 'maxConsumptionsPerDay'
   | 'maxPricePerConsumption'
   | 'metadataURI'
-  | 'startingTimestamp';
+  | 'startingTimestamp'
+  | 'target';
 
 export type Admin = {
   __typename?: 'Admin';

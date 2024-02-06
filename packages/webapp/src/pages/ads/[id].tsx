@@ -7,11 +7,9 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { useGetAdQuery } from '~/generated/graphql.types';
 import { weekdayToNumber } from '~/utils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 const AdDetailPage = () => {
   const router = useRouter();
@@ -31,12 +29,12 @@ const AdDetailPage = () => {
   }, [ad]);
   const { writeAsync: deleteAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'deleteAd',
   });
 
   const deleteAd = async (id: number) => {
-    await deleteAdAsync({ args: [id] });
+    await deleteAdAsync({ args: [BigInt(id)] });
     return undefined;
   };
 

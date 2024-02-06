@@ -1,6 +1,6 @@
 {
   "name": "@targecy/sdk",
-  "version": "0.2.5",
+  "version": "0.3.2",
   "description": "The SDK that allows you to interact with the Targecy protocol",
   "keywords": [
     "targecy",
@@ -51,7 +51,8 @@
     "@wagmi/core": "^1.3.9",
     "antd": "^5.11.3",
     "buffer-browserify": "^0.2.5",
-    "ethers": "^6.8.1",
+    "daisyui": "4.6.1",
+    "ethers": "5.7.1",
     "ffjavascript": "^0.2.62",
     "graphql": "^16.8.0",
     "graphql-codegen-typescript-common": "0.18.2",

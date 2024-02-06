@@ -38,7 +38,7 @@ if (env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
     service: 'dapp',
     env: env.NEXT_PUBLIC_VERCEL_ENV,
     version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-    sessionSampleRate: 100,
+    sessionSampleRate: 10,
     sessionReplaySampleRate: 0,
     trackUserInteractions: true,
     trackResources: true,
@@ -61,7 +61,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   return (
-    <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV}>
+    <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV} pathsToIgnore={['/storage']}>
       <Provider store={store}>
         <Head>
           <title>Targecy</title>

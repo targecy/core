@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
-import { defaultStyling } from '@targecy/sdk/src/components/Ad';
-import AdLayout from '@targecy/sdk/src/components/AdLayout';
+import { Ad } from '@targecy/sdk';
+import { Attribution } from '@targecy/sdk/src/constants/ads';
+import { SolidityTypesNames } from '@targecy/sdk/src/constants/chain';
 import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -15,14 +16,60 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import DatePicker from '~/components/DatePicker';
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
-import { targecyContractAddress } from '~/constants/contracts.constants';
+import { addressZero, targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { useGetAdQuery, useGetAllAudiencesQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 import { fetchMetadata } from '~/utils/metadata';
 import { backendTrpcClient } from '~/utils/trpc';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
+const baseSchema = z.object({
+  imageUrl: z.string().describe('Please provide an image URL'),
+  imageFile: z.custom<File>().describe('Please provide an image'),
+  active: z.boolean().describe('Please provide an active'),
+  blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers').default([]),
+  blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays').default([]),
+  maxPricePerConsumption: z.number().describe('Please provide a max impression price').optional(),
+  maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day').optional(),
+  maxBudget: z.number().describe('Please provide a max budget').optional(),
+  startingDate: z.date().describe('Please provide a starting date').optional(),
+  endingDate: z.date().describe('Please provide an ending date').optional(),
+  audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
+  title: z.string().describe('Please fill the title').optional(),
+  description: z.string().describe('Please fill the description').optional(),
+});
+type BaseSchemaType = z.infer<typeof baseSchema>;
+
+const conversionSchema = z.object({
+  attribution: z
+    .number()
+    // .refine((n) => n === Attribution.conversion)
+    .describe('Please provide an conversion attribution'),
+  abi: z.string().describe('Please provide an ABI'),
+  target: z.string().describe('Please provide a target'),
+  paramsSchema: z.record(z.string(), z.enum(SolidityTypesNames)).describe('Please provide a valid params schema'),
+});
+type ConversionSchemaType = z.infer<typeof conversionSchema>;
+const isConversion = (body: any): body is ConversionSchemaType => body.attribution === Attribution.conversion;
+
+const clickSchema = z.object({
+  attribution: z
+    .number()
+    // .refine((n) => n === Attribution.click)
+    .describe('Please provide an conversion attribution'),
+});
+type ClickSchemaType = z.infer<typeof clickSchema>;
+
+const impressionSchema = z.object({
+  attribution: z
+    .number()
+    // .refine((n) => n === Attribution.impression)
+    .describe('Please provide an conversion attribution'),
+});
+type ImpressionSchemaType = z.infer<typeof impressionSchema>;
+
+const schema = baseSchema.and(conversionSchema.or(clickSchema).or(impressionSchema));
+type FormValues = BaseSchemaType & (ConversionSchemaType | ClickSchemaType | ImpressionSchemaType);
 
 const attributionOptions = [
   { value: 0, label: 'Impression' },
@@ -51,15 +98,12 @@ export const AdEditorComponent = (id?: string) => {
   const { data: publishers } = useGetAllPublishersQuery();
 
   const [processingAd, setProcessingAd] = useState(false);
-  const { writeAsync: createAdAsync } = useContractWrite({
+  const [loadingImage, setLoadingImage] = useState(false);
+
+  const { writeAsync: setAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
-    functionName: 'createAd',
-  });
-  const { writeAsync: editAdAsync } = useContractWrite({
-    address: targecyContractAddress,
-    abi,
-    functionName: 'editAd',
+    abi: Targecy__factory.abi,
+    functionName: 'setAd',
   });
 
   const router = useRouter();
@@ -68,11 +112,15 @@ export const AdEditorComponent = (id?: string) => {
   const submitForm = async (data: FormValues) => {
     setProcessingAd(true);
 
+    console.log(data);
+
     const adMetadataFormData = new FormData();
 
-    adMetadataFormData.append('title', data.title);
-    adMetadataFormData.append('description', data.description);
+    if (data.title) adMetadataFormData.append('title', data.title);
+    if (data.description) adMetadataFormData.append('description', data.description);
     adMetadataFormData.append('image', data.imageFile || data.imageUrl); // To avoid removing the image when editing
+    if (isConversion(data) && data.paramsSchema)
+      adMetadataFormData.append('description', JSON.stringify(data.paramsSchema));
 
     const metadataUploadResponse = await fetch('/api/metadata/upload', {
       method: 'POST',
@@ -100,34 +148,39 @@ export const AdEditorComponent = (id?: string) => {
     try {
       let hash;
       const newAdArgs = {
-        // @todo (Martin): Type this based on function's args
         metadataURI,
-        attribution: data.attribution,
-        active: data.active,
-        startingTimestamp: data.startingDate.getTime(),
-        endingTimestamp: data.endingDate.getTime(),
-        audienceIds: data.audienceIds,
-        blacklistedPublishers: data.blacklistedPublishers,
-        blacklistedWeekdays: data.blacklistedWeekdays,
-        maxPricePerConsumption: data.maxPricePerConsumption,
-        maxConsumptionsPerDay: data.maxConsumptionsPerDay,
+        attribution: data.attribution ?? 0n,
+        active: data.active ?? true,
+        abi: isConversion(data) && data.abi ? data.abi : '',
+        target: isConversion(data) && data.target ? (data.target as `0x${string}`) : addressZero,
+        startingTimestamp: BigInt(data.startingDate?.getTime() ?? 0),
+        endingTimestamp: BigInt(data.endingDate?.getTime() ?? Number.MAX_SAFE_INTEGER), // @todo check this max
+        audienceIds: data.audienceIds.map(BigInt) ?? [],
+        blacklistedPublishers: data.blacklistedPublishers.map((a) => a as `0x${string}`) ?? [],
+        blacklistedWeekdays: data.blacklistedWeekdays ?? [],
+        maxPricePerConsumption: BigInt(data.maxPricePerConsumption ?? Number.MAX_SAFE_INTEGER),
+        maxConsumptionsPerDay: BigInt(data.maxConsumptionsPerDay ?? Number.MAX_SAFE_INTEGER),
+        maxBudget: BigInt(data.maxBudget ?? Number.MAX_SAFE_INTEGER),
       };
+
+      console.log(newAdArgs);
 
       if (id) {
         // Edit Ad
         hash = (
-          await editAdAsync({
-            args: [id, newAdArgs],
+          await setAdAsync({
+            args: [BigInt(id), newAdArgs],
           })
         ).hash;
       } else {
         // Create Ad
         hash = (
-          await createAdAsync({
-            args: [newAdArgs],
+          await setAdAsync({
+            args: [0n, newAdArgs],
           })
         ).hash;
       }
+
       Swal.mixin({
         toast: true,
         position: 'top',
@@ -156,24 +209,6 @@ export const AdEditorComponent = (id?: string) => {
       setProcessingAd(false);
     }
   };
-
-  const schema = z.object({
-    title: z.string().describe('Please fill the title'),
-    description: z.string().describe('Please fill the description'),
-    imageUrl: z.string().describe('Please provide an image URL'),
-    imageFile: z.custom<File>().describe('Please provide an image'),
-    attribution: z.number().describe('Please provide an attribution'),
-    active: z.boolean().describe('Please provide an active'),
-    blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers'),
-    blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays'),
-    maxPricePerConsumption: z.number().describe('Please provide a max impression price'),
-    maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day'),
-    startingDate: z.date().describe('Please provide a starting date'),
-    endingDate: z.date().describe('Please provide an ending date'),
-    audienceIds: z.array(z.number()).describe('You must set a list of audiences'),
-  });
-
-  type FormValues = z.infer<typeof schema>;
 
   const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
 
@@ -298,8 +333,12 @@ export const AdEditorComponent = (id?: string) => {
                 description: currentMetadata?.description ?? '',
                 image: undefined,
                 imageUrl: currentMetadata?.image ?? '',
+                abi: '',
+                paramsSchema: {},
+                target: addressZero,
                 maxPricePerConsumption: ad?.maxPricePerConsumption ? Number(ad.maxPricePerConsumption) : undefined,
                 maxConsumptionsPerDay: ad?.maxConsumptionsPerDay ? Number(ad.maxConsumptionsPerDay) : undefined,
+                maxBudget: ad?.maxBudget ? Number(ad.maxBudget) : undefined,
                 startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
                 endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : undefined,
                 attribution: ad?.attribution ? Number(ad.attribution) : undefined,
@@ -372,17 +411,29 @@ export const AdEditorComponent = (id?: string) => {
                         accept="image/*"
                         placeholder="Enter Image URL"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setLoadingImage(true);
                           const file = e.target.files?.[0];
                           if (file) {
                             const reader = new FileReader();
                             reader.onloadend = () => {
+                              values.imageUrl = reader.result as string;
+                              handleChange(e);
+                              setFieldValue('imageUrl', reader.result as string);
                               setPreviewValues((prevState) => ({ ...prevState, imageUrl: reader.result as string }));
+                              setLoadingImage(false);
+                            };
+
+                            reader.onerror = (e) => {
+                              setLoadingImage(false);
+                              console.error(e);
+                              setFieldValue('imageUrl', undefined);
+                              setPreviewValues((prevState) => ({ ...prevState, imageUrl: undefined }));
+                              values.imageUrl = '';
                             };
                             reader.readAsDataURL(file);
 
                             setFieldValue('imageFile', file);
                           }
-                          handleChange(e);
                         }}
                       />
 
@@ -396,6 +447,7 @@ export const AdEditorComponent = (id?: string) => {
                         ''
                       )}
                     </div>
+                    {loadingImage && <span> Loading...</span>}
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
@@ -416,10 +468,11 @@ export const AdEditorComponent = (id?: string) => {
                         id="attribution"
                         options={attributionOptions}
                         name="attribution"
-                        value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? []}
+                        value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? 0}
                         onChange={(value) => {
                           setCurrentAttribution(Number(value?.value) ?? 0);
                           values.attribution = Number(value?.value) ?? 0;
+                          setPreviewValues((prevState) => ({ ...prevState, attribution: Number(value?.value) ?? 0 }));
                         }}
                         isSearchable={true}
                       />
@@ -470,6 +523,92 @@ export const AdEditorComponent = (id?: string) => {
                       )}
                     </div>
                   </div>
+
+                  <div
+                    hidden={currentAttribution !== Attribution.conversion}
+                    className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                    <div
+                      hidden={currentAttribution !== Attribution.conversion}
+                      className={submitCount ? (errors.target ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="target">Target Contract Address</label>
+                      <Field
+                        name="target"
+                        type="text"
+                        id="target"
+                        placeholder="Enter conversion target"
+                        className="form-input"
+                      />
+                      {submitCount ? (
+                        errors.target ? (
+                          <div className="mt-1 text-danger">{errors.target.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div
+                      hidden={currentAttribution !== Attribution.conversion}
+                      className={submitCount ? (errors.abi ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="abi">Abi</label>
+                      <Field name="abi" type="text" id="abi" placeholder="Enter abi" className="form-input" />
+                      {submitCount ? (
+                        errors.abi ? (
+                          <div className="mt-1 text-danger">{errors.abi.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
+                  <div
+                    hidden={currentAttribution !== Attribution.conversion}
+                    className={submitCount ? (errors.paramsSchema ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="paramsSchema">paramsSchema </label>
+                    <Field
+                      name="paramsSchema"
+                      as="textarea"
+                      id="paramsSchema"
+                      placeholder="Enter paramsSchema"
+                      className="form-input"
+                      // Display the object as a string
+                      value={
+                        typeof values.paramsSchema === 'string'
+                          ? values.paramsSchema
+                          : JSON.stringify(values.paramsSchema, null, 2)
+                      }
+                      onChange={(e: any) => {
+                        // Update the field value as a string always
+                        setFieldValue('paramsSchema', e.target.value);
+
+                        try {
+                          // Attempt to parse the edited JSON string back into an object
+                          const parsed = JSON.parse(e.target.value);
+                          // Update preview values or any other state you need
+                          setPreviewValues((prevState) => ({ ...prevState, paramsSchema: parsed }));
+                        } catch (error) {
+                          // Optionally handle JSON parse errors or show an error message
+                          // For example, you could set an error state here
+                        }
+                      }}
+                    />
+
+                    {submitCount ? (
+                      errors.paramsSchema ? (
+                        <div className="mt-1 text-danger">{errors.paramsSchema.toString()}</div>
+                      ) : (
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
+                  </div>
+
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.startingDate ? 'has-error' : 'has-success') : ''}>
                       <label htmlFor="startingDate">Starting Date</label>
@@ -556,6 +695,26 @@ export const AdEditorComponent = (id?: string) => {
                         ''
                       )}
                     </div>
+                  </div>
+                  <div className={submitCount ? (errors.maxBudget ? 'has-error' : 'has-success') : ''}>
+                    <label htmlFor="maxBudget">Total Maximum Budget to consume</label>
+                    <Field
+                      name="maxBudget"
+                      type="number"
+                      id="maxBudget"
+                      placeholder="Enter max budget"
+                      className="form-input"
+                    />
+
+                    {submitCount ? (
+                      errors.maxBudget ? (
+                        <div className="mt-1 text-danger">{errors.maxBudget.toString()}</div>
+                      ) : (
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
@@ -703,22 +862,13 @@ export const AdEditorComponent = (id?: string) => {
               <div className="flex w-full justify-center">
                 <div className="flex w-full max-w-lg flex-col items-start">
                   <label className="text-2xl text-secondary">Preview</label>
-                  <div className="card" style={{ ...defaultStyling, width: '100%' }}>
-                    <AdLayout
-                      title={previewValues.title || 'Title'}
-                      description={previewValues.description || 'Description'}
-                      image={
-                        previewValues.imageUrl ||
-                        'https://www.topnotchegypt.com/wp-content/uploads/2020/11/no-image.jpg'
-                      }
-                    />
-                  </div>
+                  <Ad publisher={addressZero} isDemo={true} customDemo={{ ...previewValues }}></Ad>
                 </div>
               </div>
               <div hidden={potentialReach === undefined} className="mb-8 mt-4 flex w-full max-w-lg justify-center">
                 <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                   <label className="text-2xl text-secondary">Potential Reach</label>
-                  <label className="text-2xl text-primary">{potentialReach}</label>
+                  <label className="text-2xl text-primary">{potentialReach ?? '?'}</label>
                 </div>
               </div>
             </div>

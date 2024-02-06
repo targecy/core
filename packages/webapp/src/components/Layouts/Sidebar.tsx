@@ -5,6 +5,7 @@ import {
   FileTextOutlined,
   GiftOutlined,
   HomeOutlined,
+  LineChartOutlined,
   PlaySquareOutlined,
   RiseOutlined,
   SecurityScanOutlined,
@@ -145,6 +146,17 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
+                  <li className="nav-item hover:cursor-pointer">
+                    <Link href="https://docs.targecy.xyz/" target="_blank" className="group hover:bg-transparent ">
+                      <div className="flex items-center">
+                        <FileTextOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Docs')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+
                   <br></br>
                   <label>User</label>
                   <li className="nav-item">
@@ -194,7 +206,7 @@ const Sidebar = () => {
                       <div className="flex items-center">
                         <DotChartOutlined rev={undefined} />
                         <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
-                          {t('Performace (coming soon)')}
+                          {t('Audiences (coming soon)')}
                         </span>
                       </div>
                     </Link>
@@ -214,13 +226,14 @@ const Sidebar = () => {
                   <li className="nav-item opacity-50">
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
-                        <FileTextOutlined rev={undefined} />
+                        <LineChartOutlined rev={undefined} />
                         <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
-                          {t('Docs (coming soon)')}
+                          {t('Performace (coming soon)')}
                         </span>
                       </div>
                     </Link>
                   </li>
+
                   <div hidden={!isAdmin}>
                     <br></br>
 

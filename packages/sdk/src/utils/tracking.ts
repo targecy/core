@@ -52,8 +52,6 @@ const trackEvent = async (env: environment, params: TrackingEvent) => {
   const identityWallet = zkServices.identityWallet;
   const userIdentity = await createUserIdentity(zkServices.identityWallet);
 
-  console.log('[Targecy SDK] Tracking event: ', params);
-
   const savedCredentials = await getSavedCredentials();
 
   const issuerIdentity = await createIssuerIdentity(identityWallet, issuerUrl.toString());

@@ -13,12 +13,10 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { useGetSegmentQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 import { backendTrpcClient } from '~/utils/trpc';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 export const operatorOptions = [
   {
@@ -49,13 +47,8 @@ export const SegmentEditorComponent = (id?: string) => {
   const [processingSegment, setProcessingSegment] = useState(false);
   const { writeAsync: setSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'setSegment',
-  });
-  const { writeAsync: editSegmentAsync } = useContractWrite({
-    address: targecyContractAddress,
-    abi,
-    functionName: 'editSegment',
   });
 
   const router = useRouter();
@@ -94,41 +87,28 @@ export const SegmentEditorComponent = (id?: string) => {
 
     try {
       let hash;
+      const args = {
+        query: {
+          schema: data.schema,
+          slotIndex: data.slotIndex,
+          operator: data.operator,
+          value: [data.value],
+
+          circuitId: 'credentialAtomicQuerySig',
+        },
+        metadataURI: metadataURI,
+        issuer: data.issuer,
+      };
+
       if (editingMode) {
         hash = (
-          await editSegmentAsync({
-            args: [
-              id,
-              {
-                query: {
-                  schema: data.schema,
-                  slotIndex: data.slotIndex,
-                  operator: data.operator,
-                  value: [data.value],
-
-                  circuitId: 'credentialAtomicQuerySig',
-                },
-                metadataURI: metadataURI,
-              },
-            ],
+          await setSegmentAsync({
+            args: [BigInt(id), args],
           })
         ).hash;
       } else {
         hash = await setSegmentAsync({
-          args: [
-            {
-              validator: '0xeE229A1514Bf4E7AADe8384428828CE9CCc5dA1a',
-              query: {
-                schema: data.schema,
-                slotIndex: data.slotIndex,
-                operator: data.operator,
-                value: [data.value],
-
-                circuitId: 'credentialAtomicQuerySig',
-              },
-              metadataURI: metadataURI,
-            },
-          ],
+          args: [0n, args],
         });
       }
       await Swal.mixin({
@@ -162,12 +142,11 @@ export const SegmentEditorComponent = (id?: string) => {
   const schema = z.object({
     title: z.string().min(1).max(50).describe('Please fill the title'),
     description: z.string().min(1).max(500).describe('Please fill the description'),
-    schema: z.string().describe('Please fill the schema'),
-    // schemaUrl: z.string().url().describe('Please fill the schema url'),
-    slotIndex: z.number().describe('Please fill the slotIndex'),
-    // field: z.string().describe('Please fill the field'),
-    operator: z.number().describe('Please fill the operator'),
-    value: z.string().describe('Please fill the value'),
+    schema: z.bigint().describe('Please fill the schema'),
+    slotIndex: z.bigint().describe('Please fill the slotIndex'),
+    operator: z.bigint().describe('Please fill the operator'),
+    value: z.bigint().describe('Please fill the value'),
+    issuer: z.bigint().describe('Please fill the issuer'),
   });
 
   type FormValues = z.infer<typeof schema>;
@@ -183,7 +162,7 @@ export const SegmentEditorComponent = (id?: string) => {
   });
 
   const [currentParams, setCurrentParams] = useState<
-    { operator?: number; value?: any; slotIndex?: number; schema?: string } | undefined
+    { operator?: number; value?: any; slotIndex?: number; schema?: string; issuer?: bigint } | undefined
   >(undefined);
   const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
@@ -193,7 +172,8 @@ export const SegmentEditorComponent = (id?: string) => {
       !currentParams.operator ||
       !currentParams.value ||
       !currentParams.slotIndex ||
-      !currentParams.schema
+      !currentParams.schema ||
+      !currentParams.issuer
     )
       return;
 
@@ -296,6 +276,7 @@ export const SegmentEditorComponent = (id?: string) => {
                 slotIndex: Number(segment?.querySlotIndex),
                 operator: Number(segment?.queryOperator),
                 value: segment?.queryValue.filter((e: string) => e !== '0').toString(),
+                issuer: segment?.issuer,
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -340,7 +321,7 @@ export const SegmentEditorComponent = (id?: string) => {
                     </div>
 
                     <div className={submitCount ? (errors.schema ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="operator">Schema</label>
+                      <label htmlFor="schema">Schema</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -464,6 +445,30 @@ export const SegmentEditorComponent = (id?: string) => {
                     </div>
                   </div>
 
+                  <div className={`${submitCount ? (errors.issuer ? 'has-error' : 'has-success') : ''} col-span-2`}>
+                    <label htmlFor="issuer">Issuer</label>
+                    <Field
+                      name="issuer"
+                      type="string"
+                      id="issuer"
+                      placeholder="Enter issuer"
+                      onChange={(e: any) => {
+                        setCurrentParams((prevState) => ({ ...prevState, issuer: e.target.value }));
+                        handleChange(e);
+                      }}
+                      className="form-input"
+                    />
+                    {submitCount ? (
+                      errors.issuer ? (
+                        <div className="mt-1 text-danger">{errors.issuer.toString()}</div>
+                      ) : (
+                        <div className="mt-1 text-success"></div>
+                      )
+                    ) : (
+                      ''
+                    )}
+                  </div>
+
                   {isConnected ? (
                     <button
                       type="submit"
@@ -497,7 +502,7 @@ export const SegmentEditorComponent = (id?: string) => {
               <div className="m-7 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="m-5 mb-0 text-secondary">Potential Reach</label>
                 <div className="h-full w-full p-5">
-                  <label className="text-center align-middle text-8xl">{potentialReach ?? "?"}</label>
+                  <label className="text-center align-middle text-8xl">{potentialReach ?? '?'}</label>
                 </div>
               </div>
             </div>

@@ -18,9 +18,10 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "paths": {
+      "~/*": ["../sdk/src/*"],
       "@backend/*": ["../backend/src/*"],
       "@relayer/*": ["../relayer/src/*"],
-      "@common/*": ["../common/src/*"],
+      "@common/*": ["../common/src/*"]
     }
   },
   "include": ["src", "codegen.ts", "apollo.config.js"],

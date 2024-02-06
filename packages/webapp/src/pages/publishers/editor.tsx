@@ -8,11 +8,9 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { useGetPublisherQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 export const PublisherEditorComponent = (id?: string) => {
   const editingMode = !!id;
@@ -20,7 +18,7 @@ export const PublisherEditorComponent = (id?: string) => {
   const [processingPublisher, setProcessingPublisher] = useState(false);
   const { writeAsync: setPublisherAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'setPublisher',
   });
 
@@ -35,14 +33,12 @@ export const PublisherEditorComponent = (id?: string) => {
       const hash = await setPublisherAsync({
         args: [
           {
-            publisher: {
-              vault: data.address,
-              userRewardPercentage: data.usersRewardsPercentage,
-              cpi: data.cpi,
-              cpc: data.cpc,
-              cpa: data.cpa,
-              active: true,
-            },
+            vault: data.address as `0x${string}`,
+            userRewardsPercentage: data.usersRewardsPercentage,
+            cpi: data.cpi,
+            cpc: data.cpc,
+            cpa: data.cpa,
+            active: true,
           },
         ],
       });
@@ -77,10 +73,10 @@ export const PublisherEditorComponent = (id?: string) => {
 
   const schema = z.object({
     address: z.string().min(1).max(50).describe('Please fill the address'),
-    usersRewardsPercentage: z.number().min(1).max(99999999999).describe('Please fill the usersRewardsPercentage'),
-    cpi: z.number().min(1).max(99999999999).describe('Please fill the value'),
-    cpc: z.number().min(1).max(99999999999).describe('Please fill the value'),
-    cpa: z.number().min(1).max(99999999999).describe('Please fill the value'),
+    usersRewardsPercentage: z.bigint().describe('Please fill the usersRewardsPercentage'),
+    cpi: z.bigint().describe('Please fill the value'),
+    cpc: z.bigint().describe('Please fill the value'),
+    cpa: z.bigint().describe('Please fill the value'),
   });
 
   const { data: publisherData } = useGetPublisherQuery({ id: id ?? '' });

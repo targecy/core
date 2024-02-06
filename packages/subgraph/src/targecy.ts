@@ -261,6 +261,8 @@ export function handleAdEdited(event: AdEditedEvent): void {
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
   entity.attribution = event.params.ad.attribution;
+  entity.abi = event.params.ad.abi;
+  entity.target = event.params.ad.target.toHexString();
   entity.active = event.params.ad.active;
   entity.consumptionsPerDay = [];
 

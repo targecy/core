@@ -15,9 +15,7 @@ import { targecyContractAddress } from '~/constants/contracts.constants';
 import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~/generated/graphql.types';
 import { shortString } from '~/utils';
 import { backendTrpcClient } from '~/utils/trpc';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
+import { Targecy__factory } from '~/generated/contract-types';
 
 const SegmentsList = () => {
   const router = useRouter();
@@ -51,11 +49,11 @@ const SegmentsList = () => {
 
   const { writeAsync: deleteSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'deleteSegment',
   });
 
-  const deleteSegment = async (id: number) => {
+  const deleteSegment = async (id: bigint) => {
     await deleteSegmentAsync({ args: [id] });
     return undefined;
   };
@@ -111,7 +109,7 @@ const SegmentsList = () => {
             <DeleteOutlined
               rev={undefined}
               onClick={() => {
-                deleteSegment(Number(item.id))
+                deleteSegment(BigInt(item.id))
                   .then(async () => {
                     await Swal.mixin({
                       toast: true,

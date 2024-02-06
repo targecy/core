@@ -19,6 +19,7 @@ export type Scalars = {
 
 export type Ad = {
   __typename?: 'Ad';
+  abi: Scalars['String'];
   active: Scalars['Boolean'];
   advertiser: Advertiser;
   attribution: Scalars['Int8'];
@@ -35,6 +36,7 @@ export type Ad = {
   maxPricePerConsumption: Scalars['BigInt'];
   metadataURI: Scalars['String'];
   startingTimestamp: Scalars['BigInt'];
+  target: Scalars['String'];
 };
 
 
@@ -67,6 +69,26 @@ export type AdConsumptionsPerDayArgs = {
 export type Ad_Filter = {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  abi?: InputMaybe<Scalars['String']>;
+  abi_contains?: InputMaybe<Scalars['String']>;
+  abi_contains_nocase?: InputMaybe<Scalars['String']>;
+  abi_ends_with?: InputMaybe<Scalars['String']>;
+  abi_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  abi_gt?: InputMaybe<Scalars['String']>;
+  abi_gte?: InputMaybe<Scalars['String']>;
+  abi_in?: InputMaybe<Array<Scalars['String']>>;
+  abi_lt?: InputMaybe<Scalars['String']>;
+  abi_lte?: InputMaybe<Scalars['String']>;
+  abi_not?: InputMaybe<Scalars['String']>;
+  abi_not_contains?: InputMaybe<Scalars['String']>;
+  abi_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  abi_not_ends_with?: InputMaybe<Scalars['String']>;
+  abi_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  abi_not_in?: InputMaybe<Array<Scalars['String']>>;
+  abi_not_starts_with?: InputMaybe<Scalars['String']>;
+  abi_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  abi_starts_with?: InputMaybe<Scalars['String']>;
+  abi_starts_with_nocase?: InputMaybe<Scalars['String']>;
   active?: InputMaybe<Scalars['Boolean']>;
   active_in?: InputMaybe<Array<Scalars['Boolean']>>;
   active_not?: InputMaybe<Scalars['Boolean']>;
@@ -213,9 +235,30 @@ export type Ad_Filter = {
   startingTimestamp_lte?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_not?: InputMaybe<Scalars['BigInt']>;
   startingTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  target?: InputMaybe<Scalars['String']>;
+  target_contains?: InputMaybe<Scalars['String']>;
+  target_contains_nocase?: InputMaybe<Scalars['String']>;
+  target_ends_with?: InputMaybe<Scalars['String']>;
+  target_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  target_gt?: InputMaybe<Scalars['String']>;
+  target_gte?: InputMaybe<Scalars['String']>;
+  target_in?: InputMaybe<Array<Scalars['String']>>;
+  target_lt?: InputMaybe<Scalars['String']>;
+  target_lte?: InputMaybe<Scalars['String']>;
+  target_not?: InputMaybe<Scalars['String']>;
+  target_not_contains?: InputMaybe<Scalars['String']>;
+  target_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  target_not_ends_with?: InputMaybe<Scalars['String']>;
+  target_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  target_not_in?: InputMaybe<Array<Scalars['String']>>;
+  target_not_starts_with?: InputMaybe<Scalars['String']>;
+  target_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  target_starts_with?: InputMaybe<Scalars['String']>;
+  target_starts_with_nocase?: InputMaybe<Scalars['String']>;
 };
 
 export enum Ad_OrderBy {
+  Abi = 'abi',
   Active = 'active',
   Advertiser = 'advertiser',
   AdvertiserAdsQuantity = 'advertiser__adsQuantity',
@@ -236,7 +279,8 @@ export enum Ad_OrderBy {
   MaxConsumptionsPerDay = 'maxConsumptionsPerDay',
   MaxPricePerConsumption = 'maxPricePerConsumption',
   MetadataUri = 'metadataURI',
-  StartingTimestamp = 'startingTimestamp'
+  StartingTimestamp = 'startingTimestamp',
+  Target = 'target'
 }
 
 export type Admin = {
@@ -1217,45 +1261,45 @@ export type GetAdminQueryVariables = Exact<{
 
 export type GetAdminQuery = { __typename?: 'Query', admin?: { __typename?: 'Admin', id: string } | null };
 
-export type AdFragmentFragment = { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> };
+export type AdFragmentFragment = { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> };
 
 export type GetAllAdsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+export type GetAllAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
 export type GetAdToShowQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAdToShowQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+export type GetAdToShowQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
 export type GetAdQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetAdQuery = { __typename?: 'Query', ad?: { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> } | null };
+export type GetAdQuery = { __typename?: 'Query', ad?: { __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> } | null };
 
 export type GetLastAdsQueryVariables = Exact<{
   limit: Scalars['Int'];
 }>;
 
 
-export type GetLastAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+export type GetLastAdsQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
 export type GetAdsByAdvertiserQueryVariables = Exact<{
   advertiserId: Scalars['String'];
 }>;
 
 
-export type GetAdsByAdvertiserQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+export type GetAdsByAdvertiserQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
 export type AdvertiserFragmentFragment = { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } };
 
 export type GetAllAdvertisersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllAdvertisersQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
+export type GetAllAdvertisersQuery = { __typename?: 'Query', ads: Array<{ __typename?: 'Ad', id: string, metadataURI: string, attribution: any, active: boolean, abi: string, target: string, maxBudget: any, currentBudget: any, startingTimestamp: any, endingTimestamp: any, blacklistedWeekdays: Array<any>, maxConsumptionsPerDay: any, maxPricePerConsumption: any, consumptions: any, advertiser: { __typename?: 'Advertiser', id: string, adsQuantity: any, impressions: any, clicks: any, conversions: any, budget: { __typename?: 'Budget', id: string, totalBudget: any, remainingBudget: any } }, audiences: Array<{ __typename?: 'Audience', id: string, metadataURI: string, consumptions: any, segments: Array<{ __typename?: 'Segment', id: string, metadataURI: string, issuer: any, querySchema: any, querySlotIndex: any, queryOperator: any, queryValue: Array<any>, queryCircuitId: string }> }>, blacklistedPublishers: Array<{ __typename?: 'Publisher', id: string, active: boolean, cpi: any, cpc: any, cpa: any, usersRewardsPercentage: any, adsQuantity: any, impressions: any, clicks: any, conversions: any }>, consumptionsPerDay: Array<{ __typename?: 'ConsumptionsPerDay', id: string, day: any, adId: string, consumptions: any }> }> };
 
 export type GetAdvertiserQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1384,6 +1428,8 @@ export const AdFragmentFragmentDoc = `
   metadataURI
   attribution
   active
+  abi
+  target
   maxBudget
   currentBudget
   startingTimestamp
