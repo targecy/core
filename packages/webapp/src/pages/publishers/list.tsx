@@ -6,10 +6,8 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllPublishersQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 const PublishersList = () => {
   const router = useRouter();
@@ -18,17 +16,17 @@ const PublishersList = () => {
 
   const { writeAsync: pausePublisherAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'pausePublisher',
   });
   const { writeAsync: unpausePublisherAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'unpausePublisher',
   });
   const { writeAsync: removePublisherFromWhitelistAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'removePublisher',
   });
 

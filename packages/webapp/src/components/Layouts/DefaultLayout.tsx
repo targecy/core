@@ -8,6 +8,7 @@ import Portals from '../../components/Portals';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
+import { StatusBar } from './StatusBar';
 
 import { IRootState } from '~/store';
 import { toggleSidebar } from '~/store/themeConfigSlice';
@@ -146,6 +147,8 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
             {/* BEGIN TOP NAVBAR */}
             <Header />
             {/* END TOP NAVBAR */}
+
+            <StatusBar />
 
             {/* BEGIN CONTENT AREA */}
             <div className={`${animation} animate__animated p-6`}>{children}</div>

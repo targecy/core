@@ -28,7 +28,6 @@ exports.txsRouter = (0, __1.router)({
     }),
     consumeAd: __1.publicProcedure
         .input(zod_1.z.object({
-        data: zod_1.z.string(),
         adId: zod_1.z.string(),
         publisher: zod_1.z.string(),
         zkProofs: zod_1.z

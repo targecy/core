@@ -4,11 +4,14 @@ import { useAsync } from 'react-use';
 import { getValidCredentialByProofRequest, useCredentials } from '..';
 import { TargecyContextType } from '../components/misc/Context.types';
 import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
+import { SolidityTypes } from '../constants/chain';
 
 export type AdMetadata = {
-  title: string;
-  description: string;
-  image: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  link?: string;
+  paramsSchema?: Record<string, SolidityTypes>;
 };
 
 export type AdWithMetadata = {
@@ -30,18 +33,14 @@ export const useAds = (context: TargecyContextType) => {
     ) || [];
 
   const [completeAds, setCompleteAds] = useState<
-    { ad: Ad; metadata: { title: string; description: string; image: string } }[]
+    { ad: Ad; metadata: AdMetadata }[]
   >([]);
 
   useAsync(async () => {
     if (validAds) {
       const finalAds: {
         ad: Ad;
-        metadata: {
-          title: string;
-          description: string;
-          image: string;
-        };
+        metadata: AdMetadata;
       }[] = [];
       for (const ad of validAds) {
         // @todo(kevin): this is being repeated in the webapp, we should move it to a common place
@@ -54,6 +53,8 @@ export const useAds = (context: TargecyContextType) => {
               title: json.title,
               description: json.description,
               image: json.image,
+              link: json.link,
+              paramsSchema: json.paramsSchema,
             },
           });
       }

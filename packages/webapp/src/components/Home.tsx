@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/await-thenable */
 import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
-import { trackCustomEvent } from '@targecy/sdk/src/utils/tracking';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -150,18 +148,18 @@ export const Home = () => {
     id: wallet.address || '',
   });
 
-  useAsync(async () => {
-    await trackCustomEvent(
-      {
-        id: 'purchase',
-        params: {
-          currency: 'USD',
-          value: 42,
-        },
-      },
-      env.NEXT_PUBLIC_VERCEL_ENV
-    );
-  }, []);
+  // useAsync(async () => {
+  //   await trackCustomEvent(
+  //     {
+  //       id: 'purchase',
+  //       params: {
+  //         currency: 'USD',
+  //         value: 42,
+  //       },
+  //     },
+  //     env.NEXT_PUBLIC_VERCEL_ENV
+  //   );
+  // }, []);
 
   if (!mounted) return <></>;
 

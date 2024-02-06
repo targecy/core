@@ -28,7 +28,6 @@ export const txsRouter = router({
   consumeAd: publicProcedure
     .input(
       z.object({
-        data: z.string(),
         adId: z.string(),
         publisher: z.string(),
         zkProofs: z

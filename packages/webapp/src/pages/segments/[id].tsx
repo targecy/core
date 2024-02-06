@@ -7,11 +7,9 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { useGetSegmentQuery } from '~/generated/graphql.types';
 import { shortString } from '~/utils';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 const SegmentDetailPage = () => {
   const router = useRouter();
@@ -29,11 +27,11 @@ const SegmentDetailPage = () => {
   }, [segment]);
   const { writeAsync: deleteSegmentAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'deleteSegment',
   });
 
-  const deleteSegment = async (id: number) => {
+  const deleteSegment = async (id: bigint) => {
     await deleteSegmentAsync({ args: [id] });
     return undefined;
   };
@@ -68,7 +66,7 @@ const SegmentDetailPage = () => {
               <button
                 className="btn-outline-danger btn m-2 w-fit"
                 onClick={() => {
-                  deleteSegment(Number(id))
+                  deleteSegment(BigInt(id))
                     .then(async () => {
                       await Swal.mixin({
                         toast: true,

@@ -26,6 +26,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
     multisig?: `0x${string}`;
     validator?: `0x${string}`;
     erc20?: `0x${string}`;
+    external?: `0x${string}`;
   };
 
   switch (network.name) {
@@ -57,6 +58,13 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   console.log(`Starting Deployment for network: ${network.name} with deployer: ${deployer}`);
 
   if (network.name === 'localhost') {
+    console.log('Deploying MockExternalVaultContract...');
+    const mockExternalContractDeployResult = await deployments.deploy('MockExternalVaultContract', {
+      from: deployer,
+      log: true,
+    });
+    config.external = mockExternalContractDeployResult.address as `0x${string}`;
+
     console.log('Deploying MockValidator...');
     const mockValidatorDeployResult = await deployments.deploy('MockValidator', {
       from: deployer,
@@ -125,7 +133,15 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   }
 
   if (network.name === 'localhost') {
-    current = { ...current, ...{ [hostname()]: address } };
+    current = {
+      ...current,
+      ...{
+        [hostname()]: address,
+        [hostname() + '_mockExternalContract']: config.external,
+        [hostname() + '_mockValidator']: config.validator,
+        [hostname() + '_mockErc20']: config.erc20,
+      },
+    };
   } else {
     current = { ...current, ...{ [`address`]: address } };
   }

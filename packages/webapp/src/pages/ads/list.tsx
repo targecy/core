@@ -9,11 +9,9 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 const AdsList = () => {
   const router = useRouter();
@@ -53,34 +51,34 @@ const AdsList = () => {
 
   const { writeAsync: deleteAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'deleteAd',
   });
 
   const deleteAd = async (id: number) => {
-    await deleteAdAsync({ args: [id] });
+    await deleteAdAsync({ args: [BigInt(id)] });
     return undefined;
   };
 
   const { writeAsync: pauseAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'pauseAd',
   });
 
   const pauseAd = async (id: number) => {
-    await pauseAdAsync({ args: [id] });
+    await pauseAdAsync({ args: [BigInt(id)] });
     return undefined;
   };
 
   const { writeAsync: unpauseAdAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'unpauseAd',
   });
 
   const unpauseAd = async (id: number) => {
-    await unpauseAdAsync({ args: [id] });
+    await unpauseAdAsync({ args: [BigInt(id)] });
     return undefined;
   };
 

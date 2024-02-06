@@ -7,10 +7,8 @@ import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { useGetAudienceQuery } from '~/generated/graphql.types';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 const AudienceDetailPage = () => {
   const router = useRouter();
@@ -50,12 +48,12 @@ const AudienceDetailPage = () => {
 
   const { writeAsync: deleteAudienceAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
+    abi: Targecy__factory.abi,
     functionName: 'deleteAudience',
   });
 
   const deleteAudience = async (id: number) => {
-    await deleteAudienceAsync({ args: [id] });
+    await deleteAudienceAsync({ args: [BigInt(id)] });
     return undefined;
   };
 

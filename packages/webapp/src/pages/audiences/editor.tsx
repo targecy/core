@@ -12,13 +12,11 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { Segment, useGetAllSegmentsQuery, useGetAudienceQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 import { fetchMetadata } from '~/utils/metadata';
 import { backendTrpcClient } from '~/utils/trpc';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const abi = require('../../generated/abis/Targecy.json');
 
 export const AudienceEditorComponent = (id?: string) => {
   const { data } = useGetAllSegmentsQuery();
@@ -27,15 +25,11 @@ export const AudienceEditorComponent = (id?: string) => {
   const editingMode = id !== undefined;
 
   const [processingAudience, setProcessingAudience] = useState(false);
-  const { writeAsync: createAudience } = useContractWrite({
+  
+  const { writeAsync: setAudienceAsync } = useContractWrite({
     address: targecyContractAddress,
-    abi,
-    functionName: 'createAudience',
-  });
-  const { writeAsync: editAudience } = useContractWrite({
-    address: targecyContractAddress,
-    abi,
-    functionName: 'editAudience',
+    abi: Targecy__factory.abi,
+    functionName: 'setAudience',
   });
 
   const router = useRouter();
@@ -88,14 +82,14 @@ export const AudienceEditorComponent = (id?: string) => {
       let hash;
       if (!editingMode) {
         hash = (
-          await createAudience({
-            args: [metadataURI, data.segments],
+          await setAudienceAsync({
+            args: [0n, metadataURI, data.segments],
           })
         ).hash;
       } else {
         hash = (
-          await editAudience({
-            args: [id, metadataURI, data.segments],
+          await setAudienceAsync({
+            args: [BigInt(id), metadataURI, data.segments],
           })
         ).hash;
       }
@@ -131,7 +125,7 @@ export const AudienceEditorComponent = (id?: string) => {
   const schema = z.object({
     title: z.string().describe('Please fill the title'),
     description: z.string().describe('Please fill the description'),
-    segments: z.array(z.number()).describe('You must set a list of segments'),
+    segments: z.array(z.bigint()).describe('You must set a list of segments'),
   });
 
   type FormValues = z.infer<typeof schema>;

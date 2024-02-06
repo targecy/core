@@ -127,7 +127,6 @@ export declare const appRouter: import("@trpc/server").CreateRouterInner<import(
                 res: import("express").Response<any, Record<string, any>>;
             };
             _input_in: {
-                data: string;
                 adId: string;
                 publisher: string;
                 zkProofs?: {
@@ -138,7 +137,6 @@ export declare const appRouter: import("@trpc/server").CreateRouterInner<import(
                 } | undefined;
             };
             _input_out: {
-                data: string;
                 adId: string;
                 publisher: string;
                 zkProofs: {
