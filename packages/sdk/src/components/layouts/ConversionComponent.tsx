@@ -54,7 +54,15 @@ export const ConversionComponent = (props: LayoutParams) => {
             type={getInputType(type as SolidityTypes)}
             id={key}
             placeholder={key}
-            className="form-input mt-1 max-w-64"
+            style={{
+              marginTop: '0.25rem', // equivalent to mt-1 in Tailwind
+              maxWidth: '16rem', // equivalent to max-w-64 in Tailwind
+              padding: '0.5rem 1rem', // padding
+              border: '1px solid rgba(209, 213, 219, 0.5)', // slight border with transparency
+              borderRadius: '0.25rem', // rounded corners
+              width: '100%', // full width
+              backgroundColor: 'rgba(255, 255, 255, 0.5)', // slight transparency
+            }}
           />
         ))}
 

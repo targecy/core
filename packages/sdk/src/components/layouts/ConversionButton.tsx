@@ -134,17 +134,45 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
   };
 
   return (
-    <div className="mt-2">
+    <div style={{ marginTop: '0.5rem' }}>
       {isConnected ? (
-        <button disabled={props.isDemo} className="btn btn-outline-secondary" onClick={executeTransaction}>
+        <button
+          disabled={props.isDemo}
+          style={{
+            padding: '0.5rem 1rem',
+            border: '1px solid #6c757d',
+            backgroundColor: 'transparent',
+            color: '#6c757d',
+            borderRadius: '0.25rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            opacity: props.isDemo ? 0.5 : 1,
+          }}
+          onClick={executeTransaction}>
           Execute
         </button>
       ) : (
-        <button disabled={props.isDemo} className="btn btn-outline-secondary" onClick={connect}>
+        <button
+          disabled={props.isDemo}
+          style={{
+            padding: '0.5rem 1rem',
+            border: '1px solid #6c757d',
+            backgroundColor: 'transparent',
+            color: '#6c757d',
+            borderRadius: '0.25rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            opacity: props.isDemo ? 0.5 : 1,
+          }}
+          onClick={connect}>
           Connect
         </button>
       )}
-      {address && <span className="mt-2 text-xs text-slate-600 dark:text-slate-400		">{shortenAddress(address ?? zeroAddress)} connected.</span>}
+      {address && (
+        <span style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#718096' }}>
+          {shortenAddress(address ?? zeroAddress)} connected.
+        </span>
+      )}
     </div>
   );
 };
