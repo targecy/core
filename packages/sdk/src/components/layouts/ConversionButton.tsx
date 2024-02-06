@@ -74,12 +74,15 @@ export const ConversionButton = (props: LayoutParams, params: Record<string, any
 
   return (
     <div className="mt-2">
-      <button className="btn btn-outline-secondary" onClick={connect}>
-        Connect
-      </button>
-      <button className="btn btn-outline-secondary" onClick={executeTransaction}>
-        Execute
-      </button>
+      {isConnected ? (
+        <button className="btn btn-outline-secondary" onClick={executeTransaction}>
+          Execute
+        </button>
+      ) : (
+        <button className="btn btn-outline-secondary" onClick={connect}>
+          Connect
+        </button>
+      )}
     </div>
   );
 };

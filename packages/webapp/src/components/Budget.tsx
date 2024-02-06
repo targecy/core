@@ -94,7 +94,7 @@ export const Budget = () => {
 
   return (
     <>
-      <dialog id="my_modal_1" className="modal">
+      <dialog id="budgetModal" className="modal">
         <div className="modal-box">
           <div>
             <Formik
@@ -192,7 +192,7 @@ export const Budget = () => {
                         if (Object.keys(touched).length !== 0 && Object.keys(errors).length === 0) {
                           const parsed = schema.safeParse(values);
                           if (parsed.success) {
-                            handleSubmit(parsed.data);
+                            handleSubmit(parsed.data).catch(console.error);
                           } else {
                             console.log(parsed.error);
                           }
@@ -208,19 +208,20 @@ export const Budget = () => {
                   )}
 
                   {values.isDeposit && (
-                    <span className='mt-1'>Deposits will trigger an approval transaction for USDC contract first.</span>
+                    <span className="mt-3">Deposits will trigger an approval transaction for USDC contract first.</span>
                   )}
                 </Form>
               )}
             </Formik>
           </div>
         </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
       </dialog>
 
       <span
-        onClick={() =>
-          document.getElementById('my_modal_1') != null && document.getElementById('my_modal_1').showModal()
-        }
+        onClick={() => document && (document.getElementById('budgetModal') as HTMLDialogElement).showModal()}
         className="text-gray mr-2 transition-all hover:cursor-pointer hover:text-primary">
         ${isLoading ? '...' : data?.budget?.remainingBudget || 0}
       </span>

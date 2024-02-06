@@ -5,6 +5,7 @@ import {
   FileTextOutlined,
   GiftOutlined,
   HomeOutlined,
+  LineChartOutlined,
   PlaySquareOutlined,
   RiseOutlined,
   SecurityScanOutlined,
@@ -205,7 +206,7 @@ const Sidebar = () => {
                       <div className="flex items-center">
                         <DotChartOutlined rev={undefined} />
                         <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
-                          {t('Performace (coming soon)')}
+                          {t('Audiences (coming soon)')}
                         </span>
                       </div>
                     </Link>
@@ -225,7 +226,7 @@ const Sidebar = () => {
                   <li className="nav-item opacity-50">
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
-                        <DotChartOutlined rev={undefined} />
+                        <LineChartOutlined rev={undefined} />
                         <span className="text-gray ltr:pl-3 rtl:pr-3 dark:text-[#506690] ">
                           {t('Performace (coming soon)')}
                         </span>

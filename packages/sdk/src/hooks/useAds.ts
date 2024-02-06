@@ -4,7 +4,7 @@ import { useAsync } from 'react-use';
 import { getValidCredentialByProofRequest, useCredentials } from '..';
 import { TargecyContextType } from '../components/misc/Context.types';
 import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
-import { SolidityTypes } from 'src/constants/chain';
+import { SolidityTypes } from '../constants/chain';
 
 export type AdMetadata = {
   title?: string;

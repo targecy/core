@@ -34,9 +34,15 @@ export const BannerLarge = (props: LayoutParams) => {
         onMouseOut={(e) => {
           e.currentTarget.style.opacity = '0';
         }}>
-        <span>{props.title}</span>
+        <span style={{
+          color: props.styling.titleColor
+        }}>{props.title}</span>
         <br />
-        <span>{props.description}</span>
+        <span 
+          style={{
+            color: props.styling.subtitleColor
+          }}
+        >{props.description}</span>
         <br />
         <br />
         {props.attribution === Attribution.conversion ? <ConversionComponent {...props} /> : ''}

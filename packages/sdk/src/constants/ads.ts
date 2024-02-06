@@ -1,5 +1,5 @@
-import { Ad } from 'src/generated/graphql.types';
-import { AdMetadata } from 'src/hooks';
+import { Ad } from '../generated/graphql.types';
+import { AdMetadata } from '../hooks';
 import { zeroAddress } from 'viem';
 
 export enum Layouts {

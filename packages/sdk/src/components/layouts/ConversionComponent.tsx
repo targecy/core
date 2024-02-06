@@ -51,15 +51,14 @@ export const ConversionComponent = (props: LayoutParams) => {
           <input
             key={key}
             onChange={(e) => setParams({ ...params, [key]: e.target.value })}
-            type={getInputType(type)}
+            type={getInputType(type as SolidityTypes)}
             id={key}
             placeholder={key}
-            className="form-input mt-1"
+            className="form-input mt-1 max-w-64"
           />
         ))}
 
       <ConversionButton {...props} {...params} />
-     
     </>
   );
 };
