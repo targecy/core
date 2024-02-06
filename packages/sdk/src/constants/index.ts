@@ -1,1 +1,1 @@
-export type { AdStyling } from './ads';
+export * from './ads';

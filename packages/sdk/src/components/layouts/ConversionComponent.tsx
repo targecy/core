@@ -58,7 +58,7 @@ export const ConversionComponent = (props: LayoutParams) => {
           />
         ))}
 
-      <ConversionButton {...props} {...params} />
+      <ConversionButton props={props} params={params} />
     </>
   );
 };
