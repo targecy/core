@@ -332,15 +332,15 @@ const Demo = () => {
               )}
             </Formik>
             <div className="mockup-code mt-5  max-w-full">
+              <CopyOutlined
+                className="float-right mr-5 active:opacity-50"
+                onClick={() => copyToClipboard(code)}></CopyOutlined>
               <pre data-prefix="1. " className="pl-3">
                 <code>{"import { Ad } from '@targecy/sdk';  "}</code>
               </pre>
               <pre data-prefix="2. " className="pl-3">
                 <code>{''}</code>
               </pre>
-              <CopyOutlined
-                className="float-right mr-5 active:opacity-50"
-                onClick={() => copyToClipboard(code)}></CopyOutlined>
               <pre data-prefix="3. " className="max-w-full break-words  pl-3">
                 <code>{code}</code>
               </pre>

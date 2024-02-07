@@ -51,9 +51,12 @@ export const StatusBar = () => {
 
   return content ? (
     <div className="p-6 pb-1">
-      <div className="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-orange-300 p-2 dark:bg-black dark:text-white">
+      <div className="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-warning p-2 dark:bg-black dark:text-white">
         <div className="flex flex-grow justify-center">{content}</div>
-        <CloseOutlined className="cursor-pointer text-warning" onClick={() => setShowComponent(false)} />
+        <CloseOutlined
+          className="cursor-pointer text-warning hover:text-secondary"
+          onClick={() => setShowComponent(false)}
+        />
       </div>
     </div>
   ) : null;
