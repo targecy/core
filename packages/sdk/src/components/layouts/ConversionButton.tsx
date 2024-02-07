@@ -144,7 +144,7 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
             backgroundColor: 'transparent',
             color: '#6c757d',
             borderRadius: '0.25rem',
-            cursor: 'pointer',
+            cursor: props.isDemo ? 'auto' : 'pointer',
             transition: 'all 0.2s',
             opacity: props.isDemo ? 0.5 : 1,
           }}
@@ -160,7 +160,7 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
             backgroundColor: 'transparent',
             color: '#6c757d',
             borderRadius: '0.25rem',
-            cursor: 'pointer',
+            cursor: props.isDemo ? 'auto' : 'pointer',
             transition: 'all 0.2s',
             opacity: props.isDemo ? 0.5 : 1,
           }}
@@ -168,10 +168,11 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
           Connect
         </button>
       )}
+      <br />
       {address && (
-        <span style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#718096' }}>
-          {shortenAddress(address ?? zeroAddress)} connected.
-        </span>
+        <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#718096' }}>
+          {shortenAddress(address ?? zeroAddress)} is connected.
+        </p>
       )}
     </div>
   );

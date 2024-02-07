@@ -1,7 +1,6 @@
-// import { useConfig } from 'wagmi';
 
 import { CopyOutlined } from '@ant-design/icons';
-import { Ad, AdProps, Layouts, isLayout } from '@targecy/sdk';
+import { Ad, AdProps, Layouts, isLayout, titleCase } from '@targecy/sdk';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
@@ -52,10 +51,10 @@ const Demo = () => {
     setCode(getCode(props));
   }, [props]);
 
-  const layoutOptions = (Object.keys(Layouts) as Array<keyof typeof Layouts>).map((key, index) => {
+  const layoutOptions = Layouts.map((key) => {
     return {
-      value: index,
-      label: key.toString(),
+      value: key.toString(),
+      label: titleCase(key.toString()),
     };
   });
 
@@ -98,14 +97,14 @@ const Demo = () => {
                           menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                         }}
                         placeholder="Select an option"
-                        id="attribution"
+                        id="layout"
                         options={layoutOptions}
-                        name="attribution"
-                        value={layoutOptions.find((option) => option.label === props.styling?.layout?.toString())}
+                        name="layout"
+                        value={layoutOptions.find((option) => option.value === props.styling?.layout?.toString())}
                         onChange={(value) => {
                           const current = props;
                           if (!current.styling) current.styling = {};
-                          const v = value?.label ?? '';
+                          const v = value?.value ?? '';
                           if (isLayout(v)) current.styling.layout = v;
                           setProps(current);
                           setCode(getCode(props));
@@ -333,15 +332,15 @@ const Demo = () => {
               )}
             </Formik>
             <div className="mockup-code mt-5  max-w-full">
+              <CopyOutlined
+                className="float-right mr-5 active:opacity-50"
+                onClick={() => copyToClipboard(code)}></CopyOutlined>
               <pre data-prefix="1. " className="pl-3">
                 <code>{"import { Ad } from '@targecy/sdk';  "}</code>
               </pre>
               <pre data-prefix="2. " className="pl-3">
                 <code>{''}</code>
               </pre>
-              <CopyOutlined
-                className="float-right mr-5 active:opacity-50"
-                onClick={() => copyToClipboard(code)}></CopyOutlined>
               <pre data-prefix="3. " className="max-w-full break-words  pl-3">
                 <code>{code}</code>
               </pre>

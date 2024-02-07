@@ -1,9 +1,13 @@
+import { CloseOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { useGetAdvertiserQuery, useGetBudgetQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 
 export const StatusBar = () => {
+  const [showComponent, setShowComponent] = useState(true);
+
   const wallet = useWallet();
 
   const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery({
@@ -16,7 +20,7 @@ export const StatusBar = () => {
 
   const isDataLoading = isBudgetLoading || isAdvertiserDataLoading;
 
-  if (isDataLoading) return null;
+  if (isDataLoading || !showComponent) return null;
 
   let content: React.ReactNode;
 
@@ -24,7 +28,9 @@ export const StatusBar = () => {
     content = (
       <span>
         Seems that your remaining budget is 0,{' '}
-        <b className="cursor-pointer" onClick={() => document && (document.getElementById('budgetModal') as HTMLDialogElement).showModal()}>
+        <b
+          className="cursor-pointer"
+          onClick={() => document && (document.getElementById('budgetModal') as HTMLDialogElement).showModal()}>
           fund your budget
         </b>{' '}
         to keep your ads running!
@@ -45,8 +51,12 @@ export const StatusBar = () => {
 
   return content ? (
     <div className="p-6 pb-1">
-      <div className="flex w-full items-center justify-center whitespace-nowrap rounded-md border	 border-orange-300  p-2  dark:bg-black dark:text-white">
-        {content}
+      <div className="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-warning p-2 dark:bg-black dark:text-white">
+        <div className="flex flex-grow justify-center">{content}</div>
+        <CloseOutlined
+          className="cursor-pointer text-warning hover:text-secondary"
+          onClick={() => setShowComponent(false)}
+        />
       </div>
     </div>
   ) : null;

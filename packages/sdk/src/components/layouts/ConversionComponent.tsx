@@ -3,6 +3,7 @@ import { HTMLInputTypeAttribute, useState } from 'react';
 import { SolidityTypes } from '../../constants/chain';
 import { environment } from '../../utils/context';
 import { ConversionButton } from './ConversionButton';
+import { titleCase } from '../../utils';
 
 const getInputType = (type: SolidityTypes): HTMLInputTypeAttribute => {
   switch (type) {
@@ -53,7 +54,7 @@ export const ConversionComponent = (props: LayoutParams) => {
             onChange={(e) => setParams({ ...params, [key]: e.target.value })}
             type={getInputType(type as SolidityTypes)}
             id={key}
-            placeholder={key}
+            placeholder={titleCase(key)}
             style={{
               marginTop: '0.25rem', // equivalent to mt-1 in Tailwind
               maxWidth: '16rem', // equivalent to max-w-64 in Tailwind
@@ -61,7 +62,7 @@ export const ConversionComponent = (props: LayoutParams) => {
               border: '1px solid rgba(209, 213, 219, 0.5)', // slight border with transparency
               borderRadius: '0.25rem', // rounded corners
               width: '100%', // full width
-              backgroundColor: 'rgba(255, 255, 255, 0.5)', // slight transparency
+              backgroundColor: 'rgba(255, 255, 255, 0.1)', // slight transparency
             }}
           />
         ))}
