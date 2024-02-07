@@ -47,12 +47,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react/display-name': 'off',
-    'react-hooks/exhaustive-deps': [
-      'warn',
-      {
-        additionalHooks: '(useRecoilCallback)',
-      },
-    ],
+    'react-hooks/exhaustive-deps': 'off',
     'react/destructuring-assignment': 'off',
 
     '@typescript-eslint/explicit-function-return-type': 'off',

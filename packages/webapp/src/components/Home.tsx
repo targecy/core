@@ -2,12 +2,14 @@ import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useAsync } from 'react-use';
 import { useContractRead } from 'wagmi';
 
 import abi from '../generated/abis/Targecy.json';
+
+import { HomeLoader } from './HomeLoader';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { env } from '~/env.mjs';
@@ -35,35 +37,31 @@ export const Home = () => {
   });
   const adsQuantity = adsQuantityData?.toString() ?? 0;
 
-  const { data: audiencesQuantityData } = useContractRead({
+  const { data: audiencesQuantityData, isLoading: audienceQuantityLoading } = useContractRead({
     address: targecyContractAddress,
     abi,
     functionName: '_audienceId',
   });
   const audiencesQuantity = audiencesQuantityData?.toString() ?? 0;
 
-  const { data: segmentsQuantityData } = useContractRead({
+  const { data: segmentsQuantityData, isLoading: segmentsQuantityLoading } = useContractRead({
     address: targecyContractAddress,
     abi,
     functionName: '_segmentId',
   });
   const segmentsQuantity = segmentsQuantityData?.toString() ?? 0;
 
-  const { data: totalConsumptionsData } = useContractRead({
+  const { data: totalConsumptionsData, isLoading: totalConsumtionsLoading } = useContractRead({
     address: targecyContractAddress,
     abi,
     functionName: 'totalConsumptions',
   });
   const totalConsumptions = totalConsumptionsData?.toString() ?? 0;
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const { data: lastAds } = useGetLastAdsQuery({ limit: 5 });
   const [lastAdsMetadata, setLastAdsMetadata] = useState<Record<string, { title?: string; description?: string }>>({});
-  useAsync(async () => {
+
+  const { loading: lastAdsLoading } = useAsync(async () => {
     if (lastAds) {
       setLastAdsMetadata(
         (
@@ -86,7 +84,8 @@ export const Home = () => {
   const [lastAudiencesMetadata, setLastAudiencesMetadata] = useState<
     Record<string, { title?: string; description?: string }>
   >({});
-  useAsync(async () => {
+
+  const { loading: lastAudiencesLoading } = useAsync(async () => {
     if (lastAudiences) {
       setLastAudiencesMetadata(
         (
@@ -109,7 +108,8 @@ export const Home = () => {
   const [lastSegmentsMetadata, setLastSegmentsMetadata] = useState<
     Record<string, { title?: string; description?: string }>
   >({});
-  useAsync(async () => {
+
+  const { loading: lastSegmentsLoading } = useAsync(async () => {
     if (lastSegments) {
       setLastSegmentsMetadata(
         (
@@ -129,7 +129,7 @@ export const Home = () => {
   }, [lastSegments]);
 
   const [schemas, setSchemas] = useState<SCHEMA<any>[]>([]);
-  useAsync(async () => {
+  const { loading: backendTrpcLoding } = useAsync(async () => {
     const response = await backendTrpcClient.schemas.getAllSchemas.query();
     setSchemas(Object.entries(response).map(([, schema]) => schema));
   }, []);
@@ -161,14 +161,19 @@ export const Home = () => {
   //   );
   // }, []);
 
-  if (!mounted) return <></>;
+  const isLoadingQuantities = audienceQuantityLoading || segmentsQuantityLoading || totalConsumtionsLoading;
+  const loadingQueries = lastAdsLoading || lastAudiencesLoading || lastSegmentsLoading || backendTrpcLoding;
+
+  if (isLoadingQuantities || loadingQueries) {
+    return <HomeLoader />;
+  }
 
   return (
     <div>
       <div className="">
         <div className="flex h-1/4 flex-row justify-between">
-          <div className="panel mb-3 h-max-[100px] w-full">
-            <div className="flex justify-between gap-5 pr-10 text-sm font-bold text-[#515365] sm:grid-cols-2">
+          <div className="panel h-max-[100px] mb-3 w-full">
+            <div className="flex flex-auto flex-wrap justify-between gap-5 pr-10 text-sm font-bold text-[#515365] sm:grid-cols-2">
               <div>
                 <h5 className="text-lg font-semibold text-black dark:text-white  ">Network Statistics</h5>
                 <h6 className="text-sm font-semibold ">
@@ -213,7 +218,7 @@ export const Home = () => {
         </div>
         <div className="flex h-3/4 flex-row justify-between">
           <div className="flex w-full">
-            <div className="mt-3 mr-3 flex w-1/3 flex-col">
+            <div className="mr-3 mt-3 flex w-1/3 flex-col">
               <div className="panel">
                 <div className="-mx-5 mb-5 flex items-start justify-between border-b border-white-light p-5 pt-0  dark:border-[#1b2e4b] dark:text-white-light">
                   <h5 className="text-lg font-semibold ">Activity Log</h5>
@@ -316,7 +321,7 @@ export const Home = () => {
                 </PerfectScrollbar>
               </div>
             </div>
-            <div className="mt-3 ml-3 flex w-2/3 flex-col">
+            <div className="ml-3 mt-3 flex w-2/3 flex-col">
               <div className="mb-3 flex h-1/2 flex-row justify-between">
                 <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
                   <div className="mb-5 flex justify-between dark:text-white-light">

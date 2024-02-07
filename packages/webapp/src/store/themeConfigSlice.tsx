@@ -3,17 +3,34 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import themeConfig from '../theme.config';
 
+const getItemOrDefault = (key: string, defaultValue: string | boolean) => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key) || defaultValue;
+  }
+
+  return defaultValue;
+};
+
+const isDarkMode = getItemOrDefault('theme', false);
+const menu = getItemOrDefault('menu', themeConfig.menu);
+const layout = getItemOrDefault('layout', themeConfig.layout);
+const rtlClass = getItemOrDefault('rtlClass', themeConfig.rtlClass);
+const animation = getItemOrDefault('animation', themeConfig.animation);
+const navbar = getItemOrDefault('navbar', themeConfig.navbar);
+const semidark = getItemOrDefault('semidark', themeConfig.semidark);
+const selectedLocale = getItemOrDefault('i18nextLng', themeConfig.locale);
+
 const initialState = {
-  isDarkMode: false,
+  isDarkMode: isDarkMode,
   sidebar: false,
   theme: themeConfig.theme,
-  menu: themeConfig.menu,
-  layout: themeConfig.layout,
-  rtlClass: themeConfig.rtlClass,
-  animation: themeConfig.animation,
-  navbar: themeConfig.navbar,
-  locale: themeConfig.locale,
-  semidark: themeConfig.semidark,
+  menu: menu,
+  layout: layout,
+  rtlClass: rtlClass,
+  animation: animation,
+  navbar: navbar,
+  locale: selectedLocale,
+  semidark: semidark,
   languageList: [
     { code: 'zh', name: 'Chinese' },
     { code: 'da', name: 'Danish' },
@@ -75,7 +92,7 @@ const themeConfigSlice = createSlice({
       payload = payload || state.rtlClass; // rtl, ltr
       localStorage.setItem('rtlClass', payload);
       state.rtlClass = payload;
-      document.querySelector('html')?.setAttribute('dir', state.rtlClass || 'ltr');
+      document.querySelector('html')?.setAttribute('dir', (state.rtlClass as string) || 'ltr');
     },
     toggleAnimation(state, { payload }) {
       payload = payload || state.animation; // animate__fadeIn, animate__fadeInDown, animate__fadeInUp, animate__fadeInLeft, animate__fadeInRight, animate__slideInDown, animate__slideInLeft, animate__slideInRight, animate__zoomIn
