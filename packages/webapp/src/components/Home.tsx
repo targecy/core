@@ -9,7 +9,7 @@ import { useContractRead } from 'wagmi';
 
 import abi from '../generated/abis/Targecy.json';
 
-import { HomeLoader } from './HomeLoader';
+import { HomeLoader } from './loaders/HomeLoader';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { env } from '~/env.mjs';

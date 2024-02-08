@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { PublishersLoader } from '~/components/loaders/PublishersLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllPublishersQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
@@ -161,6 +162,8 @@ const PublishersList = () => {
       ),
     },
   ];
+
+  if (isLoading) return <PublishersLoader />;
 
   return (
     <div className="panel">
