@@ -8,6 +8,7 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { AudiencesLoader } from '~/components/loaders/AudienceLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllAudiencesQuery, useGetAllAudiencesQuery } from '~/generated/graphql.types';
@@ -26,7 +27,8 @@ const ListAudiences = () => {
     {}
   );
   const [ZKPMetadata, setZKPMetadata] = useState<Record<string, Awaited<ReturnType<typeof fetchMetadata>>>>({});
-  useAsync(async () => {
+
+  const { loading: audiencesLoading } = useAsync(async () => {
     if (audiences) {
       setMetadata(
         (
@@ -132,6 +134,8 @@ const ListAudiences = () => {
   ];
 
   const router = useRouter();
+
+  if (audiencesLoading) return <AudiencesLoader />;
 
   return (
     <div className="panel">

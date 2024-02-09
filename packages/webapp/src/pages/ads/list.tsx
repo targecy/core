@@ -8,6 +8,7 @@ import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
+import { AdsListLoader } from '~/components/AdsListLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~/generated/graphql.types';
@@ -27,7 +28,7 @@ const AdsList = () => {
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string; image?: string }>>(
     {}
   );
-  useAsync(async () => {
+  const { loading: loadingAdsByAdvertiserData } = useAsync(async () => {
     if (ads) {
       setMetadata(
         (
@@ -229,6 +230,8 @@ const AdsList = () => {
       ),
     },
   ];
+
+  if (loadingAdsByAdvertiserData) return <AdsListLoader />;
 
   return (
     <div className="panel">

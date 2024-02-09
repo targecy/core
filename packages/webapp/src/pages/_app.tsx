@@ -1,3 +1,8 @@
+import { datadogLogs } from '@datadog/browser-logs';
+import { datadogRum } from '@datadog/browser-rum';
+import { compose } from '@reduxjs/toolkit';
+import { TargecyTracker } from '@targecy/sdk';
+import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { appWithI18Next } from 'ni18n';
@@ -12,15 +17,9 @@ import store from '../store/index';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import '../styles/tailwind.css';
-import { NextPage } from 'next';
-import { compose } from '@reduxjs/toolkit';
-import { datadogRum } from '@datadog/browser-rum';
-import { datadogLogs } from '@datadog/browser-logs';
 
 import { env } from '~/env.mjs';
 import { withProviders } from '~/lib/withProviders';
-
-import { TargecyTracker } from '@targecy/sdk';
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

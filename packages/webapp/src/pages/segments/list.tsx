@@ -11,11 +11,12 @@ import { useContractWrite } from 'wagmi';
 
 import { operatorOptions } from './editor';
 
+import { SegmentsLoader } from '~/components/loaders/SegmentLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
+import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~/generated/graphql.types';
 import { shortString } from '~/utils';
 import { backendTrpcClient } from '~/utils/trpc';
-import { Targecy__factory } from '~/generated/contract-types';
 
 const SegmentsList = () => {
   const router = useRouter();
@@ -28,7 +29,8 @@ const SegmentsList = () => {
   const segments = data?.data?.segments;
 
   const [metadata, setMetadata] = useState<Record<string, { title?: string; description?: string }>>({});
-  useAsync(async () => {
+
+  const { loading: segmentsLoading } = useAsync(async () => {
     if (segments) {
       setMetadata(
         (
@@ -59,7 +61,7 @@ const SegmentsList = () => {
   };
 
   const [schemas, setSchemas] = useState<SCHEMA<any>[]>([]);
-  useAsync(async () => {
+  const { loading: backendTrpcClientLoading } = useAsync(async () => {
     const response = await backendTrpcClient.schemas.getAllSchemas.query();
     setSchemas(Object.entries(response).map(([, schema]) => schema));
   }, []);
@@ -142,6 +144,8 @@ const SegmentsList = () => {
       ),
     },
   ];
+
+  if (backendTrpcClientLoading || segmentsLoading) return <SegmentsLoader />;
 
   return (
     <div className="panel">

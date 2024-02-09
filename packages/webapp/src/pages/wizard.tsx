@@ -1,4 +1,3 @@
-
 import { CopyOutlined } from '@ant-design/icons';
 import { Ad, AdProps, Layouts, isLayout, titleCase } from '@targecy/sdk';
 import { Field, Form, Formik } from 'formik';
@@ -32,14 +31,24 @@ const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text).catch((err) => console.error(err));
 };
 
-const getCode = (props: AdProps) =>
-  `<Ad publisher="${props.publisher}" ${
-    props?.styling && Object.keys(props.styling).length > 0
-      ? `\n          styling={{${Object.entries(props.styling)
-          .map(([key, value]) => `\n              ${key}: '${value}'`)
-          .join(',')}\n          }}\n      `
-      : ''
-  }/>    `;
+/**
+ * Generates a string representation of an HTML element <Ad> with attributes based on the input props.
+ * @param props - An object that represents the properties of an advertisement.
+ * @returns A string representing an HTML element <Ad> with attributes based on the input props.
+ */
+const getCode = (props: AdProps): string => {
+  const { publisher, styling } = props;
+
+  let stylingString = '';
+  if (styling && Object.keys(styling).length > 0) {
+    stylingString = Object.entries(styling)
+      .map(([key, value]) => `  ${key}: '${value}'`)
+      .join(',\n');
+    stylingString = `\n  styling={{\n${stylingString}\n  }}`;
+  }
+
+  return `<Ad publisher="${publisher}"${stylingString}/>`;
+};
 
 const Demo = () => {
   const [props, setProps] = useState<AdProps>({
