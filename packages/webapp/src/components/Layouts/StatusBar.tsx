@@ -26,7 +26,7 @@ export const StatusBar = () => {
 
   if (!budget?.budget?.remainingBudget) {
     content = (
-      <span>
+      <span className="flex flex-grow flex-wrap text-center">
         Seems that your remaining budget is 0,{' '}
         <b
           className="cursor-pointer"
@@ -51,8 +51,8 @@ export const StatusBar = () => {
 
   return content ? (
     <div className="p-6 pb-1">
-      <div className="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-warning p-2 dark:bg-black dark:text-white">
-        <div className="flex flex-grow justify-center">{content}</div>
+      <div className="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-warning p-2 dark:bg-black dark:text-white sm:w-full md:w-full">
+        <div className="flex flex-grow flex-wrap justify-center">{content}</div>
         <CloseOutlined
           className="cursor-pointer text-warning hover:text-secondary"
           onClick={() => setShowComponent(false)}

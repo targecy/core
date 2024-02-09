@@ -20,35 +20,26 @@ function App({ children }: PropsWithChildren) {
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    dispatch(toggleTheme(localStorage.getItem('theme') || themeConfig.theme));
-    dispatch(toggleMenu(localStorage.getItem('menu') || themeConfig.menu));
-    dispatch(toggleLayout(localStorage.getItem('layout') || themeConfig.layout));
-    dispatch(toggleRTL(localStorage.getItem('rtlClass') || themeConfig.rtlClass));
-    dispatch(toggleAnimation(localStorage.getItem('animation') || themeConfig.animation));
-    dispatch(toggleNavbar(localStorage.getItem('navbar') || themeConfig.navbar));
-    dispatch(toggleSemidark(localStorage.getItem('semidark') || themeConfig.semidark));
-    // locale
-    const locale = localStorage.getItem('i18nextLng') || themeConfig.locale;
+    const { theme, menu, layout, rtlClass, animation, navbar, semidark, locale } = themeConfig;
+
+    dispatch(toggleTheme(theme));
+    dispatch(toggleMenu(menu));
+    dispatch(toggleLayout(layout));
+    dispatch(toggleRTL(rtlClass));
+    dispatch(toggleAnimation(animation));
+    dispatch(toggleNavbar(navbar));
+    dispatch(toggleSemidark(semidark));
     dispatch(toggleLocale(locale));
-    void i18n.changeLanguage(locale);
-  }, [
-    dispatch,
-    themeConfig.theme,
-    themeConfig.menu,
-    themeConfig.layout,
-    themeConfig.rtlClass,
-    themeConfig.animation,
-    themeConfig.navbar,
-    themeConfig.locale,
-    themeConfig.semidark,
-    i18n,
-  ]);
+    void i18n.changeLanguage(locale as string);
+  }, [themeConfig, i18n]);
+
+  const { sidebar, menu, layout, rtlClass } = themeConfig;
 
   return (
     <div
-      className={`${(themeConfig.sidebar && 'toggle-sidebar') || ''} ${themeConfig.menu} ${themeConfig.layout} ${
-        themeConfig.rtlClass
-      } main-section relative font-oxygen text-sm font-normal antialiased`}>
+      className={`${
+        sidebar ? 'toggle-sidebar' : ''
+      } ${menu} ${layout} ${rtlClass} main-section relative font-oxygen text-sm font-normal antialiased`}>
       {children}
     </div>
   );

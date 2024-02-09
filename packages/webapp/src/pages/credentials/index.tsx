@@ -3,6 +3,7 @@ import { useCredentialsByType } from '@targecy/sdk/src/hooks/useCredentialsByTyp
 import { useState } from 'react';
 import { useSignMessage } from 'wagmi';
 
+import { CredentialsLoader } from '~/components/loaders/CredentialsLoader';
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { useWallet } from '~/hooks';
 import { triggerSweetAlert } from '~/utils/alerts';
@@ -32,7 +33,7 @@ const Credentials = () => {
         })
     );
 
-  if (!context.userIdentity) return <div>Loading...</div>;
+  if (!context.userIdentity) return <CredentialsLoader />;
 
   return (
     <>

@@ -3,17 +3,53 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import themeConfig from '../theme.config';
 
-const initialState = {
-  isDarkMode: false,
+export interface ITypeInitialState {
+  isDarkMode: boolean;
+  sidebar: boolean;
+  theme: string;
+  menu: string;
+  layout: string;
+  rtlClass: string;
+  animation: string;
+  navbar: string;
+  locale: string;
+  semidark: boolean;
+  languageList: LanguageList[];
+}
+
+export interface LanguageList {
+  code: string;
+  name: string;
+}
+
+const getItemOrDefault = (key: string, defaultValue: string | boolean | any) => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key) || defaultValue;
+  }
+
+  return defaultValue;
+};
+
+const isDarkMode: boolean = getItemOrDefault('theme', false);
+const menu = getItemOrDefault('menu', themeConfig.menu);
+const layout = getItemOrDefault('layout', themeConfig.layout);
+const rtlClass = getItemOrDefault('rtlClass', themeConfig.rtlClass);
+const animation = getItemOrDefault('animation', themeConfig.animation);
+const navbar = getItemOrDefault('navbar', themeConfig.navbar);
+const semidark: boolean = getItemOrDefault('semidark', themeConfig.semidark);
+const selectedLocale = getItemOrDefault('i18nextLng', themeConfig.locale);
+
+const initialState: ITypeInitialState = {
+  isDarkMode: isDarkMode,
   sidebar: false,
   theme: themeConfig.theme,
-  menu: themeConfig.menu,
-  layout: themeConfig.layout,
-  rtlClass: themeConfig.rtlClass,
-  animation: themeConfig.animation,
-  navbar: themeConfig.navbar,
-  locale: themeConfig.locale,
-  semidark: themeConfig.semidark,
+  menu: menu,
+  layout: layout,
+  rtlClass: rtlClass,
+  animation: animation,
+  navbar: navbar,
+  locale: selectedLocale,
+  semidark: semidark,
   languageList: [
     { code: 'zh', name: 'Chinese' },
     { code: 'da', name: 'Danish' },
