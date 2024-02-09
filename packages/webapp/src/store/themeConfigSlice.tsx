@@ -3,7 +3,26 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import themeConfig from '../theme.config';
 
-const getItemOrDefault = (key: string, defaultValue: string | boolean) => {
+export interface ITypeInitialState {
+  isDarkMode: boolean;
+  sidebar: boolean;
+  theme: string;
+  menu: string;
+  layout: string;
+  rtlClass: string;
+  animation: string;
+  navbar: string;
+  locale: string;
+  semidark: boolean;
+  languageList: LanguageList[];
+}
+
+export interface LanguageList {
+  code: string;
+  name: string;
+}
+
+const getItemOrDefault = (key: string, defaultValue: string | boolean | any) => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem(key) || defaultValue;
   }
@@ -11,16 +30,16 @@ const getItemOrDefault = (key: string, defaultValue: string | boolean) => {
   return defaultValue;
 };
 
-const isDarkMode = getItemOrDefault('theme', false);
+const isDarkMode: boolean = getItemOrDefault('theme', false);
 const menu = getItemOrDefault('menu', themeConfig.menu);
 const layout = getItemOrDefault('layout', themeConfig.layout);
 const rtlClass = getItemOrDefault('rtlClass', themeConfig.rtlClass);
 const animation = getItemOrDefault('animation', themeConfig.animation);
 const navbar = getItemOrDefault('navbar', themeConfig.navbar);
-const semidark = getItemOrDefault('semidark', themeConfig.semidark);
+const semidark: boolean = getItemOrDefault('semidark', themeConfig.semidark);
 const selectedLocale = getItemOrDefault('i18nextLng', themeConfig.locale);
 
-const initialState = {
+const initialState: ITypeInitialState = {
   isDarkMode: isDarkMode,
   sidebar: false,
   theme: themeConfig.theme,
@@ -92,7 +111,7 @@ const themeConfigSlice = createSlice({
       payload = payload || state.rtlClass; // rtl, ltr
       localStorage.setItem('rtlClass', payload);
       state.rtlClass = payload;
-      document.querySelector('html')?.setAttribute('dir', (state.rtlClass as string) || 'ltr');
+      document.querySelector('html')?.setAttribute('dir', state.rtlClass || 'ltr');
     },
     toggleAnimation(state, { payload }) {
       payload = payload || state.animation; // animate__fadeIn, animate__fadeInDown, animate__fadeInUp, animate__fadeInLeft, animate__fadeInRight, animate__slideInDown, animate__slideInLeft, animate__slideInRight, animate__zoomIn
