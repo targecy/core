@@ -42,9 +42,9 @@ const getCode = (props: AdProps): string => {
   let stylingString = '';
   if (styling && Object.keys(styling).length > 0) {
     stylingString = Object.entries(styling)
-      .map(([key, value]) => `  ${key}: '${value}'`)
+      .map(([key, value]) => `            ${key}: '${value}'`)
       .join(',\n');
-    stylingString = `\n  styling={{\n${stylingString}\n  }}`;
+    stylingString = `\n          styling={{\n${stylingString}\n          }}\n      `;
   }
 
   return `<Ad publisher="${publisher}"${stylingString}/>`;

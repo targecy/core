@@ -36,7 +36,6 @@ export const ListItem = (props: LayoutParams) => {
               }}>
               {props.title}
             </span>
-            <br />
             <span
               style={{
                 color: props.styling?.subtitleColor,

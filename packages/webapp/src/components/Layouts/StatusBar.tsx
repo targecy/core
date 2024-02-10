@@ -26,10 +26,10 @@ export const StatusBar = () => {
 
   if (!budget?.budget?.remainingBudget) {
     content = (
-      <span className="flex flex-grow flex-wrap text-center">
+      <span className="text-center">
         Seems that your remaining budget is 0,{' '}
         <b
-          className="cursor-pointer"
+          className="cursor-pointer ml-1 mr-1"
           onClick={() => document && (document.getElementById('budgetModal') as HTMLDialogElement).showModal()}>
           fund your budget
         </b>{' '}
