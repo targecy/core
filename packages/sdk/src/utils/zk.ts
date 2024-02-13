@@ -42,6 +42,7 @@ import Swal from 'sweetalert2';
 export type StoragesSide = 'server' | 'client';
 
 const _userSeed = 'userseedseedseedseedseedseedseed';
+const base64StringRegex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
 import { TargecyContextType, UserIdentityType, ZkServicesType } from '../components/misc/Context.types';
 import { addressZero, BigNumberZero } from '../constants/chain';
@@ -136,19 +137,23 @@ export function initializeStorages() {
 }
 
 export async function createUserIdentity(identityWallet: IdentityWallet): Promise<UserIdentityType> {
-  const savedSeed = await getSeed();
+  const savedSeed: any = await getSeed();
   let seed: Uint8Array;
 
   if (!savedSeed) {
     seed = getRandomBytes(32);
-    // @todo (Martin): It isn't secure to store the seed like this, think an alternative.
+    // @todo (Martin): It isn't secure to store the seed like this, think an alternative.   
     await saveSeed(uint8ArrayToBase64String(seed));
+  } else if (base64StringRegex.test(savedSeed)) {
+      seed = base64StringToUint8Array(savedSeed);
   } else {
-    seed = base64StringToUint8Array(savedSeed);
+      seed = savedSeed
   }
 
-  if (seed.length !== 32) throw new Error('Invalid seed length');
-
+  if (seed.length != 32) {
+    return Promise.reject('Invalid seed length');
+  }
+  
   const identity = await identityWallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
@@ -158,7 +163,7 @@ export async function createUserIdentity(identityWallet: IdentityWallet): Promis
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
       id: 'https://rhs-staging.polygonid.me',
     },
-  });
+  }); 
 
   return identity;
 }

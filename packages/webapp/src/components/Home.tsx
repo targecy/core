@@ -3,12 +3,12 @@ import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
 import Link from 'next/link';
 import { useState } from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useAsync } from 'react-use';
 import { useContractRead } from 'wagmi';
 
 import abi from '../generated/abis/Targecy.json';
 
+import { ActivityLog } from './HomeComponents/ActivityLog';
 import { HomeLoader } from './loaders/HomeLoader';
 
 import { targecyContractAddress } from '~/constants/contracts.constants';
@@ -217,111 +217,19 @@ export const Home = () => {
           </div>
         </div>
         <div className="flex h-3/4 flex-row justify-between">
-          <div className="flex w-full">
-            <div className="mr-3 mt-3 flex w-1/3 flex-col">
-              <div className="panel">
-                <div className="-mx-5 mb-5 flex items-start justify-between border-b border-white-light p-5 pt-0  dark:border-[#1b2e4b] dark:text-white-light">
-                  <h5 className="text-lg font-semibold ">Activity Log</h5>
-                  <div className="dropdown"></div>
-                </div>
-                <PerfectScrollbar className="perfect-scrollbar relative h-[360px] ltr:-mr-3 ltr:pr-3 rtl:-ml-3 rtl:pl-3">
-                  <div className="space-y-7">
-                    {lastAds?.ads.map((ad) => (
-                      <div className="flex" key={ad.id}>
-                        <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow">
-                            <svg
-                              className="h-4 w-4"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round">
-                              <line x1="12" y1="5" x2="12" y2="19"></line>
-                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                          </div>
-                        </div>
-                        <div>
-                          <h5 className="font-semibold dark:text-white-light">
-                            New ad created :{' '}
-                            <button type="button" className="text-success">
-                              {lastAdsMetadata[ad.id]?.title}
-                            </button>
-                          </h5>
-                          <p className="text-xs text-white-dark">
-                            {new Date(ad.startingTimestamp).toLocaleString()} -{' '}
-                            {new Date(ad.endingTimestamp).toLocaleString() !== 'Invalid Date'
-                              ? new Date(ad.endingTimestamp).toLocaleString()
-                              : 'Infinity'}{' '}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                    {lastAudiences?.audiences.map((audience) => (
-                      <div className="flex" key={audience.id}>
-                        <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-white shadow">
-                            <svg
-                              className="h-4 w-4"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round">
-                              <line x1="12" y1="5" x2="12" y2="19"></line>
-                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                          </div>
-                        </div>
-                        <div>
-                          <h5 className="font-semibold dark:text-white-light">
-                            New audience created :{' '}
-                            <button type="button" className="text-success">
-                              {lastAudiencesMetadata[audience.id]?.title}
-                            </button>
-                          </h5>
-                          <p className="text-xs text-white-dark">{audience.segments.length} Segments</p>
-                        </div>
-                      </div>
-                    ))}
-                    {lastSegments?.segments.map((segment) => (
-                      <div className="flex" key={segment.id}>
-                        <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-dark text-white shadow">
-                            <svg
-                              className="h-4 w-4"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth="1.5"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round">
-                              <line x1="12" y1="5" x2="12" y2="19"></line>
-                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                          </div>
-                        </div>
-                        <div>
-                          <h5 className="font-semibold dark:text-white-light">
-                            New segment created :{' '}
-                            <button type="button" className="text-success">
-                              {lastSegmentsMetadata[segment.id]?.title}
-                            </button>
-                          </h5>
-                          <p className="text-xs text-white-dark">
-                            {schemas.find((s) => s.bigint === segment.querySchema)?.title || 'Unknown Schema'}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </PerfectScrollbar>
-              </div>
+          <div className="w-full sm:block md:block lg:flex">
+            <div className="mt-3 flex-col sm:mr-0 sm:block md:block md:w-full lg:mr-3 lg:flex lg:w-1/3">
+              <ActivityLog
+                lastAds={lastAds}
+                lastAdsMetadata={lastAdsMetadata}
+                lastAudiences={lastAudiences}
+                lastAudiencesMetadata={lastAudiencesMetadata}
+                lastSegments={lastSegments}
+                lastSegmentsMetadata={lastSegmentsMetadata}
+                schemas={schemas}
+              />
             </div>
-            <div className="ml-3 mt-3 flex w-2/3 flex-col">
+            <div className="mt-3 flex-col sm:ml-0 sm:block sm:w-full md:ml-0 md:block md:w-full lg:ml-3 lg:flex lg:w-2/3">
               <div className="mb-3 flex h-1/2 flex-row justify-between">
                 <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
                   <div className="mb-5 flex justify-between dark:text-white-light">

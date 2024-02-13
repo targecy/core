@@ -325,7 +325,7 @@ export const AdEditorComponent = (id?: string) => {
             {editingMode ? <span>Edit </span> : <span>New </span>}
             {editingMode ? `'${currentMetadata?.title}'` : 'Campaign'}
           </label>
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid-cols-2 gap-5 sm:block md:block lg:grid">
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -858,7 +858,7 @@ export const AdEditorComponent = (id?: string) => {
               )}
             </Formik>
 
-            <div className="flex flex-col items-center">
+            <div className="flex-col items-center sm:block md:block lg:flex">
               <div className="flex w-full justify-center">
                 <div className="flex w-full max-w-lg flex-col items-start">
                   <label className="text-2xl text-secondary">Preview</label>

@@ -30,8 +30,8 @@ function App({ children }: PropsWithChildren) {
     dispatch(toggleNavbar(navbar));
     dispatch(toggleSemidark(semidark));
     dispatch(toggleLocale(locale));
-    void i18n.changeLanguage(locale as string);
-  }, [themeConfig, i18n]);
+    void i18n.changeLanguage(locale);
+  }, []);
 
   const { sidebar, menu, layout, rtlClass } = themeConfig;
 
