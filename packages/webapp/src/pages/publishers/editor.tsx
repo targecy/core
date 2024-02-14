@@ -69,51 +69,61 @@ export const PublisherEditorComponent = (id?: string) => {
           {
             vault: data.address as `0x${string}`,
             metadataURI,
-            userRewardsPercentage: percentageStringTo10kPrecision(data.usersRewardsPercentage.toString()),
-            cpi: data.cpi,
-            cpc: data.cpc,
-            cpa: data.cpa,
+            userRewardsPercentage: percentageStringTo10kPrecision(data.usersRewardsPercentage),
+            cpi: BigInt(data.cpi),
+            cpc: BigInt(data.cpc),
+            cpa: BigInt(data.cpa),
             active: true,
           },
         ],
       });
 
-      // await Swal.mixin({
-      //   toast: true,
-      //   position: 'top',
-      //   showConfirmButton: false,
-      //   timer: 3000,
-      // }).fire({
-      //   icon: 'success',
-      //   address: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
-      //   padding: '10px 20px',
-      // });
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'success',
+        title: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
+        padding: '10px 20px',
+      });
 
       await router.push('/publishers');
     } catch (e) {
-      // await Swal.mixin({
-      //   toast: true,
-      //   position: 'top',
-      //   showConfirmButton: false,
-      //   timer: 3000,
-      // }).fire({
-      //   icon: 'error',
-      //   address: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
-      //   padding: '10px 20px',
-      // });
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'error',
+        title: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
+        padding: '10px 20px',
+      });
 
       setProcessingPublisher(false);
     }
   };
 
+  // eslint-disable-next-line prettier/prettier
+  const percentageWithDecimalsRegex = new RegExp('^[0-9]{1,2}(\\.[0-9]{1,2})?$|^100$');
   const schema = z.object({
     name: z.string().min(1).max(50).describe('Please fill the name'),
-    url: z.string().min(1).max(50).describe('Please fill the url'),
-    address: z.string().min(1).max(50).describe('Please fill the address'),
-    usersRewardsPercentage: z.bigint().describe('Please fill the usersRewardsPercentage'),
-    cpi: z.bigint().describe('Please fill the value'),
-    cpc: z.bigint().describe('Please fill the value'),
-    cpa: z.bigint().describe('Please fill the value'),
+    url: z.string().url().min(1).max(50).describe('Please fill the url'),
+    address: z
+      .string()
+      .min(1)
+      .max(50)
+      .describe('Please fill the address')
+      .regex(/^0x[a-fA-F0-9]{40}$/),
+    usersRewardsPercentage: z
+      .string()
+      .regex(percentageWithDecimalsRegex)
+      .describe('Please fill the usersRewardsPercentage'),
+    cpi: z.number().describe('Please fill the value'),
+    cpc: z.number().describe('Please fill the value'),
+    cpa: z.number().describe('Please fill the value'),
   });
 
   const { data: publisherData } = useGetPublisherQuery({ id: id ?? '' });
@@ -149,7 +159,7 @@ export const PublisherEditorComponent = (id?: string) => {
             {editingMode ? <span>Edit </span> : <span>New </span>}
             {editingMode ? `'${publisher?.id}'` : 'Publisher'}
           </label>
-          <div className="grid grid-cols-3">
+          <div className="grid-cols-3 sm:block md:block lg:grid">
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -159,7 +169,7 @@ export const PublisherEditorComponent = (id?: string) => {
                 cpi: Number(publisher?.cpi),
                 cpc: Number(publisher?.cpc),
                 cpa: Number(publisher?.cpa),
-                usersRewardsPercentage: Number(publisher?.usersRewardsPercentage),
+                usersRewardsPercentage: Number(publisher?.usersRewardsPercentage || 10),
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
@@ -198,50 +208,52 @@ export const PublisherEditorComponent = (id?: string) => {
                   </div>
 
                   <div className="grid grid-cols-1 gap-5">
-                    <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="address">address </label>
-                      <Field
-                        name="address"
-                        type="text"
-                        id="address"
-                        placeholder="Enter address"
-                        className="form-input"
-                      />
+                    <div className="grid-cols-1 gap-5 sm:block md:block lg:grid">
+                      <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
+                        <label htmlFor="address">address </label>
+                        <Field
+                          name="address"
+                          type="text"
+                          id="address"
+                          placeholder="Enter address"
+                          className="form-input"
+                        />
 
-                      {submitCount ? (
-                        errors.address ? (
-                          <div className="mt-1 text-danger">{errors.address.toString()}</div>
+                        {submitCount ? (
+                          errors.address ? (
+                            <div className="mt-1 text-danger">{errors.address.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
                         ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
+                          ''
+                        )}
+                      </div>
 
-                    <div className={submitCount ? (errors.usersRewardsPercentage ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
-                      <Field
-                        name="usersRewardsPercentage"
-                        type="text"
-                        id="usersRewardsPercentage"
-                        placeholder="Enter usersRewardsPercentage"
-                        className="form-input"
-                      />
+                      <div className={submitCount ? (errors.usersRewardsPercentage ? 'has-error' : 'has-success') : ''}>
+                        <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
+                        <Field
+                          name="usersRewardsPercentage"
+                          type="text"
+                          id="usersRewardsPercentage"
+                          placeholder="Enter usersRewardsPercentage"
+                          className="form-input"
+                        />
 
-                      {submitCount ? (
-                        errors.usersRewardsPercentage ? (
-                          <div className="mt-1 text-danger">{errors.usersRewardsPercentage.toString()}</div>
+                        {submitCount ? (
+                          errors.usersRewardsPercentage ? (
+                            <div className="mt-1 text-danger">{errors.usersRewardsPercentage.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
                         ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
+                          ''
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                  <div className="grid-cols-1 gap-5 sm:block md:block md:grid-cols-3 lg:grid">
                     <div className={`${submitCount ? (errors.cpi ? 'has-error' : 'has-success') : ''} col-span-1`}>
                       <label htmlFor="value">CPI</label>
                       <Field

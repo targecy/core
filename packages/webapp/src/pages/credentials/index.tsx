@@ -37,12 +37,12 @@ const Credentials = () => {
 
   return (
     <>
-      <div className="mb-8 grid grid-cols-2 gap-8">
-        <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
+      <div className="mb-8 w-full gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid lg:grid-cols-2">
+        <div className="panel h-full w-full sm:col-span-2 md:col-span-2 lg:col-span-1">
           <div className="mb-5 flex justify-between dark:text-white-light">
-            <h5 className="text-lg font-semibold ">My Wallet</h5>
+            <h5 className="text-lg font-semibold">My Wallet</h5>
           </div>
-          <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
+          <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-1">
             <div>
               <div>
                 <div>Public On-Chain Data Credentials</div>
@@ -71,19 +71,21 @@ const Credentials = () => {
             </div>
           </div>
         </div>
-        <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
+        <div className="panel h-full w-full sm:col-span-2 md:col-span-2 lg:col-span-1">
           <div className="mb-5 flex justify-between dark:text-white-light">
             <h5 className="text-lg font-semibold ">Identity Credential</h5>
           </div>
-          <div className="text-sm font-bold text-[#515365] sm:grid-cols-2">
+          <div className="w-full text-sm font-bold text-[#515365] sm:grid-cols-2">
             <div>
               <div>
                 <div>Type</div>
-                <div className="text-lg text-white">{context.userIdentity?.credential.type}</div>
+                <p className="text-wrap break-words text-white md:text-sm lg:text-lg">
+                  {context.userIdentity?.credential.type}
+                </p>
               </div>
               <div>
                 <div>DID</div>
-                <div className="text-lg text-white">{context.userIdentity?.did.id}</div>
+                <p className="text-wrap break-words text-white md:text-sm lg:text-lg">{context.userIdentity?.did.id}</p>
               </div>
             </div>
           </div>
@@ -114,25 +116,25 @@ const Credentials = () => {
           )}
         </div>
         <div>
-          <div className="mb-5">
+          <div className="mb-5 w-full">
             {/* Identity Credential */}
 
             {/* Misc credentials */}
             {Object.keys(credentialsByType).map((type) => (
-              <>
-                <label key={type} className="text-lg font-semibold text-secondary">
+              <div key={type} className="w-full">
+                <label key={type} className="break-words text-lg font-semibold text-secondary sm:text-sm">
                   {type}
                 </label>
                 {credentialsByType[type].map((credential) => (
                   <div
                     key={credential.id}
-                    className="m-3 w-[50rem] rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                    className=" w-full rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                     <div className="w-full px-6 py-7">
-                      <h5 className="mb-4 text-xl font-semibold text-secondary">
+                      <h5 className="mb-4 break-words text-xl font-semibold text-secondary">
                         {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
                       </h5>
-                      <p className="text-white-dark">Issuer: {credential.issuer}</p>
-                      <p className="text-white-dark">
+                      <p className="text-wrap break-words text-white-dark">Issuer: {credential.issuer}</p>
+                      <p className="text-wrap break-words text-white-dark">
                         Expiration:{' '}
                         {(credential.expirationDate && new Date(credential.expirationDate).toUTCString()) || 'None'}
                       </p>
@@ -140,14 +142,14 @@ const Credentials = () => {
                       {Object.entries(credential.credentialSubject)
                         .filter((entry: any[2]) => entry[0] !== 'id' && entry[0] !== 'type')
                         .map((entry: any[2]) => (
-                          <p key={entry[0]} className="text-white-dark">
+                          <p key={entry[0]} className="text-wrap break-words text-white-dark">
                             <b>{entry[0]}</b>: {entry[1].toString()}
                           </p>
                         ))}
                     </div>
                   </div>
                 ))}
-              </>
+              </div>
             ))}
 
             {!credentialsStatistics.total && !credentialsFetched && (

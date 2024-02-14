@@ -21,7 +21,9 @@ export type AdWithMetadata = {
 };
 
 export const useAds = (context: TargecyContextType, params?: { whitelistedAdvertisers: Address[] }) => {
-  const { data, isLoading } = useGetAdsByWhitelistedAdvertisersQuery(params?.whitelistedAdvertisers);
+  const { data, isLoading } = useGetAdsByWhitelistedAdvertisersQuery({
+    whitelistedAdvertisers: params?.whitelistedAdvertisers ?? [],
+  });
   const credentials = useCredentials(context);
 
   const validAds =
@@ -33,9 +35,7 @@ export const useAds = (context: TargecyContextType, params?: { whitelistedAdvert
         )
     ) || [];
 
-  const [completeAds, setCompleteAds] = useState<
-    { ad: Ad; metadata: AdMetadata }[]
-  >([]);
+  const [completeAds, setCompleteAds] = useState<{ ad: Ad; metadata: AdMetadata }[]>([]);
 
   useAsync(async () => {
     if (validAds) {

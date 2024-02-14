@@ -42,9 +42,9 @@ const getCode = (props: AdProps): string => {
   let stylingString = '';
   if (styling && Object.keys(styling).length > 0) {
     stylingString = Object.entries(styling)
-      .map(([key, value]) => `  ${key}: '${value}'`)
+      .map(([key, value]) => `            ${key}: '${value}'`)
       .join(',\n');
-    stylingString = `\n  styling={{\n${stylingString}\n  }}`;
+    stylingString = `\n          styling={{\n${stylingString}\n          }}\n      `;
   }
 
   return `<Ad publisher="${publisher}"${stylingString}/>`;
@@ -73,7 +73,7 @@ const Demo = () => {
     <div className="space-y-8">
       <div className="panel  min-h-[40em] items-center overflow-x-auto whitespace-nowrap p-7 text-primary">
         <label className="mb-3 text-2xl text-primary"> Customize your ad space</label>
-        <div className="flex w-full flex-row gap-5">
+        <div className="w-full flex-row gap-5 sm:block md:block lg:flex">
           <div>
             <Formik
               initialValues={{
@@ -355,7 +355,7 @@ const Demo = () => {
               </pre>
             </div>
           </div>
-          <div className="flex flex-grow place-items-center justify-center">
+          <div className="flex w-full flex-grow place-items-center justify-center self-center pt-4 sm:gap-4 md:gap-4">
             <Ad env={env.NEXT_PUBLIC_VERCEL_ENV} isDemo={true} publisher={props.publisher} styling={props.styling} />
           </div>
         </div>

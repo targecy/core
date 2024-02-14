@@ -25,7 +25,7 @@ export const AudienceEditorComponent = (id?: string) => {
   const editingMode = id !== undefined;
 
   const [processingAudience, setProcessingAudience] = useState(false);
-  
+
   const { writeAsync: setAudienceAsync } = useContractWrite({
     address: targecyContractAddress,
     abi: Targecy__factory.abi,
@@ -204,7 +204,7 @@ export const AudienceEditorComponent = (id?: string) => {
             {editingMode ? `'${currentMetadata?.title}'` : 'Audience'}
           </label>
 
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid-cols-2 gap-5 sm:block md:block lg:grid">
             <Formik
               enableReinitialize={true}
               initialValues={{

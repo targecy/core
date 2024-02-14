@@ -26,10 +26,10 @@ export const StatusBar = () => {
 
   if (!budget?.budget?.remainingBudget) {
     content = (
-      <span className="flex flex-grow flex-wrap text-center">
+      <span className="flex flex-grow flex-wrap justify-center gap-1 text-center">
         Seems that your remaining budget is 0,{' '}
         <b
-          className="cursor-pointer"
+          className="cursor-pointer ml-1 mr-1"
           onClick={() => document && (document.getElementById('budgetModal') as HTMLDialogElement).showModal()}>
           fund your budget
         </b>{' '}
@@ -38,7 +38,7 @@ export const StatusBar = () => {
     );
   } else if (!advertiserData?.advertiser?.adsQuantity) {
     content = (
-      <span>
+      <span className="flex flex-grow flex-wrap justify-center gap-1 text-center">
         You do not have any ads yet,{' '}
         <Link className="font-bold" href="/ads/editor" target="_blank">
           {' '}
@@ -50,7 +50,7 @@ export const StatusBar = () => {
   }
 
   return content ? (
-    <div className="p-6 pb-1">
+    <div className="p-6 pb-1 text-center">
       <div className="flex w-full items-center justify-between whitespace-nowrap rounded-md border border-warning p-2 dark:bg-black dark:text-white sm:w-full md:w-full">
         <div className="flex flex-grow flex-wrap justify-center">{content}</div>
         <CloseOutlined
