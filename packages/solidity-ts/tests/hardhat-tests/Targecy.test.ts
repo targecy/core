@@ -414,6 +414,7 @@ describe('Tests', function () {
         endingTimestamp: 100,
         audienceIds: [audienceId],
         blacklistedPublishers: [],
+        whitelistedPublishers: [],
 
         maxBudget: 10000000,
         maxPricePerConsumption: 20000,
@@ -456,6 +457,7 @@ describe('Tests', function () {
         endingTimestamp: 100,
         audienceIds: [audienceId],
         blacklistedPublishers: [ZeroAddress],
+        whitelistedPublishers: [],
 
         maxBudget: 10000000,
         maxPricePerConsumption: 20000,
@@ -528,6 +530,7 @@ describe('Tests', function () {
           endingTimestamp: 100,
           audienceIds: [],
           blacklistedPublishers: [ZeroAddress],
+          whitelistedPublishers: [],
 
           maxBudget: 10000000,
           maxPricePerConsumption: 20000,
@@ -618,6 +621,7 @@ describe('Tests', function () {
 
     it('Only admins can set a publisher', async () => {
       const params = {
+        metadataURI: 'metadata',
         vault: publisherWithProvider.address,
         userRewardsPercentage: 10000,
         active: true,
@@ -638,6 +642,7 @@ describe('Tests', function () {
 
     it('Only whitelisted publishers can trigger consumptions', async () => {
       const params = {
+        metadataURI: 'metadata',
         vault: publisherWithProvider.address,
         userRewardsPercentage: 10000,
         active: true,
@@ -658,6 +663,7 @@ describe('Tests', function () {
         endingTimestamp: ethers.MaxUint256,
         audienceIds: [1],
         blacklistedPublishers: [],
+        whitelistedPublishers: [],
       });
 
       await targecy.connect(adminWithProvider).setPublisher(params);
@@ -707,6 +713,7 @@ describe('Tests', function () {
         endingTimestamp: ethers.MaxUint256,
         audienceIds: [1],
         blacklistedPublishers: [],
+        whitelistedPublishers: [],
       });
       const receipt = await response.wait();
       expect(decodeEvents(receipt, abiByAddress)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
@@ -725,6 +732,7 @@ describe('Tests', function () {
         endingTimestamp: ethers.MaxUint256,
         audienceIds: [1],
         blacklistedPublishers: [],
+        whitelistedPublishers: [],
       });
       const receipt2 = await response2.wait();
       expect(decodeEvents(receipt2, abiByAddress)?.filter((e) => e.name === 'AdEdited').length).to.equal(1);
@@ -733,7 +741,15 @@ describe('Tests', function () {
       this.timeout(100000);
       const proof = await getTestProof(zkServices, 1);
 
-      await targecy.setPublisher({ userRewardsPercentage: 5000n, vault: publisherWithProvider.address, active: true, cpi: 0n, cpa: 0n, cpc: 0n });
+      await targecy.setPublisher({
+        metadataURI: 'metadata',
+        userRewardsPercentage: 5000n,
+        vault: publisherWithProvider.address,
+        active: true,
+        cpi: 0n,
+        cpa: 0n,
+        cpc: 0n,
+      });
 
       expect((await targecy.budgets(advertiserWithProvider.address)).remainingBudget).to.equal(0n);
       await erc20.approve(await targecy.getAddress(), 1000000000n); // Must approve ERC20 transfers
@@ -829,6 +845,7 @@ describe('Tests', function () {
         endingTimestamp: ethers.MaxUint256,
         audienceIds: [1],
         blacklistedPublishers: [],
+        whitelistedPublishers: [],
       });
       const invalidAdId = (await targecy._adId()) - 1n;
 

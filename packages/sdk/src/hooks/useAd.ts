@@ -4,7 +4,7 @@ import { TargecyContextType } from '../components/misc/Context.types';
 import { useAds } from './useAds';
 
 export const useAd = (context: TargecyContextType, params?: { whitelistedAdvertisers: Address[] }) => {
-  const { ads, isLoading } = useAds(context, params?.whitelistedAdvertisers);
+  const { ads, isLoading } = useAds(context, { whitelistedAdvertisers: params?.whitelistedAdvertisers ?? [] });
 
   if (!ads.length)
     return {

@@ -257,6 +257,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
   entity.consumptions = event.params.ad.consumptions;
   entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
+  entity.whitelistedPublishers = event.params.ad.whitelistedPublishers.map<string>((id) => id.toString());
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
   entity.attribution = event.params.ad.attribution;

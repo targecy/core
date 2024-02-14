@@ -202,6 +202,17 @@ const AdDetailPage = () => {
                 </div>
               </div>
 
+              <div className="space-between flex w-full flex-row gap-5">
+                <div className="flex-col">
+                  <label className="mb-3 text-xl text-secondary"> Whitelisted Publishers </label>
+                </div>
+                <div className="flex-col">
+                  <label className="mb-3 text-xl text-black dark:text-white">
+                    {ad?.whitelistedPublishers?.toString() || '-'}
+                  </label>
+                </div>
+              </div>
+
               <br></br>
 
               <label className="text-md text-dark dark:text-white"> Budget</label>

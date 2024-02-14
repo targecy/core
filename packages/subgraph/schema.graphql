@@ -12,6 +12,7 @@ type Ad @entity {
   endingTimestamp: BigInt! # uint256
   audiences: [Audience!]! # uint256[]
   blacklistedPublishers: [Publisher!]! # address[]
+  whitelistedPublishers: [Publisher!]! # address[]
   # Budget
   maxBudget: BigInt! # uint256
   currentBudget: BigInt! # uint256

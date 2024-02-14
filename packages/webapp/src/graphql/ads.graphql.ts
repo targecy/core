@@ -18,6 +18,9 @@ export const Ads = gql`
     blacklistedPublishers {
       id
     }
+    whitelistedPublishers {
+      id
+    }
     maxConsumptionsPerDay
     maxPricePerConsumption
     consumptions

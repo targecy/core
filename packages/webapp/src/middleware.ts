@@ -4,6 +4,8 @@ import { getToken } from 'next-auth/jwt';
 
 import { env } from './env.mjs';
 
+const adminPaths = ['/audiences', '/segments', 'publishers'];
+
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
@@ -16,6 +18,8 @@ export async function middleware(req: NextRequest) {
     url.search = `p=${requestedPage}`;
     return NextResponse.redirect(url);
   }
+
+  console.log(token);
 
   return NextResponse.next();
 }

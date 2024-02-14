@@ -108,16 +108,20 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   const address = await deploymentResult.getAddress();
   console.log("Targecy's address: ", address);
 
-  if (network.name === 'localhost') {
-    console.log('No need to transfer ownership of ProxyAdmin on localhost');
-  } else if (network.name === 'mumbai' || network.name === 'matic') {
-    console.log('Transferring ownership of ProxyAdmin...');
-    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (!config.multisig) throw new Error('Multisig address not set');
+  try {
+    if (network.name === 'localhost') {
+      console.log('No need to transfer ownership of ProxyAdmin on localhost');
+    } else if (network.name === 'mumbai' || network.name === 'matic') {
+      console.log('Transferring ownership of ProxyAdmin...');
+      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+      if (!config.multisig) throw new Error('Multisig address not set');
 
-    // The owner of the ProxyAdmin can upgrade our contracts
-    await upgrades.admin.changeProxyAdmin(address, config.multisig);
-    console.log('Transferred ownership of ProxyAdmin to:', config.multisig);
+      // The owner of the ProxyAdmin can upgrade our contracts
+      await upgrades.admin.changeProxyAdmin(address, config.multisig);
+      console.log('Transferred ownership of ProxyAdmin to:', config.multisig);
+    }
+  } catch (e) {
+    console.error('Error transferring ownership of ProxyAdmin: ', e);
   }
 
   let current;

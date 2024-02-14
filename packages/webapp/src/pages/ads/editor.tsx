@@ -27,6 +27,7 @@ const baseSchema = z.object({
   imageUrl: z.string().describe('Please provide an image URL'),
   imageFile: z.custom<File>().describe('Please provide an image'),
   active: z.boolean().describe('Please provide an active'),
+  whitelistedPublishers: z.array(z.string()).describe('Please provide a list of whitelisted publishers').default([]),
   blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers').default([]),
   maxPricePerConsumption: z.number().describe('Please provide a max impression price').optional(),
   maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day').optional(),
@@ -155,6 +156,7 @@ export const AdEditorComponent = (id?: string) => {
         startingTimestamp: BigInt(data.startingDate?.getTime() ?? 0),
         endingTimestamp: BigInt(data.endingDate?.getTime() ?? Number.MAX_SAFE_INTEGER), // @todo check this max
         audienceIds: data.audienceIds.map(BigInt) ?? [],
+        whitelistedPublishers: data.whitelistedPublishers.map((a) => a as `0x${string}`) ?? [],
         blacklistedPublishers: data.blacklistedPublishers.map((a) => a as `0x${string}`) ?? [],
         maxPricePerConsumption: BigInt(data.maxPricePerConsumption ?? Number.MAX_SAFE_INTEGER),
         maxConsumptionsPerDay: BigInt(data.maxConsumptionsPerDay ?? Number.MAX_SAFE_INTEGER),
@@ -255,6 +257,7 @@ export const AdEditorComponent = (id?: string) => {
 
   const [currentAttribution, setCurrentAttribution] = useState<number | undefined>(undefined);
   const [currentActive, setCurrentActive] = useState<boolean | undefined>(undefined);
+  const [currentWhitelistedPublishers, setCurrentWhitelistedPublishers] = useState<string[] | undefined>(undefined);
   const [currentBlacklistedPublishers, setCurrentBlacklistedPublishers] = useState<string[] | undefined>(undefined);
 
   const [currentMetadata, setCurrentMetadata] = useState<
@@ -278,6 +281,12 @@ export const AdEditorComponent = (id?: string) => {
         ad.blacklistedPublishers.length
       )
         setCurrentBlacklistedPublishers(ad.blacklistedPublishers.map((p) => p.id));
+      if (
+        currentWhitelistedPublishers === undefined &&
+        ad.whitelistedPublishers !== undefined &&
+        ad.whitelistedPublishers.length
+      )
+        setCurrentWhitelistedPublishers(ad.whitelistedPublishers.map((p) => p.id));
 
       const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
@@ -335,6 +344,7 @@ export const AdEditorComponent = (id?: string) => {
                 attribution: ad?.attribution ? Number(ad.attribution) : undefined,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
+                whitelistedPublishers: ad?.whitelistedPublishers.map((p) => p.id) ?? [],
 
                 audienceIds: [] as number[],
               }}
@@ -736,6 +746,42 @@ export const AdEditorComponent = (id?: string) => {
                       {submitCount ? (
                         errors.blacklistedPublishers ? (
                           <div className="mt-1 text-danger">{errors.blacklistedPublishers.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                    <div className={submitCount ? (errors.whitelistedPublishers ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="whitelistedPublishers">Whitelisted Publishers</label>
+                      <Select
+                        classNames={{
+                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          singleValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                          multiValue: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          multiValueLabel: () =>
+                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                        }}
+                        placeholder="Select an option"
+                        id="whitelistedPublishers"
+                        options={publisherOptions}
+                        name="whitelistedPublishers"
+                        isMulti
+                        value={publisherOptions?.filter((a) => currentWhitelistedPublishers?.includes(a.value)) ?? []}
+                        onChange={(value) => {
+                          setCurrentWhitelistedPublishers(value.map((v) => v.value));
+                          values.whitelistedPublishers = value.map((v) => v.value) ?? [];
+                        }}
+                        isSearchable={true}
+                      />
+                      {submitCount ? (
+                        errors.whitelistedPublishers ? (
+                          <div className="mt-1 text-danger">{errors.whitelistedPublishers.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
