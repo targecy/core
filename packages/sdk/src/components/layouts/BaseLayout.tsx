@@ -27,6 +27,10 @@ export const BaseLayout = (props: PropsWithChildren<LayoutParams>) => {
       style={{
         width,
         height,
+        minHeight: height,
+        maxHeight: height,
+        minWidth: width,
+        maxWidth: width,
         backgroundColor: props.styling?.backgroundColor,
         borderRadius: props.styling?.borderRadius,
         boxShadow: props.styling?.boxShadow,

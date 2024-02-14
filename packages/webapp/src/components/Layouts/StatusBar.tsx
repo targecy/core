@@ -29,7 +29,7 @@ export const StatusBar = () => {
       <span className="flex flex-grow flex-wrap justify-center gap-1 text-center">
         Seems that your remaining budget is 0,{' '}
         <b
-          className="cursor-pointer"
+          className="cursor-pointer ml-1 mr-1"
           onClick={() => document && (document.getElementById('budgetModal') as HTMLDialogElement).showModal()}>
           fund your budget
         </b>{' '}
