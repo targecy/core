@@ -15,6 +15,7 @@ library Errors {
   error InsufficientFunds();
   error NotAdvertiser();
   error PublisherNotWhitelisted();
+  error PublisherNotWhitelistedInAd();
   error PublisherPercentageTooBig();
   error PercentageTotalTooSmall();
   error PercentageTooBig();
@@ -26,4 +27,6 @@ library Errors {
   error AudiencesMustHaveAtLeastOneSegment();
   error UseConsumeAdMethodInstead();
   error ImpressionOrClickOnlyAvailableThroughRelayer();
+  error SenderIsNotRelayer();
+  error CouldNotMakeTransfer();
 }

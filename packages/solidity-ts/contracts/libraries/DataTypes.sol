@@ -39,6 +39,7 @@ library DataTypes {
     uint256 startingTimestamp;
     uint256 endingTimestamp;
     uint256[] audienceIds;
+    address[] whitelistedPublishers;
     address[] blacklistedPublishers;
     uint8[] blacklistedWeekdays;
     // Budget
@@ -60,6 +61,7 @@ library DataTypes {
     uint256 startingTimestamp;
     uint256 endingTimestamp;
     uint256[] audienceIds;
+    address[] whitelistedPublishers;
     address[] blacklistedPublishers;
     uint8[] blacklistedWeekdays;
     // Budget
@@ -97,6 +99,7 @@ library DataTypes {
   }
 
   struct PublisherSettings {
+    string metadataURI;
     uint256 userRewardsPercentage; // presicion: 10000
     address vault;
     bool active;

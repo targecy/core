@@ -318,6 +318,7 @@ export function handlePublisherWhitelisted(event: PublisherWhitelisted): void {
   entity.cpc = event.params.publisher.cpc;
   entity.cpa = event.params.publisher.cpa;
   entity.usersRewardsPercentage = event.params.publisher.userRewardsPercentage;
+  entity.metadataURI = event.params.publisher.metadataURI;
 
   entity.adsQuantity = BigInt.fromI32(0);
   entity.impressions = BigInt.fromI32(0);

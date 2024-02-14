@@ -39,6 +39,12 @@ export const Ads = gql`
     }
   }
 
+  query GetAdsByWhitelistedAdvertisers($whitelistedAdvertisers: [String!]!) {
+    ads(where: { advertiser_in: $whitelistedAdvertisers }) {
+      ...AdFragment
+    }
+  }
+
   query GetAdToShow {
     ads(where: { audiences_not: [] }, orderBy: id, orderDirection: desc) {
       ...AdFragment

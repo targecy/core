@@ -71,6 +71,7 @@ type Publisher @entity {
   cpc: BigInt! # uint256
   cpa: BigInt! # uint256
   usersRewardsPercentage: BigInt! # uint256
+  metadataURI: String! # string
   # Statistics
   adsQuantity: BigInt! # uint256
   impressions: BigInt! # uint256

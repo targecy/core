@@ -101,7 +101,9 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
   }
 
   function fundAdvertiserBudget(address advertiser, uint256 amount) external override {
-    require(IERC20(erc20).transferFrom(msg.sender, address(this), amount), "Transfer failed. Please check your allowance.");
+    if (!IERC20(erc20).transferFrom(msg.sender, address(this), amount)) {
+      revert Errors.CouldNotMakeTransfer();
+    }
 
     DataTypes.Budget storage budget = budgets[advertiser];
     budget.advertiser = advertiser;
@@ -121,7 +123,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     budget.remainingBudget = budget.remainingBudget - amount;
     budget.totalBudget = budget.totalBudget - amount;
 
-    require(IERC20(erc20).transfer(msg.sender, amount), "Transfer failed");
+    if (!IERC20(erc20).transfer(msg.sender, amount)) revert Errors.CouldNotMakeTransfer();
 
     emit TargecyEvents.AdvertiserBudgetWithdrawn(budget.advertiser, amount);
   }
@@ -159,6 +161,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
       adStorage.metadataURI = ad.metadataURI;
       adStorage.audienceIds = ad.audienceIds;
 
+      adStorage.whitelistedPublishers = ad.whitelistedPublishers;
       adStorage.blacklistedPublishers = ad.blacklistedPublishers;
       adStorage.blacklistedWeekdays = ad.blacklistedWeekdays;
       adStorage.startingTimestamp = ad.startingTimestamp;
@@ -180,6 +183,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
         ad.startingTimestamp,
         ad.endingTimestamp,
         ad.audienceIds,
+        ad.whitelistedPublishers,
         ad.blacklistedPublishers,
         ad.blacklistedWeekdays,
         // Budget
@@ -283,15 +287,15 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     // Protocol Fee
     uint256 protocolFee = Helpers.calculatePercentage(consumptionPrice, Constants.PROTOCOL_FEE_PERCENTAGE);
-    require(IERC20(erc20).transfer(vault, protocolFee), "Transfer to protocol vault failed.");
+    if (!IERC20(erc20).transfer(vault, protocolFee)) revert Errors.CouldNotMakeTransfer();
 
     // User Rewards
     uint256 userRewards = Helpers.calculatePercentage(consumptionPrice, publisher.userRewardsPercentage);
-    require(IERC20(erc20).transfer(user, userRewards), "Transfer to user failed.");
+    if (!IERC20(erc20).transfer(user, userRewards)) revert Errors.CouldNotMakeTransfer();
 
     // User Rewards
     uint256 publisherFee = consumptionPrice - protocolFee - userRewards;
-    require(IERC20(erc20).transfer(publisher.vault, publisherFee), "Transfer to publisher failed.");
+    if (!IERC20(erc20).transfer(publisher.vault, publisherFee)) revert Errors.CouldNotMakeTransfer();
 
     emit TargecyEvents.RewardsDistributed(adId, DataTypes.RewardsDistribution(publisher.vault, publisherFee, user, userRewards, vault, protocolFee));
     emit TargecyEvents.AdConsumed(adId, ad, publisher, consumptionPrice);
@@ -326,9 +330,26 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     DataTypes.PublisherSettings memory publisher = publishers[publisherVault];
 
-    for (uint256 i = 0; i < ad.blacklistedPublishers.length; i++) {
-      if (ad.blacklistedPublishers[i] == publisher.vault) {
-        revert Errors.PublisherBlacklistedInAd();
+    if (ad.whitelistedPublishers.length > 0) {
+      // Check if the publisher is whitelisted
+      bool isWhitelisted = false;
+      for (uint256 i = 0; i < ad.whitelistedPublishers.length; i++) {
+        if (ad.whitelistedPublishers[i] == publisher.vault) {
+          isWhitelisted = true;
+          break;
+        }
+      }
+      if (!isWhitelisted) {
+        revert Errors.PublisherNotWhitelistedInAd();
+      }
+    }
+
+    if (ad.blacklistedPublishers.length > 0) {
+      // Check if the publisher is blacklisted
+      for (uint256 i = 0; i < ad.blacklistedPublishers.length; i++) {
+        if (ad.blacklistedPublishers[i] == publisher.vault) {
+          revert Errors.PublisherBlacklistedInAd();
+        }
       }
     }
 
@@ -380,7 +401,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
     DataTypes.ZKProofs calldata zkProofs,
     bytes calldata actionParams
   ) external payable override whenNotPaused {
-    require(msg.sender == relayer, "Targecy: Only relayer can call this function");
+    if (msg.sender != relayer) revert Errors.SenderIsNotRelayer();
 
     _consumeAd(viewer, adId, publisher, zkProofs, actionParams);
   }
@@ -410,6 +431,7 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
   function setPublisher(DataTypes.PublisherSettings memory publisher) external override onlyRole(DEFAULT_ADMIN_ROLE) {
     publishers[publisher.vault] = DataTypes.PublisherSettings(
+      publisher.metadataURI,
       publisher.userRewardsPercentage,
       publisher.vault,
       publisher.active,

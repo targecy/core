@@ -12,3 +12,5 @@ import '@nomiclabs/hardhat-solhint';
 import 'hardhat-deploy';
 
 import '@openzeppelin/hardhat-upgrades';
+
+import 'hardhat-contract-sizer';
