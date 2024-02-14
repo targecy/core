@@ -41,7 +41,6 @@ library DataTypes {
     uint256[] audienceIds;
     address[] whitelistedPublishers;
     address[] blacklistedPublishers;
-    uint8[] blacklistedWeekdays;
     // Budget
     uint256 maxBudget;
     uint256 maxPricePerConsumption;
@@ -63,7 +62,6 @@ library DataTypes {
     uint256[] audienceIds;
     address[] whitelistedPublishers;
     address[] blacklistedPublishers;
-    uint8[] blacklistedWeekdays;
     // Budget
     uint256 maxBudget;
     uint256 currentBudget;

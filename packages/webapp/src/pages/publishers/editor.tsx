@@ -2,11 +2,8 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-<<<<<<< Updated upstream
-=======
 import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
->>>>>>> Stashed changes
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -35,8 +32,6 @@ export const PublisherEditorComponent = (id?: string) => {
   const submitForm = async (data: FormValues) => {
     setProcessingPublisher(true);
 
-<<<<<<< Updated upstream
-=======
     const percentageStringTo10kPrecision = (percentage: string) => {
       return BigInt(parseFloat(percentage) * 100);
     };
@@ -68,18 +63,13 @@ export const PublisherEditorComponent = (id?: string) => {
 
     const metadataURI = (await metadataUploadResponse.json()).uri;
 
->>>>>>> Stashed changes
     try {
       const hash = await setPublisherAsync({
         args: [
           {
             vault: data.address as `0x${string}`,
-<<<<<<< Updated upstream
-            userRewardsPercentage: data.usersRewardsPercentage,
-=======
             metadataURI,
-            userRewardsPercentage: percentageStringTo10kPrecision(data.usersRewardsPercentage),
->>>>>>> Stashed changes
+            userRewardsPercentage: percentageStringTo10kPrecision(data.usersRewardsPercentage.toString()),
             cpi: data.cpi,
             cpc: data.cpc,
             cpa: data.cpa,
@@ -192,24 +182,56 @@ export const PublisherEditorComponent = (id?: string) => {
                     </div>
 
                     <div className={submitCount ? (errors.url ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="url">Users Rewards Percentage </label>
-                      <Field
-<<<<<<< Updated upstream
-                        name="usersRewardsPercentage"
-                        type="number"
-                        id="usersRewardsPercentage"
-=======
-                        name="url"
-                        type="text"
-                        id="url"
->>>>>>> Stashed changes
-                        placeholder="Enter users rewards percentage"
-                        className="form-input"
-                      />
+                      <label htmlFor="url">URL </label>
+                      <Field name="url" type="text" id="url" placeholder="Enter URL" className="form-input" />
 
                       {submitCount ? (
                         errors.url ? (
                           <div className="mt-1 text-danger">{errors.url.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="address">address </label>
+                      <Field
+                        name="address"
+                        type="text"
+                        id="address"
+                        placeholder="Enter address"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.address ? (
+                          <div className="mt-1 text-danger">{errors.address.toString()}</div>
+                        ) : (
+                          <div className="mt-1 text-success"></div>
+                        )
+                      ) : (
+                        ''
+                      )}
+                    </div>
+
+                    <div className={submitCount ? (errors.usersRewardsPercentage ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
+                      <Field
+                        name="usersRewardsPercentage"
+                        type="text"
+                        id="usersRewardsPercentage"
+                        placeholder="Enter usersRewardsPercentage"
+                        className="form-input"
+                      />
+
+                      {submitCount ? (
+                        errors.usersRewardsPercentage ? (
+                          <div className="mt-1 text-danger">{errors.usersRewardsPercentage.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )

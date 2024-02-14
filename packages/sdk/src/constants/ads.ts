@@ -59,7 +59,6 @@ export const demoAd: {
     currentBudget: 0,
     active: true,
     blacklistedPublishers: [],
-    blacklistedWeekdays: [],
     consumptions: 0,
     consumptionsPerDay: [],
     maxConsumptionsPerDay: 9999,

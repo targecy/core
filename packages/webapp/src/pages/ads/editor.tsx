@@ -28,7 +28,6 @@ const baseSchema = z.object({
   imageFile: z.custom<File>().describe('Please provide an image'),
   active: z.boolean().describe('Please provide an active'),
   blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers').default([]),
-  blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays').default([]),
   maxPricePerConsumption: z.number().describe('Please provide a max impression price').optional(),
   maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day').optional(),
   maxBudget: z.number().describe('Please provide a max budget').optional(),
@@ -157,7 +156,6 @@ export const AdEditorComponent = (id?: string) => {
         endingTimestamp: BigInt(data.endingDate?.getTime() ?? Number.MAX_SAFE_INTEGER), // @todo check this max
         audienceIds: data.audienceIds.map(BigInt) ?? [],
         blacklistedPublishers: data.blacklistedPublishers.map((a) => a as `0x${string}`) ?? [],
-        blacklistedWeekdays: data.blacklistedWeekdays ?? [],
         maxPricePerConsumption: BigInt(data.maxPricePerConsumption ?? Number.MAX_SAFE_INTEGER),
         maxConsumptionsPerDay: BigInt(data.maxConsumptionsPerDay ?? Number.MAX_SAFE_INTEGER),
         maxBudget: BigInt(data.maxBudget ?? Number.MAX_SAFE_INTEGER),
@@ -258,7 +256,6 @@ export const AdEditorComponent = (id?: string) => {
   const [currentAttribution, setCurrentAttribution] = useState<number | undefined>(undefined);
   const [currentActive, setCurrentActive] = useState<boolean | undefined>(undefined);
   const [currentBlacklistedPublishers, setCurrentBlacklistedPublishers] = useState<string[] | undefined>(undefined);
-  const [currentBlacklistedWeekdays, setCurrentBlacklistedWeekdays] = useState<number[] | undefined>(undefined);
 
   const [currentMetadata, setCurrentMetadata] = useState<
     { title?: string; description?: string; image?: string } | undefined
@@ -281,12 +278,6 @@ export const AdEditorComponent = (id?: string) => {
         ad.blacklistedPublishers.length
       )
         setCurrentBlacklistedPublishers(ad.blacklistedPublishers.map((p) => p.id));
-      if (
-        currentBlacklistedWeekdays === undefined &&
-        ad.blacklistedWeekdays !== undefined &&
-        ad.blacklistedWeekdays.length
-      )
-        setCurrentBlacklistedWeekdays(ad.blacklistedWeekdays);
 
       const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
@@ -344,7 +335,6 @@ export const AdEditorComponent = (id?: string) => {
                 attribution: ad?.attribution ? Number(ad.attribution) : undefined,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
-                blacklistedWeekdays: ad?.blacklistedWeekdays ?? [],
 
                 audienceIds: [] as number[],
               }}
@@ -746,45 +736,6 @@ export const AdEditorComponent = (id?: string) => {
                       {submitCount ? (
                         errors.blacklistedPublishers ? (
                           <div className="mt-1 text-danger">{errors.blacklistedPublishers.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div className={submitCount ? (errors.blacklistedWeekdays ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="active">Blacklisted Weekdays</label>
-                      <Select
-                        classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          singleValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          multiValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          multiValueLabel: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                        }}
-                        placeholder="Select an option"
-                        id="blacklistedWeekdays"
-                        options={weekdaysOptions}
-                        name="blacklistedWeekdays"
-                        value={
-                          weekdaysOptions?.filter((a) => currentBlacklistedWeekdays?.includes(Number(a.value))) ?? []
-                        }
-                        onChange={(value) => {
-                          setCurrentBlacklistedWeekdays(value?.map((v) => Number(v.value)) ?? []);
-                          values.blacklistedWeekdays = value?.map((v) => Number(v.value)) ?? [];
-                        }}
-                        isMulti
-                        isSearchable={true}
-                      />
-                      {submitCount ? (
-                        errors.blacklistedWeekdays ? (
-                          <div className="mt-1 text-danger">{errors.blacklistedWeekdays.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )

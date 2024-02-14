@@ -21,6 +21,11 @@
   },
   {
     "inputs": [],
+    "name": "CouldNotMakeTransfer",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "ImpressionOrClickOnlyAvailableThroughRelayer",
     "type": "error"
   },
@@ -71,7 +76,12 @@
   },
   {
     "inputs": [],
-    "name": "WeekdayBlacklistedInAd",
+    "name": "PublisherNotWhitelistedInAd",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SenderIsNotRelayer",
     "type": "error"
   },
   {
@@ -835,6 +845,11 @@
     "name": "publishers",
     "outputs": [
       {
+        "internalType": "string",
+        "name": "metadataURI",
+        "type": "string"
+      },
+      {
         "internalType": "uint256",
         "name": "userRewardsPercentage",
         "type": "uint256"
@@ -1050,13 +1065,13 @@
           },
           {
             "internalType": "address[]",
-            "name": "blacklistedPublishers",
+            "name": "whitelistedPublishers",
             "type": "address[]"
           },
           {
-            "internalType": "uint8[]",
-            "name": "blacklistedWeekdays",
-            "type": "uint8[]"
+            "internalType": "address[]",
+            "name": "blacklistedPublishers",
+            "type": "address[]"
           },
           {
             "internalType": "uint256",
@@ -1176,6 +1191,11 @@
     "inputs": [
       {
         "components": [
+          {
+            "internalType": "string",
+            "name": "metadataURI",
+            "type": "string"
+          },
           {
             "internalType": "uint256",
             "name": "userRewardsPercentage",

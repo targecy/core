@@ -5,6 +5,15 @@ import mumbaiConfig from './generated/config/mumbai.json' assert { type: 'json' 
 import maticConfig from './generated/config/matic.json' assert { type: 'json' };
 import { hostname } from './config/hostname.mjs';
 
+const versionByEnv = (env) => {
+  switch (env) {
+    case 'development':
+      return 'targecy';
+    default:
+      return 'latest';
+  }
+};
+
 const deployedAddressByEnv = (env) => {
   switch (env) {
     case 'development':
@@ -80,7 +89,9 @@ export const env = createEnv({
     NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
 
     // Custom
-    NEXT_PUBLIC_TARGECY_SUBGRAPH_URL: `${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_URL}/${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_VERSION}`,
+    NEXT_PUBLIC_TARGECY_SUBGRAPH_URL: `${process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_URL}/${
+      versionByEnv(process.env.NEXT_PUBLIC_VERCEL_ENV) ?? process.env.NEXT_PUBLIC_TARGECY_SUBGRAPH_VERSION
+    }`,
     NEXT_PUBLIC_TARGECY_CONTRACT_ADDRESS: deployedAddressByEnv(process.env.NEXT_PUBLIC_VERCEL_ENV || 'development'),
 
     CIRCUITS_PATH: process.env.CIRCUITS_PATH,

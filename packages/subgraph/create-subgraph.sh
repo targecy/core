@@ -65,11 +65,11 @@ dataSources:
         - name: TargecyEvents
           file: ./abis/TargecyEvents.json
       eventHandlers:
-        - event: AdConsumed(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],address[],uint8[],uint256,uint256,uint256,uint256,uint256),(uint256,address,bool,uint256,uint256,uint256),uint256)
+        - event: AdConsumed(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],address[],uint256,uint256,uint256,uint256,uint256),(string,uint256,address,bool,uint256,uint256,uint256),uint256)
           handler: handleAdConsumed
         - event: AdDeleted(indexed uint256)
           handler: handleAdDeleted
-        - event: AdEdited(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],address[],uint8[],uint256,uint256,uint256,uint256,uint256))
+        - event: AdEdited(indexed uint256,(address,string,uint8,bool,string,address,uint256,uint256,uint256[],address[],address[],uint256,uint256,uint256,uint256,uint256))
           handler: handleAdEdited
         - event: AudienceDeleted(indexed uint256)
           handler: handleAudienceDeleted

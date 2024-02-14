@@ -176,7 +176,6 @@ export async function seed(network: string, force = false): Promise<void> {
       endingTimestamp: ad.endingTimestamp,
       audienceIds: ad.audiencesIds,
       blacklistedPublishers: ad.blacklistedPublishers,
-      blacklistedWeekdays: ad.blacklistedWeekdays,
       maxBudget: ad.budget,
       maxPricePerConsumption: ad.maxPricePerConsumption,
       maxConsumptionsPerDay: ad.maxConsumptionsPerDay,

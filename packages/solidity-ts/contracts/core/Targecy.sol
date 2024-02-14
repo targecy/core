@@ -163,7 +163,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
       adStorage.whitelistedPublishers = ad.whitelistedPublishers;
       adStorage.blacklistedPublishers = ad.blacklistedPublishers;
-      adStorage.blacklistedWeekdays = ad.blacklistedWeekdays;
       adStorage.startingTimestamp = ad.startingTimestamp;
       adStorage.endingTimestamp = ad.endingTimestamp;
       adStorage.maxConsumptionsPerDay = ad.maxConsumptionsPerDay;
@@ -185,7 +184,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
         ad.audienceIds,
         ad.whitelistedPublishers,
         ad.blacklistedPublishers,
-        ad.blacklistedWeekdays,
         // Budget
         ad.maxBudget,
         0,
@@ -355,13 +353,6 @@ contract Targecy is Initializable, AccessControlUpgradeable, PausableUpgradeable
 
     if (publisher.vault == address(0) || publisher.active == false) {
       revert Errors.PublisherNotWhitelisted();
-    }
-
-    uint256 weekDay = Helpers.getWeekDayFromTimestamp(block.timestamp);
-    for (uint256 i = 0; i < ad.blacklistedWeekdays.length; i++) {
-      if (ad.blacklistedWeekdays[i] == weekDay) {
-        revert Errors.WeekdayBlacklistedInAd();
-      }
     }
 
     uint256 dayFromEpoch = Helpers.getDayFromEpoch(block.timestamp);
