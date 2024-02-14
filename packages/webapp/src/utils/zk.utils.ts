@@ -20,8 +20,8 @@ import {
   EthStateStorage,
   type CredentialRequest,
   CredentialStatusType,
-  core,
-  W3CCredential,
+  type core,
+  type W3CCredential,
 } from '@0xpolygonid/js-sdk';
 
 export type StoragesSide = 'server' | 'client';

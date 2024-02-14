@@ -266,7 +266,7 @@ export const SegmentEditorComponent = (id?: string) => {
             {editingMode ? <span>Edit </span> : <span>New </span>}
             {editingMode ? `'${currentMetadata?.title}'` : 'Segment'}
           </label>
-          <div className="grid grid-cols-3">
+          <div className="grid-cols-3 sm:block md:block lg:grid">
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -498,7 +498,7 @@ export const SegmentEditorComponent = (id?: string) => {
                 </Form>
               )}
             </Formik>
-            <div className="col-span-1">
+            <div className="col-span-1 sm:block md:block">
               <div className="m-7 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                 <label className="m-5 mb-0 text-secondary">Potential Reach</label>
                 <div className="h-full w-full p-5">

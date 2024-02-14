@@ -18,7 +18,6 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
   const [showLoader, setShowLoader] = useState(true);
   const [showTopButton, setShowTopButton] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-  const [animation, setAnimation] = useState(themeConfig.animation);
   const dispatch = useDispatch();
 
   const goToTop = () => {
@@ -36,31 +35,16 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     window.addEventListener('scroll', onScrollHandler);
-
-    const screenLoader = document.getElementsByClassName('screen_loader');
-    if (screenLoader?.length) {
-      setTimeout(() => {
-        setShowLoader(false);
-      }, 200);
-    }
-
-    router.events.on('beforeHistoryChange', () => {
-      setAnimation(themeConfig.animation);
-    });
     return () => {
       window.removeEventListener('onscroll', onScrollHandler);
     };
   });
 
   useEffect(() => {
-    setAnimation(themeConfig.animation);
-  }, [themeConfig.animation]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setAnimation('');
-    }, 1100);
-  }, [router.asPath]);
+    if (router.isReady) {
+      setShowLoader(false);
+    }
+  }, [router]);
 
   const { pathname } = useRouter();
   const useFullLayout = pathname !== '/beta' && pathname !== '/storage';
@@ -108,7 +92,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
         )}
         {/* sidebar menu overlay */}
         <div
-          className={`${(!themeConfig.sidebar && 'hidden') || ''} fixed inset-0 z-50 bg-[black]/60 lg:hidden`}
+          className={`${themeConfig.sidebar ? '' : 'hidden'} fixed inset-0 z-50 bg-[black]/60 lg:hidden`}
           onClick={() => dispatch(toggleSidebar())}></div>
         <div className="fixed bottom-6 z-50 ltr:right-6 rtl:left-6">
           {showTopButton && (
@@ -151,7 +135,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
             <StatusBar />
 
             {/* BEGIN CONTENT AREA */}
-            <div className={`${animation} animate__animated p-6`}>{children}</div>
+            <div className={`${themeConfig.animation} animate__animated p-6`}>{children}</div>
             {/* END CONTENT AREA */}
 
             {/* BEGIN FOOTER */}

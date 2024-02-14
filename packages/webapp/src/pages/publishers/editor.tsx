@@ -117,7 +117,7 @@ export const PublisherEditorComponent = (id?: string) => {
             {editingMode ? <span>Edit </span> : <span>New </span>}
             {editingMode ? `'${publisher?.id}'` : 'Publisher'}
           </label>
-          <div className="grid grid-cols-3">
+          <div className="grid-cols-3 sm:block md:block lg:grid">
             <Formik
               enableReinitialize={true}
               initialValues={{
@@ -131,7 +131,7 @@ export const PublisherEditorComponent = (id?: string) => {
               onSubmit={() => {}}>
               {({ errors, submitCount, touched, values, handleChange }) => (
                 <Form className="col-span-2 space-y-5 text-secondary">
-                  <div className="grid grid-cols-1 gap-5">
+                  <div className="grid-cols-1 gap-5 sm:block md:block lg:grid">
                     <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
                       <label htmlFor="address">Address </label>
                       <Field
@@ -175,7 +175,7 @@ export const PublisherEditorComponent = (id?: string) => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                  <div className="grid-cols-1 gap-5 sm:block md:block md:grid-cols-3 lg:grid">
                     <div className={`${submitCount ? (errors.cpi ? 'has-error' : 'has-success') : ''} col-span-1`}>
                       <label htmlFor="value">CPI</label>
                       <Field
