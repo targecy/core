@@ -2,6 +2,7 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -29,12 +30,16 @@ export const PublisherEditorComponent = (id?: string) => {
   const submitForm = async (data: FormValues) => {
     setProcessingPublisher(true);
 
+    const percentageStringTo10kPrecision = (percentage: string) => {
+      return BigInt(parseFloat(percentage) * 100);
+    };
+
     try {
       const hash = await setPublisherAsync({
         args: [
           {
             vault: data.address as `0x${string}`,
-            userRewardsPercentage: data.usersRewardsPercentage,
+            userRewardsPercentage: percentageStringTo10kPrecision(data.usersRewardsPercentage),
             cpi: data.cpi,
             cpc: data.cpc,
             cpa: data.cpa,
@@ -43,37 +48,41 @@ export const PublisherEditorComponent = (id?: string) => {
         ],
       });
 
-      // await Swal.mixin({
-      //   toast: true,
-      //   position: 'top',
-      //   showConfirmButton: false,
-      //   timer: 3000,
-      // }).fire({
-      //   icon: 'success',
-      //   address: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
-      //   padding: '10px 20px',
-      // });
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'success',
+        title: `Publisher ${editingMode ? 'edited' : 'created'} successfully! Tx: ${JSON.stringify(hash)} `,
+        padding: '10px 20px',
+      });
 
       await router.push('/publishers');
     } catch (e) {
-      // await Swal.mixin({
-      //   toast: true,
-      //   position: 'top',
-      //   showConfirmButton: false,
-      //   timer: 3000,
-      // }).fire({
-      //   icon: 'error',
-      //   address: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
-      //   padding: '10px 20px',
-      // });
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'error',
+        title: `Error ${editingMode ? 'editing' : 'creating'} publisher`,
+        padding: '10px 20px',
+      });
 
       setProcessingPublisher(false);
     }
   };
 
+  const percentageWithDecimalsRegex = new RegExp('^d{1,2}(.d{1,2})?$|100');
   const schema = z.object({
     address: z.string().min(1).max(50).describe('Please fill the address'),
-    usersRewardsPercentage: z.bigint().describe('Please fill the usersRewardsPercentage'),
+    usersRewardsPercentage: z
+      .string()
+      .regex(percentageWithDecimalsRegex)
+      .describe('Please fill the usersRewardsPercentage'),
     cpi: z.bigint().describe('Please fill the value'),
     cpc: z.bigint().describe('Please fill the value'),
     cpa: z.bigint().describe('Please fill the value'),
@@ -148,7 +157,7 @@ export const PublisherEditorComponent = (id?: string) => {
                       <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
                       <Field
                         name="usersRewardsPercentage"
-                        type="number"
+                        type="text"
                         id="usersRewardsPercentage"
                         placeholder="Enter users rewards percentage"
                         className="form-input"

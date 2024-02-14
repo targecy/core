@@ -20,7 +20,7 @@ export const BannerSmall = (props: LayoutParams) => {
           left: 0,
           right: 0,
           padding: '10px',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backgroundColor: 'rgba(0, 0, 0, 0.75)',
           color: 'white',
           borderRadius: props.styling?.borderRadius,
           opacity: 0,
