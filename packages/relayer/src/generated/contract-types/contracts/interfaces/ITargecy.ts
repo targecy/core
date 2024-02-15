@@ -50,8 +50,8 @@ export declare namespace DataTypes {
     startingTimestamp: BigNumberish;
     endingTimestamp: BigNumberish;
     audienceIds: BigNumberish[];
+    whitelistedPublishers: AddressLike[];
     blacklistedPublishers: AddressLike[];
-    blacklistedWeekdays: BigNumberish[];
     maxBudget: BigNumberish;
     maxPricePerConsumption: BigNumberish;
     maxConsumptionsPerDay: BigNumberish;
@@ -66,8 +66,8 @@ export declare namespace DataTypes {
     startingTimestamp: bigint,
     endingTimestamp: bigint,
     audienceIds: bigint[],
+    whitelistedPublishers: string[],
     blacklistedPublishers: string[],
-    blacklistedWeekdays: bigint[],
     maxBudget: bigint,
     maxPricePerConsumption: bigint,
     maxConsumptionsPerDay: bigint
@@ -80,14 +80,15 @@ export declare namespace DataTypes {
     startingTimestamp: bigint;
     endingTimestamp: bigint;
     audienceIds: bigint[];
+    whitelistedPublishers: string[];
     blacklistedPublishers: string[];
-    blacklistedWeekdays: bigint[];
     maxBudget: bigint;
     maxPricePerConsumption: bigint;
     maxConsumptionsPerDay: bigint;
   };
 
   export type PublisherSettingsStruct = {
+    metadataURI: string;
     userRewardsPercentage: BigNumberish;
     vault: AddressLike;
     active: boolean;
@@ -97,6 +98,7 @@ export declare namespace DataTypes {
   };
 
   export type PublisherSettingsStructOutput = [
+    metadataURI: string,
     userRewardsPercentage: bigint,
     vault: string,
     active: boolean,
@@ -104,6 +106,7 @@ export declare namespace DataTypes {
     cpc: bigint,
     cpa: bigint
   ] & {
+    metadataURI: string;
     userRewardsPercentage: bigint;
     vault: string;
     active: boolean;

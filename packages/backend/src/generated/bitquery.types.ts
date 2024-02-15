@@ -3685,6 +3685,8 @@ export type BitcoinOmniTransactionsUniq =
   | 'blocks'
   /** Unique date count */
   | 'dates'
+  /** Unique transactions count */
+  | 'transactions'
   /** Unique transaction sender */
   | 'tx_sender';
 
@@ -4114,6 +4116,8 @@ export type BitcoinOmniTransfersUniq =
   | 'blocks'
   /** Unique date count */
   | 'dates'
+  /** Unique transactions count */
+  | 'transactions'
   /** Unique transaction sender */
   | 'tx_sender';
 
@@ -11702,7 +11706,9 @@ export type ElrondCallResultUniq =
   /** Unique Number of call results */
   | 'index'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique count of transactions */
+  | 'txs';
 
 export type ElrondCallResultsMeasureable =
   /** Hash of the the block */
@@ -12028,7 +12034,9 @@ export type ElrondEventUniq =
   /** Unique count of block in the blockchains */
   | 'height'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique count of transactions */
+  | 'txs';
 
 export type ElrondEventsMeasureable =
   /** Address */
@@ -12496,7 +12504,9 @@ export type ElrondOperationUniq =
   /** Unique count of operations */
   | 'operations'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique count of transactions */
+  | 'txs';
 
 export type ElrondOperationsMeasureable =
   /** Hash of the the block */
@@ -13121,7 +13131,9 @@ export type ElrondTransferUniq =
   /** Unique time */
   | 'times'
   /** Unique count of transfers type */
-  | 'transferType';
+  | 'transferType'
+  /** Unique count of transactions */
+  | 'txs';
 
 export type ElrondTransfersMeasureable =
   /** Action */
@@ -25677,7 +25689,9 @@ export type HarmonyArgumentsUniq =
   /** Unique smart contract address */
   | 'smart_contract_address'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique transaction hash */
+  | 'txs';
 
 /** Blocks in Harmony blockchain */
 export type HarmonyBlocks = {
@@ -26603,6 +26617,8 @@ export type HarmonyStakingTransactionsUniq =
   | 'smart_contract_address'
   /** Unique time */
   | 'times'
+  /** Unique transaction hash */
+  | 'txs'
   /** Unique address validator */
   | 'validator_address';
 
@@ -27096,7 +27112,9 @@ export type HarmonyTransfersUniq =
   /** Unique transfer from */
   | 'transfer_from'
   /** Unique transfer to */
-  | 'transfer_to';
+  | 'transfer_to'
+  /** Unique transaction hash */
+  | 'txs';
 
 /** Select by hash */
 export type HashSelector = {
@@ -27455,7 +27473,9 @@ export type HederaArgumentsUniq =
   /** Unique node account */
   | 'smart_contract_entity'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique transaction hash */
+  | 'txs';
 
 /** Token Balance */
 export type HederaBalance = {
@@ -27687,7 +27707,9 @@ export type HederaCallsUniq =
   /** Unique node account */
   | 'smart_contract_entity'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique transaction hash */
+  | 'txs';
 
 /** Coinpath */
 export type HederaCoinpath = {
@@ -27991,7 +28013,9 @@ export type HederaInputsUniq =
   /** Unique payer account */
   | 'payer_account'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique transaction hash */
+  | 'txs';
 
 /** Messages in Hedera blockchain */
 export type HederaMessage = {
@@ -28209,7 +28233,9 @@ export type HederaMessagesUniq =
   /** Unique payer account */
   | 'payer_account'
   /** Unique time */
-  | 'times';
+  | 'times'
+  /** Unique transaction hash */
+  | 'txs';
 
 export type HederaNetwork =
   /** The Hedera mainnet */
@@ -28455,7 +28481,9 @@ export type HederaOutputUniq =
   /** Unique time */
   | 'times'
   /** Unique Transfer entity */
-  | 'transfer_entity';
+  | 'transfer_entity'
+  /** Unique transaction hash */
+  | 'txs';
 
 /** Transactions in Hedera blockchain */
 export type HederaTransaction = {
@@ -43323,7 +43351,9 @@ export type TronTradesUniq =
   /** Sell currencies */
   | 'sell_currencies'
   /** Sellers count */
-  | 'sellers';
+  | 'sellers'
+  /** Unique transactions count */
+  | 'txs';
 
 export type TronTransactionFilter = {
   contractAddress?: InputMaybe<AddressSelector>;

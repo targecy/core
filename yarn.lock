@@ -7602,6 +7602,7 @@ __metadata:
     fs: "npm:^0.0.1-security"
     glob: "npm:^8.0.3"
     hardhat: "npm:2.19.4"
+    hardhat-contract-sizer: "npm:^2.10.0"
     hardhat-deploy: "npm:^0.11.37"
     hardhat-gas-reporter: "npm:^1.0.9"
     hardhat-preprocessor: "npm:^0.1.5"
@@ -13346,7 +13347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-table3@npm:^0.6.2, cli-table3@npm:^0.6.3":
+"cli-table3@npm:^0.6.0, cli-table3@npm:^0.6.2, cli-table3@npm:^0.6.3":
   version: 0.6.3
   resolution: "cli-table3@npm:0.6.3"
   dependencies:
@@ -19823,6 +19824,19 @@ __metadata:
   version: 2.1.0
   resolution: "hard-rejection@npm:2.1.0"
   checksum: 7baaf80a0c7fff4ca79687b4060113f1529589852152fa935e6787a2bc96211e784ad4588fb3048136ff8ffc9dfcf3ae385314a5b24db32de20bea0d1597f9dc
+  languageName: node
+  linkType: hard
+
+"hardhat-contract-sizer@npm:^2.10.0":
+  version: 2.10.0
+  resolution: "hardhat-contract-sizer@npm:2.10.0"
+  dependencies:
+    chalk: "npm:^4.0.0"
+    cli-table3: "npm:^0.6.0"
+    strip-ansi: "npm:^6.0.0"
+  peerDependencies:
+    hardhat: ^2.0.0
+  checksum: 2b3011fe5333c2f1dbcfa6c73dcb1c61da9e2e045775c24bb773fe5f3ac14e9923907fef0e61fc2897e82a61997ce74e73baadb7f69dfdeccc86ae878cf67792
   languageName: node
   linkType: hard
 

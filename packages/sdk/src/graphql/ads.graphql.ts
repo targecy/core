@@ -21,7 +21,9 @@ export const Ads = gql`
     blacklistedPublishers {
       ...PublisherFragment
     }
-    blacklistedWeekdays
+    whitelistedPublishers {
+      ...PublisherFragment
+    }
     maxConsumptionsPerDay
     maxPricePerConsumption
     consumptions
@@ -35,6 +37,12 @@ export const Ads = gql`
 
   query GetAllAds {
     ads {
+      ...AdFragment
+    }
+  }
+
+  query GetAdsByWhitelistedAdvertisers($whitelistedAdvertisers: [String!]!) {
+    ads(where: { advertiser_in: $whitelistedAdvertisers }) {
       ...AdFragment
     }
   }

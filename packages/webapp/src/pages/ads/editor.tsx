@@ -27,8 +27,8 @@ const baseSchema = z.object({
   imageUrl: z.string().describe('Please provide an image URL'),
   imageFile: z.custom<File>().describe('Please provide an image'),
   active: z.boolean().describe('Please provide an active'),
+  whitelistedPublishers: z.array(z.string()).describe('Please provide a list of whitelisted publishers').default([]),
   blacklistedPublishers: z.array(z.string()).describe('Please provide a list of blacklisted publishers').default([]),
-  blacklistedWeekdays: z.array(z.number()).describe('Please provide a list of blacklisted weekdays').default([]),
   maxPricePerConsumption: z.number().describe('Please provide a max impression price').optional(),
   maxConsumptionsPerDay: z.number().describe('Please provide a max consumptions per day').optional(),
   maxBudget: z.number().describe('Please provide a max budget').optional(),
@@ -156,8 +156,8 @@ export const AdEditorComponent = (id?: string) => {
         startingTimestamp: BigInt(data.startingDate?.getTime() ?? 0),
         endingTimestamp: BigInt(data.endingDate?.getTime() ?? Number.MAX_SAFE_INTEGER), // @todo check this max
         audienceIds: data.audienceIds.map(BigInt) ?? [],
+        whitelistedPublishers: data.whitelistedPublishers.map((a) => a as `0x${string}`) ?? [],
         blacklistedPublishers: data.blacklistedPublishers.map((a) => a as `0x${string}`) ?? [],
-        blacklistedWeekdays: data.blacklistedWeekdays ?? [],
         maxPricePerConsumption: BigInt(data.maxPricePerConsumption ?? Number.MAX_SAFE_INTEGER),
         maxConsumptionsPerDay: BigInt(data.maxConsumptionsPerDay ?? Number.MAX_SAFE_INTEGER),
         maxBudget: BigInt(data.maxBudget ?? Number.MAX_SAFE_INTEGER),
@@ -257,8 +257,8 @@ export const AdEditorComponent = (id?: string) => {
 
   const [currentAttribution, setCurrentAttribution] = useState<number | undefined>(undefined);
   const [currentActive, setCurrentActive] = useState<boolean | undefined>(undefined);
+  const [currentWhitelistedPublishers, setCurrentWhitelistedPublishers] = useState<string[] | undefined>(undefined);
   const [currentBlacklistedPublishers, setCurrentBlacklistedPublishers] = useState<string[] | undefined>(undefined);
-  const [currentBlacklistedWeekdays, setCurrentBlacklistedWeekdays] = useState<number[] | undefined>(undefined);
 
   const [currentMetadata, setCurrentMetadata] = useState<
     { title?: string; description?: string; image?: string } | undefined
@@ -282,11 +282,11 @@ export const AdEditorComponent = (id?: string) => {
       )
         setCurrentBlacklistedPublishers(ad.blacklistedPublishers.map((p) => p.id));
       if (
-        currentBlacklistedWeekdays === undefined &&
-        ad.blacklistedWeekdays !== undefined &&
-        ad.blacklistedWeekdays.length
+        currentWhitelistedPublishers === undefined &&
+        ad.whitelistedPublishers !== undefined &&
+        ad.whitelistedPublishers.length
       )
-        setCurrentBlacklistedWeekdays(ad.blacklistedWeekdays);
+        setCurrentWhitelistedPublishers(ad.whitelistedPublishers.map((p) => p.id));
 
       const newMetadata = await fetch(getIPFSStorageUrl(ad.metadataURI));
       const json = await newMetadata.json();
@@ -344,7 +344,7 @@ export const AdEditorComponent = (id?: string) => {
                 attribution: ad?.attribution ? Number(ad.attribution) : undefined,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
-                blacklistedWeekdays: ad?.blacklistedWeekdays ?? [],
+                whitelistedPublishers: ad?.whitelistedPublishers.map((p) => p.id) ?? [],
 
                 audienceIds: [] as number[],
               }}
@@ -753,9 +753,8 @@ export const AdEditorComponent = (id?: string) => {
                         ''
                       )}
                     </div>
-
-                    <div className={submitCount ? (errors.blacklistedWeekdays ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="active">Blacklisted Weekdays</label>
+                    <div className={submitCount ? (errors.whitelistedPublishers ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="whitelistedPublishers">Whitelisted Publishers</label>
                       <Select
                         classNames={{
                           control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
@@ -769,22 +768,20 @@ export const AdEditorComponent = (id?: string) => {
                           menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
                         }}
                         placeholder="Select an option"
-                        id="blacklistedWeekdays"
-                        options={weekdaysOptions}
-                        name="blacklistedWeekdays"
-                        value={
-                          weekdaysOptions?.filter((a) => currentBlacklistedWeekdays?.includes(Number(a.value))) ?? []
-                        }
-                        onChange={(value) => {
-                          setCurrentBlacklistedWeekdays(value?.map((v) => Number(v.value)) ?? []);
-                          values.blacklistedWeekdays = value?.map((v) => Number(v.value)) ?? [];
-                        }}
+                        id="whitelistedPublishers"
+                        options={publisherOptions}
+                        name="whitelistedPublishers"
                         isMulti
+                        value={publisherOptions?.filter((a) => currentWhitelistedPublishers?.includes(a.value)) ?? []}
+                        onChange={(value) => {
+                          setCurrentWhitelistedPublishers(value.map((v) => v.value));
+                          values.whitelistedPublishers = value.map((v) => v.value) ?? [];
+                        }}
                         isSearchable={true}
                       />
                       {submitCount ? (
-                        errors.blacklistedWeekdays ? (
-                          <div className="mt-1 text-danger">{errors.blacklistedWeekdays.toString()}</div>
+                        errors.whitelistedPublishers ? (
+                          <div className="mt-1 text-danger">{errors.whitelistedPublishers.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )

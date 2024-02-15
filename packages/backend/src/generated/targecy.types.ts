@@ -27,7 +27,6 @@ export type Ad = {
   attribution: Scalars['Int8'];
   audiences: Array<Audience>;
   blacklistedPublishers: Array<Publisher>;
-  blacklistedWeekdays: Array<Scalars['BigInt']>;
   consumptions: Scalars['BigInt'];
   consumptionsPerDay: Array<ConsumptionsPerDay>;
   currentBudget: Scalars['BigInt'];
@@ -39,6 +38,7 @@ export type Ad = {
   metadataURI: Scalars['String'];
   startingTimestamp: Scalars['BigInt'];
   target: Scalars['String'];
+  whitelistedPublishers: Array<Publisher>;
 };
 
 
@@ -66,6 +66,15 @@ export type AdConsumptionsPerDayArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ConsumptionsPerDay_Filter>;
+};
+
+
+export type AdWhitelistedPublishersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Publisher_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Publisher_Filter>;
 };
 
 export type Ad_Filter = {
@@ -139,12 +148,6 @@ export type Ad_Filter = {
   blacklistedPublishers_not?: InputMaybe<Array<Scalars['String']>>;
   blacklistedPublishers_not_contains?: InputMaybe<Array<Scalars['String']>>;
   blacklistedPublishers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
-  blacklistedWeekdays?: InputMaybe<Array<Scalars['BigInt']>>;
-  blacklistedWeekdays_contains?: InputMaybe<Array<Scalars['BigInt']>>;
-  blacklistedWeekdays_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
-  blacklistedWeekdays_not?: InputMaybe<Array<Scalars['BigInt']>>;
-  blacklistedWeekdays_not_contains?: InputMaybe<Array<Scalars['BigInt']>>;
-  blacklistedWeekdays_not_contains_nocase?: InputMaybe<Array<Scalars['BigInt']>>;
   consumptions?: InputMaybe<Scalars['BigInt']>;
   consumptionsPerDay?: InputMaybe<Array<Scalars['String']>>;
   consumptionsPerDay_?: InputMaybe<ConsumptionsPerDay_Filter>;
@@ -257,6 +260,13 @@ export type Ad_Filter = {
   target_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   target_starts_with?: InputMaybe<Scalars['String']>;
   target_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  whitelistedPublishers?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_?: InputMaybe<Publisher_Filter>;
+  whitelistedPublishers_contains?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_not?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Ad_OrderBy =
@@ -271,7 +281,6 @@ export type Ad_OrderBy =
   | 'attribution'
   | 'audiences'
   | 'blacklistedPublishers'
-  | 'blacklistedWeekdays'
   | 'consumptions'
   | 'consumptionsPerDay'
   | 'currentBudget'
@@ -282,7 +291,8 @@ export type Ad_OrderBy =
   | 'maxPricePerConsumption'
   | 'metadataURI'
   | 'startingTimestamp'
-  | 'target';
+  | 'target'
+  | 'whitelistedPublishers';
 
 export type Admin = {
   __typename?: 'Admin';
@@ -639,6 +649,7 @@ export type Publisher = {
   cpi: Scalars['BigInt'];
   id: Scalars['String'];
   impressions: Scalars['BigInt'];
+  metadataURI: Scalars['String'];
   usersRewardsPercentage: Scalars['BigInt'];
 };
 
@@ -726,6 +737,26 @@ export type Publisher_Filter = {
   impressions_lte?: InputMaybe<Scalars['BigInt']>;
   impressions_not?: InputMaybe<Scalars['BigInt']>;
   impressions_not_in?: InputMaybe<Array<Scalars['BigInt']>>;
+  metadataURI?: InputMaybe<Scalars['String']>;
+  metadataURI_contains?: InputMaybe<Scalars['String']>;
+  metadataURI_contains_nocase?: InputMaybe<Scalars['String']>;
+  metadataURI_ends_with?: InputMaybe<Scalars['String']>;
+  metadataURI_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  metadataURI_gt?: InputMaybe<Scalars['String']>;
+  metadataURI_gte?: InputMaybe<Scalars['String']>;
+  metadataURI_in?: InputMaybe<Array<Scalars['String']>>;
+  metadataURI_lt?: InputMaybe<Scalars['String']>;
+  metadataURI_lte?: InputMaybe<Scalars['String']>;
+  metadataURI_not?: InputMaybe<Scalars['String']>;
+  metadataURI_not_contains?: InputMaybe<Scalars['String']>;
+  metadataURI_not_contains_nocase?: InputMaybe<Scalars['String']>;
+  metadataURI_not_ends_with?: InputMaybe<Scalars['String']>;
+  metadataURI_not_ends_with_nocase?: InputMaybe<Scalars['String']>;
+  metadataURI_not_in?: InputMaybe<Array<Scalars['String']>>;
+  metadataURI_not_starts_with?: InputMaybe<Scalars['String']>;
+  metadataURI_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  metadataURI_starts_with?: InputMaybe<Scalars['String']>;
+  metadataURI_starts_with_nocase?: InputMaybe<Scalars['String']>;
   or?: InputMaybe<Array<InputMaybe<Publisher_Filter>>>;
   usersRewardsPercentage?: InputMaybe<Scalars['BigInt']>;
   usersRewardsPercentage_gt?: InputMaybe<Scalars['BigInt']>;
@@ -747,6 +778,7 @@ export type Publisher_OrderBy =
   | 'cpi'
   | 'id'
   | 'impressions'
+  | 'metadataURI'
   | 'usersRewardsPercentage';
 
 export type Query = {

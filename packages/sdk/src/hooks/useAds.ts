@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { useAsync } from 'react-use';
 import { getValidCredentialByProofRequest, useCredentials } from '..';
 import { TargecyContextType } from '../components/misc/Context.types';
-import { Ad, useGetAllAdsQuery } from '../generated/graphql.types';
+import { Ad, useGetAdsByWhitelistedAdvertisersQuery } from '../generated/graphql.types';
 import { SolidityTypes } from '../constants/chain';
+import { Address } from 'viem';
 
 export type AdMetadata = {
   title?: string;
@@ -19,8 +20,10 @@ export type AdWithMetadata = {
   metadata: AdMetadata;
 };
 
-export const useAds = (context: TargecyContextType) => {
-  const { data, isLoading } = useGetAllAdsQuery({});
+export const useAds = (context: TargecyContextType, params?: { whitelistedAdvertisers: Address[] }) => {
+  const { data, isLoading } = useGetAdsByWhitelistedAdvertisersQuery({
+    whitelistedAdvertisers: params?.whitelistedAdvertisers ?? [],
+  });
   const credentials = useCredentials(context);
 
   const validAds =
@@ -32,9 +35,7 @@ export const useAds = (context: TargecyContextType) => {
         )
     ) || [];
 
-  const [completeAds, setCompleteAds] = useState<
-    { ad: Ad; metadata: AdMetadata }[]
-  >([]);
+  const [completeAds, setCompleteAds] = useState<{ ad: Ad; metadata: AdMetadata }[]>([]);
 
   useAsync(async () => {
     if (validAds) {

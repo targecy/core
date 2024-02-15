@@ -9,7 +9,6 @@ import { useContractWrite } from 'wagmi';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { useGetAdQuery } from '~/generated/graphql.types';
-import { weekdayToNumber } from '~/utils';
 
 const AdDetailPage = () => {
   const router = useRouter();
@@ -202,13 +201,14 @@ const AdDetailPage = () => {
                   </label>
                 </div>
               </div>
+
               <div className="space-between flex w-full flex-row gap-5">
                 <div className="flex-col">
-                  <label className="mb-3 text-xl text-secondary"> Blacklisted Weekdays </label>
+                  <label className="mb-3 text-xl text-secondary"> Whitelisted Publishers </label>
                 </div>
                 <div className="flex-col">
                   <label className="mb-3 text-xl text-black dark:text-white">
-                    {ad?.blacklistedWeekdays?.sort().map(weekdayToNumber).toString() || '-'}
+                    {ad?.whitelistedPublishers?.toString() || '-'}
                   </label>
                 </div>
               </div>

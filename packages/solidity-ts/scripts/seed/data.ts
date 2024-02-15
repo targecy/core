@@ -290,7 +290,7 @@ export const initializeData = async () => {
     endingTimestamp: number;
     audiencesIds: number[];
     blacklistedPublishers: string[];
-    blacklistedWeekdays: number[];
+    whitelistedPublishers: string[];
     budget: bigint;
     maxPricePerConsumption: bigint;
     maxConsumptionsPerDay: number;
@@ -310,7 +310,7 @@ export const initializeData = async () => {
       maxConsumptionsPerDay: 1000000,
       attribution: 0,
       blacklistedPublishers: [],
-      blacklistedWeekdays: [],
+      whitelistedPublishers: [],
     },
   ];
 

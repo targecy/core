@@ -19,8 +19,10 @@ echo "Subgraph: $subgraph"
 key=${2:-$TEST_SUBGRAPH_KEY}
 echo "Key: $key"
 
-version=${3:-1.2.0}
+version=${3:-1.3.1}
 echo "Version: $version"
+
+# @todo save version in file and read it from webapp and backend, both codegen and code
 
 yarn dlx @graphprotocol/graph-cli@0.62.0 deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml
 

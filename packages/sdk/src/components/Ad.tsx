@@ -19,6 +19,7 @@ type SharedAdProps = {
     paramsSchema?: Record<string, SolidityTypes>;
   };
   publisher: Address;
+  whitelistedAdvertisers?: Address[];
   env?: environment;
 };
 

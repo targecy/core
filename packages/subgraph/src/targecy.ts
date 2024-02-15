@@ -257,7 +257,7 @@ export function handleAdEdited(event: AdEditedEvent): void {
   entity.consumptions = event.params.ad.consumptions;
   entity.audiences = event.params.ad.audienceIds.map<string>((id) => id.toString());
   entity.blacklistedPublishers = event.params.ad.blacklistedPublishers.map<string>((id) => id.toString());
-  entity.blacklistedWeekdays = event.params.ad.blacklistedWeekdays.map<BigInt>((id) => BigInt.fromI32(id));
+  entity.whitelistedPublishers = event.params.ad.whitelistedPublishers.map<string>((id) => id.toString());
   entity.maxConsumptionsPerDay = event.params.ad.maxConsumptionsPerDay;
   entity.maxPricePerConsumption = event.params.ad.maxPricePerConsumption;
   entity.attribution = event.params.ad.attribution;
@@ -318,6 +318,7 @@ export function handlePublisherWhitelisted(event: PublisherWhitelisted): void {
   entity.cpc = event.params.publisher.cpc;
   entity.cpa = event.params.publisher.cpa;
   entity.usersRewardsPercentage = event.params.publisher.userRewardsPercentage;
+  entity.metadataURI = event.params.publisher.metadataURI;
 
   entity.adsQuantity = BigInt.fromI32(0);
   entity.impressions = BigInt.fromI32(0);

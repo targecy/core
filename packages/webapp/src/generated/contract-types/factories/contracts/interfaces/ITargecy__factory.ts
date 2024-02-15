@@ -330,13 +330,13 @@ const _abi = [
           },
           {
             internalType: "address[]",
-            name: "blacklistedPublishers",
+            name: "whitelistedPublishers",
             type: "address[]",
           },
           {
-            internalType: "uint8[]",
-            name: "blacklistedWeekdays",
-            type: "uint8[]",
+            internalType: "address[]",
+            name: "blacklistedPublishers",
+            type: "address[]",
           },
           {
             internalType: "uint256",
@@ -456,6 +456,11 @@ const _abi = [
     inputs: [
       {
         components: [
+          {
+            internalType: "string",
+            name: "metadataURI",
+            type: "string",
+          },
           {
             internalType: "uint256",
             name: "userRewardsPercentage",
