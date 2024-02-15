@@ -38,6 +38,7 @@ export type Ad = {
   metadataURI: Scalars['String'];
   startingTimestamp: Scalars['BigInt'];
   target: Scalars['String'];
+  whitelistedPublishers: Array<Publisher>;
 };
 
 
@@ -65,6 +66,15 @@ export type AdConsumptionsPerDayArgs = {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars['Int']>;
   where?: InputMaybe<ConsumptionsPerDay_Filter>;
+};
+
+
+export type AdWhitelistedPublishersArgs = {
+  first?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<Publisher_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<Publisher_Filter>;
 };
 
 export type Ad_Filter = {
@@ -250,6 +260,13 @@ export type Ad_Filter = {
   target_not_starts_with_nocase?: InputMaybe<Scalars['String']>;
   target_starts_with?: InputMaybe<Scalars['String']>;
   target_starts_with_nocase?: InputMaybe<Scalars['String']>;
+  whitelistedPublishers?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_?: InputMaybe<Publisher_Filter>;
+  whitelistedPublishers_contains?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_not?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_not_contains?: InputMaybe<Array<Scalars['String']>>;
+  whitelistedPublishers_not_contains_nocase?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Ad_OrderBy =
@@ -274,7 +291,8 @@ export type Ad_OrderBy =
   | 'maxPricePerConsumption'
   | 'metadataURI'
   | 'startingTimestamp'
-  | 'target';
+  | 'target'
+  | 'whitelistedPublishers';
 
 export type Admin = {
   __typename?: 'Admin';

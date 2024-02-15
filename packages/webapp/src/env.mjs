@@ -7,12 +7,12 @@ import { hostname } from './config/hostname.mjs';
 
 const versionByEnv = (env) => {
   switch (env) {
-    case 'production':
     case 'preview':
       return '1.3.1';
     case 'development':
-    default:
       return 'targecy';
+    default:
+      return undefined;
   }
 };
 

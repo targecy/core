@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
 import { z } from 'zod';
+// @todo : set as in frontend
 
 const envVariables = z.object({
   NODE_ENV: z.union([z.literal('development'), z.literal('production')]),
@@ -12,7 +13,8 @@ const envVariables = z.object({
   BITQUERY_URL: z.string().url(),
   BITQUERY_API_KEY: z.string().min(10),
   DATABASE_URL: z.string(),
-  SUBGRAPH_URL: z.string().url(),
+  TARGECY_SUBGRAPH_URL: z.string().url(),
+  TARGECY_SUBGRAPH_VERSION: z.string(),
 });
 
 declare global {
