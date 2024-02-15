@@ -10,3 +10,18 @@ export const fetchMetadata = async (metadataURI: string) => {
     ...(json.image ? { image: json.image } : {}),
   };
 };
+
+export type PublisherMetadata = {
+  name: string;
+  url: string;
+};
+
+export const fetchPublisherMetadata = async (metadataURI: string): Promise<PublisherMetadata> => {
+  const newMetadata = await fetch(getIPFSStorageUrl(metadataURI));
+  const json = await newMetadata.json();
+
+  return {
+    name: json.name,
+    url: json.url,
+  };
+};

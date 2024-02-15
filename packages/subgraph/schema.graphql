@@ -12,7 +12,7 @@ type Ad @entity {
   endingTimestamp: BigInt! # uint256
   audiences: [Audience!]! # uint256[]
   blacklistedPublishers: [Publisher!]! # address[]
-  blacklistedWeekdays: [BigInt!]! # uint256[]
+  whitelistedPublishers: [Publisher!]! # address[]
   # Budget
   maxBudget: BigInt! # uint256
   currentBudget: BigInt! # uint256
@@ -71,6 +71,7 @@ type Publisher @entity {
   cpc: BigInt! # uint256
   cpa: BigInt! # uint256
   usersRewardsPercentage: BigInt! # uint256
+  metadataURI: String! # string
   # Statistics
   adsQuantity: BigInt! # uint256
   impressions: BigInt! # uint256

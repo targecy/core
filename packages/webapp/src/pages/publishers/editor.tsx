@@ -2,6 +2,7 @@ import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { useAsync } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 import { z } from 'zod';
@@ -12,6 +13,7 @@ import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { useGetPublisherQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
+import { PublisherMetadata, fetchPublisherMetadata } from '~/utils';
 
 export const PublisherEditorComponent = (id?: string) => {
   const editingMode = !!id;
@@ -34,15 +36,43 @@ export const PublisherEditorComponent = (id?: string) => {
       return BigInt(parseFloat(percentage) * 100);
     };
 
+    const publisherMetadata: PublisherMetadata = {
+      name: data.name,
+      url: data.url,
+    };
+
+    const metadataUploadResponse = await fetch('/api/metadata/upload', {
+      method: 'POST',
+      body: JSON.stringify({ json: publisherData }),
+    });
+
+    if (!metadataUploadResponse.ok) {
+      await Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'error',
+        title: 'Error uploading metadata ' + metadataUploadResponse.statusText,
+        padding: '10px 20px',
+      });
+      setProcessingPublisher(false);
+      return;
+    }
+
+    const metadataURI = (await metadataUploadResponse.json()).uri;
+
     try {
       const hash = await setPublisherAsync({
         args: [
           {
             vault: data.address as `0x${string}`,
+            metadataURI,
             userRewardsPercentage: percentageStringTo10kPrecision(data.usersRewardsPercentage),
-            cpi: data.cpi,
-            cpc: data.cpc,
-            cpa: data.cpa,
+            cpi: BigInt(data.cpi),
+            cpc: BigInt(data.cpc),
+            cpa: BigInt(data.cpa),
             active: true,
           },
         ],
@@ -76,26 +106,38 @@ export const PublisherEditorComponent = (id?: string) => {
     }
   };
 
-  const percentageWithDecimalsRegex = new RegExp('^d{1,2}(.d{1,2})?$|100');
+  // eslint-disable-next-line prettier/prettier
+  const percentageWithDecimalsRegex = new RegExp('^[0-9]{1,2}(\\.[0-9]{1,2})?$|^100$');
   const schema = z.object({
-    address: z.string().min(1).max(50).describe('Please fill the address'),
+    name: z.string().min(1).max(50).describe('Please fill the name'),
+    url: z.string().url().min(1).max(50).describe('Please fill the url'),
+    address: z
+      .string()
+      .min(1)
+      .max(50)
+      .describe('Please fill the address')
+      .regex(/^0x[a-fA-F0-9]{40}$/),
     usersRewardsPercentage: z
       .string()
       .regex(percentageWithDecimalsRegex)
       .describe('Please fill the usersRewardsPercentage'),
-    cpi: z.bigint().describe('Please fill the value'),
-    cpc: z.bigint().describe('Please fill the value'),
-    cpa: z.bigint().describe('Please fill the value'),
+    cpi: z.number().describe('Please fill the value'),
+    cpc: z.number().describe('Please fill the value'),
+    cpa: z.number().describe('Please fill the value'),
   });
 
   const { data: publisherData } = useGetPublisherQuery({ id: id ?? '' });
   const publisher = publisherData?.publisher;
+  const [publisherMetadata, setPublisherMetadata] = useState<PublisherMetadata | undefined>(undefined);
+
+  useAsync(async () => {
+    if (publisher?.metadataURI) {
+      const metadata = await fetchPublisherMetadata(publisher.metadataURI);
+      setPublisherMetadata(metadata);
+    }
+  }, [publisher?.metadataURI]);
 
   type FormValues = z.infer<typeof schema>;
-
-  const [currentParams, setCurrentParams] = useState<
-    { operator?: number; value?: any; slotIndex?: number; schema?: string } | undefined
-  >(undefined);
 
   return (
     <div>
@@ -121,30 +163,26 @@ export const PublisherEditorComponent = (id?: string) => {
             <Formik
               enableReinitialize={true}
               initialValues={{
+                name: publisherMetadata?.name,
+                url: publisherMetadata?.url,
                 address: publisher?.id,
                 cpi: Number(publisher?.cpi),
                 cpc: Number(publisher?.cpc),
                 cpa: Number(publisher?.cpa),
-                usersRewardsPercentage: Number(publisher?.usersRewardsPercentage),
+                usersRewardsPercentage: Number(publisher?.usersRewardsPercentage || 10),
               }}
               validationSchema={toFormikValidationSchema(schema)}
               onSubmit={() => {}}>
               {({ errors, submitCount, touched, values, handleChange }) => (
                 <Form className="col-span-2 space-y-5 text-secondary">
-                  <div className="grid-cols-1 gap-5 sm:block md:block lg:grid">
-                    <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="address">Address </label>
-                      <Field
-                        name="address"
-                        type="text"
-                        id="address"
-                        placeholder="Enter Address"
-                        className="form-input"
-                      />
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className={submitCount ? (errors.name ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="name">Name </label>
+                      <Field name="name" type="text" id="name" placeholder="Enter name" className="form-input" />
 
                       {submitCount ? (
-                        errors.address ? (
-                          <div className="mt-1 text-danger">{errors.address.toString()}</div>
+                        errors.name ? (
+                          <div className="mt-1 text-danger">{errors.name.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
@@ -153,25 +191,65 @@ export const PublisherEditorComponent = (id?: string) => {
                       )}
                     </div>
 
-                    <div className={submitCount ? (errors.usersRewardsPercentage ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
-                      <Field
-                        name="usersRewardsPercentage"
-                        type="text"
-                        id="usersRewardsPercentage"
-                        placeholder="Enter users rewards percentage"
-                        className="form-input"
-                      />
+                    <div className={submitCount ? (errors.url ? 'has-error' : 'has-success') : ''}>
+                      <label htmlFor="url">URL </label>
+                      <Field name="url" type="text" id="url" placeholder="Enter URL" className="form-input" />
 
                       {submitCount ? (
-                        errors.usersRewardsPercentage ? (
-                          <div className="mt-1 text-danger">{errors.usersRewardsPercentage}</div>
+                        errors.url ? (
+                          <div className="mt-1 text-danger">{errors.url.toString()}</div>
                         ) : (
                           <div className="mt-1 text-success"></div>
                         )
                       ) : (
                         ''
                       )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className="grid-cols-1 gap-5 sm:block md:block lg:grid">
+                      <div className={submitCount ? (errors.address ? 'has-error' : 'has-success') : ''}>
+                        <label htmlFor="address">address </label>
+                        <Field
+                          name="address"
+                          type="text"
+                          id="address"
+                          placeholder="Enter address"
+                          className="form-input"
+                        />
+
+                        {submitCount ? (
+                          errors.address ? (
+                            <div className="mt-1 text-danger">{errors.address.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
+                        ) : (
+                          ''
+                        )}
+                      </div>
+
+                      <div className={submitCount ? (errors.usersRewardsPercentage ? 'has-error' : 'has-success') : ''}>
+                        <label htmlFor="usersRewardsPercentage">Users Rewards Percentage </label>
+                        <Field
+                          name="usersRewardsPercentage"
+                          type="text"
+                          id="usersRewardsPercentage"
+                          placeholder="Enter usersRewardsPercentage"
+                          className="form-input"
+                        />
+
+                        {submitCount ? (
+                          errors.usersRewardsPercentage ? (
+                            <div className="mt-1 text-danger">{errors.usersRewardsPercentage.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
+                        ) : (
+                          ''
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -184,7 +262,6 @@ export const PublisherEditorComponent = (id?: string) => {
                         id="cpi"
                         placeholder="Enter cpi"
                         onChange={(e: any) => {
-                          setCurrentParams((prevState) => ({ ...prevState, cpi: e.target.value }));
                           handleChange(e);
                         }}
                         className="form-input"
@@ -207,7 +284,6 @@ export const PublisherEditorComponent = (id?: string) => {
                         id="cpc"
                         placeholder="Enter cpc"
                         onChange={(e: any) => {
-                          setCurrentParams((prevState) => ({ ...prevState, cpc: e.target.value }));
                           handleChange(e);
                         }}
                         className="form-input"
@@ -230,7 +306,6 @@ export const PublisherEditorComponent = (id?: string) => {
                         id="cpa"
                         placeholder="Enter cpa"
                         onChange={(e: any) => {
-                          setCurrentParams((prevState) => ({ ...prevState, cpa: e.target.value }));
                           handleChange(e);
                         }}
                         className="form-input"

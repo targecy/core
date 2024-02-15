@@ -1,10 +1,20 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
 import { join } from 'path';
 
 import { CodegenConfig } from '@graphql-codegen/cli';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config({ path: join(__dirname, '.env') });
+
+const versionByEnv = (env: string | undefined) => {
+  switch (env) {
+    case 'preview':
+      return '1.3.1';
+    case 'development':
+      return 'targecy';
+    default:
+      return undefined;
+  }
+};
 
 const config: CodegenConfig = {
   overwrite: true,
@@ -28,7 +38,9 @@ const config: CodegenConfig = {
     },
     [`src/generated/targecy.types.ts`]: {
       schema: {
-        [`${process.env.TARGECY_SUBGRAPH_URL}/${process.env.TARGECY_SUBGRAPH_VERSION}`]: {
+        [`${process.env.TARGECY_SUBGRAPH_URL}/${
+          versionByEnv(process.env.TARGECY_SUBGRAPH_URL) ?? process.env.TARGECY_SUBGRAPH_VERSION
+        }`]: {
           headers: {
             'content-type': 'application/json',
           },

@@ -4,7 +4,19 @@ exports.getAllSegments = exports.getSegmentsByIds = exports.getSegmentById = exp
 const server_1 = require("@trpc/server");
 const graphql_request_1 = require("graphql-request");
 const targecy_types_1 = require("../../../generated/targecy.types");
-const url = process.env.SUBGRAPH_URL || '';
+const versionByEnv = (env) => {
+    switch (env) {
+        case 'staging':
+        case 'test':
+        case 'preview':
+            return '1.3.1';
+        case 'development':
+            return 'targecy';
+        default:
+            return 'latest';
+    }
+};
+const url = `${process.env.TARGECY_SUBGRAPH_URL}/${versionByEnv(process.env.TARGECY_SUBGRAPH_URL) ?? process.env.TARGECY_SUBGRAPH_VERSION}`;
 const targecyApi = (0, targecy_types_1.getSdk)(new graphql_request_1.GraphQLClient(url, {}));
 async function getSegmentForAudience(audienceId) {
     const response = await targecyApi.GetSegmentForAudience({ id: audienceId });

@@ -37,6 +37,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "CouldNotMakeTransfer",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "ImpressionOrClickOnlyAvailableThroughRelayer",
     type: "error",
   },
@@ -107,7 +112,17 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "PublisherNotWhitelistedInAd",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "PublisherPercentageTooBig",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "SenderIsNotRelayer",
     type: "error",
   },
   {
@@ -133,7 +148,7 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212207462d26a1635812b7162250cb374c80109909ec7f0de9512ea6df3c484f1357964736f6c634300080a0033";
+  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea26469706673582212204293b1b230f7e5eb831f4584602a8ba6c222357cd218e4e55142e791b9cbc41864736f6c634300080a0033";
 
 type ErrorsConstructorParams =
   | [signer?: Signer]

@@ -4,6 +4,7 @@ export const Publisher = gql`
   fragment PublisherFragment on Publisher {
     id
     active
+    metadataURI
     cpi
     cpc
     cpa

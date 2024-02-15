@@ -73,13 +73,13 @@ const _abi = [
           },
           {
             internalType: "address[]",
-            name: "blacklistedPublishers",
+            name: "whitelistedPublishers",
             type: "address[]",
           },
           {
-            internalType: "uint8[]",
-            name: "blacklistedWeekdays",
-            type: "uint8[]",
+            internalType: "address[]",
+            name: "blacklistedPublishers",
+            type: "address[]",
           },
           {
             internalType: "uint256",
@@ -114,6 +114,11 @@ const _abi = [
       },
       {
         components: [
+          {
+            internalType: "string",
+            name: "metadataURI",
+            type: "string",
+          },
           {
             internalType: "uint256",
             name: "userRewardsPercentage",
@@ -219,13 +224,13 @@ const _abi = [
           },
           {
             internalType: "address[]",
-            name: "blacklistedPublishers",
+            name: "whitelistedPublishers",
             type: "address[]",
           },
           {
-            internalType: "uint8[]",
-            name: "blacklistedWeekdays",
-            type: "uint8[]",
+            internalType: "address[]",
+            name: "blacklistedPublishers",
+            type: "address[]",
           },
           {
             internalType: "uint256",
@@ -323,13 +328,13 @@ const _abi = [
           },
           {
             internalType: "address[]",
-            name: "blacklistedPublishers",
+            name: "whitelistedPublishers",
             type: "address[]",
           },
           {
-            internalType: "uint8[]",
-            name: "blacklistedWeekdays",
-            type: "uint8[]",
+            internalType: "address[]",
+            name: "blacklistedPublishers",
+            type: "address[]",
           },
           {
             internalType: "uint256",
@@ -556,6 +561,11 @@ const _abi = [
       },
       {
         components: [
+          {
+            internalType: "string",
+            name: "metadataURI",
+            type: "string",
+          },
           {
             internalType: "uint256",
             name: "userRewardsPercentage",
@@ -798,7 +808,7 @@ const _abi = [
 ] as const;
 
 const _bytecode =
-  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220b40dc466bfe6cdb103edad5d68c7ed49051480423acb14480f17c9cacf30cdd864736f6c634300080a0033";
+  "0x60566037600b82828239805160001a607314602a57634e487b7160e01b600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220cd795a9bbcae5626f3d3522e052d3b76e565dbcba62be9a167e440e99a06c24564736f6c634300080a0033";
 
 type TargecyEventsConstructorParams =
   | [signer?: Signer]

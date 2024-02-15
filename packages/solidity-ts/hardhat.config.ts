@@ -102,7 +102,7 @@ export const config: HardhatUserConfig = {
           evmVersion: 'istanbul',
           optimizer: {
             enabled: true,
-            runs: 250,
+            runs: 200,
           },
           outputSelection: {
             '*': {
@@ -147,6 +147,11 @@ export const config: HardhatUserConfig = {
       files: ['./contracts', './tests'],
       clearOnStart: true,
     },
+  },
+  contractSizer: {
+    runOnCompile: true,
+    strict: false,
+    only: ['Targecy$'],
   },
 };
 export default config;

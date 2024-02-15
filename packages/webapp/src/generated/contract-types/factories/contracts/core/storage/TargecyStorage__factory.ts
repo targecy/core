@@ -280,6 +280,11 @@ const _abi = [
     name: "publishers",
     outputs: [
       {
+        internalType: "string",
+        name: "metadataURI",
+        type: "string",
+      },
+      {
         internalType: "uint256",
         name: "userRewardsPercentage",
         type: "uint256",

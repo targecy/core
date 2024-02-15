@@ -288,7 +288,8 @@ export interface TargecyStorage extends BaseContract {
   publishers: TypedContractMethod<
     [arg0: AddressLike],
     [
-      [bigint, string, boolean, bigint, bigint, bigint] & {
+      [string, bigint, string, boolean, bigint, bigint, bigint] & {
+        metadataURI: string;
         userRewardsPercentage: bigint;
         vault: string;
         active: boolean;
@@ -417,7 +418,8 @@ export interface TargecyStorage extends BaseContract {
   ): TypedContractMethod<
     [arg0: AddressLike],
     [
-      [bigint, string, boolean, bigint, bigint, bigint] & {
+      [string, bigint, string, boolean, bigint, bigint, bigint] & {
+        metadataURI: string;
         userRewardsPercentage: bigint;
         vault: string;
         active: boolean;
