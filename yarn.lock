@@ -2482,6 +2482,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@extractus/feed-extractor@npm:^7.0.9":
+  version: 7.0.9
+  resolution: "@extractus/feed-extractor@npm:7.0.9"
+  dependencies:
+    bellajs: "npm:^11.1.2"
+    cross-fetch: "npm:^4.0.0"
+    fast-xml-parser: "npm:^4.3.3"
+    html-entities: "npm:^2.4.0"
+  checksum: 20c3a50e64173433f914b5b355708e4ad5df7cda248141809b9d58af87cfe7a8a8e12e5015d21fcbcff4e96b2b5fd29b7a28b1ebbf08bfd0db51141d096db7c0
+  languageName: node
+  linkType: hard
+
 "@fastify/busboy@npm:^2.0.0":
   version: 2.1.0
   resolution: "@fastify/busboy@npm:2.1.0"
@@ -7672,6 +7684,7 @@ __metadata:
     "@ethersproject/signing-key": "npm:^5.7.0"
     "@ethersproject/solidity": "npm:^5.7.0"
     "@ethersproject/units": "npm:^5.7.0"
+    "@extractus/feed-extractor": "npm:^7.0.9"
     "@fullcalendar/core": "npm:^6.1.4"
     "@fullcalendar/daygrid": "npm:^6.1.4"
     "@fullcalendar/interaction": "npm:^6.1.1"
@@ -7817,6 +7830,7 @@ __metadata:
     request: "npm:^2.88.2"
     rfc4648: "npm:^1.5.3"
     rollup-plugin-polyfill-node: "npm:^0.10.2"
+    rss-to-json: "npm:^2.1.1"
     shx: "npm:^0.3.4"
     siwe: "npm:^2.1.4"
     snarkjs: "npm:^0.7.2"
@@ -11604,6 +11618,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.2.6":
+  version: 1.6.7
+  resolution: "axios@npm:1.6.7"
+  dependencies:
+    follow-redirects: "npm:^1.15.4"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: a1932b089ece759cd261f175d9ebf4d41c8994cf0c0767cda86055c7a19bcfdade8ae3464bf4cec4c8b142f4a657dc664fb77a41855e8376cf38b86d7a86518f
+  languageName: node
+  linkType: hard
+
 "axios@npm:^1.4.0, axios@npm:^1.5.1":
   version: 1.6.2
   resolution: "axios@npm:1.6.2"
@@ -11817,6 +11842,13 @@ __metadata:
   version: 2.2.3
   resolution: "before-after-hook@npm:2.2.3"
   checksum: e676f769dbc4abcf4b3317db2fd2badb4a92c0710e0a7da12cf14b59c3482d4febf835ad7de7874499060fd4e13adf0191628e504728b3c5bb4ec7a878c09940
+  languageName: node
+  linkType: hard
+
+"bellajs@npm:^11.1.2":
+  version: 11.1.2
+  resolution: "bellajs@npm:11.1.2"
+  checksum: d9411350b9b9fea0ee22af974d7fcbae8a7b37071264d9db8f1472143767abd20258b7826499f739aa59a0cbbceaf3edf15972da9dfc6a6b070c6bea928a9b54
   languageName: node
   linkType: hard
 
@@ -14273,7 +14305,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:4.0.0":
+"cross-fetch@npm:4.0.0, cross-fetch@npm:^4.0.0":
   version: 4.0.0
   resolution: "cross-fetch@npm:4.0.0"
   dependencies:
@@ -18094,6 +18126,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-xml-parser@npm:^4.0.15, fast-xml-parser@npm:^4.3.3":
+  version: 4.3.4
+  resolution: "fast-xml-parser@npm:4.3.4"
+  dependencies:
+    strnum: "npm:^1.0.5"
+  bin:
+    fxparser: src/cli/cli.js
+  checksum: ef859101980cdd02b111fce09e25949a80e373654a6c424091355930f0d364abec144d8bb722d250a0c070416566518e621e198204a6b976db68f20c16d9300b
+  languageName: node
+  linkType: hard
+
 "fastest-levenshtein@npm:^1.0.16, fastest-levenshtein@npm:^1.0.7":
   version: 1.0.16
   resolution: "fastest-levenshtein@npm:1.0.16"
@@ -18495,6 +18538,16 @@ __metadata:
     debug:
       optional: true
   checksum: 60d98693f4976892f8c654b16ef6d1803887a951898857ab0cdc009570b1c06314ad499505b7a040ac5b98144939f8597766e5e6a6859c0945d157b473aa6f5f
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.15.4":
+  version: 1.15.5
+  resolution: "follow-redirects@npm:1.15.5"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: d467f13c1c6aa734599b8b369cd7a625b20081af358f6204ff515f6f4116eb440de9c4e0c49f10798eeb0df26c95dd05d5e0d9ddc5786ab1a8a8abefe92929b4
   languageName: node
   linkType: hard
 
@@ -20248,6 +20301,13 @@ __metadata:
   dependencies:
     lru-cache: "npm:^10.0.1"
   checksum: 5f740ecf3c70838e27446ff433a9a9a583de8747f7b661390b373ad12ca47edb937136e79999a4f953d0953079025a11df173f1fd9f7d52b0277b2fb9433e1c7
+  languageName: node
+  linkType: hard
+
+"html-entities@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "html-entities@npm:2.4.0"
+  checksum: 646f2f19214bad751e060ceef4df98520654a1d0cd631b55d45504df2f0aaf8a14d8c0a5a4f92b353be298774d856157ac2d04a031d78889c9011892078ca157
   languageName: node
   linkType: hard
 
@@ -30750,6 +30810,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rss-to-json@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "rss-to-json@npm:2.1.1"
+  dependencies:
+    axios: "npm:^1.2.6"
+    fast-xml-parser: "npm:^4.0.15"
+  checksum: e5b376f6c23c35e260acea6e9aa6110301458dedf89269c19fcc3bd938380874be569db2f59642c4898832e342e036577fdeffa01c7688e28b3c1f7d57edefb0
+  languageName: node
+  linkType: hard
+
 "rtl-css-js@npm:^1.16.1":
   version: 1.16.1
   resolution: "rtl-css-js@npm:1.16.1"
@@ -32510,6 +32580,13 @@ __metadata:
   version: 1.0.1
   resolution: "strip-url-auth@npm:1.0.1"
   checksum: c7f529d2c027ebdbe9a521cd2e6b4dbae9d5431fe6f6ca6fc62683b7b4c17bb543dc2abe5c58cd5f8933917c8b0ae896b2f215bc2e5410dfbfa1a81933b3ea6a
+  languageName: node
+  linkType: hard
+
+"strnum@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "strnum@npm:1.0.5"
+  checksum: d3117975db8372d4d7b2c07601ed2f65bf21cc48d741f37a8617b76370d228f2ec26336e53791ebc3638264d23ca54e6c241f57f8c69bd4941c63c79440525ca
   languageName: node
   linkType: hard
 
