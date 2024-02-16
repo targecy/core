@@ -5,8 +5,9 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
 import { HYDRATE } from 'next-redux-wrapper';
 
+import { Dlnews, TopProtocols, dlnewsSchema, topProtocolsSchema } from '../components/Discover/utils';
+
 import { env } from '~/env.mjs';
-import { Dlnews, TopProtocols, dlnewsSchema, topProtocolsSchema } from '~/pages/discover/utils';
 
 export const baseApiTagTypes = [] as const;
 export const baseApiReducerPath = 'baseApi' as const;
@@ -43,9 +44,14 @@ export const testEndpoint = (build: Build): any =>
   });
 
 export const newsApi = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://www.dlnews.com' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://corsproxy.io/?https://www.dlnews.com' }),
   reducerPath: 'newsApi',
   tagTypes: [], // Define your tag types here
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
   endpoints: (build) => ({
     getNews: build.query<Dlnews, object>({
       query: () => ({
@@ -66,6 +72,11 @@ export const defillamaApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://defillama-datasets.llama.fi' }),
   reducerPath: 'defillamaApi',
   tagTypes: [], // Define your tag types here
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
   endpoints: (build) => ({
     getProtocols: build.query<TopProtocols, object>({
       query: () => ({

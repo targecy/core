@@ -56,7 +56,6 @@ export const Budget = () => {
   const [processing, setProcessing] = useState(false);
   const handleSubmit = async (values: FormValues) => {
     setProcessing(true);
-    console.log(values);
 
     if (values.isDeposit) {
       try {
@@ -66,17 +65,14 @@ export const Budget = () => {
         });
         const approveReceipt = await publicClient.waitForTransactionReceipt({ hash: approveResponse.hash });
 
-        console.log(approveReceipt);
-
         // Deposit
         const fundResponse = await fundAdvertiserBudgetAsync({
           args: [values.address, values.value],
         });
         const fundReceipt = await publicClient.waitForTransactionReceipt({ hash: fundResponse.hash });
 
-        console.log(fundReceipt);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     } else {
       // Withdraw
@@ -84,7 +80,6 @@ export const Budget = () => {
         args: [values.value],
       });
       const withdrawReceipt = await publicClient.waitForTransactionReceipt({ hash: withdrawResponse.hash });
-      console.log(withdrawReceipt);
     }
 
     setProcessing(false);
@@ -192,7 +187,7 @@ export const Budget = () => {
                           if (parsed.success) {
                             handleSubmit(parsed.data).catch(console.error);
                           } else {
-                            console.log(parsed.error);
+                            console.error(parsed.error);
                           }
                         }
                       }}>

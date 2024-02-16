@@ -112,8 +112,6 @@ export const AdEditorComponent = (id?: string) => {
   const submitForm = async (data: FormValues) => {
     setProcessingAd(true);
 
-    console.log(data);
-
     const adMetadataFormData = new FormData();
 
     if (data.title) adMetadataFormData.append('title', data.title);
@@ -162,8 +160,6 @@ export const AdEditorComponent = (id?: string) => {
         maxConsumptionsPerDay: BigInt(data.maxConsumptionsPerDay ?? Number.MAX_SAFE_INTEGER),
         maxBudget: BigInt(data.maxBudget ?? Number.MAX_SAFE_INTEGER),
       };
-
-      console.log(newAdArgs);
 
       if (id) {
         // Edit Ad

@@ -21,7 +21,7 @@ export default function Beta() {
 
   useEffect(() => {
     if (sessionData?.data.isBetaUser) {
-      router.push(href?.toString() ?? '/').catch((e) => console.log(e));
+      router.push(href?.toString() ?? '/').catch((e) => console.error(e));
     }
   }, [router, href, sessionData]);
 

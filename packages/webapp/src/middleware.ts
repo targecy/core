@@ -19,8 +19,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  console.log(token);
-
   return NextResponse.next();
 }
 

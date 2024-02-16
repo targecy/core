@@ -3,7 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { DiscoverLoading } from '../loaders/DiscoverLoading';
 
-import { TopProtocols } from '~/pages/discover/utils';
+import { TopProtocols } from './utils';
+
 import { useGetProtocolsQuery } from '~/services/baseApi';
 
 const RecommendationsComponent = () => {
@@ -20,7 +21,7 @@ const RecommendationsComponent = () => {
   useEffect(() => {
     if (data?.protocols) {
       // Randomly filter protocols and maintain this subset
-      const subset = data.protocols.filter(() => Math.random() > 0.5).slice(0, 30);
+      const subset = data.protocols.filter(() => Math.random() > 0.5).slice(0, 50);
       setFilteredProtocols(subset);
     }
   }, [data]);
@@ -56,17 +57,24 @@ const RecommendationsComponent = () => {
         </h5>
         <div className="max-h-[700px] p-6 ">
           <div className="flex flex-auto flex-wrap justify-between gap-5 overflow-hidden pr-10 text-sm font-bold  sm:grid-cols-2">
-            {filteredProtocols.map((r) => (
+            {filteredProtocols.map((r: any) => (
               <div className="max-h-[60px] w-full" key={r.name}>
                 <Link
                   href={r.url}
                   target="_blank"
                   className={`w-full cursor-pointer  rounded-lg p-1 hover:text-primary focus:text-primary`}>
-                  <div className="m-1 flex">
-                    <img src={r.logo} alt={r.name} className="h-10 w-10" />
-                    <div className="ml-3">
-                      <p>{r.name}</p>
-                      <span className="text-gray-700">{r.category}</span>
+                  <div className="flex justify-between">
+                    <div className="m-1 flex">
+                      <img src={r.logo} alt={r.name} className="h-10 w-10" />
+                      <div className="ml-3">
+                        <p>{r.name}</p>
+                        <span className="text-gray-700">{r.category}</span>
+                      </div>
+                    </div>
+                    <div>
+                      {!!r.tvl && <p className="float-right text-gray-500">TVL: ${r.tvl.toLocaleString()}</p>}
+                      <br></br>
+                      {!!r.mcap && <p className="float-right text-gray-500">Market Cap: ${r.mcap.toLocaleString()}</p>}
                     </div>
                   </div>
                 </Link>

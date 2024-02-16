@@ -39,16 +39,15 @@ const NewsComponent = () => {
         <h5 className="w-ful sticky top-0 bg-inherit p-6 text-lg font-semibold text-black dark:text-white">News</h5>
         <div className="max-h-[700px] p-6 ">
           <div className="flex flex-auto flex-wrap justify-between gap-5 overflow-hidden pr-10 text-sm font-bold  sm:grid-cols-2">
-            {news.map((r) => (
+            {news.map((r: any) => (
               <div className="w-full" key={r.id}>
                 <Link
                   href={r.link}
                   target="_blank"
-                  className={`w-full cursor-pointer  rounded-lg p-1 hover:text-primary focus:text-primary`}>
+                  className={`block w-full  cursor-pointer rounded-lg p-1 hover:text-primary focus:text-primary`}>
                   {r.title}
                 </Link>
-                <br />
-                <span className="p-1 text-gray-700">{r.description}</span>
+                <span className="block p-1 pt-0 text-gray-700">{r.description}</span>
               </div>
             ))}
           </div>

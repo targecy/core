@@ -1,36 +1,17 @@
+import { range } from 'lodash';
+
 export const DiscoverLoading = () => {
   return (
-    <>
-      <div className="mb-8 grid grid-cols-2 gap-8">
-        <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
-          <div className="mb-5 flex justify-between dark:text-white-light">
-            <div className="skeleton h-32 w-full"></div>
-          </div>
-          <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
-            <div>
-              <div>
-                <div className="skeleton h-full w-full"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
-          <div className="mb-5 flex justify-between dark:text-white-light">
-            <div className="skeleton h-32 w-full"></div>
-          </div>
-          <div className="text-sm font-bold text-[#515365] sm:grid-cols-2">
-            <div>
-              <div className="skeleton h-full w-full"></div>
-            </div>
-          </div>
-        </div>
+    <div className="panel h-full w-full overflow-hidden">
+      <div className="mb-1 flex justify-between dark:text-white-light">
+        <div className="skeleton h-10 w-64"></div>
       </div>
-      <div className="panel">
-        {/* Header */}
-        <div className="mb-5 flex items-center justify-between">
-          <div className="skeleton h-32 w-full"></div>
+      <br></br>
+      {range(0, 8).map((i) => (
+        <div key={i} className="mb-3 flex justify-between dark:text-white-light">
+          <div className="skeleton h-10 w-full"></div>
         </div>
-      </div>
-    </>
+      ))}
+    </div>
   );
 };

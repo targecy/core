@@ -90,7 +90,7 @@ const SegmentDetailPage = () => {
                         title: 'Could not delete segment.',
                         padding: '10px 20px',
                       });
-                      console.log(error);
+                      console.error(error);
                     });
                 }}>
                 Delete
