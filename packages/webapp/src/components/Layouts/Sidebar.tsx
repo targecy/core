@@ -13,6 +13,7 @@ import {
   ShareAltOutlined,
   TwitterOutlined,
   UsergroupAddOutlined,
+  WalletOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -166,6 +167,16 @@ const Sidebar = () => {
                         <CompassOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Discover')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link href="/discover" className="group">
+                      <div className="flex items-center">
+                        <WalletOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Wallet Insights')}
                         </span>
                       </div>
                     </Link>

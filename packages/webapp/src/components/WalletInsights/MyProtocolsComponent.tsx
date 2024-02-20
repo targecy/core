@@ -10,9 +10,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useAsync } from 'react-use';
 import { z } from 'zod';
 
+import {
+  ProtocolProperties,
+  TokenProperties,
+  protocolPropertiesSchema,
+  tokenPropertiesSchema,
+} from '../Discover/utils';
 import { DiscoverLoading } from '../loaders/DiscoverLoading';
-
-import { ProtocolProperties, TokenProperties, protocolPropertiesSchema, tokenPropertiesSchema } from './utils';
 
 import { trimAddress } from '~/utils';
 

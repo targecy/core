@@ -1,4 +1,4 @@
-import MyProtocolsComponent from '~/components/Discover/MyProtocolsComponent';
+import BenefitsComponent from '~/components/Discover/Benefits';
 import NewsComponent from '~/components/Discover/NewsComponent';
 import RecommendationsComponent from '~/components/Discover/RecommendationsComponent';
 
@@ -14,7 +14,7 @@ const Discover = () => {
         </div>
       </div>
       <div className="mt-3">
-        <MyProtocolsComponent></MyProtocolsComponent>
+        <BenefitsComponent />
       </div>
     </>
   );

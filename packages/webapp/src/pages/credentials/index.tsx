@@ -121,14 +121,14 @@ const Credentials = () => {
 
             {/* Misc credentials */}
             {Object.keys(credentialsByType).map((type) => (
-              <div key={type} className="w-full">
+              <div key={type} className="mb-2 mt-6 w-full">
                 <label key={type} className="break-words text-lg font-semibold text-secondary sm:text-sm">
                   {type}
                 </label>
                 {credentialsByType[type].map((credential) => (
                   <div
                     key={credential.id}
-                    className=" w-full rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                    className=" w-full mb-4 mt-2 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                     <div className="w-full px-6 py-7">
                       <h5 className="mb-4 break-words text-xl font-semibold text-secondary">
                         {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
