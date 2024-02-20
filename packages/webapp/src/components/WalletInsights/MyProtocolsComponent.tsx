@@ -93,7 +93,15 @@ const MyProtocolsComponent = () => {
   console.log('myProtocols', myProtocols, myProtocolsProperties);
   console.log('myTokens', myTokens, myTokensProperties);
 
-  if (!context || !context.userIdentity) return <DiscoverLoading />;
+  if (!context || !context.userIdentity)
+    return (
+      <div>
+        <div className="mb-4">
+          <DiscoverLoading />
+        </div>
+        <DiscoverLoading />
+      </div>
+    );
 
   const protocolsColumns: DataTableColumn<ProtocolUsedTargecyCredentialSubject>[] = [
     {
@@ -173,16 +181,16 @@ const MyProtocolsComponent = () => {
     <>
       <div className="flex h-full w-full flex-row justify-between overflow-y-auto">
         <div className="panel mb-3 w-full overflow-y-auto p-0" ref={scrollRef}>
-          <div className="sticky top-0 w-full bg-inherit p-6 ">
+          <div className="sticky top-0 w-full bg-inherit p-6 pb-3 ">
             <h5 className="text-lg font-semibold text-black dark:text-white">My Protocols</h5>
             <p className="text-gray-500">
-              Protocols you have interacted with based on your
+              See how the protocols you have interacted with are doing. Based on your
               <Link href="/credentials" target="_blank" className="p-1 font-bold hover:text-primary">
                 credentials
               </Link>
             </p>
           </div>
-          <div className="max-h-[700px] p-6 ">
+          <div className="max-h-[700px]  pl-4 pr-4 ">
             <DataTable
               rowBorderColor="transparent"
               borderColor="grey"
@@ -201,16 +209,16 @@ const MyProtocolsComponent = () => {
       </div>
       <div className="mt-3 flex h-full w-full flex-row justify-between overflow-y-auto">
         <div className="panel mb-3 w-full overflow-y-auto p-0" ref={scrollRef}>
-          <div className="sticky top-0 w-full bg-inherit p-6 ">
+          <div className="sticky top-0 w-full bg-inherit p-6 pb-3 ">
             <h5 className="text-lg font-semibold text-black dark:text-white">My Tokens</h5>
             <p className="text-gray-500">
-              Tokens you hold, based on your
+              See how the tokens you have interacted with are doing. Based on your 
               <Link href="/credentials" target="_blank" className="p-1 font-bold hover:text-primary">
                 credentials
               </Link>
             </p>
           </div>
-          <div className="max-h-[700px] p-6 ">
+          <div className="max-h-[700px] pl-4 pr-4">
             <DataTable
               rowBorderColor="transparent"
               borderColor="grey"
