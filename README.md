@@ -109,6 +109,7 @@ The following table shows the ports used by each service:
 | **3090** | [Main Dapp](http://localhost:3090)                                                 |
 | **4000** | Relayer                                                                            |
 | **4001** | Backend                                                                            |
+| **4090** | Extension Preview                                                                  |
 | **5001** | Subgraph IPFS                                                                      |
 | **5432** | Subgraph Postgres                                                                  |
 | **5435** | Backend Postgres                                                                   |
