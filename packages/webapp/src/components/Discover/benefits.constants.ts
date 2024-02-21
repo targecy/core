@@ -1,17 +1,9 @@
+export const benefitsSheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTAywHJlrGuj4UIHc-QqJbO1zR7FyWnLzwyNoS5O-oVGsZDGPCgZUrjo6NKi0DWEev5taRJPOSrvBbf/pub?output=csv';
+
 export type Benefit = {
   protocol: string;
-  chains: string[];
+  chain: string;
   icon: string;
   offer: string;
-  link: URL;
+  link: string;
 };
-
-export const benefits: Benefit[] = [
-  {
-    protocol: 'GMX',
-    chains: ['arbitrum'], // @todo type this
-    icon: '/images/protocols/gmx.png',
-    offer: '5% OFF', // @todo type this
-    link: new URL('https://www.gmx.io/'),
-  },
-];

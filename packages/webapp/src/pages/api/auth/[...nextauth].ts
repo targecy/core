@@ -1,10 +1,16 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 
 import { isVercelDevelopment } from '~/constants/app.constants';
 import { env } from '~/env.mjs';
+
+export type SessionData = {
+  address: string;
+  isBetaUser: boolean;
+  userRoles: ('user' | 'advertiser' | 'publisher')[];
+} & DefaultSession;
 
 const WHITELISTED_ADDRESSES = [
   '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
@@ -77,10 +83,13 @@ export default async function auth(req: any, res: any) {
     secret: env.NEXTAUTH_SECRET,
     callbacks: {
       session({ session, token }: { session: any; token: any }) {
-        session.data = {
+        const data: Partial<SessionData> = {
           address: token.sub,
           isBetaUser: isBetaUser(token.sub),
+          userRoles: ['user'],
         };
+
+        session.user = data;
 
         return session;
       },

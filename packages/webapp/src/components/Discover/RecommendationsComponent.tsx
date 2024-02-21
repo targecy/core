@@ -48,12 +48,12 @@ const RecommendationsComponent = () => {
 
   return (
     <div
-      className="flex h-full w-full flex-row justify-between overflow-y-auto"
+      className="flex max-h-[150px] w-full  flex-row justify-between overflow-y-auto"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
       <div className="panel mb-3 w-full overflow-y-auto p-0" ref={scrollRef}>
         <h5 className="w-ful sticky top-0 bg-inherit p-6 text-lg font-semibold text-black dark:text-white">
-          Recommended Protocols
+          Top Protocols
         </h5>
         <div className="max-h-[700px] p-6 ">
           <div className="flex flex-auto flex-wrap justify-between gap-5 overflow-hidden pr-10 text-sm font-bold  sm:grid-cols-2">

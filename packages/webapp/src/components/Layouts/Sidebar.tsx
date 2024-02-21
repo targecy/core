@@ -1,5 +1,4 @@
 import {
-  BookOutlined,
   CompassOutlined,
   DotChartOutlined,
   EditOutlined,
@@ -9,11 +8,12 @@ import {
   LineChartOutlined,
   PlaySquareOutlined,
   RiseOutlined,
+  SearchOutlined,
   SecurityScanOutlined,
   ShareAltOutlined,
   TwitterOutlined,
+  UserOutlined,
   UsergroupAddOutlined,
-  WalletOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -174,7 +174,7 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link href="/walletInsights" className="group">
                       <div className="flex items-center">
-                        <WalletOutlined rev={undefined} />
+                        <SearchOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Wallet Insights')}
                         </span>
@@ -184,9 +184,9 @@ const Sidebar = () => {
                   <li className="nav-item">
                     <Link href="/credentials" className="group">
                       <div className="flex items-center">
-                        <BookOutlined rev={undefined} />
+                        <UserOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Credentials')}
+                          {t('Profile')}
                         </span>
                       </div>
                     </Link>

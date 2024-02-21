@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { Benefit } from './benefits.constants';
+
 export const dlnewsSchema = z.array(
   z.object({
     id: z.string(),
@@ -55,3 +57,51 @@ export const tokenPropertiesSchema = z.object({
 });
 
 export type TokenProperties = z.infer<typeof tokenPropertiesSchema>;
+
+export async function fetchAndParseSheetData<T>(url: string, mapper: (obj: any) => T | undefined): Promise<T[]> {
+  try {
+    const response = await fetch(url);
+    const csvData = await response.text();
+    console.log('csv', csvData);
+    const jsonData = csvToJson<T>(csvData, mapper);
+    console.log('json', jsonData);
+    return jsonData;
+  } catch (error) {
+    console.error('Error fetching or parsing Google Sheet data:', error);
+    return [];
+  }
+}
+
+export function csvToJson<T>(csv: string, mapper: (obj: any) => T | undefined): T[] {
+  const lines = csv.split('\n').filter((line) => line.trim()); // Filter out empty lines
+  const result: T[] = [];
+  const headers = lines[0].replace('"', '').replace('\r', '').replace('\n', '').split(',');
+
+  for (let i = 1; i < lines.length; i++) {
+    const obj: Record<string, string> = {};
+    const currentline = lines[i].split(',');
+
+    console.log(headers);
+    for (let j = 0; j < headers.length; j++) {
+      obj[headers[j]] = currentline[j];
+    }
+
+    // Use the mapper function to transform and map the object to the generic type T
+    const mapped = mapper(obj);
+    if (mapped) result.push(mapped);
+  }
+
+  return result;
+}
+
+export function mapToBenefit(obj: Record<string, string>): Benefit | undefined {
+  console.log(obj);
+  if (!obj.protocol || !obj.chain || !obj.icon || !obj.offer || !obj.link) return undefined;
+  return {
+    protocol: obj.protocol,
+    chain: obj.chain,
+    icon: obj.icon?.replace('"', ''),
+    offer: obj.offer,
+    link: obj.link?.replace('"', ''),
+  };
+}

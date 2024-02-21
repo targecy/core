@@ -186,7 +186,7 @@ const MyProtocolsComponent = () => {
             <p className="text-gray-500">
               See how the protocols you have interacted with are doing. Based on your
               <Link href="/credentials" target="_blank" className="p-1 font-bold hover:text-primary">
-                credentials
+                profile
               </Link>
             </p>
           </div>
@@ -214,7 +214,7 @@ const MyProtocolsComponent = () => {
             <p className="text-gray-500">
               See how the tokens you have interacted with are doing. Based on your 
               <Link href="/credentials" target="_blank" className="p-1 font-bold hover:text-primary">
-                credentials
+                profile
               </Link>
             </p>
           </div>
