@@ -13389,7 +13389,7 @@ export type EosAddressStat = {
   /** Address */
   address?: Maybe<Address>;
   /** Balance */
-  balance?: Maybe<Scalars['BigInt']>;
+  balance?: Maybe<Scalars['Float']>;
   /** Call Tx Count */
   callTxCount?: Maybe<Scalars['BigInt']>;
   /** Called Tx Count */
@@ -13413,7 +13413,7 @@ export type EosAddressStat = {
   /** Other Tx Count */
   otherTxCount?: Maybe<Scalars['BigInt']>;
   /** Receive Amount */
-  receiveAmount?: Maybe<Scalars['BigInt']>;
+  receiveAmount?: Maybe<Scalars['Float']>;
   /** Receive from Count */
   receiveFromCount?: Maybe<Scalars['BigInt']>;
   /** Receive from currencies */
@@ -13421,7 +13421,7 @@ export type EosAddressStat = {
   /** Receive tx Count */
   receiveTxCount?: Maybe<Scalars['BigInt']>;
   /** Send Amount */
-  sendAmount?: Maybe<Scalars['BigInt']>;
+  sendAmount?: Maybe<Scalars['Float']>;
   /** Send to count */
   sendToCount?: Maybe<Scalars['BigInt']>;
   /** Send to currencies */
@@ -16056,7 +16056,7 @@ export type EthereumAddressStat = {
   /** Address */
   address?: Maybe<Address>;
   /** Balance */
-  balance?: Maybe<Scalars['BigInt']>;
+  balance?: Maybe<Scalars['Float']>;
   /** Call Tx Count */
   callTxCount?: Maybe<Scalars['BigInt']>;
   /** Called Tx Count */
@@ -16070,7 +16070,7 @@ export type EthereumAddressStat = {
   /** Days with transfers */
   daysWithTransfers?: Maybe<Scalars['BigInt']>;
   /** Amount of paid fee */
-  feeAmount?: Maybe<Scalars['BigInt']>;
+  feeAmount?: Maybe<Scalars['Float']>;
   /** First transfer at */
   firstTransferAt?: Maybe<DateTime>;
   /** First tx at */
@@ -16082,7 +16082,7 @@ export type EthereumAddressStat = {
   /** Other Tx Count */
   otherTxCount?: Maybe<Scalars['BigInt']>;
   /** Receive Amount */
-  receiveAmount?: Maybe<Scalars['BigInt']>;
+  receiveAmount?: Maybe<Scalars['Float']>;
   /** Receive from Count */
   receiveFromCount?: Maybe<Scalars['BigInt']>;
   /** Receive from currencies */
@@ -16090,7 +16090,7 @@ export type EthereumAddressStat = {
   /** Receive tx Count */
   receiveTxCount?: Maybe<Scalars['BigInt']>;
   /** Send Amount */
-  sendAmount?: Maybe<Scalars['BigInt']>;
+  sendAmount?: Maybe<Scalars['Float']>;
   /** Send to count */
   sendToCount?: Maybe<Scalars['BigInt']>;
   /** Send to currencies */
@@ -31122,7 +31122,7 @@ export type RippleAddressStat = {
   /** Address */
   address?: Maybe<Address>;
   /** Balance */
-  balance?: Maybe<Scalars['BigInt']>;
+  balance?: Maybe<Scalars['Float']>;
   /** Days with received */
   daysWithReceived?: Maybe<Scalars['BigInt']>;
   /** Days with sent */
@@ -31140,7 +31140,7 @@ export type RippleAddressStat = {
   /** Last tx at */
   lastTxAt?: Maybe<DateTime>;
   /** Receive Amount */
-  receiveAmount?: Maybe<Scalars['BigInt']>;
+  receiveAmount?: Maybe<Scalars['Float']>;
   /** Receive from Count */
   receiveFromCount?: Maybe<Scalars['BigInt']>;
   /** Receive from currencies */
@@ -31148,7 +31148,7 @@ export type RippleAddressStat = {
   /** Receive tx Count */
   receiveTxCount?: Maybe<Scalars['BigInt']>;
   /** Send Amount */
-  sendAmount?: Maybe<Scalars['BigInt']>;
+  sendAmount?: Maybe<Scalars['Float']>;
   /** Send to count */
   sendToCount?: Maybe<Scalars['BigInt']>;
   /** Send to currencies */
@@ -35887,7 +35887,7 @@ export type StellarAddressStat = {
   /** Address */
   address?: Maybe<Address>;
   /** Balance */
-  balance?: Maybe<Scalars['BigInt']>;
+  balance?: Maybe<Scalars['Float']>;
   /** Days with received */
   daysWithReceived?: Maybe<Scalars['BigInt']>;
   /** Days with sent */
@@ -35905,7 +35905,7 @@ export type StellarAddressStat = {
   /** Last tx at */
   lastTxAt?: Maybe<DateTime>;
   /** Receive Amount */
-  receiveAmount?: Maybe<Scalars['BigInt']>;
+  receiveAmount?: Maybe<Scalars['Float']>;
   /** Receive from Count */
   receiveFromCount?: Maybe<Scalars['BigInt']>;
   /** Receive from currencies */
@@ -35913,7 +35913,7 @@ export type StellarAddressStat = {
   /** Receive tx Count */
   receiveTxCount?: Maybe<Scalars['BigInt']>;
   /** Send Amount */
-  sendAmount?: Maybe<Scalars['BigInt']>;
+  sendAmount?: Maybe<Scalars['Float']>;
   /** Send to count */
   sendToCount?: Maybe<Scalars['BigInt']>;
   /** Send to currencies */
