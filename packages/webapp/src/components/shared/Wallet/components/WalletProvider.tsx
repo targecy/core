@@ -4,19 +4,40 @@ import { RainbowKitSiweNextAuthProvider, GetSiweMessageOptions } from '@rainbow-
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { SessionProvider } from 'next-auth/react';
 import { ReactNode } from 'react';
+import { defineChain } from 'viem';
+import { polygonMumbai, polygon, localhost } from 'viem/chains';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
-import { polygonMumbai, localhost } from 'wagmi/chains';
 
 import { appName } from '../Wallet.constants';
 
-import { isVercelDevelopment } from '~/constants/app.constants';
+import { isVercelPreview, isVercelProduction } from '~/constants/app.constants';
+
+type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
+
+const chain = () => {
+  if (isVercelProduction) return polygon;
+  if (isVercelPreview)
+    return defineChain({
+      ...polygonMumbai,
+      name: 'Mumbai',
+      rpcUrls: {
+        default: {
+          http: ['https://rpc-mumbai.maticvigil.com'],
+        },
+        public: {
+          http: ['https://rpc-mumbai.maticvigil.com'],
+        },
+      },
+    });
+  return localhost;
+};
 
 const { chains, publicClient } = configureChains(
-  [isVercelDevelopment ? localhost : polygonMumbai],
+  [chain()],
   [
     jsonRpcProvider({
       rpc: (chain) => ({
-        http: isVercelDevelopment ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon_mumbai',
+        http: chain.rpcUrls.default.http[0],
       }),
     }),
   ]
