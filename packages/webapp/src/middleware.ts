@@ -11,13 +11,13 @@ export async function middleware(req: NextRequest) {
 
   if (env.NEXT_PUBLIC_VERCEL_ENV === 'development') return NextResponse.next();
 
-  if (!token?.isBetaUser) {
-    const requestedPage = req.nextUrl.pathname || '/';
-    const url = req.nextUrl.clone();
-    url.pathname = `/beta`;
-    url.search = `p=${requestedPage}`;
-    return NextResponse.redirect(url);
-  }
+  // if (!token?.isBetaUser) {
+  //   const requestedPage = req.nextUrl.pathname || '/';
+  //   const url = req.nextUrl.clone();
+  //   url.pathname = `/beta`;
+  //   url.search = `p=${requestedPage}`;
+  //   return NextResponse.redirect(url);
+  // }
 
   return NextResponse.next();
 }

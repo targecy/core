@@ -1,11 +1,11 @@
 import BenefitsComponent from '~/components/Discover/Benefits';
-import RecommendationsComponent from '~/components/Discover/RecommendationsComponent';
+import FeaturedComponent from '~/components/Discover/FeaturedComponent';
 
 const Discover = () => {
   return (
     <>
       <div className="">
-        <RecommendationsComponent></RecommendationsComponent>
+        <FeaturedComponent></FeaturedComponent>
       </div>
       <div className="mt-3">
         <BenefitsComponent />

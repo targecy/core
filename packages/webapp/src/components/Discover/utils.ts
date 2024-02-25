@@ -100,6 +100,9 @@ export function mapToBenefit(obj: Record<string, string>): Benefit | undefined {
   return {
     protocol: obj.protocol,
     chain: obj.chain,
+    symbol: obj.symbol,
+    tvl: obj.tvl,
+    apy: obj.apy,
     icon: obj.icon?.replace('"', ''),
     offer: obj.offer,
     link: obj.link?.replace('"', ''),

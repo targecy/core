@@ -9,26 +9,26 @@ import { fetchAndParseSheetData, mapToBenefit } from './utils';
 
 const BenefitsComponent = () => {
   const [benefits, setBenefits] = useState<Benefit[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [areBenefitsLoading, setAreBenefitsLoading] = useState(true);
 
   useEffect(() => {
     try {
       fetchAndParseSheetData<Benefit>(benefitsSheetURL, mapToBenefit)
         .then((benefits) => {
           setBenefits(benefits);
-          setIsLoading(false);
+          setAreBenefitsLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching benefits', error);
-          setIsLoading(false);
+          setAreBenefitsLoading(false);
         });
     } catch (error) {
       console.error('Error fetching benefits', error);
-      setIsLoading(false);
+      setAreBenefitsLoading(false);
     }
   }, []);
 
-  if (isLoading) return <DiscoverLoading />;
+  if (areBenefitsLoading) return <DiscoverLoading />;
 
   const benefitsColumns: DataTableColumn<Benefit>[] = [
     {
@@ -50,7 +50,19 @@ const BenefitsComponent = () => {
       accessor: 'chain',
     },
     {
-      title: 'Offer',
+      title: 'Symbol',
+      accessor: 'symbol',
+    },
+    {
+      title: 'TVL',
+      accessor: 'tvl',
+    },
+    {
+      title: 'APY',
+      accessor: 'apy',
+    },
+    {
+      title: 'Targecy Reward',
       accessor: 'offer',
     },
     {

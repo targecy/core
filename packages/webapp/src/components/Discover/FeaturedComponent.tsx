@@ -3,28 +3,32 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { DiscoverLoading } from '../loaders/DiscoverLoading';
 
-import { TopProtocols } from './utils';
+import { Featured, featuredSheetURL } from './benefits.constants';
+import { fetchAndParseSheetData, mapToBenefit } from './utils';
 
-import { useGetProtocolsQuery } from '~/services/baseApi';
-
-const RecommendationsComponent = () => {
+const FeaturedComponent = () => {
   const scrollRef = useRef(null);
-  const { data, isLoading } = useGetProtocolsQuery({});
-  const { protocols } = data || {};
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
-  const [filteredProtocols, setFilteredProtocols] = useState<TopProtocols['protocols']>([]);
 
-  console.log(data);
+  const [featured, setFeatured] = useState<Featured[]>([]);
+  const [areFeaturesLoading, setAreFeaturesLoading] = useState(true);
 
-  // Keep an aleatory subset of protocols. @todo : recommendations based on credentials
-  // Initialize filtered protocols once upon data fetch completion
   useEffect(() => {
-    if (data?.protocols) {
-      // Randomly filter protocols and maintain this subset
-      const subset = data.protocols.filter(() => Math.random() > 0.5).slice(0, 50);
-      setFilteredProtocols(subset);
+    try {
+      fetchAndParseSheetData<Featured>(featuredSheetURL, mapToBenefit)
+        .then((featured) => {
+          setFeatured(featured);
+          setAreFeaturesLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching benefits', error);
+          setAreFeaturesLoading(false);
+        });
+    } catch (error) {
+      console.error('Error fetching benefits', error);
+      setAreFeaturesLoading(false);
     }
-  }, [data]);
+  }, []);
 
   // Auto-scroll functionality
   useEffect(() => {
@@ -39,9 +43,9 @@ const RecommendationsComponent = () => {
     return () => clearInterval(interval);
   }, [isAutoScrollEnabled]);
 
-  if (isLoading) return <DiscoverLoading />;
+  if (areFeaturesLoading) return <DiscoverLoading />;
 
-  if (!protocols) return <p>No protocols available</p>;
+  if (!featured || !featured.length) return <p>No protocols available</p>;
 
   const handleMouseEnter = () => setIsAutoScrollEnabled(false);
   const handleMouseLeave = () => setIsAutoScrollEnabled(true);
@@ -53,28 +57,28 @@ const RecommendationsComponent = () => {
       onMouseLeave={handleMouseLeave}>
       <div className="panel mb-3 w-full overflow-y-auto p-0" ref={scrollRef}>
         <h5 className="w-ful sticky top-0 bg-inherit p-6 text-lg font-semibold text-black dark:text-white">
-          Top Protocols
+          Featured
         </h5>
         <div className="max-h-[700px] p-6 ">
           <div className="flex flex-auto flex-wrap justify-between gap-5 overflow-hidden pr-10 text-sm font-bold  sm:grid-cols-2">
-            {filteredProtocols.map((r: any) => (
-              <div className="max-h-[60px] w-full" key={r.name}>
+            {featured.map((r: Featured) => (
+              <div className="max-h-[60px] w-full" key={r.protocol}>
                 <Link
-                  href={r.url}
+                  href={r.link}
                   target="_blank"
                   className={`w-full cursor-pointer  rounded-lg p-1 hover:text-primary focus:text-primary`}>
                   <div className="flex justify-between">
                     <div className="m-1 flex">
-                      <img src={r.logo} alt={r.name} className="h-10 w-10" />
+                      <img src={r.icon} alt={r.protocol} className="h-10 w-10" />
                       <div className="ml-3">
-                        <p>{r.name}</p>
-                        <span className="text-gray-700">{r.category}</span>
+                        <p>{r.protocol}</p>
+                        <span className="text-gray-700">{r.chain}</span>
                       </div>
                     </div>
                     <div>
                       {!!r.tvl && <p className="float-right text-gray-500">TVL: ${r.tvl.toLocaleString()}</p>}
                       <br></br>
-                      {!!r.mcap && <p className="float-right text-gray-500">Market Cap: ${r.mcap.toLocaleString()}</p>}
+                      {!!r.apy && <p className="float-right text-gray-500">APY: ${r.apy.toLocaleString()}</p>}
                     </div>
                   </div>
                 </Link>
@@ -87,4 +91,4 @@ const RecommendationsComponent = () => {
   );
 };
 
-export default RecommendationsComponent;
+export default FeaturedComponent;

@@ -5,18 +5,15 @@ import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { SessionProvider } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { defineChain } from 'viem';
-import { polygonMumbai, polygon, localhost } from 'viem/chains';
+import { polygonMumbai, localhost } from 'viem/chains';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 
 import { appName } from '../Wallet.constants';
 
 import { isVercelPreview, isVercelProduction } from '~/constants/app.constants';
 
-type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
-
 const chain = () => {
-  if (isVercelProduction) return polygon;
-  if (isVercelPreview)
+  if (isVercelProduction || isVercelPreview)
     return defineChain({
       ...polygonMumbai,
       name: 'Mumbai',
