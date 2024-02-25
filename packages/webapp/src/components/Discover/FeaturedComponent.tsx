@@ -30,13 +30,17 @@ const FeaturedComponent = () => {
     }
   }, []);
 
-  // Auto-scroll functionality
+  // Adjusted for horizontal auto-scroll functionality
   useEffect(() => {
     const interval = setInterval(() => {
       if (scrollRef.current && isAutoScrollEnabled) {
+        const currentScrollPosition = (scrollRef.current as any).scrollLeft;
+        const maxScrollPosition = (scrollRef.current as any).scrollWidth - (scrollRef.current as any).clientWidth;
+
+        // Scroll back to start to simulate infinite scrolling
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        const newPosition = (scrollRef.current as any).scrollTop + 0.5; // Adjust scroll speed if necessary
-        (scrollRef.current as any).scrollTo(0, newPosition);
+        const newPosition = currentScrollPosition >= maxScrollPosition ? 0 : currentScrollPosition + 1;
+        (scrollRef.current as any).scrollTo(newPosition, 0);
       }
     }, 50); // Adjust auto-scroll speed if necessary
 
@@ -52,39 +56,45 @@ const FeaturedComponent = () => {
 
   return (
     <div
-      className="flex max-h-[150px] w-full  flex-row justify-between overflow-y-auto"
+      className="flex h-[180px] max-w-full flex-col justify-between overflow-x-auto"
+      style={{
+        scrollbarWidth: 'none',
+        scrollbarColor: 'transparent transparent',
+      }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}>
-      <div className="panel mb-3 w-full overflow-y-auto p-0" ref={scrollRef}>
-        <h5 className="w-ful sticky top-0 bg-inherit p-6 text-lg font-semibold text-black dark:text-white">
+      <div className="panel mb-3 h-full overflow-x-auto p-0" ref={scrollRef}>
+        <h5 className="sticky left-0 top-0 bg-inherit p-6 text-lg font-semibold text-black dark:text-white">
           Featured
         </h5>
-        <div className="max-h-[700px] p-6 ">
-          <div className="flex flex-auto flex-wrap justify-between gap-5 overflow-hidden pr-10 text-sm font-bold  sm:grid-cols-2">
-            {featured.map((r: Featured) => (
-              <div className="max-h-[60px] w-full" key={r.protocol}>
+        <div className="flex pl-6 pr-6">
+          {featured.map((r: Featured) => (
+            <>
+              <div className=" mr-32" key={r.id}>
                 <Link
                   href={r.link}
                   target="_blank"
-                  className={`w-full cursor-pointer  rounded-lg p-1 hover:text-primary focus:text-primary`}>
-                  <div className="flex justify-between">
-                    <div className="m-1 flex">
+                  className={`h-full cursor-pointer rounded-lg p-1 hover:text-primary focus:text-primary`}>
+                  <div className="flex flex-row gap-20 ">
+                    <div className="flex">
                       <img src={r.icon} alt={r.protocol} className="h-10 w-10" />
-                      <div className="ml-3">
+                      <div className="ml-5 w-fit">
                         <p>{r.protocol}</p>
                         <span className="text-gray-700">{r.chain}</span>
                       </div>
                     </div>
-                    <div>
-                      {!!r.tvl && <p className="float-right text-gray-500">TVL: ${r.tvl.toLocaleString()}</p>}
-                      <br></br>
-                      {!!r.apy && <p className="float-right text-gray-500">APY: ${r.apy.toLocaleString()}</p>}
+                    <div className="w-[120px]">
+                      {!!r.tvl && <p className="text-gray-500">TVL: ${r.tvl.toLocaleString()}</p>}
+                      {!!r.apy && <p className="text-gray-500">APY: ${r.apy.toLocaleString()}</p>}
                     </div>
                   </div>
                 </Link>
               </div>
-            ))}
-          </div>
+              <div className="mr-32 flex items-center justify-center">
+                <div className="">|</div>
+              </div>
+            </>
+          ))}
         </div>
       </div>
     </div>

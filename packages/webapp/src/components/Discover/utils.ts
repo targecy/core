@@ -62,9 +62,7 @@ export async function fetchAndParseSheetData<T>(url: string, mapper: (obj: any) 
   try {
     const response = await fetch(url);
     const csvData = await response.text();
-    console.log('csv', csvData);
     const jsonData = csvToJson<T>(csvData, mapper);
-    console.log('json', jsonData);
     return jsonData;
   } catch (error) {
     console.error('Error fetching or parsing Google Sheet data:', error);
@@ -81,7 +79,7 @@ export function csvToJson<T>(csv: string, mapper: (obj: any) => T | undefined): 
     const obj: Record<string, string> = {};
     const currentline = lines[i].split(',');
 
-    console.log(headers);
+    obj.id = i.toString();
     for (let j = 0; j < headers.length; j++) {
       obj[headers[j]] = currentline[j];
     }
@@ -95,9 +93,9 @@ export function csvToJson<T>(csv: string, mapper: (obj: any) => T | undefined): 
 }
 
 export function mapToBenefit(obj: Record<string, string>): Benefit | undefined {
-  console.log(obj);
   if (!obj.protocol || !obj.chain || !obj.icon || !obj.offer || !obj.link) return undefined;
   return {
+    id: obj.id,
     protocol: obj.protocol,
     chain: obj.chain,
     symbol: obj.symbol,
