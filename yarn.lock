@@ -7725,6 +7725,7 @@ __metadata:
     "@types/formidable": "npm:^3"
     "@types/lodash": "npm:^4.14.191"
     "@types/node": "npm:^16.11.59"
+    "@types/papaparse": "npm:^5"
     "@types/pretty-time": "npm:^1.1.2"
     "@types/qrcode.react": "npm:^1.0.2"
     "@types/react": "npm:^18.0.20"
@@ -7792,6 +7793,7 @@ __metadata:
     next-redux-wrapper: "npm:8.0.0"
     nft.storage: "npm:^7.1.1"
     ni18n: "npm:^1.0.5"
+    papaparse: "npm:^5.4.1"
     pino-pretty: "npm:^10.2.0"
     postcss: "npm:^8.4.16"
     prettier: "npm:^2.7.1"
@@ -8506,6 +8508,15 @@ __metadata:
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
   checksum: 65dff72b543997b7be8b0265eca7ace0e34b75c3e5fee31de11179d08fa7124a7a5587265d53d0409532ecb7f7fba662c2012807963e1f9b059653ec2c83ee05
+  languageName: node
+  linkType: hard
+
+"@types/papaparse@npm:^5":
+  version: 5.3.14
+  resolution: "@types/papaparse@npm:5.3.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 9bd5cc0e6a2c02def6c8903dc4604e499907cb465186ed3532390468082a06f023adbac0216428d0d8e8fe017206780a03d20007041e9fed47c8d391cd69a536
   languageName: node
   linkType: hard
 
@@ -26689,6 +26700,13 @@ __metadata:
   bin:
     pacote: lib/bin.js
   checksum: 57e18f4f963abb5f67f794158a55c01ad23f76e56dcdc74e6b843dfdda017515b0e8c0f56e60e842cd5af5ab9b351afdc49fc70633994f0e5fc0c6c9f4bcaebc
+  languageName: node
+  linkType: hard
+
+"papaparse@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "papaparse@npm:5.4.1"
+  checksum: 5e6dc978187182ad2efa1d264ffe73d2042cd23b8fb1dcb0b0f5c8c7c772c11e3eb4e166fb0893880ed24529a96abe9065d704cc5b4cb96abf037413cfe43788
   languageName: node
   linkType: hard
 

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { DiscoverLoading } from '../loaders/DiscoverLoading';
 
 import { Benefit, benefitsSheetURL } from './benefits.constants';
-import { fetchAndParseSheetData, mapToBenefit } from './utils';
+import { fetchAndParseSheetData } from './utils';
 
 const BenefitsComponent = () => {
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -13,7 +13,7 @@ const BenefitsComponent = () => {
 
   useEffect(() => {
     try {
-      fetchAndParseSheetData<Benefit>(benefitsSheetURL, mapToBenefit)
+      fetchAndParseSheetData<Benefit>(benefitsSheetURL)
         .then((benefits) => {
           setBenefits(benefits);
           setAreBenefitsLoading(false);

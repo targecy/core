@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { DiscoverLoading } from '../loaders/DiscoverLoading';
 
 import { Featured, featuredSheetURL } from './benefits.constants';
-import { fetchAndParseSheetData, mapToBenefit } from './utils';
+import { fetchAndParseSheetData } from './utils';
 
 const FeaturedComponent = () => {
   const scrollRef = useRef(null);
@@ -15,7 +15,7 @@ const FeaturedComponent = () => {
 
   useEffect(() => {
     try {
-      fetchAndParseSheetData<Featured>(featuredSheetURL, mapToBenefit)
+      fetchAndParseSheetData<Featured>(featuredSheetURL)
         .then((featured) => {
           setFeatured(featured);
           setAreFeaturesLoading(false);
@@ -69,13 +69,13 @@ const FeaturedComponent = () => {
         </h5>
         <div className="flex pl-6 pr-6">
           {featured.map((r: Featured) => (
-            <>
-              <div className=" mr-32" key={r.id}>
+            <div key={r.id}>
+              <div className=" mr-32">
                 <Link
                   href={r.link}
                   target="_blank"
                   className={`h-full cursor-pointer rounded-lg p-1 hover:text-primary focus:text-primary`}>
-                  <div className="flex flex-row gap-20 ">
+                  <div className="flex flex-row gap-16 ">
                     <div className="flex">
                       <img src={r.icon} alt={r.protocol} className="h-10 w-10" />
                       <div className="ml-5 w-fit">
@@ -83,17 +83,17 @@ const FeaturedComponent = () => {
                         <span className="text-gray-700">{r.chain}</span>
                       </div>
                     </div>
-                    <div className="w-[120px]">
-                      {!!r.tvl && <p className="text-gray-500">TVL: ${r.tvl.toLocaleString()}</p>}
-                      {!!r.apy && <p className="text-gray-500">APY: ${r.apy.toLocaleString()}</p>}
+                    <div className="w-[150px]">
+                      {!!r.tvl && <p className="text-gray-500">TVL: {r.tvl.toLocaleString()}</p>}
+                      {!!r.apy && <p className="text-gray-500">APY: {r.apy.toLocaleString()}</p>}
                     </div>
                   </div>
                 </Link>
               </div>
-              <div className="mr-32 flex items-center justify-center">
+              {/* <div className="mr-32 flex items-center justify-center">
                 <div className="">|</div>
-              </div>
-            </>
+              </div> */}
+            </div>
           ))}
         </div>
       </div>

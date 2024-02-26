@@ -1,6 +1,5 @@
+import { parse } from 'papaparse';
 import { z } from 'zod';
-
-import { Benefit } from './benefits.constants';
 
 export const dlnewsSchema = z.array(
   z.object({
@@ -58,11 +57,11 @@ export const tokenPropertiesSchema = z.object({
 
 export type TokenProperties = z.infer<typeof tokenPropertiesSchema>;
 
-export async function fetchAndParseSheetData<T>(url: string, mapper: (obj: any) => T | undefined): Promise<T[]> {
+export async function fetchAndParseSheetData<T>(url: string): Promise<T[]> {
   try {
     const response = await fetch(url);
     const csvData = await response.text();
-    const jsonData = csvToJson<T>(csvData, mapper);
+    const jsonData = csvToJson<T>(csvData);
     return jsonData;
   } catch (error) {
     console.error('Error fetching or parsing Google Sheet data:', error);
@@ -70,39 +69,13 @@ export async function fetchAndParseSheetData<T>(url: string, mapper: (obj: any) 
   }
 }
 
-export function csvToJson<T>(csv: string, mapper: (obj: any) => T | undefined): T[] {
-  const lines = csv.split('\n').filter((line) => line.trim()); // Filter out empty lines
-  const result: T[] = [];
-  const headers = lines[0].replace('"', '').replace('\r', '').replace('\n', '').split(',');
+export function csvToJson<T>(csv: string): T[] {
+  // Parse the CSV data
+  const result = parse<T>(csv, {
+    header: true, // Indicates that the first row of the CSV is a header
+    dynamicTyping: true, // Automatically converts numeric and boolean values
+    skipEmptyLines: true, // Skips empty lines in the input
+  });
 
-  for (let i = 1; i < lines.length; i++) {
-    const obj: Record<string, string> = {};
-    const currentline = lines[i].split(',');
-
-    obj.id = i.toString();
-    for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
-    }
-
-    // Use the mapper function to transform and map the object to the generic type T
-    const mapped = mapper(obj);
-    if (mapped) result.push(mapped);
-  }
-
-  return result;
-}
-
-export function mapToBenefit(obj: Record<string, string>): Benefit | undefined {
-  if (!obj.protocol || !obj.chain || !obj.icon || !obj.offer || !obj.link) return undefined;
-  return {
-    id: obj.id,
-    protocol: obj.protocol,
-    chain: obj.chain,
-    symbol: obj.symbol,
-    tvl: obj.tvl,
-    apy: obj.apy,
-    icon: obj.icon?.replace('"', ''),
-    offer: obj.offer,
-    link: obj.link?.replace('"', ''),
-  };
+  return result.data;
 }
