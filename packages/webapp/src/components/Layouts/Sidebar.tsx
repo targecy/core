@@ -1,5 +1,5 @@
 import {
-  BookOutlined,
+  CompassOutlined,
   DotChartOutlined,
   EditOutlined,
   FileTextOutlined,
@@ -11,6 +11,7 @@ import {
   SecurityScanOutlined,
   ShareAltOutlined,
   TwitterOutlined,
+  UserOutlined,
   UsergroupAddOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
@@ -19,12 +20,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCookie } from 'react-use';
 
 import { IRootState } from '../../store';
 import { toggleSidebar } from '../../store/themeConfigSlice';
 
 import { useGetAdminQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
+import { UserRole } from '~/utils/preferences';
 
 const Sidebar = () => {
   const router = useRouter();
@@ -37,6 +40,20 @@ const Sidebar = () => {
       return oldValue === value ? '' : value;
     });
   };
+  const [cookieValue] = useCookie('userRoles');
+
+  const [hasMultipleRoles, setHasMultipleRoles] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [isAdvertiser, setIsAdvertiser] = useState(false);
+  const [isPublisher, setIsPublisher] = useState(false);
+
+  useEffect(() => {
+    const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
+    setHasMultipleRoles(userRoles.length > 1);
+    setIsUser(userRoles.includes('user'));
+    setIsAdvertiser(userRoles.includes('advertiser'));
+    setIsPublisher(userRoles.includes('publisher'));
+  }, [cookieValue]);
 
   useEffect(() => {
     const selector = document.querySelector('.sidebar ul a[href="' + window.location.pathname + '"]');
@@ -87,11 +104,13 @@ const Sidebar = () => {
   }, [isAdminData]);
 
   return (
-    <div className={semidark ? 'dark' : ''}>
-      <nav
-        className={`sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${
-          semidark ? 'text-white-dark' : ''
-        }`}>
+    <div
+      className={` ${
+        semidark ? 'dark' : ''
+      } sidebar fixed bottom-0 top-0 z-50 h-full min-h-screen w-[260px] shadow-[5px_0_25px_0_rgba(94,92,154,0.1)] transition-all duration-300 ${
+        semidark ? 'text-white-dark' : ''
+      }`}>
+      <nav>
         <div className="h-full bg-white dark:bg-black">
           <div className="flex items-center justify-between px-4 py-3">
             <Link href="/" className="main-logo flex shrink-0 items-center">
@@ -135,13 +154,13 @@ const Sidebar = () => {
               <li className="nav-item">
                 <ul>
                   <br></br>
-                  <label>Overall</label>
+                  <label hidden={!hasMultipleRoles && !isAdmin}>Overall</label>
                   <li className="nav-item">
                     <Link href="/" className="group">
                       <div className="flex items-center">
                         <HomeOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Insights Hub')}
+                          {t('Home')}
                         </span>
                       </div>
                     </Link>
@@ -157,19 +176,40 @@ const Sidebar = () => {
                     </Link>
                   </li>
 
-                  <br></br>
-                  <label>User</label>
-                  <li className="nav-item">
-                    <Link href="/credentials" className="group">
+                  <br hidden={!(isAdmin || (hasMultipleRoles && isUser))}></br>
+                  <label hidden={!(isAdmin || (hasMultipleRoles && isUser))}>User</label>
+
+                  <li className={`nav-item ${!isUser ? 'hidden' : ''}`}>
+                    <Link href="/discover" className="group">
                       <div className="flex items-center">
-                        <BookOutlined rev={undefined} />
+                        <CompassOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Credentials')}
+                          {t('Discover')}
                         </span>
                       </div>
                     </Link>
                   </li>
-                  <li className="nav-item opacity-50">
+                  {/* <li hidden={!isUser} className="nav-item">
+                    <Link href="/walletInsights" className="group">
+                      <div className="flex items-center">
+                        <SearchOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Wallet Insights')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li> */}
+                  <li hidden={!isUser && !isAdmin} className="nav-item">
+                    <Link href="/credentials" className="group">
+                      <div className="flex items-center">
+                        <UserOutlined rev={undefined} />
+                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                          {t('Profile')}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                  <li hidden={!isUser && !isAdmin} className="nav-item opacity-50">
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <RiseOutlined rev={undefined} />
@@ -179,7 +219,7 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
-                  <li className="nav-item opacity-50">
+                  <li hidden={!isUser && !isAdmin} className="nav-item opacity-50">
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <GiftOutlined rev={undefined} />
@@ -189,9 +229,10 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
-                  <br></br>
-                  <label>Advertiser</label>
-                  <li className="nav-item">
+
+                  <br hidden={!(isAdmin || (hasMultipleRoles && isAdvertiser))}></br>
+                  <label hidden={!(isAdmin || (hasMultipleRoles && isAdvertiser))}>Advertiser</label>
+                  <li hidden={!isAdvertiser && !isAdmin} className="nav-item">
                     <Link href="/ads" className="group">
                       <div className="flex items-center">
                         <EditOutlined rev={undefined} />
@@ -201,7 +242,7 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
-                  <li className="nav-item opacity-50">
+                  <li hidden={!isAdvertiser && !isAdmin} className="nav-item opacity-50">
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <DotChartOutlined rev={undefined} />
@@ -211,9 +252,10 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
-                  <br></br>
-                  <label>Publisher</label>
-                  <li className="nav-item">
+
+                  <br hidden={!(isAdmin || (hasMultipleRoles && isPublisher))}></br>
+                  <label hidden={!(isAdmin || (hasMultipleRoles && isPublisher))}>Publisher</label>
+                  <li hidden={!isPublisher && !isAdmin} className="nav-item">
                     <Link href="/wizard" className="group">
                       <div className="flex items-center">
                         <PlaySquareOutlined rev={undefined} />
@@ -223,7 +265,7 @@ const Sidebar = () => {
                       </div>
                     </Link>
                   </li>
-                  <li className="nav-item opacity-50">
+                  <li hidden={!isPublisher && !isAdmin} className="nav-item opacity-50">
                     <Link href="#" className="group hover:bg-transparent">
                       <div className="flex items-center">
                         <LineChartOutlined rev={undefined} />
@@ -235,7 +277,7 @@ const Sidebar = () => {
                   </li>
 
                   <div hidden={!isAdmin}>
-                    <br></br>
+                    <br hidden={!hasMultipleRoles || !isAdmin}></br>
 
                     <label>Admin</label>
                     <li className="nav-item">

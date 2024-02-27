@@ -1,8 +1,11 @@
-import { BaseQueryFn } from '@reduxjs/toolkit/dist/query';
+import { extractFromXml } from '@extractus/feed-extractor';
+import { BaseQueryFn, fetchBaseQuery } from '@reduxjs/toolkit/dist/query';
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GraphQLClient } from 'graphql-request';
 import { HYDRATE } from 'next-redux-wrapper';
+
+import { Dlnews, TopProtocols, dlnewsSchema, topProtocolsSchema } from '../components/Discover/utils';
 
 import { env } from '~/env.mjs';
 
@@ -40,6 +43,50 @@ export const testEndpoint = (build: Build): any =>
     },
   });
 
+export const newsApi = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://corsproxy.io/?https://www.dlnews.com' }),
+  reducerPath: 'newsApi',
+  tagTypes: [], // Define your tag types here
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
+  endpoints: (build) => ({
+    getNews: build.query<Dlnews, object>({
+      query: () => ({
+        url: '/arc/outboundfeeds/rss/',
+        responseHandler: (response) =>
+          response
+            .text()
+            .then(extractFromXml)
+            .then((json) => dlnewsSchema.parse(json.entries))
+            .catch(console.error),
+      }),
+    }),
+    // Add other endpoints here
+  }),
+});
+
+export const defillamaApi = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://defillama-datasets.llama.fi' }),
+  reducerPath: 'defillamaApi',
+  tagTypes: [], // Define your tag types here
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
+  endpoints: (build) => ({
+    getProtocols: build.query<TopProtocols, object>({
+      query: () => ({
+        url: '/lite/protocols2',
+        responseHandler: (response) => response.json().then(topProtocolsSchema.parse).catch(console.error),
+      }),
+    }),
+  }),
+});
+
 export const api = createApi({
   baseQuery: graphqlBaseQuery(),
   reducerPath: baseApiReducerPath,
@@ -49,9 +96,8 @@ export const api = createApi({
       return action.payload[reducerPath];
     }
   },
-  endpoints: (build) => ({
-    test: testEndpoint(build),
-  }),
+  endpoints: (build) => ({}),
 });
 
-export const { useTestQuery } = api;
+export const { useGetNewsQuery } = newsApi;
+export const { useGetProtocolsQuery } = defillamaApi;

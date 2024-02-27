@@ -225,6 +225,8 @@ export declare const appRouter: import("@trpc/server").CreateRouterInner<import(
             ActiveOnChainTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"ActiveOnChainTargecySchema">;
             PageViewTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"PageViewTargecySchema">;
             CustomEventTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"CustomEventTargecySchema">;
+            InterestTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"InterestTargecySchema">;
+            ProfileTargecySchema: import("../../constants/schemas/schemas.constant").SCHEMA<"ProfileTargecySchema">;
         }>;
         getSchemaByType: import("@trpc/server").BuildProcedure<"query", {
             _config: import("@trpc/server").RootConfig<{
@@ -261,7 +263,7 @@ export declare const appRouter: import("@trpc/server").CreateRouterInner<import(
             };
             _output_in: typeof import("@trpc/server").unsetMarker;
             _output_out: typeof import("@trpc/server").unsetMarker;
-        }, import("../../constants/schemas/schemas.constant").SCHEMA<"ProtocolUsedTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"TokenHolderTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"ActiveOnChainTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"PageViewTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"CustomEventTargecySchema">>;
+        }, import("../../constants/schemas/schemas.constant").SCHEMA<"ProtocolUsedTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"TokenHolderTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"ActiveOnChainTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"PageViewTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"CustomEventTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"InterestTargecySchema"> | import("../../constants/schemas/schemas.constant").SCHEMA<"ProfileTargecySchema">>;
     }>;
     targets: import("@trpc/server").CreateRouterInner<import("@trpc/server").RootConfig<{
         ctx: {

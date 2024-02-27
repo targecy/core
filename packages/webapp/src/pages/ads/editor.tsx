@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { Ad } from '@targecy/sdk';
 import { Attribution } from '@targecy/sdk/src/constants/ads';
@@ -112,8 +113,6 @@ export const AdEditorComponent = (id?: string) => {
   const submitForm = async (data: FormValues) => {
     setProcessingAd(true);
 
-    console.log(data);
-
     const adMetadataFormData = new FormData();
 
     if (data.title) adMetadataFormData.append('title', data.title);
@@ -163,8 +162,6 @@ export const AdEditorComponent = (id?: string) => {
         maxBudget: BigInt(data.maxBudget ?? Number.MAX_SAFE_INTEGER),
       };
 
-      console.log(newAdArgs);
-
       if (id) {
         // Edit Ad
         hash = (
@@ -210,7 +207,9 @@ export const AdEditorComponent = (id?: string) => {
     }
   };
 
-  const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({});
+  const [previewValues, setPreviewValues] = useState<Partial<FormValues>>({
+    attribution: 0,
+  });
 
   const [currentAudiences, setCurrentAudiences] = useState<number[] | undefined>(undefined);
   const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
@@ -255,7 +254,7 @@ export const AdEditorComponent = (id?: string) => {
     };
   });
 
-  const [currentAttribution, setCurrentAttribution] = useState<number | undefined>(undefined);
+  const [currentAttribution, setCurrentAttribution] = useState<number>(0);
   const [currentActive, setCurrentActive] = useState<boolean | undefined>(undefined);
   const [currentWhitelistedPublishers, setCurrentWhitelistedPublishers] = useState<string[] | undefined>(undefined);
   const [currentBlacklistedPublishers, setCurrentBlacklistedPublishers] = useState<string[] | undefined>(undefined);
@@ -341,7 +340,7 @@ export const AdEditorComponent = (id?: string) => {
                 maxBudget: ad?.maxBudget ? Number(ad.maxBudget) : undefined,
                 startingDate: ad?.startingTimestamp ? new Date(Number(ad?.startingTimestamp)) : undefined,
                 endingDate: ad?.endingTimestamp ? new Date(Number(ad?.endingTimestamp)) : undefined,
-                attribution: ad?.attribution ? Number(ad.attribution) : undefined,
+                attribution: ad?.attribution ? Number(ad.attribution) : 0,
                 active: Boolean(ad?.active),
                 blacklistedPublishers: ad?.blacklistedPublishers.map((p) => p.id) ?? [],
                 whitelistedPublishers: ad?.whitelistedPublishers.map((p) => p.id) ?? [],
@@ -449,347 +448,6 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                     {loadingImage && <span> Loading...</span>}
                   </div>
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="attribution">Bidding Strategy</label>
-                      <Select
-                        classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          singleValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          multiValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          multiValueLabel: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                        }}
-                        placeholder="Select an option"
-                        id="attribution"
-                        options={attributionOptions}
-                        name="attribution"
-                        value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? 0}
-                        onChange={(value) => {
-                          setCurrentAttribution(Number(value?.value) ?? 0);
-                          values.attribution = Number(value?.value) ?? 0;
-                          setPreviewValues((prevState) => ({ ...prevState, attribution: Number(value?.value) ?? 0 }));
-                        }}
-                        isSearchable={true}
-                      />
-                      {submitCount ? (
-                        errors.attribution ? (
-                          <div className="mt-1 text-danger">{errors.attribution.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div className={submitCount ? (errors.active ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="active">Campaign Status</label>
-                      <Select
-                        classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          singleValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          multiValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          multiValueLabel: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                        }}
-                        placeholder="Select an option"
-                        id="active"
-                        options={activeOptions}
-                        name="active"
-                        value={activeOptions?.filter((a) => currentActive === a.value) ?? true}
-                        onChange={(value) => {
-                          setCurrentActive(value?.value ?? true);
-                          values.active = value?.value ?? true;
-                        }}
-                        isSearchable={true}
-                      />
-                      {submitCount ? (
-                        errors.active ? (
-                          <div className="mt-1 text-danger">{errors.active.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </div>
-
-                  <div
-                    hidden={currentAttribution !== Attribution.conversion}
-                    className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div
-                      hidden={currentAttribution !== Attribution.conversion}
-                      className={submitCount ? (errors.target ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="target">Target Contract Address</label>
-                      <Field
-                        name="target"
-                        type="text"
-                        id="target"
-                        placeholder="Enter conversion target"
-                        className="form-input"
-                      />
-                      {submitCount ? (
-                        errors.target ? (
-                          <div className="mt-1 text-danger">{errors.target.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div
-                      hidden={currentAttribution !== Attribution.conversion}
-                      className={submitCount ? (errors.abi ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="abi">Abi</label>
-                      <Field name="abi" type="text" id="abi" placeholder="Enter abi" className="form-input" />
-                      {submitCount ? (
-                        errors.abi ? (
-                          <div className="mt-1 text-danger">{errors.abi.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </div>
-
-                  <div
-                    hidden={currentAttribution !== Attribution.conversion}
-                    className={submitCount ? (errors.paramsSchema ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="paramsSchema">paramsSchema </label>
-                    <Field
-                      name="paramsSchema"
-                      as="textarea"
-                      id="paramsSchema"
-                      placeholder="Enter paramsSchema"
-                      className="form-input"
-                      // Display the object as a string
-                      value={
-                        typeof values.paramsSchema === 'string'
-                          ? values.paramsSchema
-                          : JSON.stringify(values.paramsSchema, null, 2)
-                      }
-                      onChange={(e: any) => {
-                        // Update the field value as a string always
-                        setFieldValue('paramsSchema', e.target.value);
-
-                        try {
-                          // Attempt to parse the edited JSON string back into an object
-                          const parsed = JSON.parse(e.target.value);
-                          // Update preview values or any other state you need
-                          setPreviewValues((prevState) => ({ ...prevState, paramsSchema: parsed }));
-                        } catch (error) {
-                          // Optionally handle JSON parse errors or show an error message
-                          // For example, you could set an error state here
-                        }
-                      }}
-                    />
-
-                    {submitCount ? (
-                      errors.paramsSchema ? (
-                        <div className="mt-1 text-danger">{errors.paramsSchema.toString()}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.startingDate ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="startingDate">Starting Date</label>
-                      <DatePicker
-                        name="startingDate"
-                        id="startingDate"
-                        placeholderText="Enter starting Date"
-                        className="form-input"
-                        todayButton="Today"
-                        dateFormat="MMMM d, yyyy h:mm aa"
-                        showTimeSelect
-                      />
-                      {submitCount ? (
-                        errors.startingDate ? (
-                          <div className="mt-1 text-danger">{errors.startingDate.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-
-                    <div className={submitCount ? (errors.endingDate ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="endingDate">Ending Date</label>
-                      <DatePicker
-                        name="endingDate"
-                        id="endingDate"
-                        placeholderText="Enter ending Date"
-                        className="form-input"
-                        todayButton="Today"
-                        dateFormat="MMMM d, yyyy h:mm aa"
-                        showTimeSelect
-                      />
-                      {submitCount ? (
-                        errors.endingDate ? (
-                          <div className="mt-1 text-danger">{errors.endingDate.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.maxPricePerConsumption ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="maxPricePerConsumption">Max Impression Price</label>
-                      <Field
-                        name="maxPricePerConsumption"
-                        type="number"
-                        id="maxPricePerConsumption"
-                        placeholder="Enter max impression price"
-                        className="form-input"
-                      />
-
-                      {submitCount ? (
-                        errors.maxPricePerConsumption ? (
-                          <div className="mt-1 text-danger">{errors.maxPricePerConsumption.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                    <div className={submitCount ? (errors.maxConsumptionsPerDay ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="maxPricePerConsumption">Max Consumptions per day</label>
-                      <Field
-                        name="maxConsumptionsPerDay"
-                        type="number"
-                        id="maxConsumptionsPerDay"
-                        placeholder="Enter max consumptions per day"
-                        className="form-input"
-                      />
-
-                      {submitCount ? (
-                        errors.maxConsumptionsPerDay ? (
-                          <div className="mt-1 text-danger">{errors.maxConsumptionsPerDay.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </div>
-                  <div className={submitCount ? (errors.maxBudget ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="maxBudget">Total Maximum Budget to consume</label>
-                    <Field
-                      name="maxBudget"
-                      type="number"
-                      id="maxBudget"
-                      placeholder="Enter max budget"
-                      className="form-input"
-                    />
-
-                    {submitCount ? (
-                      errors.maxBudget ? (
-                        <div className="mt-1 text-danger">{errors.maxBudget.toString()}</div>
-                      ) : (
-                        <div className="mt-1 text-success"></div>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </div>
-                  <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-                    <div className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="blacklistedPublishers">Placement Exclusion</label>
-                      <Select
-                        classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          singleValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          multiValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          multiValueLabel: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                        }}
-                        placeholder="Select an option"
-                        id="blacklistedPublishers"
-                        options={publisherOptions}
-                        name="blacklistedPublishers"
-                        isMulti
-                        value={publisherOptions?.filter((a) => currentBlacklistedPublishers?.includes(a.value)) ?? []}
-                        onChange={(value) => {
-                          setCurrentBlacklistedPublishers(value.map((v) => v.value));
-                          values.blacklistedPublishers = value.map((v) => v.value) ?? [];
-                        }}
-                        isSearchable={true}
-                      />
-                      {submitCount ? (
-                        errors.blacklistedPublishers ? (
-                          <div className="mt-1 text-danger">{errors.blacklistedPublishers.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                    <div className={submitCount ? (errors.whitelistedPublishers ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="whitelistedPublishers">Whitelisted Publishers</label>
-                      <Select
-                        classNames={{
-                          control: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          option: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          singleValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                          multiValue: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          multiValueLabel: () =>
-                            'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                          menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                        }}
-                        placeholder="Select an option"
-                        id="whitelistedPublishers"
-                        options={publisherOptions}
-                        name="whitelistedPublishers"
-                        isMulti
-                        value={publisherOptions?.filter((a) => currentWhitelistedPublishers?.includes(a.value)) ?? []}
-                        onChange={(value) => {
-                          setCurrentWhitelistedPublishers(value.map((v) => v.value));
-                          values.whitelistedPublishers = value.map((v) => v.value) ?? [];
-                        }}
-                        isSearchable={true}
-                      />
-                      {submitCount ? (
-                        errors.whitelistedPublishers ? (
-                          <div className="mt-1 text-danger">{errors.whitelistedPublishers.toString()}</div>
-                        ) : (
-                          <div className="mt-1 text-success"></div>
-                        )
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </div>
                   <div className={submitCount ? (errors.audienceIds ? 'has-error' : 'has-success') : ''}>
                     <label htmlFor="audienceIds">Audiences</label>
                     <Select
@@ -826,6 +484,371 @@ export const AdEditorComponent = (id?: string) => {
                     )}
                   </div>
 
+                  <div className="collapse collapse-arrow">
+                    <input type="checkbox" />
+                    <div className="text-md collapse-title pl-0 font-medium hover:cursor-pointer hover:text-primary">
+                      Advanced Options
+                    </div>
+                    <div className="collapse-content p-0">
+                      <div className="mb-4 grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="attribution">Bidding Strategy</label>
+                          <Select
+                            classNames={{
+                              control: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              option: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              singleValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              multiValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              multiValueLabel: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                            }}
+                            placeholder="Select an option"
+                            id="attribution"
+                            options={attributionOptions}
+                            name="attribution"
+                            value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? 0}
+                            onChange={(value) => {
+                              setCurrentAttribution(Number(value?.value) ?? 0);
+                              values.attribution = Number(value?.value) ?? 0;
+                              setPreviewValues((prevState) => ({
+                                ...prevState,
+                                attribution: Number(value?.value) ?? 0,
+                              }));
+                            }}
+                            isSearchable={true}
+                          />
+                          {submitCount ? (
+                            errors.attribution ? (
+                              <div className="mt-1 text-danger">{errors.attribution.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+
+                        <div className={submitCount ? (errors.active ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="active">Campaign Status</label>
+                          <Select
+                            classNames={{
+                              control: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              option: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              singleValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              multiValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              multiValueLabel: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                            }}
+                            placeholder="Select an option"
+                            id="active"
+                            options={activeOptions}
+                            name="active"
+                            value={activeOptions?.filter((a) => currentActive === a.value) ?? true}
+                            onChange={(value) => {
+                              setCurrentActive(value?.value ?? true);
+                              values.active = value?.value ?? true;
+                            }}
+                            isSearchable={true}
+                          />
+                          {submitCount ? (
+                            errors.active ? (
+                              <div className="mt-1 text-danger">{errors.active.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                      <div
+                        hidden={currentAttribution !== Attribution.conversion}
+                        className="mb-4 grid grid-cols-1 gap-5  md:grid-cols-2">
+                        <div
+                          hidden={currentAttribution !== Attribution.conversion}
+                          className={submitCount ? (errors.target ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="target">Target Contract Address</label>
+                          <Field
+                            name="target"
+                            type="text"
+                            id="target"
+                            placeholder="Enter conversion target"
+                            className="form-input"
+                          />
+                          {submitCount ? (
+                            errors.target ? (
+                              <div className="mt-1 text-danger">{errors.target.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+
+                        <div
+                          hidden={currentAttribution !== Attribution.conversion}
+                          className={submitCount ? (errors.abi ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="abi">Abi</label>
+                          <Field name="abi" type="text" id="abi" placeholder="Enter abi" className="form-input" />
+                          {submitCount ? (
+                            errors.abi ? (
+                              <div className="mt-1 text-danger">{errors.abi.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                      <div
+                        hidden={currentAttribution !== Attribution.conversion}
+                        className={`${submitCount ? (errors.paramsSchema ? 'has-error' : 'has-success') : ''}  mb-4`}>
+                        <label htmlFor="paramsSchema">paramsSchema </label>
+                        <Field
+                          name="paramsSchema"
+                          as="textarea"
+                          id="paramsSchema"
+                          placeholder="Enter paramsSchema"
+                          className="form-input"
+                          // Display the object as a string
+                          value={
+                            typeof values.paramsSchema === 'string'
+                              ? values.paramsSchema
+                              : JSON.stringify(values.paramsSchema, null, 2)
+                          }
+                          onChange={(e: any) => {
+                            // Update the field value as a string always
+                            setFieldValue('paramsSchema', e.target.value);
+
+                            try {
+                              // Attempt to parse the edited JSON string back into an object
+                              const parsed = JSON.parse(e.target.value);
+                              // Update preview values or any other state you need
+                              setPreviewValues((prevState) => ({ ...prevState, paramsSchema: parsed }));
+                            } catch (error) {
+                              // Optionally handle JSON parse errors or show an error message
+                              // For example, you could set an error state here
+                            }
+                          }}
+                        />
+
+                        {submitCount ? (
+                          errors.paramsSchema ? (
+                            <div className="mt-1 text-danger">{errors.paramsSchema.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                      <div className="mb-4 grid grid-cols-1 gap-5  md:grid-cols-2">
+                        <div className={submitCount ? (errors.startingDate ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="startingDate">Starting Date</label>
+                          <DatePicker
+                            name="startingDate"
+                            id="startingDate"
+                            placeholderText="Enter starting Date"
+                            className="form-input"
+                            todayButton="Today"
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            showTimeSelect
+                          />
+                          {submitCount ? (
+                            errors.startingDate ? (
+                              <div className="mt-1 text-danger">{errors.startingDate.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+
+                        <div className={submitCount ? (errors.endingDate ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="endingDate">Ending Date</label>
+                          <DatePicker
+                            name="endingDate"
+                            id="endingDate"
+                            placeholderText="Enter ending Date"
+                            className="form-input"
+                            todayButton="Today"
+                            dateFormat="MMMM d, yyyy h:mm aa"
+                            showTimeSelect
+                          />
+                          {submitCount ? (
+                            errors.endingDate ? (
+                              <div className="mt-1 text-danger">{errors.endingDate.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                      <div className="mb-4 grid grid-cols-1 gap-5  md:grid-cols-2">
+                        <div
+                          className={submitCount ? (errors.maxPricePerConsumption ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="maxPricePerConsumption">Max Impression Price</label>
+                          <Field
+                            name="maxPricePerConsumption"
+                            type="number"
+                            id="maxPricePerConsumption"
+                            placeholder="Enter max impression price"
+                            className="form-input"
+                          />
+
+                          {submitCount ? (
+                            errors.maxPricePerConsumption ? (
+                              <div className="mt-1 text-danger">{errors.maxPricePerConsumption.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                        <div
+                          className={submitCount ? (errors.maxConsumptionsPerDay ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="maxPricePerConsumption">Max Consumptions per day</label>
+                          <Field
+                            name="maxConsumptionsPerDay"
+                            type="number"
+                            id="maxConsumptionsPerDay"
+                            placeholder="Enter max consumptions per day"
+                            className="form-input"
+                          />
+
+                          {submitCount ? (
+                            errors.maxConsumptionsPerDay ? (
+                              <div className="mt-1 text-danger">{errors.maxConsumptionsPerDay.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                      <div className={` mb-4 ${submitCount ? (errors.maxBudget ? 'has-error' : 'has-success') : ''}`}>
+                        <label htmlFor="maxBudget">Total Maximum Budget to consume</label>
+                        <Field
+                          name="maxBudget"
+                          type="number"
+                          id="maxBudget"
+                          placeholder="Enter max budget"
+                          className="form-input"
+                        />
+
+                        {submitCount ? (
+                          errors.maxBudget ? (
+                            <div className="mt-1 text-danger">{errors.maxBudget.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                        <div
+                          className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="blacklistedPublishers">Placement Exclusion</label>
+                          <Select
+                            classNames={{
+                              control: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              option: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              singleValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              multiValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              multiValueLabel: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                            }}
+                            placeholder="Select an option"
+                            id="blacklistedPublishers"
+                            options={publisherOptions}
+                            name="blacklistedPublishers"
+                            isMulti
+                            value={
+                              publisherOptions?.filter((a) => currentBlacklistedPublishers?.includes(a.value)) ?? []
+                            }
+                            onChange={(value) => {
+                              setCurrentBlacklistedPublishers(value.map((v) => v.value));
+                              values.blacklistedPublishers = value.map((v) => v.value) ?? [];
+                            }}
+                            isSearchable={true}
+                          />
+                          {submitCount ? (
+                            errors.blacklistedPublishers ? (
+                              <div className="mt-1 text-danger">{errors.blacklistedPublishers.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                        <div
+                          className={submitCount ? (errors.whitelistedPublishers ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="whitelistedPublishers">Whitelisted Publishers</label>
+                          <Select
+                            classNames={{
+                              control: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              option: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              singleValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              multiValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              multiValueLabel: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                            }}
+                            placeholder="Select an option"
+                            id="whitelistedPublishers"
+                            options={publisherOptions}
+                            name="whitelistedPublishers"
+                            isMulti
+                            value={
+                              publisherOptions?.filter((a) => currentWhitelistedPublishers?.includes(a.value)) ?? []
+                            }
+                            onChange={(value) => {
+                              setCurrentWhitelistedPublishers(value.map((v) => v.value));
+                              values.whitelistedPublishers = value.map((v) => v.value) ?? [];
+                            }}
+                            isSearchable={true}
+                          />
+                          {submitCount ? (
+                            errors.whitelistedPublishers ? (
+                              <div className="mt-1 text-danger">{errors.whitelistedPublishers.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   {isConnected ? (
                     <button
                       type="submit"
@@ -851,6 +874,18 @@ export const AdEditorComponent = (id?: string) => {
                   ) : (
                     <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
                   )}
+
+                  <div className="">
+                    <span className="flex ">
+                      <Link
+                        href="https://docs.targecy.xyz/advertisers/manage-campaigns"
+                        target="_blank"
+                        className="cursor-pointer text-gray-400 hover:text-primary">
+                        <InfoCircleOutlined className="mb-1 mt-1 align-middle"></InfoCircleOutlined>{' '}
+                        <span className="align-middle">Need help? </span>
+                      </Link>{' '}
+                    </span>
+                  </div>
                 </Form>
               )}
             </Formik>
@@ -862,7 +897,7 @@ export const AdEditorComponent = (id?: string) => {
                   <Ad publisher={addressZero} isDemo={true} customDemo={{ ...previewValues }}></Ad>
                 </div>
               </div>
-              <div hidden={potentialReach === undefined} className="mb-8 mt-4 flex w-full max-w-lg justify-center">
+              <div hidden={potentialReach === undefined} className="mb-2 mt-4 flex w-full max-w-lg justify-center">
                 <div className="flex w-full items-center justify-between rounded border border-white-light bg-white p-4 shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                   <label className="text-2xl text-secondary">Potential Reach</label>
                   <label className="text-2xl text-primary">{potentialReach ?? '?'}</label>

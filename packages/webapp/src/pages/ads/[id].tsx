@@ -130,7 +130,7 @@ const AdDetailPage = () => {
                         title: 'Could not delete ad.',
                         padding: '10px 20px',
                       });
-                      console.log(error);
+                      console.error(error);
                     });
                 }}>
                 Delete

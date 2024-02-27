@@ -29,7 +29,7 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-if (env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
+// if (env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
   datadogRum.init({
     applicationId: 'c67b2bb4-e954-4ec8-b652-2faeb725d198',
     clientToken: 'pub8b1d36983b7012cb76a1af361bcb75cc',
@@ -54,7 +54,7 @@ if (env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
     forwardErrorsToLogs: true,
     sessionSampleRate: 100,
   });
-}
+// }
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);

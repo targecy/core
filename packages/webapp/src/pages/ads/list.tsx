@@ -144,7 +144,7 @@ const AdsList = () => {
                         title: 'Could not pause ad.',
                         padding: '10px 20px',
                       });
-                      console.log(error);
+                      console.error(error);
                     });
                 }}
                 className="ml-2 align-middle text-warning transition-all hover:text-secondary"
@@ -179,7 +179,7 @@ const AdsList = () => {
                         title: 'Could not unpause ad.',
                         padding: '10px 20px',
                       });
-                      console.log(error);
+                      console.error(error);
                     });
                 }}
                 className="ml-2 align-middle text-warning transition-all hover:text-secondary"
@@ -220,7 +220,7 @@ const AdsList = () => {
                       title: 'Could not delete ad.',
                       padding: '10px 20px',
                     });
-                    console.log(error);
+                    console.error(error);
                   });
               }}
               className="ml-2 align-middle text-danger transition-all hover:text-secondary"
@@ -250,7 +250,7 @@ const AdsList = () => {
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
           records={ads || []}
           onRowClick={(row) => {
-            router.push(`/ads/${row.id}`).catch((e) => console.log(e));
+            router.push(`/ads/${row.id}`).catch((e) => console.error(e));
           }}
           highlightOnHover={true}
           minHeight={100}

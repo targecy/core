@@ -2,8 +2,8 @@ import { SCHEMA } from '@backend/constants/schemas/schemas.constant';
 import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { useCredentialsStatistics, useTargecyContext } from '@targecy/sdk';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useAsync } from 'react-use';
+import { useEffect, useState } from 'react';
+import { useAsync, useCookie } from 'react-use';
 import { useContractRead } from 'wagmi';
 
 import abi from '../generated/abis/Targecy.json';
@@ -22,6 +22,7 @@ import {
 } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
 import { backendTrpcClient } from '~/utils';
+import { UserRole } from '~/utils/preferences';
 
 const scannerUrl: Record<typeof env.NEXT_PUBLIC_VERCEL_ENV, string> = {
   development: `http://localhost:8090`,
@@ -164,6 +165,21 @@ export const Home = () => {
   const isLoadingQuantities = audienceQuantityLoading || segmentsQuantityLoading || totalConsumtionsLoading;
   const loadingQueries = lastAdsLoading || lastAudiencesLoading || lastSegmentsLoading || backendTrpcLoding;
 
+  const [cookieValue] = useCookie('userRoles');
+
+  const [hasMultipleRoles, setHasMultipleRoles] = useState(false);
+  const [isUser, setIsUser] = useState(false);
+  const [isAdvertiser, setIsAdvertiser] = useState(false);
+  const [isPublisher, setIsPublisher] = useState(false);
+
+  useEffect(() => {
+    const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
+    setHasMultipleRoles(userRoles.length > 1);
+    setIsUser(userRoles.includes('user'));
+    setIsAdvertiser(userRoles.includes('advertiser'));
+    setIsPublisher(userRoles.includes('publisher'));
+  }, [cookieValue]);
+
   if (isLoadingQuantities || loadingQueries) {
     return <HomeLoader />;
   }
@@ -230,84 +246,88 @@ export const Home = () => {
               />
             </div>
             <div className="mt-3 flex-col sm:ml-0 sm:block sm:w-full md:ml-0 md:block md:w-full lg:ml-3 lg:flex lg:w-2/3">
-              <div className="mb-3 flex h-1/2 flex-row justify-between">
-                <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
-                  <div className="mb-5 flex justify-between dark:text-white-light">
-                    <h5 className="text-lg font-semibold ">My Wallet</h5>
-                  </div>
-                  <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
-                    <div>
-                      <div>
-                        <div>Public On-Chain Data Credentials</div>
-                        <div className="text-lg text-primary">{credentialsStatistics.public}</div>
-                      </div>
+              {isUser && (
+                <div className="mb-3 flex flex-row justify-between">
+                  <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
+                    <div className="mb-5 flex justify-between dark:text-white-light">
+                      <h5 className="text-lg font-semibold ">My Wallet</h5>
                     </div>
-                    <div>
+                    <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
                       <div>
-                        <div>Behaviour Data Credentials</div>
-                        <div className="text-lg text-primary">{credentialsStatistics.behaviour}</div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div>
-                        <div>Private Data Credentials</div>
-                        <div className="text-lg text-primary">{credentialsStatistics.private} </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div>
-                        <div>Configuration Credentials</div>
-                        <div className="text-lg text-primary ">{credentialsStatistics.configuration} </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-3 flex  h-1/2 flex-row justify-between">
-                <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
-                  <div className="mb-5 flex justify-between dark:text-white-light">
-                    <h5 className="text-lg font-semibold ">My Advertising Account</h5>
-                  </div>
-                  <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
-                    <div>
-                      <div>
-                        <div>Ads</div>
-                        <div className="text-lg text-secondary">{advertiserData?.advertiser?.adsQuantity || 0}</div>
-                      </div>
-                    </div>
-                    <div>
-                      <div>
-                        <div>Remaining Budget</div>
-                        <div className="text-lg text-secondary">{budget?.budget?.remainingBudget || 0}</div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div>
-                        <div>Impressions/Clicks/Conversions/Total</div>
-                        <div className="text-lg text-secondary">
-                          {advertiserData?.advertiser?.impressions || 0}/{advertiserData?.advertiser?.clicks || 0}/
-                          {advertiserData?.advertiser?.conversions || 0}/{totalInteractions}{' '}
+                        <div>
+                          <div>Public On-Chain Data Credentials</div>
+                          <div className="text-lg text-primary">{credentialsStatistics.public}</div>
                         </div>
                       </div>
-                    </div>
-
-                    <div>
                       <div>
-                        <div>Cost per any interaction</div>
-                        <div className="text-lg text-white dark:text-white ">
-                          {totalInteractions > 0
-                            ? (Number(budget?.budget?.totalBudget) - Number(budget?.budget?.remainingBudget)) /
-                              totalInteractions
-                            : '-'}{' '}
+                        <div>
+                          <div>Behaviour Data Credentials</div>
+                          <div className="text-lg text-primary">{credentialsStatistics.behaviour}</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div>
+                          <div>Private Data Credentials</div>
+                          <div className="text-lg text-primary">{credentialsStatistics.private} </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div>
+                          <div>Configuration Credentials</div>
+                          <div className="text-lg text-primary ">{credentialsStatistics.configuration} </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+              {isAdvertiser && (
+                <div className="mt-3 flex  h-1/2 flex-row justify-between">
+                  <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
+                    <div className="mb-5 flex justify-between dark:text-white-light">
+                      <h5 className="text-lg font-semibold ">My Advertising Account</h5>
+                    </div>
+                    <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
+                      <div>
+                        <div>
+                          <div>Ads</div>
+                          <div className="text-lg text-secondary">{advertiserData?.advertiser?.adsQuantity || 0}</div>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          <div>Remaining Budget</div>
+                          <div className="text-lg text-secondary">{budget?.budget?.remainingBudget || 0}</div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div>
+                          <div>Impressions/Clicks/Conversions/Total</div>
+                          <div className="text-lg text-secondary">
+                            {advertiserData?.advertiser?.impressions || 0}/{advertiserData?.advertiser?.clicks || 0}/
+                            {advertiserData?.advertiser?.conversions || 0}/{totalInteractions}{' '}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div>
+                          <div>Cost per any interaction</div>
+                          <div className="text-lg text-white dark:text-white ">
+                            {totalInteractions > 0
+                              ? (Number(budget?.budget?.totalBudget) - Number(budget?.budget?.remainingBudget)) /
+                                totalInteractions
+                              : '-'}{' '}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
