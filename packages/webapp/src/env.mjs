@@ -68,6 +68,7 @@ export const env = createEnv({
         'Targency contract address. If working locally, you can use localhost config and hostname properly load on hostname.ts file.'
       ),
     NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: z.string().min(1).default('localhost'),
+    NEXT_PUBLIC_GOOGLE_ANALYTICS: z.string().min(1).optional(),
   },
   // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
   // runtimeEnv: {
@@ -102,5 +103,6 @@ export const env = createEnv({
     PRIVATE_KEY: process.env.PRIVATE_KEY,
     NODE_ENV: process.env.NODE_ENV,
     VERCEL_ENV: process.env.VERCEL_ENV,
+    NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
   },
 });

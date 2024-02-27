@@ -106,7 +106,7 @@ export const AudienceEditorComponent = (id?: string) => {
 
       await router.push('/audiences');
     } catch (e) {
-      console.log(e);
+      console.error(e);
       await Swal.mixin({
         toast: true,
         position: 'top',
@@ -138,7 +138,7 @@ export const AudienceEditorComponent = (id?: string) => {
       .query({
         ids: currentSegments.map((id) => id.toString()),
       })
-      .catch((error) => console.log(error))
+      .catch((error) => console.error(error))
       .then((response) => setPotentialReach(response?.count));
   }, [currentSegments]);
 
@@ -298,7 +298,7 @@ export const AudienceEditorComponent = (id?: string) => {
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             submitForm(parsed.data);
                           } else {
-                            console.log(parsed.error);
+                            console.error(parsed.error);
                           }
                         }
                       }}>

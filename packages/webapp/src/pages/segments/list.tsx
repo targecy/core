@@ -135,7 +135,7 @@ const SegmentsList = () => {
                       title: 'Could not delete Segment.',
                       padding: '10px 20px',
                     });
-                    console.log(error);
+                    console.error(error);
                   });
               }}
               className="align-middle text-danger hover:text-secondary"></DeleteOutlined>
@@ -167,7 +167,7 @@ const SegmentsList = () => {
           highlightOnHover={true}
           minHeight={200}
           onRowClick={(row) => {
-            router.push(`/segments/${row.id}`).catch((e) => console.log(e));
+            router.push(`/segments/${row.id}`).catch((e) => console.error(e));
           }}
           columns={columns}></DataTable>
       </div>

@@ -37,6 +37,8 @@ export type ZkServicesType = {
   };
   circuitStorage: CircuitStorage;
   proofService: ProofService;
+  userIdentity: UserIdentityType;
+  issuerIdentity: UserIdentityType;
 };
 
 export type UserIdentityType = {

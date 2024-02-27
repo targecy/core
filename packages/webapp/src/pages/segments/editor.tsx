@@ -166,7 +166,6 @@ export const SegmentEditorComponent = (id?: string) => {
   >(undefined);
   const [potentialReach, setPotentialReach] = useState<number | undefined>(undefined);
   useEffect(() => {
-    console.log(currentParams);
     if (
       !currentParams ||
       !currentParams.operator ||

@@ -76,7 +76,7 @@ export const networkDefinitions: Record<TNetworkNamesList, TNetworkDefinition> =
     chainId: 137,
     price: 1,
     gasPrice: 3500000000,
-    rpcUrl: 'https://matic-mainnet.chainstacklabs.com',
+    rpcUrl: 'https://polygon-rpc.com',
     faucet: 'https://faucet.matic.network',
     blockExplorer: 'https://polygonscan.com',
   },

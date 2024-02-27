@@ -47,7 +47,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
   }, [router]);
 
   const { pathname } = useRouter();
-  const useFullLayout = pathname !== '/beta' && pathname !== '/storage';
+  const useFullLayout = pathname !== '/onboarding' && pathname !== '/storage';
 
   if (!useFullLayout)
     return (

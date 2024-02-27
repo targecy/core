@@ -3,11 +3,14 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCookie } from 'react-use';
 
 import { IRootState } from '../../store';
 import { toggleTheme, toggleSidebar, toggleRTL } from '../../store/themeConfigSlice';
 import { Budget } from '../Budget';
 import { HeaderWalletManager } from '../shared/Wallet';
+
+import { UserRole } from '~/utils/preferences';
 
 const Header = () => {
   const router = useRouter();
@@ -128,6 +131,14 @@ const Header = () => {
 
   const { t, i18n } = useTranslation();
 
+  const [cookieValue] = useCookie('userRoles');
+  const [isAdvertiser, setIsAdvertiser] = useState(false);
+
+  useEffect(() => {
+    const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
+    setIsAdvertiser(userRoles.includes('advertiser'));
+  }, [cookieValue]);
+
   return (
     <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
       <div className="shadow-sm">
@@ -212,8 +223,7 @@ const Header = () => {
               </button>
             </div> */}
 
-            <Budget></Budget>
-
+            {isAdvertiser && <Budget></Budget>}
             <div>
               {themeConfig.theme === 'light' ? (
                 <button

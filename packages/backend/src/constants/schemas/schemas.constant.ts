@@ -26,6 +26,8 @@ export enum SCHEMA_TYPES {
   ActiveOnChainTargecySchema = 'ActiveOnChainTargecySchema',
   PageViewTargecySchema = 'PageViewTargecySchema',
   CustomEventTargecySchema = 'CustomEventTargecySchema',
+  InterestTargecySchema = 'InterestTargecySchema',
+  ProfileTargecySchema = 'ProfileTargecySchema',
 }
 
 export type CredentialSubjectBase = { id: string };
@@ -55,12 +57,23 @@ export type CustomEventTargecyCredentialSubject = CredentialSubjectBase & {
   eventParam: string;
 };
 
+export type InterestTargecyCredentialSubject = CredentialSubjectBase & {
+  interest: string;
+};
+
+export type ProfileTargecyCredentialSubject = CredentialSubjectBase & {
+  country: string;
+  birthdate: string;
+};
+
 export type CredentialSubjects = {
   ProtocolUsedTargecySchema: ProtocolUsedTargecyCredentialSubject;
   TokenHolderTargecySchema: TokenHolderTargecyCredentialSubject;
   ActiveOnChainTargecySchema: ActiveOnChainTargecyCredentialSubject;
   PageViewTargecySchema: PageViewTargecyCredentialSubject;
   CustomEventTargecySchema: CustomEventTargecyCredentialSubject;
+  InterestTargecySchema: InterestTargecyCredentialSubject;
+  ProfileTargecySchema: ProfileTargecyCredentialSubject;
 };
 
 export type SCHEMA_TYPE = keyof typeof SCHEMA_TYPES;
@@ -143,6 +156,35 @@ export const SCHEMAS: {
       id: '',
       eventId: '',
       eventParam: '',
+    },
+  },
+
+  InterestTargecySchema: {
+    title: 'User Interest Credential',
+    description: 'The interest given by the user.',
+    type: 'InterestTargecySchema',
+    bigint: '250607888161114778398481712804653335080',
+    hash: '2882d6c6e6e816051f93332ad85289bc',
+    schemaUrl: 'ipfs://QmbEQuiwt41aMGJC775AwYa9c6gHNvguJULreJeU84q6BU',
+    jsonLdContextUrl: 'ipfs://QmWXLX5ceiVbvLum6QnHjN4BJjgjHMhbqWnui3iKiT1M3t',
+    credentialSubject: {
+      id: '',
+      interest: '',
+    },
+  },
+
+  ProfileTargecySchema: {
+    title: "Profile Credential",
+    description: "The profile of the user.",
+    type: "ProfileTargecySchema",
+    bigint: "147787338414075909568652196209943617365",
+    hash: "559f8b188638bfde8ee808fc58ce2e6f",
+    schemaUrl: "ipfs://QmYhnFX2r4YgL2EfNGBJYjF5ab9UZch7nKBSyY7ibTUi6z",
+    jsonLdContextUrl: "ipfs://QmaG3XAaNkoxKR8jUJMCLA1hsGDucEcRdqv471KYYkBYi5",
+    credentialSubject: {
+      id: "",
+      country: "",
+      birthdate: "",
     },
   },
 };

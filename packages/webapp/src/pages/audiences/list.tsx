@@ -123,7 +123,7 @@ const ListAudiences = () => {
                       title: 'Could not delete ad.',
                       padding: '10px 20px',
                     });
-                    console.log(error);
+                    console.error(error);
                   });
               }}
               className="align-middle text-danger transition-all hover:text-secondary"></DeleteOutlined>
@@ -157,8 +157,7 @@ const ListAudiences = () => {
           highlightOnHover={true}
           minHeight={200}
           onRowClick={(row) => {
-            console.log(row);
-            router.push(`/audiences/${row.id}`).catch((e) => console.log(e));
+            router.push(`/audiences/${row.id}`).catch((e) => console.error(e));
           }}
           columns={columns}></DataTable>
       </div>

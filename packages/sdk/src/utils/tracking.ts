@@ -6,6 +6,7 @@ import { DID } from '@iden3/js-iden3-core';
 import { SCHEMAS } from '@backend/constants/schemas/schemas.constant';
 import { sha256 } from '@iden3/js-crypto';
 import { createUserIdentity } from './zk';
+import { updatePotentialReachDatabase } from './reach';
 
 enum TrackingEventType {
   PAGE_VIEW = 'page_view',
@@ -46,24 +47,18 @@ const trackEvent = async (env: environment, params: TrackingEvent) => {
     console.error('window is not defined');
     return false;
   }
-  const issuerUrl = window.location.hostname;
 
-  const zkServices = await initServices();
-  const identityWallet = zkServices.identityWallet;
-  const userIdentity = await createUserIdentity(zkServices.identityWallet);
+  const zkServices = await initServices();  
 
   const savedCredentials = await getSavedCredentials();
-
-  const issuerIdentity = await createIssuerIdentity(identityWallet, issuerUrl.toString());
-
-  const credentialToSave = await eventToCredential(env, identityWallet, issuerIdentity.did, userIdentity.did, params);
+  const credentialToSave = await eventToCredential(env, zkServices.identityWallet, zkServices.issuerIdentity.did, zkServices.userIdentity.did, params);
 
   const credentialAlreadySaved = savedCredentials.find(
     (c) => JSON.stringify(c.credentialSubject) == JSON.stringify(credentialToSave.credentialSubject)
   );
 
   if (!credentialAlreadySaved) {
-    saveCredential(credentialToSave);
+    saveCredential(credentialToSave, env);
     updatePotentialReachDatabase(env, credentialToSave);
   }
 
@@ -139,17 +134,7 @@ const eventToCredential = (
   });
 };
 
-const saveCredential = async (credential: W3CCredential) => {
-  await saveCredentials([credential]);
+const saveCredential = async (credential: W3CCredential, env: environment) => {
+  await saveCredentials([credential], env);
 };
 
-const updatePotentialReachDatabase = async (env: environment, credential: W3CCredential) => {
-  const subject = credential.credentialSubject;
-  delete subject.id; // We don't track users data!
-
-  backendTrpcClient(env).reach.updateReach.mutate({
-    type: credential.type.length > 1 ? credential.type[1] : credential.type[0],
-    issuer: credential.issuer,
-    subject,
-  });
-};

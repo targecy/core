@@ -85,7 +85,7 @@ const PublishersList = () => {
                         title: 'Could not pause publisher.',
                         padding: '10px 20px',
                       });
-                      console.log(error);
+                      console.error(error);
                     });
                 }}
                 className="align-middle text-warning transition-all hover:text-secondary"></PauseOutlined>
@@ -119,7 +119,7 @@ const PublishersList = () => {
                         title: 'Could not unpause publisher.',
                         padding: '10px 20px',
                       });
-                      console.log(error);
+                      console.error(error);
                     });
                 }}
                 className="align-middle text-warning transition-all hover:text-secondary"></CaretRightOutlined>
@@ -153,7 +153,7 @@ const PublishersList = () => {
                       title: 'Could not remove publisher.',
                       padding: '10px 20px',
                     });
-                    console.log(error);
+                    console.error(error);
                   });
               }}
               className="align-middle text-danger transition-all hover:text-secondary"></DeleteOutlined>
@@ -183,7 +183,7 @@ const PublishersList = () => {
           className="table-hover whitespace-nowrap bg-white p-7 px-2 py-2 dark:bg-black"
           records={publishers || []}
           onRowClick={(row) => {
-            router.push(`/publishers/${row.id}`).catch((e) => console.log(e));
+            router.push(`/publishers/${row.id}`).catch((e) => console.error(e));
           }}
           highlightOnHover={true}
           minHeight={200}

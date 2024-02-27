@@ -29,8 +29,11 @@ const getCredentialCategory = (credential: W3CCredential) => {
       return CredentialCategory.Behaviour;
     case SCHEMA_TYPES.CustomEventTargecySchema:
       return CredentialCategory.Behaviour;
+    case SCHEMA_TYPES.InterestTargecySchema:
+      return CredentialCategory.Behaviour;
     default:
-      throw new Error(`Set category for credential type: ${type}`);
+      console.error(`Set category for credential type: ${type}`);
+      return CredentialCategory.Configuration;
   }
 };
 
