@@ -7723,6 +7723,7 @@ __metadata:
     "@trpc/react-query": "npm:10.40.0"
     "@trpc/server": "npm:10.40.0"
     "@types/formidable": "npm:^3"
+    "@types/js-cookie": "npm:^3"
     "@types/lodash": "npm:^4.14.191"
     "@types/node": "npm:^16.11.59"
     "@types/papaparse": "npm:^5"
@@ -8312,6 +8313,13 @@ __metadata:
   version: 2.2.7
   resolution: "@types/js-cookie@npm:2.2.7"
   checksum: 851f47e94ca1fc43661d8f51614d67a613e7810c91b876d0a3b311ce72f7df800107fd02a08cb6948184e12c120b4f058edca2f50424d8798bdcffd6627281e3
+  languageName: node
+  linkType: hard
+
+"@types/js-cookie@npm:^3":
+  version: 3.0.6
+  resolution: "@types/js-cookie@npm:3.0.6"
+  checksum: 272d551687547445cb210213c73e72e0e5d58ad73e2e444a65d688b8ff9425529779ee0cd6492aaa1f070161916d4254ef2b1a76d64179100437f60749d094ef
   languageName: node
   linkType: hard
 

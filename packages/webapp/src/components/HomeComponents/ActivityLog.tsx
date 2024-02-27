@@ -1,4 +1,5 @@
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import { useCookie } from 'react-use';
 
 export const ActivityLog = (props: {
   lastAds: any;
@@ -19,13 +20,20 @@ export const ActivityLog = (props: {
     schemas,
   } = props;
 
+  const [cookieValue] = useCookie('userRoles');
+  const userRoles = JSON.parse(cookieValue ?? '[]');
+  const useLarge = userRoles.includes('advertiser') && userRoles.includes('user');
+
   return (
     <div className="panel w-full">
       <div className="-mx-5 mb-5 flex items-start justify-between border-b border-white-light p-5 pt-0  dark:border-[#1b2e4b] dark:text-white-light">
         <h5 className="text-lg font-semibold ">Activity Log</h5>
         <div className="dropdown"></div>
       </div>
-      <PerfectScrollbar className="perfect-scrollbar relative h-[360px] ltr:-mr-3 ltr:pr-3 rtl:-ml-3 rtl:pl-3">
+      <PerfectScrollbar
+        className={`perfect-scrollbar relative ${
+          useLarge ? 'h-[360px]' : 'h-[130px]'
+        } ltr:-mr-3 ltr:pr-3 rtl:-ml-3 rtl:pl-3`}>
         <div className="space-y-7">
           {lastAds?.ads.map(
             (ad: { id: any; startingTimestamp: string | number | Date; endingTimestamp: string | number | Date }) => (

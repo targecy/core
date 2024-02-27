@@ -80,7 +80,6 @@ function retrieveItem(key: string): Promise<string | null> {
 
 export async function getSavedCredentials() {
   try {
-    console.log(await retrieveItem('credentials'));
     const json = JSON.parse((await retrieveItem('credentials')) ?? '[]');
     if (!Array.isArray(json)) throw new Error('Invalid credentials');
 

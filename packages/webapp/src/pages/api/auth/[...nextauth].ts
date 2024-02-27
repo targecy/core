@@ -3,23 +3,11 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { getCsrfToken } from 'next-auth/react';
 import { SiweMessage } from 'siwe';
 
-import { isVercelDevelopment } from '~/constants/app.constants';
 import { env } from '~/env.mjs';
 
 export type SessionData = {
   address: string;
-  isBetaUser: boolean;
-  userRoles: ('user' | 'advertiser' | 'publisher')[];
 } & DefaultSession;
-
-const WHITELISTED_ADDRESSES = [
-  '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
-  '0xc8e4fcff013b61bea893d54427f1a72691ffe7a2',
-  '0xE86ce0450be5bCAb5302d381EB3e6297F874fBd6', // Benja Farres
-  '0x0263C341D1788174aC51B110aB99016d5a642651',
-  '0x374E763fBE0FC4e404db4531f7Ee54044019a8A1', // Ash Fishman
-];
-const isBetaUser = (address: string) => WHITELISTED_ADDRESSES.includes(address) || isVercelDevelopment;
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -52,12 +40,6 @@ export default async function auth(req: any, res: any) {
 
           if (!result.success) return { id: 'Could not verify signature.' };
 
-          const isBetaUser = true;
-          if (!isBetaUser)
-            return {
-              id: 'Address is not whitelisted.',
-            };
-
           return {
             id: siwe.address,
           };
@@ -85,8 +67,6 @@ export default async function auth(req: any, res: any) {
       session({ session, token }: { session: any; token: any }) {
         const data: Partial<SessionData> = {
           address: token.sub,
-          isBetaUser: isBetaUser(token.sub),
-          userRoles: ['user'],
         };
 
         session.user = data;
@@ -94,8 +74,6 @@ export default async function auth(req: any, res: any) {
         return session;
       },
       jwt({ token }: { token: any }) {
-        token.isBetaUser = isBetaUser(token.sub);
-
         return token;
       },
     },
