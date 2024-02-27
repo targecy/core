@@ -84,6 +84,7 @@
     "apexcharts": "^3.37.1",
     "buffer": "^6.0.3",
     "classnames": "^2.5.1",
+    "countries-list": "^3.0.6",
     "daisyui": "4.6.1",
     "easymde": "^2.18.0",
     "eslint": "8.32.0",

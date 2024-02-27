@@ -2,6 +2,8 @@ import { W3CCredential } from '@0xpolygonid/js-sdk';
 
 import { cloneCredential } from './credential';
 import { sha256 } from '@iden3/js-crypto';
+import { updatePotentialReachDatabase } from './reach';
+import { environment } from './context';
 
 /**
  * This is a workaround for the fact that the browser doesn't allow us to
@@ -78,6 +80,7 @@ function retrieveItem(key: string): Promise<string | null> {
 
 export async function getSavedCredentials() {
   try {
+    console.log(await retrieveItem('credentials'));
     const json = JSON.parse((await retrieveItem('credentials')) ?? '[]');
     if (!Array.isArray(json)) throw new Error('Invalid credentials');
 
@@ -92,7 +95,7 @@ const hashCredentialSubject = (credential: W3CCredential) => {
   return sha256(new TextEncoder().encode(JSON.stringify(credential.credentialSubject))).toString();
 };
 
-export async function saveCredentials(credentials: W3CCredential[]) {
+export async function saveCredentials(credentials: W3CCredential[], env: environment) {
   const savedCredentials = await getSavedCredentials();
   const savedCredentialsDids = savedCredentials.map((c) => c.id);
 
@@ -107,6 +110,9 @@ export async function saveCredentials(credentials: W3CCredential[]) {
 
   const json = JSON.stringify(savedCredentials.concat(newCredentials));
   await saveItem('credentials', json);
+
+  // Don't wait
+  newCredentials.map((c) => updatePotentialReachDatabase(env, c));
 }
 
 export async function saveSeed(seed: string) {

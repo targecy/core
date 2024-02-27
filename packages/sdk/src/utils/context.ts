@@ -1,6 +1,7 @@
 import { ZkServicesType } from '../components/misc/Context.types';
+import { createIssuerIdentity } from './tracking';
 
-import { getCircuitStorage, initProofService, initializeStorages } from './zk';
+import { createUserIdentity, getCircuitStorage, initProofService, initializeStorages } from './zk';
 
 export const initServices = async (): Promise<ZkServicesType> => {
   const storages = initializeStorages();
@@ -12,12 +13,19 @@ export const initServices = async (): Promise<ZkServicesType> => {
     circuitStorage
   );
 
+  const issuerUrl = window.location.hostname;
+
+  const userIdentity = await createUserIdentity(storages.identityWallet);
+  const issuerIdentity = await createIssuerIdentity(storages.identityWallet, issuerUrl.toString());
+
   return {
     identityWallet: storages.identityWallet,
     credWallet: storages.credWallet,
     dataStorage: storages.dataStorage,
     circuitStorage,
     proofService,
+    userIdentity,
+    issuerIdentity,
   };
 };
 

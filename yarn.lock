@@ -7753,6 +7753,7 @@ __metadata:
     buffer: "npm:^6.0.3"
     classnames: "npm:^2.5.1"
     concurrently: "npm:7.2.1"
+    countries-list: "npm:^3.0.6"
     cross-env: "npm:^7.0.3"
     daisyui: "npm:4.6.1"
     easymde: "npm:^2.18.0"
@@ -14242,6 +14243,13 @@ __metadata:
     typescript:
       optional: true
   checksum: 91d082baca0f33b1c085bf010f9ded4af43cbedacba8821da0fb5667184d0a848addc52c31fadd080007f904a555319c238cf5f4c03e6d58ece2e4876b2e73d6
+  languageName: node
+  linkType: hard
+
+"countries-list@npm:^3.0.6":
+  version: 3.0.6
+  resolution: "countries-list@npm:3.0.6"
+  checksum: ec686f04d9f6a2be35599d27ed9e97c15f889b245127a65cabd9eecb5c9aa017a8dda9a4b2ccc4b13c4f4544985e97167927ed7b1e0d4d21639cecca145d378a
   languageName: node
   linkType: hard
 
