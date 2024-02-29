@@ -26,7 +26,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.credentialsRouter = void 0;
 const js_iden3_core_1 = require("@iden3/js-iden3-core");
 const server_1 = require("@trpc/server");
-const viem_1 = require("viem");
 const zod_1 = require("zod");
 const __1 = require("..");
 const default_issuer_1 = require("../../constants/issuers/default/default.issuer");
@@ -69,20 +68,18 @@ exports.credentialsRouter = (0, __1.router)({
     }),
     getPublicCredentials: __1.publicProcedure
         .input(zod_1.z.object({
-        message: zod_1.z.string().optional(),
-        signature: zod_1.z.string(),
+        // message: z.string().optional(),
         did: zod_1.z.string(),
         wallet: zod_1.z.string(),
     }))
         .query(async ({ ctx, input }) => {
         console.debug('getPublicCredentials');
-        // Validate signature, only wallet owners can get their credentials.
-        const walletFromSignature = await (0, viem_1.recoverMessageAddress)({
-            message: input.message ?? 'public.credentials',
-            signature: input.signature,
-        });
-        if (walletFromSignature !== input.wallet)
-            throw new server_1.TRPCError({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
+        // // Validate signature, only wallet owners can get their credentials.
+        // const walletFromSignature = await recoverMessageAddress({
+        //   message: input.message ?? 'public.credentials',
+        //   signature: input.signature as `0x{string}`,
+        // });
+        // if (walletFromSignature !== input.wallet) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Unauthorized' });
         // Check last time credentials were issued for this wallet
         const lastTimeIssuedForWallet = (await ctx.prisma.credential.aggregate({
             where: {

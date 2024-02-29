@@ -158,16 +158,12 @@ export declare const appRouter: import("@trpc/server").CreateRouterInner<import(
                 }, "query", false>;
             };
             _input_in: {
-                signature: string;
                 did: string;
                 wallet: string;
-                message?: string | undefined;
             };
             _input_out: {
-                signature: string;
                 did: string;
                 wallet: string;
-                message?: string | undefined;
             };
             _output_in: typeof import("@trpc/server").unsetMarker;
             _output_out: typeof import("@trpc/server").unsetMarker;
