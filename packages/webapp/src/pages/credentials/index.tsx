@@ -1,13 +1,7 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { SCHEMA_TYPES } from '@backend/constants/schemas/schemas.constant';
-import {
-  useTargecyContext,
-  cloneCredential,
-  useCredentials,
-  useCredentialsStatistics,
-  saveCredentials,
-} from '@targecy/sdk';
+import { useTargecyContext, useCredentialsStatistics, saveCredentials } from '@targecy/sdk';
 import { useCredentialsByType } from '@targecy/sdk/src/hooks/useCredentialsByType';
 import { getCountryDataList } from 'countries-list';
 import { Form, Formik } from 'formik';
@@ -22,7 +16,6 @@ import { CredentialsLoader } from '~/components/loaders/CredentialsLoader';
 import { vercelEnv } from '~/constants/app.constants';
 import { useWallet } from '~/hooks';
 import { getWebappCredentialRequest } from '~/utils';
-import { backendTrpcClient } from '~/utils/trpc';
 
 const interests = [
   'Staking',
@@ -43,7 +36,6 @@ const interests = [
 
 const Credentials = () => {
   const { context } = useTargecyContext();
-  const { setCredentials } = useCredentials(context);
   const credentialsByType = useCredentialsByType(context);
   const credentialsStatistics = useCredentialsStatistics(context);
   const { isConnected, address } = useWallet();
@@ -70,21 +62,6 @@ const Credentials = () => {
       });
     }
   }, [credentialsByType]);
-
-  const getPublicCredentials = () =>
-    signMessageAsync({ message: 'public.credentials' }).then((signature) =>
-      backendTrpcClient.credentials.getPublicCredentials
-        .query({
-          signature,
-          wallet: address as `0x${string}`,
-          did: context.userIdentity?.did.id || '',
-        })
-        .then((res) => {
-          setCredentials(res.map(cloneCredential));
-          setFetchingCredentials(false);
-        })
-    );
-
   const [savingInterests, setSavingInterests] = useState(false);
   const saveInterests = () => {
     setSavingInterests(true);
