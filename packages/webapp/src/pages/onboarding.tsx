@@ -8,6 +8,7 @@ import { useCookie } from 'react-use';
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { useWallet } from '~/hooks';
 import { UserRole } from '~/utils/preferences';
+import Link from 'next/link';
 
 export default function Onboarding() {
   const { openAccountModal } = useAccountModal();
@@ -37,7 +38,7 @@ export default function Onboarding() {
 
   const goToApp = () => {
     if (cookieValue && JSON.parse(cookieValue ?? '[]').length) {
-      console.log("href", href?.toString() ?? '/');
+      console.log('href', href?.toString() ?? '/');
       router.push(href?.toString() ?? '/').catch(console.error);
     } else {
       console.error('Roles not confirmed', cookieValue);
@@ -53,7 +54,7 @@ export default function Onboarding() {
           Welcome to Targecy
         </Typography>
 
-        {status === 'authenticated' && address && (
+        {status === 'authenticated' && (
           <div className="flex flex-col items-center gap-2">
             <p className="flex">
               {' '}
@@ -86,13 +87,24 @@ export default function Onboarding() {
                     ? 'borde-gray-700 bg-gray-200 dark:border-gray-300 dark:bg-neutral-700/30'
                     : ''
                 }`}>
-                <h2 className={`mb-3 text-2xl font-semibold`}>Creator or Business </h2>
+                <h2 className={`mb-3 text-2xl font-semibold`}>Creator</h2>
+                <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>You want to gain exposure for your content.</p>
+              </div>
+
+              <div
+                onClick={() => handleRoleChange('advertiser')}
+                className={`group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
+                  selectedRoles.includes('advertiser')
+                    ? 'borde-gray-700 bg-gray-200 dark:border-gray-300 dark:bg-neutral-700/30'
+                    : ''
+                }`}>
+                <h2 className={`mb-3 text-2xl font-semibold`}>Business </h2>
                 <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
                   You want to advertise on Targecy and grow your metrics.
                 </p>
               </div>
 
-              <div
+              {/* <div
                 onClick={() => handleRoleChange('publisher')}
                 className={`group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
                   selectedRoles.includes('publisher')
@@ -101,8 +113,9 @@ export default function Onboarding() {
                 }`}>
                 <h2 className={`mb-3 text-2xl font-semibold`}>Publisher </h2>
                 <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>You want to monetize your content.</p>
-              </div>
+              </div> */}
             </div>
+            
 
             <button
               disabled={settingValue || !selectedRoles.length}
@@ -113,6 +126,8 @@ export default function Onboarding() {
               {' '}
               Go to App{' '}
             </button>
+
+            <p>If you want to monetize your traffic <Link className='hover:text-secondary' href="maito:help@targecy.xyz" target='_blank' >contact us</Link></p>
           </div>
         )}
 
@@ -123,6 +138,8 @@ export default function Onboarding() {
             <NoWalletConnected caption="Please connect Wallet"></NoWalletConnected>
           </>
         )}
+
+        {status === 'loading' && <p>Loading...</p>}
       </div>
     </div>
   );

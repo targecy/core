@@ -10,9 +10,10 @@ import {
   RiseOutlined,
   SecurityScanOutlined,
   ShareAltOutlined,
-  TwitterOutlined,
   UserOutlined,
+  DiscordOutlined,
   UsergroupAddOutlined,
+  QuestionOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -149,7 +150,7 @@ const Sidebar = () => {
               </svg>
             </button>
           </div>
-          <PerfectScrollbar className="relative h-[calc(98vh-80px)]">
+          <PerfectScrollbar className="relative h-[calc(98vh-200px)]">
             <ul className="relative space-y-0.5 p-4 py-0 font-semibold">
               <li className="nav-item">
                 <ul>
@@ -161,16 +162,6 @@ const Sidebar = () => {
                         <HomeOutlined rev={undefined} />
                         <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
                           {t('Home')}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                  <li className="nav-item hover:cursor-pointer">
-                    <Link href="https://docs.targecy.xyz/" target="_blank" className="group hover:bg-transparent ">
-                      <div className="flex items-center">
-                        <FileTextOutlined rev={undefined} />
-                        <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
-                          {t('Docs')}
                         </span>
                       </div>
                     </Link>
@@ -315,7 +306,41 @@ const Sidebar = () => {
               </li>
             </ul>
           </PerfectScrollbar>
-          <div className="flex justify-center p-3">
+
+          <ul className="relative p-4 py-0 font-semibold">
+            <li className="nav-item hover:cursor-pointer">
+              <Link href="https://docs.targecy.xyz/" target="_blank" className="group hover:bg-transparent ">
+                <div className="flex items-center">
+                  <FileTextOutlined rev={undefined} />
+                  <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                    {t('Docs')}
+                  </span>
+                </div>
+              </Link>
+            </li>
+            <li className="nav-item hover:cursor-pointer">
+              <Link href="https://discord.gg/smyzhu7Gyt" target="_blank" className="group hover:bg-transparent ">
+                <div className="flex items-center">
+                  <DiscordOutlined rev={undefined} />
+                  <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                    {t('Discord')}
+                  </span>
+                </div>
+              </Link>
+            </li>
+            <li className="nav-item hover:cursor-pointer">
+              <Link href="mailto:help@targecy.xyz" target="_blank" className="group hover:bg-transparent ">
+                <div className="flex items-center">
+                  <QuestionOutlined rev={undefined} />
+                  <span className="text-black ltr:pl-3 rtl:pr-3 dark:text-[#506690] dark:group-hover:text-white-dark">
+                    {t('Help')}
+                  </span>
+                </div>
+              </Link>
+            </li>
+          </ul>
+
+          {/* <div className="flex justify-center p-3">
             <span className="hover:color-primary flex align-middle">
               Find help
               <Link href="mailto:help@targecy.xyz" target="_blank" className="group flex pl-1 hover:text-primary">
@@ -334,7 +359,7 @@ const Sidebar = () => {
                 </div>
               </Link>
             </span>
-          </div>
+          </div> */}
         </div>
       </nav>
     </div>

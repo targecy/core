@@ -172,12 +172,27 @@ export const Home = () => {
   const [isAdvertiser, setIsAdvertiser] = useState(false);
   const [isPublisher, setIsPublisher] = useState(false);
 
+  const [action, setAction] = useState<
+    | {
+        url: string;
+        label: string;
+      }
+    | undefined
+  >(undefined);
+
   useEffect(() => {
     const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
     setHasMultipleRoles(userRoles.length > 1);
     setIsUser(userRoles.includes('user'));
     setIsAdvertiser(userRoles.includes('advertiser'));
     setIsPublisher(userRoles.includes('publisher'));
+
+    if (userRoles.includes('advertiser')) {
+      setAction({
+        url: '/ads/editor',
+        label: 'Create Ad',
+      });
+    }
   }, [cookieValue]);
 
   if (isLoadingQuantities || loadingQueries) {
@@ -192,7 +207,7 @@ export const Home = () => {
             <div className="flex flex-auto flex-wrap justify-between gap-5 pr-10 text-sm font-bold text-[#515365] sm:grid-cols-2">
               <div>
                 <h5 className="text-lg font-semibold text-black dark:text-white  ">Network Statistics</h5>
-                <h6 className="text-sm font-semibold ">
+                <h6 className="text-sm font-semibold text-gray-900 dark:text-gray-400 ">
                   <Link
                     className=" cursor-pointer transition-all hover:text-primary"
                     target="_blank"
@@ -205,32 +220,37 @@ export const Home = () => {
               </div>
               <div>
                 <div>
-                  <div>Impressions/Clicks/Conversions</div>
+                  <div className="text-gray-900 dark:text-gray-400">Impressions/Clicks/Conversions</div>
                   <div className="text-lg text-primary">{totalConsumptions}</div>
                 </div>
               </div>
               <div>
                 <div>
-                  <div>Ads</div>
+                  <div className="text-gray-900 dark:text-gray-400">Ads</div>
                   <div className="text-lg text-primary">{adsQuantity}</div>
                 </div>
               </div>
 
               <div>
                 <div>
-                  <div>Audiences</div>
+                  <div className="text-gray-900 dark:text-gray-400">Audiences</div>
                   <div className="text-lg text-primary">{audiencesQuantity} </div>
                 </div>
               </div>
 
               <div>
                 <div>
-                  <div>Segments</div>
+                  <div className="text-gray-900 dark:text-gray-400">Segments</div>
                   <div className="text-lg text-primary ">{segmentsQuantity} </div>
                 </div>
               </div>
             </div>
           </div>
+          {action && (
+            <Link href={action.url} className="btn btn-secondary m-1 ml-3 h-20 w-36">
+              {action.label}
+            </Link>
+          )}
         </div>
         <div className="flex h-3/4 flex-row justify-between">
           <div className="w-full sm:block md:block lg:flex">
@@ -245,7 +265,7 @@ export const Home = () => {
                 schemas={schemas}
               />
             </div>
-            <div className="mt-3 flex-col sm:ml-0 sm:block sm:w-full md:ml-0 md:block md:w-full lg:ml-3 lg:flex lg:w-2/3">
+            <div className="mb-3 mt-3 flex-col sm:ml-0 sm:block sm:w-full md:ml-0 md:block md:w-full lg:ml-3 lg:flex lg:w-2/3">
               {isUser && (
                 <div className="mb-3 flex flex-row justify-between">
                   <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
@@ -284,7 +304,7 @@ export const Home = () => {
                 </div>
               )}
               {isAdvertiser && (
-                <div className="mt-3 flex  h-1/2 flex-row justify-between">
+                <div className="flex  h-fit flex-row justify-between">
                   <div className="panel h-full w-full sm:col-span-2 lg:col-span-1">
                     <div className="mb-5 flex justify-between dark:text-white-light">
                       <h5 className="text-lg font-semibold ">My Advertising Account</h5>
@@ -292,30 +312,28 @@ export const Home = () => {
                     <div className="grid gap-8 text-sm font-bold text-[#515365] sm:grid-cols-2">
                       <div>
                         <div>
-                          <div>Ads</div>
+                          <div className="text-gray-900 dark:text-gray-400">Ads</div>
                           <div className="text-lg text-secondary">{advertiserData?.advertiser?.adsQuantity || 0}</div>
                         </div>
                       </div>
                       <div>
                         <div>
-                          <div>Remaining Budget</div>
+                          <div className="text-gray-900 dark:text-gray-400">Remaining Budget</div>
                           <div className="text-lg text-secondary">{budget?.budget?.remainingBudget || 0}</div>
                         </div>
                       </div>
 
                       <div>
                         <div>
-                          <div>Impressions/Clicks/Conversions/Total</div>
-                          <div className="text-lg text-secondary">
-                            {advertiserData?.advertiser?.impressions || 0}/{advertiserData?.advertiser?.clicks || 0}/
-                            {advertiserData?.advertiser?.conversions || 0}/{totalInteractions}{' '}
+                          <div className="text-gray-900 dark:text-gray-400">Total Interactions</div>
+                          <div className="text-lg text-secondary">{totalInteractions}{' '}
                           </div>
                         </div>
                       </div>
 
                       <div>
                         <div>
-                          <div>Cost per any interaction</div>
+                          <div className="text-gray-900 dark:text-gray-400">Cost per any interaction</div>
                           <div className="text-lg text-white dark:text-white ">
                             {totalInteractions > 0
                               ? (Number(budget?.budget?.totalBudget) - Number(budget?.budget?.remainingBudget)) /
