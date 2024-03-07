@@ -237,10 +237,10 @@ const AdsList = () => {
     <div className="panel">
       <div className="mb-5 flex items-center justify-between p-2">
         <h5 className="text-2xl font-semibold dark:text-white-light">Ads</h5>
-        <Link className="btn-outline-secondary btn" href="/ads/editor">
+        <Link className="btn-secondary btn" href="/ads/editor">
           Create
         </Link>
-      </div>
+    </div>
       <div>
         <DataTable
           rowBorderColor="transparent"
