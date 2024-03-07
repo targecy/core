@@ -73,9 +73,9 @@ const schema = baseSchema.and(conversionSchema.or(clickSchema).or(impressionSche
 type FormValues = BaseSchemaType & (ConversionSchemaType | ClickSchemaType | ImpressionSchemaType);
 
 const attributionOptions = [
-  { value: 0, label: 'Impression' },
-  { value: 1, label: 'Click' },
-  { value: 2, label: 'Conversion' },
+  { value: 0, label: 'Reach (Get more people to see my ads)' },
+  { value: 1, label: 'Website traffic (Get more visitors)' },
+  { value: 2, label: 'Conversions (Get more people to do specific actions)' },
 ];
 
 const activeOptions = [
@@ -351,8 +351,49 @@ export const AdEditorComponent = (id?: string) => {
               onSubmit={() => {}}>
               {({ errors, submitCount, touched, values, handleChange, setFieldValue }) => (
                 <Form className="space-y-5 text-secondary">
+                  <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
+                          <label htmlFor="attribution">Campaign Objective</label>
+                          <Select
+                            classNames={{
+                              control: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              option: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              singleValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                              multiValue: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              multiValueLabel: () =>
+                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
+                              menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
+                            }}
+                            placeholder="Select an option"
+                            id="attribution"
+                            options={attributionOptions}
+                            name="attribution"
+                            value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? 0}
+                            onChange={(value) => {
+                              setCurrentAttribution(Number(value?.value) ?? 0);
+                              values.attribution = Number(value?.value) ?? 0;
+                              setPreviewValues((prevState) => ({
+                                ...prevState,
+                                attribution: Number(value?.value) ?? 0,
+                              }));
+                            }}
+                            isSearchable={true}
+                          />
+                          {submitCount ? (
+                            errors.attribution ? (
+                              <div className="mt-1 text-danger">{errors.attribution.toString()}</div>
+                            ) : (
+                              <div className="mt-1 text-success"></div>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </div>
                   <div className={submitCount ? (errors.title ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="title">Title </label>
+                    <label htmlFor="title">Ad Text </label>
                     <Field
                       name="title"
                       type="text"
@@ -375,7 +416,7 @@ export const AdEditorComponent = (id?: string) => {
                     )}
                   </div>
                   <div className={submitCount ? (errors.description ? 'has-error' : 'has-success') : ''}>
-                    <label htmlFor="description">Description </label>
+                    <label htmlFor="description">Ad Sub-Caption </label>
                     <Field
                       name="description"
                       type="textarea"
@@ -401,7 +442,7 @@ export const AdEditorComponent = (id?: string) => {
                   </div>
                   <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                     <div className={submitCount ? (errors.image ? 'has-error' : 'has-success') : ''}>
-                      <label htmlFor="fullName">Image URL </label>
+                      <label htmlFor="fullName">Ad Media </label>
                       <Field
                         name="image"
                         type="file"
@@ -484,6 +525,26 @@ export const AdEditorComponent = (id?: string) => {
                     )}
                   </div>
 
+                  <div className={` mb-4 ${submitCount ? (errors.maxBudget ? 'has-error' : 'has-success') : ''}`}>
+                        <label htmlFor="maxBudget">Total Maximum Budget to consume</label>
+                        <Field
+                          name="maxBudget"
+                          type="number"
+                          id="maxBudget"
+                          placeholder="Enter max budget"
+                          className="form-input"
+                        />
+
+                        {submitCount ? (
+                          errors.maxBudget ? (
+                            <div className="mt-1 text-danger">{errors.maxBudget.toString()}</div>
+                          ) : (
+                            <div className="mt-1 text-success"></div>
+                          )
+                        ) : (
+                          ''
+                        )}
+                      </div>
                   <div className="collapse collapse-arrow">
                     <input type="checkbox" />
                     <div className="text-md collapse-title pl-0 font-medium hover:cursor-pointer hover:text-primary">
@@ -491,50 +552,10 @@ export const AdEditorComponent = (id?: string) => {
                     </div>
                     <div className="collapse-content p-0">
                       <div className="mb-4 grid grid-cols-1 gap-5 md:grid-cols-2">
-                        <div className={submitCount ? (errors.attribution ? 'has-error' : 'has-success') : ''}>
-                          <label htmlFor="attribution">Bidding Strategy</label>
-                          <Select
-                            classNames={{
-                              control: () =>
-                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                              option: () =>
-                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                              singleValue: () =>
-                                'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                              multiValue: () =>
-                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                              multiValueLabel: () =>
-                                'bg-white dark:border-[#17263c] dark:bg-secondary text-dark dark:text-white',
-                              menu: () => 'bg-white dark:border-[#17263c] dark:bg-[#1b2e4b] text-black dark:text-white',
-                            }}
-                            placeholder="Select an option"
-                            id="attribution"
-                            options={attributionOptions}
-                            name="attribution"
-                            value={attributionOptions?.filter((a) => currentAttribution === Number(a.value)) ?? 0}
-                            onChange={(value) => {
-                              setCurrentAttribution(Number(value?.value) ?? 0);
-                              values.attribution = Number(value?.value) ?? 0;
-                              setPreviewValues((prevState) => ({
-                                ...prevState,
-                                attribution: Number(value?.value) ?? 0,
-                              }));
-                            }}
-                            isSearchable={true}
-                          />
-                          {submitCount ? (
-                            errors.attribution ? (
-                              <div className="mt-1 text-danger">{errors.attribution.toString()}</div>
-                            ) : (
-                              <div className="mt-1 text-success"></div>
-                            )
-                          ) : (
-                            ''
-                          )}
-                        </div>
+                        
 
                         <div className={submitCount ? (errors.active ? 'has-error' : 'has-success') : ''}>
-                          <label htmlFor="active">Campaign Status</label>
+                          <label htmlFor="active">Campaign Initial Status</label>
                           <Select
                             classNames={{
                               control: () =>
@@ -743,26 +764,7 @@ export const AdEditorComponent = (id?: string) => {
                           )}
                         </div>
                       </div>
-                      <div className={` mb-4 ${submitCount ? (errors.maxBudget ? 'has-error' : 'has-success') : ''}`}>
-                        <label htmlFor="maxBudget">Total Maximum Budget to consume</label>
-                        <Field
-                          name="maxBudget"
-                          type="number"
-                          id="maxBudget"
-                          placeholder="Enter max budget"
-                          className="form-input"
-                        />
-
-                        {submitCount ? (
-                          errors.maxBudget ? (
-                            <div className="mt-1 text-danger">{errors.maxBudget.toString()}</div>
-                          ) : (
-                            <div className="mt-1 text-success"></div>
-                          )
-                        ) : (
-                          ''
-                        )}
-                      </div>
+                      
                       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                         <div
                           className={submitCount ? (errors.blacklistedPublishers ? 'has-error' : 'has-success') : ''}>

@@ -57,7 +57,7 @@ export const StatusBar = () => {
     );
   } else if (isAdvertiser && !budget?.budget?.remainingBudget) {
     content = (
-      <span className="flex flex-grow flex-wrap justify-center gap-1 text-center">
+      <span className="flex flex-grow flex-wrap justify-center gap-1 text-center text-warning">
         Seems that your remaining budget is 0,{' '}
         <b
           className="ml-1 mr-1 cursor-pointer"

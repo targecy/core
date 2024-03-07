@@ -18,8 +18,9 @@ const BASE_URL = 'https://app.targecy.xyz';
 const URL = `${BASE_URL}/storage`;
 
 function saveItem(key: string, value: string): Promise<boolean> {
-  // Create an iframe and append it to the DOM
-  const iframe = document.createElement('iframe');
+  let currentIframe = document.getElementsByTagName('iframe').item(0);
+  const iframe = currentIframe ?? document.createElement('iframe');
+
   iframe.src = URL;
   iframe.style.display = 'none';
   document.body.appendChild(iframe);
@@ -36,7 +37,6 @@ function saveItem(key: string, value: string): Promise<boolean> {
         };
 
         iframe.contentWindow?.postMessage(data, BASE_URL);
-
         resolve(true);
       } catch (error) {
         reject(error);
@@ -47,8 +47,9 @@ function saveItem(key: string, value: string): Promise<boolean> {
 
 function retrieveItem(key: string): Promise<string | null> {
   return new Promise((resolve, _reject) => {
-    // Create an iframe and append it to the DOM
-    const iframe = document.createElement('iframe');
+    let currentIframe = document.getElementsByTagName('iframe').item(0);
+    const iframe = currentIframe ?? document.createElement('iframe');
+  
     iframe.src = URL;
     iframe.style.display = 'none';
     document.body.appendChild(iframe);
@@ -86,6 +87,7 @@ export async function getSavedCredentials() {
     return json.map((c) => W3CCredential.fromJSON(c));
   } catch (e) {
     console.error(e);
+    console.error('JSON: ' + (await retrieveItem('credentials')))
     return [];
   }
 }
