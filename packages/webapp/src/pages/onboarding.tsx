@@ -1,5 +1,7 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
+import { track } from '@vercel/analytics/react';
 import { Typography } from 'antd';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -8,7 +10,6 @@ import { useCookie } from 'react-use';
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
 import { useWallet } from '~/hooks';
 import { UserRole } from '~/utils/preferences';
-import Link from 'next/link';
 
 export default function Onboarding() {
   const { openAccountModal } = useAccountModal();
@@ -25,6 +26,14 @@ export default function Onboarding() {
     setSettingValue(true);
     const newRoles = selectedRoles.includes(role) ? selectedRoles.filter((r) => r !== role) : [...selectedRoles, role];
     setSelectedRoles(newRoles);
+
+    try {
+      track('role_selected', {
+        roles: newRoles.toString(),
+      });
+    } catch (error) {
+      console.error('Error tracking role_selected', error);
+    }
 
     updateCookie(JSON.stringify(newRoles));
   };
@@ -115,7 +124,6 @@ export default function Onboarding() {
                 <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>You want to monetize your content.</p>
               </div> */}
             </div>
-            
 
             <button
               disabled={settingValue || !selectedRoles.length}
@@ -127,7 +135,12 @@ export default function Onboarding() {
               Go to App{' '}
             </button>
 
-            <p>If you want to monetize your traffic <Link className='hover:text-secondary' href="maito:help@targecy.xyz" target='_blank' >contact us</Link></p>
+            <p>
+              If you want to monetize your traffic{' '}
+              <Link className="hover:text-secondary" href="maito:help@targecy.xyz" target="_blank">
+                contact us
+              </Link>
+            </p>
           </div>
         )}
 
