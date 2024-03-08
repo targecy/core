@@ -30,30 +30,30 @@ type AppPropsWithLayout = AppProps & {
 };
 
 // if (env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
-  datadogRum.init({
-    applicationId: 'c67b2bb4-e954-4ec8-b652-2faeb725d198',
-    clientToken: 'pub8b1d36983b7012cb76a1af361bcb75cc',
-    site: 'datadoghq.com',
-    service: 'dapp',
-    env: env.NEXT_PUBLIC_VERCEL_ENV,
-    version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-    sessionSampleRate: 10,
-    sessionReplaySampleRate: 0,
-    trackUserInteractions: true,
-    trackResources: true,
-    trackLongTasks: true,
-    defaultPrivacyLevel: 'mask-user-input',
-  });
+datadogRum.init({
+  applicationId: 'c67b2bb4-e954-4ec8-b652-2faeb725d198',
+  clientToken: 'pub8b1d36983b7012cb76a1af361bcb75cc',
+  site: 'datadoghq.com',
+  service: 'dapp',
+  env: env.NEXT_PUBLIC_VERCEL_ENV,
+  version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+  sessionSampleRate: 10,
+  sessionReplaySampleRate: 0,
+  trackUserInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: 'mask-user-input',
+});
 
-  datadogLogs.init({
-    clientToken: 'puba07a9f47cba40760139fec60df972df9',
-    site: 'datadoghq.com',
-    service: 'dapp',
-    env: env.NEXT_PUBLIC_VERCEL_ENV,
-    version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
-    forwardErrorsToLogs: true,
-    sessionSampleRate: 100,
-  });
+datadogLogs.init({
+  clientToken: 'puba07a9f47cba40760139fec60df972df9',
+  site: 'datadoghq.com',
+  service: 'dapp',
+  env: env.NEXT_PUBLIC_VERCEL_ENV,
+  version: env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+  forwardErrorsToLogs: true,
+  sessionSampleRate: 100,
+});
 // }
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
