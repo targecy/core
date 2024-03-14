@@ -2,9 +2,11 @@ import { datadogLogs } from '@datadog/browser-logs';
 import { datadogRum } from '@datadog/browser-rum';
 import { compose } from '@reduxjs/toolkit';
 import { TargecyTracker } from '@targecy/sdk';
+import { Analytics } from '@vercel/analytics/react';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import Script from 'next/script';
 import { appWithI18Next } from 'ni18n';
 import { ni18nConfig } from 'ni18n.config.ts';
 import { ReactElement, ReactNode } from 'react';
@@ -72,9 +74,25 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
             content="A decentralized and transparent advertising solution ready to empower the next generation of web3 protocols."
           />
           <link rel="icon" href="/images/logo.svg" />
+
+          {env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
+            <>
+              <Script async src={`https://www.googletagmanager.com/gtag/js?id=${env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`} />
+              <Script id="google-analytics">
+                {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${env.NEXT_PUBLIC_GOOGLE_ANALYTICS}');
+              `}
+              </Script>
+            </>
+          )}
         </Head>
 
         {getLayout(<Component {...pageProps} />)}
+
+        <Analytics />
       </Provider>
     </TargecyTracker>
   );
