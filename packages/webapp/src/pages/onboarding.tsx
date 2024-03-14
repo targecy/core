@@ -90,9 +90,9 @@ export default function Onboarding() {
               </div>
 
               <div
-                onClick={() => handleRoleChange('advertiser')}
+                onClick={() => handleRoleChange('creator')}
                 className={`group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
-                  selectedRoles.includes('advertiser')
+                  selectedRoles.includes('creator')
                     ? 'borde-gray-700 bg-gray-200 dark:border-gray-300 dark:bg-neutral-700/30'
                     : ''
                 }`}>
@@ -101,9 +101,9 @@ export default function Onboarding() {
               </div>
 
               <div
-                onClick={() => handleRoleChange('advertiser')}
+                onClick={() => handleRoleChange('business')}
                 className={`group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30 ${
-                  selectedRoles.includes('advertiser')
+                  selectedRoles.includes('business')
                     ? 'borde-gray-700 bg-gray-200 dark:border-gray-300 dark:bg-neutral-700/30'
                     : ''
                 }`}>

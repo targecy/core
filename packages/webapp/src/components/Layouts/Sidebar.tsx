@@ -52,7 +52,7 @@ const Sidebar = () => {
     const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
     setHasMultipleRoles(userRoles.length > 1);
     setIsUser(userRoles.includes('user'));
-    setIsAdvertiser(userRoles.includes('advertiser'));
+    setIsAdvertiser(userRoles.includes('creator') || userRoles.includes('business'));
     setIsPublisher(userRoles.includes('publisher'));
   }, [cookieValue]);
 
