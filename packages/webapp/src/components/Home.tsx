@@ -27,7 +27,7 @@ import { UserRole } from '~/utils/preferences';
 const scannerUrl: Record<typeof env.NEXT_PUBLIC_VERCEL_ENV, string> = {
   development: `http://localhost:8090`,
   preview: `https://mumbai.polygonscan.com`,
-  production: `https://polygonscan.com`,
+  production: `https://mumbai.polygonscan.com`,
 };
 
 export const Home = () => {
@@ -184,10 +184,12 @@ export const Home = () => {
     const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
     setHasMultipleRoles(userRoles.length > 1);
     setIsUser(userRoles.includes('user'));
-    setIsAdvertiser(userRoles.includes('creator') || userRoles.includes('business'));
+
+    const isAdvertiserBoolean = userRoles.includes('creator') || userRoles.includes('business');
+    setIsAdvertiser(isAdvertiserBoolean);
     setIsPublisher(userRoles.includes('publisher'));
 
-    if (isAdvertiser) {
+    if (isAdvertiserBoolean) {
       setAction({
         url: '/ads/editor',
         label: 'Create Ad',
