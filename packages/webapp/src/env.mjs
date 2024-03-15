@@ -2,7 +2,7 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 import localhostConfig from './generated/config/localhost.json' assert { type: 'json' };
 import mumbaiConfig from './generated/config/mumbai.json' assert { type: 'json' };
-import maticConfig from './generated/config/matic.json' assert { type: 'json' };
+// import maticConfig from './generated/config/matic.json' assert { type: 'json' };
 import { hostname } from './config/hostname.mjs';
 
 const versionByEnv = (env) => {
@@ -25,9 +25,8 @@ const deployedAddressByEnv = (env) => {
         );
       return localhostConfig[hostname];
     case 'preview':
-      return mumbaiConfig.address;
     case 'production':
-      return maticConfig.address;
+      return mumbaiConfig.address;
     default:
       throw new Error(`Unknown env ${env}`);
   }
