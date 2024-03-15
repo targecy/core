@@ -184,10 +184,10 @@ export const Home = () => {
     const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
     setHasMultipleRoles(userRoles.length > 1);
     setIsUser(userRoles.includes('user'));
-    setIsAdvertiser(userRoles.includes('advertiser'));
+    setIsAdvertiser(userRoles.includes('creator') || userRoles.includes('business'));
     setIsPublisher(userRoles.includes('publisher'));
 
-    if (userRoles.includes('advertiser')) {
+    if (isAdvertiser) {
       setAction({
         url: '/ads/editor',
         label: 'Create Ad',
@@ -326,8 +326,7 @@ export const Home = () => {
                       <div>
                         <div>
                           <div className="text-gray-900 dark:text-gray-400">Total Interactions</div>
-                          <div className="text-lg text-secondary">{totalInteractions}{' '}
-                          </div>
+                          <div className="text-lg text-secondary">{totalInteractions} </div>
                         </div>
                       </div>
 

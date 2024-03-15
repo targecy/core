@@ -136,7 +136,7 @@ const Header = () => {
 
   useEffect(() => {
     const userRoles = JSON.parse(cookieValue ?? '[]') as UserRole[];
-    setIsAdvertiser(userRoles.includes('advertiser'));
+    setIsAdvertiser(userRoles.includes('creator') || userRoles.includes('business'));
   }, [cookieValue]);
 
   return (

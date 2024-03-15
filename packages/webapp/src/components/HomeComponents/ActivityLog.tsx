@@ -22,7 +22,7 @@ export const ActivityLog = (props: {
 
   const [cookieValue] = useCookie('userRoles');
   const userRoles = JSON.parse(cookieValue ?? '[]');
-  const useLarge = userRoles.includes('advertiser') && userRoles.includes('user');
+  const useLarge = (userRoles.includes('business') || userRoles.includes('creator')) && userRoles.includes('user');
 
   return (
     <div className="panel w-full">

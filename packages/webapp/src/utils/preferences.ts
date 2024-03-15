@@ -1,4 +1,4 @@
-export type UserRole = 'user' | 'advertiser' | 'publisher';
+export type UserRole = 'user' | 'creator' | 'business' | 'publisher';
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Preferences = {};
 
