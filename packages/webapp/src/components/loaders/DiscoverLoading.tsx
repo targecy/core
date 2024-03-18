@@ -1,4 +1,4 @@
-import { range } from 'lodash';
+import range from 'lodash/range';
 
 export const DiscoverLoading = () => {
   return (

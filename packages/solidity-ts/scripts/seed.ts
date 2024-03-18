@@ -61,7 +61,7 @@ export async function seed(network: string, force = false): Promise<void> {
       address = localhostConfig[hostname() as keyof typeof localhostConfig];
       break;
     case 'mumbai':
-      provider = new ethers.JsonRpcProvider('https://rpc-mumbai.maticvigil.com');
+      provider = new ethers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/NdeRszEl7KquB4CoT8QF7zfjd-a-IDFX');
       address = mumbaiConfig.address;
       break;
     case 'matic':
