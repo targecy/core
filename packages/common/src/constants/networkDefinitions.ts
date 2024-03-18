@@ -86,7 +86,7 @@ export const networkDefinitions: Record<TNetworkNamesList, TNetworkDefinition> =
     chainId: 80001,
     price: 1,
     gasPrice: 2000000000,
-    rpcUrl: 'https://rpc-mumbai.maticvigil.com/v1/c4cefd6a50400c1ccf6544b1ab174d8fade68604',
+    rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/NdeRszEl7KquB4CoT8QF7zfjd-a-IDFX',
     faucet: 'https://faucet.matic.network',
     blockExplorer: 'https://mumbai.polygonscan.com/',
   },
