@@ -39,6 +39,9 @@
 /* form element*/
 @import './form-elements.css';
 
+/* glboal */
+@import './globals.css';
+
 /* Select2*/
 @import './select2.css';
 @tailwind base;

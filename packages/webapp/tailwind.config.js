@@ -69,8 +69,8 @@ module.exports = {
         },
       },
       fontFamily: {
-        nunito: ['Nunito', 'sans-serif'],
-        oxygen: ['Oxygen', 'sans-serif'],
+        nunito: ['var(--font-nunito)', 'sans-serif'],
+        oxygen: ['var(--font-oxygen)', 'sans-serif'],
       },
       spacing: {
         4.5: '18px',
@@ -95,6 +95,15 @@ module.exports = {
           },
         },
       }),
+      animation: {
+        marquee: 'marquee 45s infinite linear',
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+      },
     },
   },
   plugins: [
