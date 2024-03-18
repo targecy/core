@@ -5,7 +5,7 @@ const Discover = () => {
   return (
     <>
       <div className="">
-        <FeaturedComponent></FeaturedComponent>
+        <FeaturedComponent />
       </div>
       <div className="mt-3">
         <BenefitsComponent />
