@@ -21,10 +21,10 @@ const chain = () => {
       name: 'Mumbai',
       rpcUrls: {
         default: {
-          http: ['https://rpc-mumbai.maticvigil.com'],
+          http: ['https://rpc-mumbai.maticvigil.com/v1/c4cefd6a50400c1ccf6544b1ab174d8fade68604'],
         },
         public: {
-          http: ['https://rpc-mumbai.maticvigil.com'],
+          http: ['https://rpc-mumbai.maticvigil.com/v1/c4cefd6a50400c1ccf6544b1ab174d8fade68604'],
         },
       },
     });
