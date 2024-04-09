@@ -1,3 +1,4 @@
+import { track } from '@vercel/analytics/react';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -69,12 +70,22 @@ const BenefitsComponent = () => {
       title: 'Link',
       accessor: 'link',
       render: (value) => (
-        <Link target="_blank" className="cursor-pointer hover:text-primary" href={value.link?.toString()}>
-          Go to site
-        </Link>
+        <div
+          onClick={() => {
+            try {
+              track('benefit_clicked', value);
+            } catch (error) {
+              console.error('Error tracking role_selected', error);
+            }
+          }}>
+          <Link target="_blank" className="cursor-pointer hover:text-primary" href={value.link?.toString()}>
+            Go to site
+          </Link>
+        </div>
       ),
     },
   ];
+  
   return (
     <>
       <div className="flex h-full min-h-[400px] w-full flex-row justify-between overflow-y-auto">
