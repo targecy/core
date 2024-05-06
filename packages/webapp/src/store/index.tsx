@@ -1,11 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
-import themeConfigSlice from './themeConfigSlice';
 
 import { api, defillamaApi, newsApi } from '~/services/baseApi';
+import { themeConfigSlice } from './themeConfigSlice';
 
 const rootReducer = combineReducers({
-  themeConfig: themeConfigSlice,
+  themeConfig: themeConfigSlice.reducer,
   baseApi: api.reducer,
   newsApi: newsApi.reducer,
   defillamaApi: defillamaApi.reducer,

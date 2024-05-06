@@ -2,6 +2,7 @@ import { CopyOutlined } from '@ant-design/icons';
 import { Ad, AdProps, Layouts, isLayout, titleCase } from '@targecy/sdk';
 import { Field, Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import { useConfig } from 'wagmi';
 import { z } from 'zod';
@@ -9,6 +10,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import { addressZero } from '~/constants/contracts.constants';
 import { env } from '~/env.mjs';
+import { setPageTitle } from '~/store/themeConfigSlice';
 
 const schema = z.object({
   layout: z.union([
@@ -51,6 +53,11 @@ const getCode = (props: AdProps): string => {
 };
 
 const Demo = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Wizard'));
+  });
+
   const [props, setProps] = useState<AdProps>({
     publisher: addressZero,
   });
