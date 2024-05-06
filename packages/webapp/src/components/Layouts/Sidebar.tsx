@@ -15,6 +15,7 @@ import {
   UsergroupAddOutlined,
   QuestionOutlined,
 } from '@ant-design/icons';
+import { Skeleton } from '@mantine/core';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
@@ -36,6 +37,8 @@ const Sidebar = () => {
   const [errorSubMenu, setErrorSubMenu] = useState(false);
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const semidark = useSelector((state: IRootState) => state.themeConfig.semidark);
+  const domain = useSelector((state: IRootState) => state.themeConfig.domain);
+
   const toggleMenu = (value: string) => {
     setCurrentMenu((oldValue) => {
       return oldValue === value ? '' : value;
@@ -114,12 +117,16 @@ const Sidebar = () => {
       <nav>
         <div className="h-full bg-white dark:bg-black">
           <div className="flex items-center justify-between px-4 py-3">
-            <Link href="/" className="main-logo flex shrink-0 items-center">
-              <img className="ml-[5px] w-8 flex-none" src="/images/logo.svg" alt="logo" />
-              <span className="align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
-                {t('TARGECY')}
-              </span>
-            </Link>
+            {domain ? (
+              <Link href="/" className="main-logo flex shrink-0 items-center">
+                <img className="ml-[5px] w-8 h-8 object-contain  flex-none" src={`/images/logos/${domain}.png`} alt="logo" />
+                <span className="h-full align-middle text-2xl font-semibold ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light lg:inline">
+                  {t(domain.toUpperCase())}
+                </span>
+              </Link>
+            ) : (
+              <Skeleton />
+            )}
 
             <button
               type="button"

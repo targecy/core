@@ -7,6 +7,7 @@ import { getCountryDataList } from 'countries-list';
 import { Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 import { useSignMessage } from 'wagmi';
@@ -15,6 +16,7 @@ import DatePicker from '~/components/DatePicker';
 import { CredentialsLoader } from '~/components/loaders/CredentialsLoader';
 import { vercelEnv } from '~/constants/app.constants';
 import { useWallet } from '~/hooks';
+import { setPageTitle } from '~/store/themeConfigSlice';
 import { getWebappCredentialRequest } from '~/utils';
 
 const interests = [
@@ -35,6 +37,11 @@ const interests = [
 ] as const;
 
 const Credentials = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Profile'));
+  });
+
   const { context } = useTargecyContext();
   const credentialsByType = useCredentialsByType(context);
   const credentialsStatistics = useCredentialsStatistics(context);

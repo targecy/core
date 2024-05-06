@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import themeConfig from '../theme.config';
 
+import { capitalizeFirstLetter } from '~/utils';
+
 export interface ITypeInitialState {
   isDarkMode: boolean;
   sidebar: boolean;
@@ -14,6 +16,7 @@ export interface ITypeInitialState {
   navbar: string;
   locale: string;
   semidark: boolean;
+  domain?: string;
   languageList: LanguageList[];
 }
 
@@ -70,7 +73,7 @@ const initialState: ITypeInitialState = {
   ],
 };
 
-const themeConfigSlice = createSlice({
+export const themeConfigSlice = createSlice({
   name: 'auth',
   initialState: initialState,
   reducers: {
@@ -101,6 +104,10 @@ const themeConfigSlice = createSlice({
       state.sidebar = false; // reset sidebar state
       localStorage.setItem('menu', payload);
       state.menu = payload;
+    },
+    toggleDomain(state, { payload }) {
+      if (payload === 'localhost') state.domain = 'targecy';
+      else state.domain = payload;
     },
     toggleLayout(state, { payload }) {
       payload = payload || state.layout; // full, boxed-layout
@@ -139,7 +146,7 @@ const themeConfigSlice = createSlice({
     },
 
     setPageTitle(state, { payload }) {
-      document.title = `${payload} | Targecy`;
+      document.title = `${payload} | ${state.domain ? capitalizeFirstLetter(state.domain) : ''} Ads`;
     },
   },
 });
@@ -154,7 +161,6 @@ export const {
   toggleSemidark,
   toggleLocale,
   toggleSidebar,
+  toggleDomain,
   setPageTitle,
 } = themeConfigSlice.actions;
-
-export default themeConfigSlice.reducer;

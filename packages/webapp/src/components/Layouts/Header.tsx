@@ -1,3 +1,4 @@
+import { Skeleton } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -44,6 +45,8 @@ const Header = () => {
   }, [router.pathname]);
 
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
+  const domain = useSelector((state: IRootState) => state.themeConfig.domain);
+  console.log("domain", domain)
 
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const setLocale = (flag: string) => {
@@ -144,12 +147,18 @@ const Header = () => {
       <div className="shadow-sm">
         <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
           <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
-            <Link href="https://targecy.xyz" target="_blank" className="main-logo flex shrink-0 items-center">
-              <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/images/logo.svg" alt="logo" />
-              <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
-                TARGECY
-              </span>
-            </Link>
+            {domain ? (
+              <>
+                <Link href="#" target="_blank" className="main-logo flex shrink-0 items-center">
+                  <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src={`/images/logos/${domain}.png`} alt="logo" />
+                  <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">
+                    {domain}
+                  </span>
+                </Link>
+              </>
+            ) : (
+              <Skeleton></Skeleton>
+            )}
             <button
               type="button"
               className="collapse-icon flex flex-none rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary ltr:ml-2 rtl:mr-2 dark:bg-dark/40 dark:text-[#d0d2d6] dark:hover:bg-dark/60 dark:hover:text-primary lg:hidden"

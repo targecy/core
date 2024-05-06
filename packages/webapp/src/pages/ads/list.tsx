@@ -3,7 +3,8 @@ import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
@@ -13,8 +14,14 @@ import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllAdsQuery, useGetAdsByAdvertiserQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
+import { setPageTitle } from '~/store/themeConfigSlice';
 
 const AdsList = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Campaigns'));
+  });
+
   const router = useRouter();
   const { address } = useWallet();
   const data = useGetAdsByAdvertiserQuery({ advertiserId: address?.toLowerCase() ?? '' });
