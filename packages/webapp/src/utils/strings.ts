@@ -3,3 +3,7 @@ export const shortString = (str: string, length: number) => {
   if (str.length <= length) return str;
   return `${str.substring(0, length / 2)}...${str.substring(str.length - length / 2, str.length)}`;
 };
+
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

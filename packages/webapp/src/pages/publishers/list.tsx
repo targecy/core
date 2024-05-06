@@ -2,6 +2,8 @@ import { CaretRightOutlined, DeleteOutlined, PauseOutlined } from '@ant-design/i
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
 
@@ -9,8 +11,14 @@ import { PublishersLoader } from '~/components/loaders/PublishersLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllPublishersQuery, useGetAllPublishersQuery } from '~/generated/graphql.types';
+import { setPageTitle } from '~/store/themeConfigSlice';
 
 const PublishersList = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Publishers'));
+  });
+
   const router = useRouter();
   const { data, isLoading } = useGetAllPublishersQuery();
   const publishers = data?.publishers;

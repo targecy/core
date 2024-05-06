@@ -4,7 +4,8 @@ import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
@@ -15,10 +16,16 @@ import { SegmentsLoader } from '~/components/loaders/SegmentLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllSegmentsQuery, useGetAllSegmentsQuery } from '~/generated/graphql.types';
+import { setPageTitle } from '~/store/themeConfigSlice';
 import { shortString } from '~/utils';
 import { backendTrpcClient } from '~/utils/trpc';
 
 const SegmentsList = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Segments'));
+  });
+
   const router = useRouter();
   const data = useGetAllSegmentsQuery();
 

@@ -5,12 +5,11 @@ import { TargecyTracker } from '@targecy/sdk';
 import { Analytics } from '@vercel/analytics/react';
 import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
-import Head from 'next/head';
-import Script from 'next/script';
+import { useRouter } from 'next/router';
 import { appWithI18Next } from 'ni18n';
 import { ni18nConfig } from 'ni18n.config.ts';
-import { ReactElement, ReactNode } from 'react';
-import { Provider } from 'react-redux';
+import { ReactElement, ReactNode, useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
 
 import DefaultLayout from '../components/Layouts/DefaultLayout';
 import store from '../store/index';
@@ -20,8 +19,11 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import '../styles/tailwind.css';
 
+import TargecyHead from '~/components/main/Head';
 import { env } from '~/env.mjs';
 import { withProviders } from '~/lib/withProviders';
+import { toggleDomain } from '~/store/themeConfigSlice';
+import { extractDomainName } from '~/utils';
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -58,41 +60,30 @@ datadogLogs.init({
 });
 // }
 
+const ProviderWrapper = ({ children }: { children: ReactNode }) => {
+  const dispatch = useDispatch();
+
+  const router = useRouter();
+  useEffect(() => {
+    dispatch(toggleDomain(extractDomainName(window.location.hostname)));
+  }, [router.pathname]);
+
+  return <>{children}</>;
+};
+
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const getLayout = Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
   return (
     <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV} pathsToIgnore={['/storage']}>
       <Provider store={store}>
-        <Head>
-          <title>Targecy</title>
-          <meta charSet="UTF-8" />
-          <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta
-            name="description"
-            content="A decentralized and transparent advertising solution ready to empower the next generation of web3 protocols."
-          />
-          <link rel="icon" href="/images/logo.svg" />
+        <ProviderWrapper>
+          <TargecyHead />
 
-          {env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
-            <>
-              <Script async src={`https://www.googletagmanager.com/gtag/js?id=${env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`} />
-              <Script id="google-analytics">
-                {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${env.NEXT_PUBLIC_GOOGLE_ANALYTICS}');
-              `}
-              </Script>
-            </>
-          )}
-        </Head>
+          {getLayout(<Component {...pageProps} />)}
 
-        {getLayout(<Component {...pageProps} />)}
-
-        <Analytics />
+          <Analytics />
+        </ProviderWrapper>
       </Provider>
     </TargecyTracker>
   );

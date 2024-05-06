@@ -3,7 +3,8 @@ import { getIPFSStorageUrl } from '@common/functions/getIPFSStorageUrl';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useAsync, useInterval } from 'react-use';
 import Swal from 'sweetalert2';
 import { useContractWrite } from 'wagmi';
@@ -12,9 +13,15 @@ import { AudiencesLoader } from '~/components/loaders/AudienceLoader';
 import { targecyContractAddress } from '~/constants/contracts.constants';
 import { Targecy__factory } from '~/generated/contract-types';
 import { GetAllAudiencesQuery, useGetAllAudiencesQuery } from '~/generated/graphql.types';
+import { setPageTitle } from '~/store/themeConfigSlice';
 import { fetchMetadata } from '~/utils/metadata';
 
 const ListAudiences = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(setPageTitle('Audiences'));
+  });
+
   const data = useGetAllAudiencesQuery();
 
   useInterval(() => {
