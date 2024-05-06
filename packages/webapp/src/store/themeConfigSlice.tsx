@@ -106,7 +106,8 @@ export const themeConfigSlice = createSlice({
       state.menu = payload;
     },
     toggleDomain(state, { payload }) {
-      if (payload === 'localhost') state.domain = 'targecy';
+      if ((typeof payload === 'string' && payload.toLowerCase() === 'localhost') || payload.toLowerCase() === 'vercel')
+        state.domain = 'targecy';
       else state.domain = payload;
     },
     toggleLayout(state, { payload }) {
