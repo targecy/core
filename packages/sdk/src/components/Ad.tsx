@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import { BannerLarge, BannerMedium, BannerSmall, Square, ListItem } from './layouts';
 import { TargecyServicesContext } from './misc';
 import { useAd } from '../hooks/useAd';
-import { demoAd, defaultStyling, Layouts, Attribution, AdStyling } from '../constants/ads';
+import { demoAd, defaultStyling, Attribution, AdStyling } from '../constants/ads';
 import { LayoutParams } from './layouts/Params';
 import { SolidityTypes } from '../constants/chain';
-import { Address, FallbackTransport } from 'viem';
+import { Address } from 'viem';
 import { environment } from '../utils/context';
 
 type SharedAdProps = {

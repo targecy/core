@@ -1,13 +1,18 @@
 import { defineConfig } from 'tsup';
 import alias from 'esbuild-plugin-alias';
+import fixCjsExports from 'tsup-fix-cjs-exports'
+
 
 export default defineConfig({
+  shims: true,
   entry: ['src/index.ts'],
-  format: ['esm'], // Build for commonJS and ESmodules
+  target: 'esnext',
+  format: ['esm', 'cjs'], // Build for commonJS and ESmodules
   dts: true, // Generate declaration file (.d.ts)
-  splitting: false,
+  splitting: true,
   sourcemap: true,
   clean: true,
+  plugins: [fixCjsExports()],
   esbuildPlugins: [
     alias({
       '~': './src',
@@ -16,4 +21,6 @@ export default defineConfig({
       '@common': '../common/src',
     }),
   ],
+  cjsInterop: true,
+  external: ["@0xpolygonid/js-sdk",  "@iden3/js-iden3-core"]
 });
