@@ -5,6 +5,7 @@
     "sourceMap": true,
     "allowJs": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
@@ -24,6 +25,7 @@
       "@common/*": ["../common/src/*"]
     }
   },
+
   "include": ["src", "codegen.ts", "apollo.config.js"],
   "exclude": [
     "**/node_modules",
@@ -33,6 +35,8 @@
     "tailwind.config.js",
     "node_modules",
     "**/.yalc/**/*",
-    ".yalc/**/*"
+    ".yalc/**/*",
+    "@0xpolygonid/js-sdk",
+    "@iden3/js-iden3-core"
   ]
 }
