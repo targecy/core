@@ -18,3 +18,7 @@ export function extractDomainName(domain: string) {
     return secondToLastPart;
   }
 }
+
+export function isTargecyDomain(domain?: string) {
+  return domain === 'targecy';
+}
