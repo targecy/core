@@ -9,10 +9,18 @@ export const ListItem = (props: LayoutParams) => {
     <BaseLayout {...props}>
       <div className="grid grid-cols-2 gap-4 h-full w-full">
         <div className="col-span-1 h-full">
-          <img
-            style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: props.styling?.borderRadius }}
-            src={props.image}
-          />
+          <a href={props.link ?? ''} target="_blank" className="cursor-pointer">
+            <img
+              style={{
+                objectFit: 'cover',
+                objectPosition: 'center',
+                width: '100%',
+                height: '100%',
+                borderRadius: props.styling?.borderRadius,
+              }}
+              src={props.image}
+            />
+          </a>
         </div>
         <div className="col-span-1 h-full overflow-scroll">
           {/* Title and description container */}
@@ -40,7 +48,6 @@ export const ListItem = (props: LayoutParams) => {
               style={{
                 color: props.styling?.subtitleColor,
                 fontSize: '0.75rem',
-                fontWeight: 'bold',
                 whiteSpace: 'normal',
                 overflowWrap: 'break-word',
                 wordBreak: 'break-word',

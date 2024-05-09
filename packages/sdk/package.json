@@ -1,6 +1,6 @@
 {
   "name": "@targecy/sdk",
-  "version": "0.3.3",
+  "version": "0.3.25",
   "description": "The SDK that allows you to interact with the Targecy protocol",
   "keywords": [
     "targecy",
@@ -13,14 +13,16 @@
   ],
   "author": "Targecy",
   "license": "MIT",
-  "main": "./dist/index.mjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.mts",
+  "browser": "./dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "tsup --splitting --cjsInterop --treeshake",
     "test": "echo \"Error: no test specified\" && exit 1",
     "link": "npm link",
     "publish:public": "npm publish --access public",
@@ -89,7 +91,8 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "prettier": "^3.2.2",
     "ts-node": "^10.9.2",
-    "tsup": "^8.0.1",
+    "tsup": "^8.0.2",
+    "tsup-fix-cjs-exports": "^1.0.3",
     "typescript": "^5.3.3"
   }
 }

@@ -48,18 +48,26 @@ const trackEvent = async (env: environment, params: TrackingEvent) => {
     return false;
   }
 
-  const zkServices = await initServices();  
+  const zkServices = await initServices();
 
   const savedCredentials = await getSavedCredentials();
-  const credentialToSave = await eventToCredential(env, zkServices.identityWallet, zkServices.issuerIdentity.did, zkServices.userIdentity.did, params);
+  const credentialToSave = await eventToCredential(
+    env,
+    zkServices.identityWallet,
+    zkServices.issuerIdentity.did,
+    zkServices.userIdentity.did,
+    params
+  );
 
   const credentialAlreadySaved = savedCredentials.find(
     (c) => JSON.stringify(c.credentialSubject) == JSON.stringify(credentialToSave.credentialSubject)
   );
 
+  console.info('Credential to save: ', credentialToSave);
   if (!credentialAlreadySaved) {
     saveCredential(credentialToSave, env);
     updatePotentialReachDatabase(env, credentialToSave);
+    console.info('Credential saved');
   }
 
   return true;
@@ -137,4 +145,3 @@ const eventToCredential = (
 const saveCredential = async (credential: W3CCredential, env: environment) => {
   await saveCredentials([credential], env);
 };
-

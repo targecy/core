@@ -35,7 +35,7 @@ services:
     command: >
       -a 10
       -i 1337
-      -f https://rpc.ankr.com/polygon_mumbai@43259277
+      -f https://rpc-mumbai.polygon.technology@43259277
       --db /var/lib/data
       --verbose
       -m "$MNEMONIC_ESCAPED"

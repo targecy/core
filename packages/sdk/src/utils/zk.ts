@@ -104,7 +104,7 @@ export async function generateZKProof(
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_mumbai';
+  ethConnectionConfig.url = 'https://rpc-mumbai.polygon.technology';
   ethConnectionConfig.chainId = 80001;
   ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
 
@@ -142,18 +142,18 @@ export async function createUserIdentity(identityWallet: IdentityWallet): Promis
 
   if (!savedSeed) {
     seed = getRandomBytes(32);
-    // @todo (Martin): It isn't secure to store the seed like this, think an alternative.   
+    // @todo (Martin): It isn't secure to store the seed like this, think an alternative.
     await saveSeed(uint8ArrayToBase64String(seed));
   } else if (base64StringRegex.test(savedSeed)) {
-      seed = base64StringToUint8Array(savedSeed);
+    seed = base64StringToUint8Array(savedSeed);
   } else {
-      seed = savedSeed
+    seed = savedSeed;
   }
 
   if (seed.length != 32) {
     return Promise.reject('Invalid seed length');
   }
-  
+
   const identity = await identityWallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
@@ -163,7 +163,7 @@ export async function createUserIdentity(identityWallet: IdentityWallet): Promis
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
       id: 'https://rhs-staging.polygonid.me',
     },
-  }); 
+  });
 
   return identity;
 }

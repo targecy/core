@@ -38168,6 +38168,7 @@ export type StellarTradeEffect = {
   operation?: Maybe<OperationIndexedWithAccount>;
   /** Order */
   order?: Maybe<Scalars['Int']>;
+  priceAmount?: Maybe<Scalars['DecimalNumberAsDiv']>;
   sellAmount?: Maybe<Scalars['DecimalNumberAsDiv']>;
   /** Sell currency */
   sellCurrency?: Maybe<Currency>;
@@ -40479,7 +40480,7 @@ export type TezosTransactionWithSourceDimension = {
 /** Transfer in Tezos blockchain */
 export type TezosTransfer = {
   __typename?: 'TezosTransfer';
-  amount?: Maybe<Scalars['DecimalNumberAsDiv']>;
+  amount?: Maybe<Scalars['Float']>;
   any?: Maybe<Scalars['String']>;
   /** Block */
   block?: Maybe<TezosBlockWithHashDimension>;

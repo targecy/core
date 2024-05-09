@@ -1,21 +1,20 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { SCHEMA_TYPES } from '@backend/constants/schemas/schemas.constant';
-import { useTargecyContext, useCredentialsStatistics, saveCredentials } from '@targecy/sdk';
+import { useTargecyContext, useCredentialsStatistics, saveCredentials, deleteCredential } from '@targecy/sdk';
 import { useCredentialsByType } from '@targecy/sdk/src/hooks/useCredentialsByType';
 import { getCountryDataList } from 'countries-list';
 import { Form, Formik } from 'formik';
+import { cloneDeep } from 'lodash';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
-import { useSignMessage } from 'wagmi';
 
 import DatePicker from '~/components/DatePicker';
 import { CredentialsLoader } from '~/components/loaders/CredentialsLoader';
 import { vercelEnv } from '~/constants/app.constants';
-import { useWallet } from '~/hooks';
 import { setPageTitle } from '~/store/themeConfigSlice';
 import { getWebappCredentialRequest } from '~/utils';
 
@@ -45,10 +44,12 @@ const Credentials = () => {
   const { context } = useTargecyContext();
   const credentialsByType = useCredentialsByType(context);
   const credentialsStatistics = useCredentialsStatistics(context);
-  const { isConnected, address } = useWallet();
-  const { signMessageAsync } = useSignMessage();
-  const [fetchingCredentials, setFetchingCredentials] = useState(false);
-  const [credentialsFetched, setCredentialsFetched] = useState(false);
+
+  const [credentialsByTypeUpdated, setCredentialsByTypeUpdated] = useState<Record<string, W3CCredential[]>>({});
+
+  useEffect(() => {
+    if (Object.keys(credentialsByTypeUpdated).length === 0) setCredentialsByTypeUpdated(credentialsByType);
+  }, [credentialsByType]);
 
   const [interestsConfig, setInterestsConfig] = useState<Partial<Record<keyof typeof interests, boolean>>>({});
 
@@ -76,13 +77,13 @@ const Credentials = () => {
     if (!context.zkServices || !context.zkServices?.identityWallet || !context.zkServices?.userIdentity.did) {
       Swal.mixin({
         toast: true,
-        position: 'top',
+        position: 'bottom-right',
         showConfirmButton: false,
         timer: 3000,
       })
         .fire({
           icon: 'error',
-          title: 'User identity not found. Please try again.',
+          title: 'Error saving profile. Please try again.',
           padding: '10px 20px',
         })
         .catch(console.error);
@@ -107,7 +108,7 @@ const Credentials = () => {
         if (!credentialToSave) {
           await Swal.mixin({
             toast: true,
-            position: 'top',
+            position: 'bottom-right',
             showConfirmButton: false,
             timer: 3000,
           }).fire({
@@ -128,7 +129,7 @@ const Credentials = () => {
           .then(async () => {
             await Swal.mixin({
               toast: true,
-              position: 'top',
+              position: 'bottom-right',
               showConfirmButton: false,
               timer: 3000,
             }).fire({
@@ -141,7 +142,7 @@ const Credentials = () => {
           .catch(async (e) => {
             await Swal.mixin({
               toast: true,
-              position: 'top',
+              position: 'bottom-right',
               showConfirmButton: false,
               timer: 3000,
             }).fire({
@@ -156,7 +157,7 @@ const Credentials = () => {
       .catch(async (e) => {
         await Swal.mixin({
           toast: true,
-          position: 'top',
+          position: 'bottom-right',
           showConfirmButton: false,
           timer: 3000,
         }).fire({
@@ -165,6 +166,78 @@ const Credentials = () => {
           padding: '10px 20px',
         });
         setSavingInterests(false);
+        console.error(e);
+      });
+  };
+
+  const deleteCredentialFromStorage = async (credential: W3CCredential) => {
+    if (
+      !context ||
+      !context.zkServices ||
+      !context.zkServices?.identityWallet ||
+      !context.zkServices?.userIdentity.did
+    ) {
+      await Swal.mixin({
+        toast: true,
+        position: 'bottom-right',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'error',
+        title: 'User identity not found. Please try again.',
+        padding: '10px 20px',
+      });
+      return;
+    }
+
+    const issuerDID = context.zkServices.issuerIdentity.did;
+
+    context.zkServices.identityWallet.revokeCredential(issuerDID, credential).catch(async (e: any) => {
+      await Swal.mixin({
+        toast: true,
+        position: 'bottom-right',
+        showConfirmButton: false,
+        timer: 3000,
+      }).fire({
+        icon: 'warning',
+        title: 'Error revoking credential. Please try again.',
+        padding: '10px 20px',
+      });
+
+      console.error(e);
+    });
+
+    deleteCredential(credential)
+      .then(async () => {
+        console.log(credentialsByTypeUpdated);
+        const newCredentials = cloneDeep(credentialsByTypeUpdated);
+        newCredentials[credential.type[1]] = newCredentials[credential.type[1]].filter((c) => c.id !== credential.id);
+        setCredentialsByTypeUpdated(newCredentials);
+        console.log(credentialsByTypeUpdated);
+
+        await Swal.mixin({
+          toast: true,
+          position: 'bottom-right',
+          showConfirmButton: false,
+          timer: 3000,
+        }).fire({
+          icon: 'success',
+          title: 'Credential deleted.',
+          padding: '10px 20px',
+        });
+      })
+      .catch(async (e: any) => {
+        await Swal.mixin({
+          toast: true,
+          position: 'bottom-right',
+          showConfirmButton: false,
+          timer: 3000,
+        }).fire({
+          icon: 'error',
+          title: 'Error deleting credential. Please try again.',
+          padding: '10px 20px',
+        });
+
         console.error(e);
       });
   };
@@ -190,7 +263,7 @@ const Credentials = () => {
     if (!context.zkServices || !context.zkServices?.identityWallet || !context.zkServices?.userIdentity.did) {
       Swal.mixin({
         toast: true,
-        position: 'top',
+        position: 'bottom-right',
         showConfirmButton: false,
         timer: 3000,
       })
@@ -220,7 +293,7 @@ const Credentials = () => {
         if (!credentialToSave) {
           await Swal.mixin({
             toast: true,
-            position: 'top',
+            position: 'bottom-right',
             showConfirmButton: false,
             timer: 3000,
           }).fire({
@@ -236,7 +309,7 @@ const Credentials = () => {
           .then(async () => {
             await Swal.mixin({
               toast: true,
-              position: 'top',
+              position: 'bottom-right',
               showConfirmButton: false,
               timer: 3000,
             }).fire({
@@ -249,7 +322,7 @@ const Credentials = () => {
           .catch(async (e) => {
             await Swal.mixin({
               toast: true,
-              position: 'top',
+              position: 'bottom-right',
               showConfirmButton: false,
               timer: 3000,
             }).fire({
@@ -260,6 +333,20 @@ const Credentials = () => {
             setSavingProfile(false);
             console.error(e);
           });
+      })
+      .catch(async (e) => {
+        await Swal.mixin({
+          toast: true,
+          position: 'bottom-right',
+          showConfirmButton: false,
+          timer: 3000,
+        }).fire({
+          icon: 'error',
+          title: 'Error saving profile. Please try again.',
+          padding: '10px 20px',
+        });
+        setSavingProfile(false);
+        console.error(e);
       });
 
     setSavingProfile(false);
@@ -310,19 +397,28 @@ const Credentials = () => {
               {/* Identity Credential */}
 
               {/* Misc credentials */}
-              {Object.keys(credentialsByType).map((type) => (
+              {Object.keys(credentialsByTypeUpdated).map((type) => (
                 <div key={type} className="mb-2 mt-6 w-full">
                   <label key={type} className="break-words text-lg font-semibold text-secondary sm:text-sm">
                     {type}
                   </label>
-                  {credentialsByType[type].map((credential) => (
+                  {credentialsByTypeUpdated[type].map((credential) => (
                     <div
                       key={credential.id}
                       className=" mb-4 mt-2 rounded border border-white-light bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
                       <div className="w-full px-6 py-7">
-                        <h5 className="mb-4 break-words text-xl font-semibold ">
-                          {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
-                        </h5>
+                        <div className="flex justify-between">
+                          <h5 className="mb-4 break-words text-xl font-semibold ">
+                            {credential.type.filter((type: string) => type !== 'VerifiableCredential')}
+                          </h5>
+                          <DeleteOutlined
+                            className="transition-all hover:text-danger"
+                            onClick={() => {
+                              deleteCredentialFromStorage(credential).catch(console.error);
+                            }}
+                          />
+                        </div>
+
                         <p className="text-wrap break-words text-white-dark">
                           <b>Issuer:</b> {credential.issuer}
                         </p>
@@ -345,12 +441,7 @@ const Credentials = () => {
                 </div>
               ))}
 
-              {!credentialsStatistics.total && !credentialsFetched && (
-                <label className="mt-4">
-                  You have not fetched any credentials yet. Please click on the button above to fetch your credentials.
-                </label>
-              )}
-              {!credentialsStatistics.total && credentialsFetched && (
+              {!credentialsStatistics.total && (
                 <label className="mt-4">
                   We could not find any credentials for this wallet. Please try again in the future or request us for
                   specific credentials.
@@ -522,7 +613,7 @@ const Credentials = () => {
             </div>
           </>
         ) : (
-          <CredentialsLoader />
+          <div>Fetching credentials, this may take a while..</div>
         )}
       </div>
     </>

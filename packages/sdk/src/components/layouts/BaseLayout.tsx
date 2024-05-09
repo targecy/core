@@ -13,7 +13,7 @@ const getSizesByLayout = (layout: LayoutsType) => {
     case 'square':
       return { width: '400px', height: '400px' };
     case 'list_item':
-      return { width: '500px', height: '200px' };
+      return { width: 'auto', height: 'auto' };
     default:
       throw new Error('Invalid layout');
   }
