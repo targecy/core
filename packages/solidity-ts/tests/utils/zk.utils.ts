@@ -46,7 +46,7 @@ const issuerSeed = 'issuseedseedseedseedseedseedseed';
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = Boolean(isolatedEnv) ? 'http://localhost:8545' : 'https://rpc.ankr.com/polygon_mumbai';
+  ethConnectionConfig.url = Boolean(isolatedEnv) ? 'http://localhost:8545' : 'https://rpc-mumbai.polygon.technology';
   ethConnectionConfig.chainId = 80001;
   ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
 

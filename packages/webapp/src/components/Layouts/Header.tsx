@@ -46,7 +46,6 @@ const Header = () => {
 
   const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
   const domain = useSelector((state: IRootState) => state.themeConfig.domain);
-  console.log("domain", domain)
 
   const themeConfig = useSelector((state: IRootState) => state.themeConfig);
   const setLocale = (flag: string) => {

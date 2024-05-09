@@ -49,7 +49,7 @@ function retrieveItem(key: string): Promise<string | null> {
   return new Promise((resolve, _reject) => {
     let currentIframe = document.getElementsByTagName('iframe').item(0);
     const iframe = currentIframe ?? document.createElement('iframe');
-  
+
     iframe.src = URL;
     iframe.style.display = 'none';
     document.body.appendChild(iframe);
@@ -79,15 +79,15 @@ function retrieveItem(key: string): Promise<string | null> {
   });
 }
 
-export async function getSavedCredentials() {
+export async function getSavedCredentials(): Promise<W3CCredential[]> {
   try {
     const json = JSON.parse((await retrieveItem('credentials')) ?? '[]');
     if (!Array.isArray(json)) throw new Error('Invalid credentials');
 
-    return json.map((c) => W3CCredential.fromJSON(c));
+    return json.map((c) => W3CCredential.fromJSON(c)) as W3CCredential[];
   } catch (e) {
     console.error(e);
-    console.error('JSON: ' + (await retrieveItem('credentials')))
+    console.error('JSON: ' + (await retrieveItem('credentials')));
     return [];
   }
 }
@@ -114,6 +114,22 @@ export async function saveCredentials(credentials: W3CCredential[], env: environ
 
   // Don't wait
   newCredentials.map((c) => updatePotentialReachDatabase(env, c));
+}
+
+export async function deleteCredential(credential: W3CCredential) {
+  try {
+    const savedCredentials = await getSavedCredentials();
+
+    const newCredentials = savedCredentials.filter((c) => c.id !== credential.id);
+
+    const json = JSON.stringify(newCredentials);
+    await saveItem('credentials', json);
+
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 }
 
 export async function saveSeed(seed: string) {
