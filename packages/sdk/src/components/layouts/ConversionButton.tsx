@@ -38,7 +38,7 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
           }
         : props.env === 'production'
           ? { chainId: '0x89' }
-          : '0x539';
+          : { chainId: '0x539'};
 
     if (networkParams && provider) {
       try {
@@ -133,27 +133,75 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
     }
   };
 
+  const [signed, setSigned] = useState(false);
+
+  const signForRewards = async () => {
+    if (provider && isConnected) {
+      await connect();
+      const signer = provider.getSigner();
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+
+        // Message to sign
+        const messageToSign = `0x${Buffer.from('Targecy will store your wallet in order to send you your rewards.', 'utf8').toString('hex')}`;
+
+        // Request the signature from the user's wallet
+        const signature = await window.ethereum.request({
+          method: 'personal_sign',
+          params: [messageToSign, account],
+        });
+
+        if (signature) {
+          setSigned(true);
+        }
+      } catch (error) {
+        console.error('Error executing transaction:', error);
+      }
+    } else {
+      console.error('Ethereum provider not found or not connected');
+    }
+  };
+
   return (
     <div style={{ marginTop: '0.5rem' }}>
       {isConnected ? (
-        <button
-          disabled={props.isDemo}
-          style={{
-            padding: '0.5rem 1rem',
-            border: '1px solid #6c757d',
-            backgroundColor: 'transparent',
-            color: '#6c757d',
-            borderRadius: '0.25rem',
-            cursor: props.isDemo ? 'auto' : 'pointer',
-            transition: 'all 0.2s',
-            opacity: props.isDemo ? 0.5 : 1,
-          }}
-          onClick={executeTransaction}>
-          Execute
-        </button>
+        props.isDemo ? (
+          <button
+            disabled={signed}
+            style={{
+              padding: '0.5rem 1rem',
+              border: '1px solid #6c757d',
+              backgroundColor: 'transparent',
+              color:  signed ? '#6c757d' : props.styling.titleColor,
+              borderRadius: '0.25rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              opacity: signed ? 0.5 : 1,
+            }}
+            className='hover:opacity-70'
+            onClick={signForRewards}>
+            {signed ? "Done" : "Sign for rewards"}
+          </button>
+        ) : (
+          <button
+            disabled={props.isDemo}
+            style={{
+              padding: '0.5rem 1rem',
+              border: '1px solid #6c757d',
+              backgroundColor: 'transparent',
+              color: '#6c757d',
+              borderRadius: '0.25rem',
+              cursor: props.isDemo ? 'auto' : 'pointer',
+              transition: 'all 0.2s',
+              opacity: props.isDemo ? 0.5 : 1,
+            }}
+            onClick={executeTransaction}>
+            Execute
+          </button>
+        )
       ) : (
         <button
-          disabled={props.isDemo}
           style={{
             padding: '0.5rem 1rem',
             border: '1px solid #6c757d',

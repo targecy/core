@@ -70,13 +70,11 @@ export const demoAd: {
     audiences: [],
   },
   metadata: {
-    title: 'Are you looking for the best yield!',
-    description: 'Protocol is the best yield aggregator in the world.',
+    title: 'Introducing Targecy',
+    description: 'Experience the next evolution in digital advertising.',
     image:
-      'https://cdn.dribbble.com/users/1925451/screenshots/4224926/media/3fec19dcc072afde5c91df61e49cc14e.jpg?resize=400x0',
+      'https://i.ibb.co/3fVNRBx/ad-basic.png',
     link: 'https://targecy.xyz/',
-    paramsSchema: {
-      value: 'uint256',
-    },
+    
   },
 };
