@@ -71,8 +71,8 @@ export async function generateZKProof(
     optional: false,
     query: {
       allowedIssuers: ['*'],
-      type: match.credential.type,
-      context: match.credential['@context'],
+      type: match.credential.type.length > 1 ? match.credential.type[1] : match.credential.type[0],
+      context: match.credential['@context'].filter((context: string) => context.includes('json-ld'))[0],
       credentialSubject: {
         [match.credentialSubjectField]: {
           [operatorKeyByNumber[match.operator]]: match.credentialSubjectValue,
