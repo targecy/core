@@ -38,9 +38,9 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
         relayer: '0x3bBF2d68CBb8C813Cbc4b4237abFeeE7023279ae',
       };
       break;
-    case 'mumbai':
+    case 'amoy':
       config = {
-        defaultIssuer: 27524721169281435317324794740804524348876903871467534457093785347343127041n, // @todo (Martin): force set in mumbai contracts
+        defaultIssuer: 27524721169281435317324794740804524348876903871467534457093785347343127041n, // @todo (Martin): force set in amoy contracts
         admin: '0xFF12A566B10A92E311b8A2a52302806756Ab0A4b',
         vault: '0x97C9f2450dfb4ae01f776ea3F772F51C3BEFa26a',
         multisig: '0x8fe74Ce445F70b9a46F254dcc02c0857974F96eb',
@@ -111,7 +111,7 @@ const func: DeployFunction = async (hre: THardhatRuntimeEnvironmentExtended) => 
   try {
     if (network.name === 'localhost') {
       console.log('No need to transfer ownership of ProxyAdmin on localhost');
-    } else if (network.name === 'mumbai' || network.name === 'matic') {
+    } else if (network.name === 'amoy' || network.name === 'matic') {
       console.log('Transferring ownership of ProxyAdmin...');
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (!config.multisig) throw new Error('Multisig address not set');

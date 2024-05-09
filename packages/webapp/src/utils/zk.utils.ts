@@ -29,8 +29,8 @@ export type StoragesSide = 'server' | 'client';
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = 'https://rpc-mumbai.polygon.technology';
-  ethConnectionConfig.chainId = 80001;
+  ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_amoy';
+  ethConnectionConfig.chainId = 80002; // Amoy chain id
   ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
 
   const dataStorage = {

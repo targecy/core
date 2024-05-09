@@ -10,9 +10,9 @@ import { ethers } from 'hardhat';
 
 import { hostname } from 'os';
 
+import amoyConfig from '../generated/config/amoy.json';
 import localhostConfig from '../generated/config/localhost.json';
 import maticConfig from '../generated/config/matic.json';
-import mumbaiConfig from '../generated/config/mumbai.json';
 
 import { initializeData } from './seed/data';
 import { uploadMetadata } from './seed/utils';
@@ -60,9 +60,9 @@ export async function seed(network: string, force = false): Promise<void> {
       });
       address = localhostConfig[hostname() as keyof typeof localhostConfig];
       break;
-    case 'mumbai':
+    case 'amoy':
       provider = new ethers.JsonRpcProvider('https://polygon-mainnet.g.alchemy.com/v2/NdeRszEl7KquB4CoT8QF7zfjd-a-IDFX');
-      address = mumbaiConfig.address;
+      address = amoyConfig.address;
       break;
     case 'matic':
       provider = new ethers.JsonRpcProvider('https://rpc-mainnet.maticvigil.com');
@@ -191,8 +191,8 @@ export async function seed(network: string, force = false): Promise<void> {
     case 'localhost':
       console.log('http://http://localhost:8000/subgraphs/name/targecy/graphql');
       break;
-    case 'mumbai':
-      console.log('https://api.studio.thegraph.com/query/58687/targecy-mumbai/version/latest');
+    case 'amoy':
+      console.log('https://api.studio.thegraph.com/query/58687/targecy-amoy/version/latest');
       break;
     case 'matic':
       throw new Error('Set up config for MATIC network');

@@ -62,9 +62,9 @@ const networks: HardhatUserConfig['networks'] = {
   },
 
   // Test
-  mumbai: {
-    url: isolatedEnv ? 'http://127.0.0.1:8545' : 'https://rpc-mumbai.polygon.technology',
-    chainId: 80001,
+  amoy: {
+    url: isolatedEnv ? 'http://127.0.0.1:8545' : 'https://rpc.ankr.com/polygon_amoy',
+    chainId: 80002, // Amoy chain id
     accounts: [process.env.PRIVATE_KEY],
   },
 

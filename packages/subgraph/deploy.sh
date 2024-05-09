@@ -13,7 +13,7 @@ fi
 source "$env_file"
 
 # Check if a network argument is provided, default to 'localhost'
-subgraph=${1:-"targecy-mumbai"}
+subgraph=${1:-"targecy-amoy"}
 echo "Subgraph: $subgraph"
 
 key=${2:-$TEST_SUBGRAPH_KEY}
@@ -24,6 +24,6 @@ echo "Version: $version"
 
 # @todo save version in file and read it from webapp and backend, both codegen and code
 
-yarn dlx @graphprotocol/graph-cli@0.62.0 deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml
+yarn dlx @graphprotocol/graph-cli@0.71.2 deploy --studio $subgraph --deploy-key $key -l $version $script_dir/subgraph.yaml
 
 # This is a workaround for a bug that happens when running directly yarn graph deploy

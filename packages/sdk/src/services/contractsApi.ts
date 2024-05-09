@@ -13,7 +13,7 @@ const getGraphQLUrl = (env: environment) => {
     case 'development':
       return 'http://localhost:8000/subgraphs/name/targecy';
     case 'preview':
-      return 'https://api.studio.thegraph.com/query/58687/targecy-mumbai/version/latest';
+      return 'https://api.studio.thegraph.com/query/58687/targecy-amoy/version/latest';
     case 'production':
       throw new Error('Not implemented prod subgraph.');
     default:

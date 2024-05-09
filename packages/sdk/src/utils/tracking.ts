@@ -82,7 +82,7 @@ export async function createIssuerIdentity(wallet: IdentityWallet, url: string) 
   return await wallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
+    networkId: core.NetworkId.Main,
     seed: hashUrlTo32ByteSeed(url),
     revocationOpts: {
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,

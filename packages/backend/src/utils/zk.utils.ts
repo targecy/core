@@ -28,8 +28,8 @@ import { DID } from '@iden3/js-iden3-core';
 
 export async function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = 'https://rpc-mumbai.polygon.technology';
-  ethConnectionConfig.chainId = 80001;
+  ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_amoy';
+  ethConnectionConfig.chainId = 80002; // Amoy chain id
   ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
 
   const dataStorage = {
@@ -62,7 +62,7 @@ export async function initializeStorages() {
   const issuer = await identityWallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
+    networkId: core.NetworkId.Main,
     seed: seedPhraseIssuer,
     revocationOpts: {
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,

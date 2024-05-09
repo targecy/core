@@ -1,7 +1,7 @@
 import { Targecy, Targecy__factory } from '../generated/contract-types';
 import { ethers } from 'ethers';
 import localhostConfig from '../generated/config/localhost.json';
-import mumbaiConfig from '../generated/config/mumbai.json';
+import amoyConfig from '../generated/config/amoy.json';
 import maticConfig from '../generated/config/matic.json';
 import { hostname } from 'os';
 
@@ -19,19 +19,15 @@ export const getSettings = () => {
       };
     case 'staging':
       return {
-        network: 'mumbai',
-        address: mumbaiConfig.address,
-        provider: new ethers.JsonRpcProvider(
-          'https://rpc-mumbai.maticvigil.com/v1/0e5b8e0c0b3f6e0c5b4f4c0e8f6e0c5b4f4c0e8f/'
-        ),
+        network: 'amoy',
+        address: amoyConfig.address,
+        provider: new ethers.JsonRpcProvider('https://rpc.ankr.com/polygon_amoy'),
       };
     case 'production':
       return {
-        network: 'mumbai',
-        address: mumbaiConfig.address,
-        provider: new ethers.JsonRpcProvider(
-          'https://rpc-mumbai.maticvigil.com/v1/0e5b8e0c0b3f6e0c5b4f4c0e8f6e0c5b4f4c0e8f/'
-        ),
+        network: 'amoy',
+        address: amoyConfig.address,
+        provider: new ethers.JsonRpcProvider('https://rpc.ankr.com/polygon_amoy'),
       };
     default:
       throw new Error('Invalid environment');
