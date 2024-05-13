@@ -37,10 +37,10 @@ const isCustomEventParams = (params: Record<string, any>): params is CustomEvent
 
 type TrackingEvent = TrackingEventBaseParams & (PageViewEventParams | CustomEventParams);
 
-export const trackCustomEvent = (params: CustomEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined) =>
+export const trackCustomEvent = (params: CustomEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined = undefined) =>
   trackEvent(env, { type: TrackingEventType.CUSTOM_EVENT, ...params }, zkServices);
 
-export const trackPageView = (page: PageViewEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined) =>
+export const trackPageView = (page: PageViewEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined = undefined) =>
   trackEvent(env, { type: TrackingEventType.PAGE_VIEW, path: page.path }, zkServices);
 
 const trackEvent = async (env: environment, params: TrackingEvent, zkServices: ZkServicesType | undefined) => {
