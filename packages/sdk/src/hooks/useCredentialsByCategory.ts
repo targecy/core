@@ -18,23 +18,21 @@ const getCredentialCategory = (credential: W3CCredential) => {
     return CredentialCategory.Configuration;
   }
 
-  switch (type) {
-    case SCHEMA_TYPES.ProtocolUsedTargecySchema:
-      return CredentialCategory.Public;
-    case SCHEMA_TYPES.TokenHolderTargecySchema:
-      return CredentialCategory.Public;
-    case SCHEMA_TYPES.ActiveOnChainTargecySchema:
-      return CredentialCategory.Public;
-    case SCHEMA_TYPES.PageViewTargecySchema:
-      return CredentialCategory.Behaviour;
-    case SCHEMA_TYPES.CustomEventTargecySchema:
-      return CredentialCategory.Behaviour;
-    case SCHEMA_TYPES.InterestTargecySchema:
-      return CredentialCategory.Behaviour;
-    default:
-      console.error(`Set category for credential type: ${type}`);
-      return CredentialCategory.Configuration;
+  const schemaToCategoryMap = {
+    [SCHEMA_TYPES.ProtocolUsedTargecySchema]: CredentialCategory.Public,
+    [SCHEMA_TYPES.TokenHolderTargecySchema]: CredentialCategory.Public,
+    [SCHEMA_TYPES.ActiveOnChainTargecySchema]: CredentialCategory.Public,
+    [SCHEMA_TYPES.PageViewTargecySchema]: CredentialCategory.Behaviour,
+    [SCHEMA_TYPES.CustomEventTargecySchema]: CredentialCategory.Behaviour,
+    [SCHEMA_TYPES.InterestTargecySchema]: CredentialCategory.Behaviour,
+    [SCHEMA_TYPES.ProfileTargecySchema]: CredentialCategory.Public,
+  };
+
+  const category = schemaToCategoryMap[type] || CredentialCategory.Configuration;
+  if (category === CredentialCategory.Configuration) {
+    console.error(`Set category for credential type: ${type}`);
   }
+  return category;
 };
 
 export const useCredentialsByCategory = (context: TargecyContextType) => {

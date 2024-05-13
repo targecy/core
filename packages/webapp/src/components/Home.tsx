@@ -135,7 +135,7 @@ export const Home = () => {
     setSchemas(Object.entries(response).map(([, schema]) => schema));
   }, []);
 
-  const { context } = useTargecyContext();
+  const context = useTargecyContext();
   const credentialsStatistics = useCredentialsStatistics(context);
 
   const wallet = useWallet();

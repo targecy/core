@@ -35,23 +35,33 @@ const interests = [
   'Analytics',
 ] as const;
 
+type Profile = {
+  country?: string;
+  birthdate?: Date;
+};
+
 const Credentials = () => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(setPageTitle('Profile'));
-  });
-
-  const { context } = useTargecyContext();
+  const context = useTargecyContext();
   const credentialsByType = useCredentialsByType(context);
   const credentialsStatistics = useCredentialsStatistics(context);
-
+  const [savingInterests, setSavingInterests] = useState(false);
   const [credentialsByTypeUpdated, setCredentialsByTypeUpdated] = useState<Record<string, W3CCredential[]>>({});
+  const [interestsConfig, setInterestsConfig] = useState<Partial<Record<keyof typeof interests, boolean>>>({});
+  const [profile, setProfile] = useState<Profile>({});
+  const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
-    if (Object.keys(credentialsByTypeUpdated).length === 0) setCredentialsByTypeUpdated(credentialsByType);
-  }, [credentialsByType]);
+    dispatch(setPageTitle('Profile'));
+  }, []);
 
-  const [interestsConfig, setInterestsConfig] = useState<Partial<Record<keyof typeof interests, boolean>>>({});
+  useEffect(() => {
+    if (Object.keys(credentialsByType).length > 0 && Object.keys(credentialsByTypeUpdated).length === 0) {
+      setCredentialsByTypeUpdated(() => {
+        return credentialsByType;
+      });
+    }
+  }, [credentialsByType]);
 
   useEffect(() => {
     if (credentialsByType) {
@@ -70,7 +80,7 @@ const Credentials = () => {
       });
     }
   }, [credentialsByType]);
-  const [savingInterests, setSavingInterests] = useState(false);
+
   const saveInterests = () => {
     setSavingInterests(true);
 
@@ -247,15 +257,7 @@ const Credentials = () => {
     label: country.name,
   }));
 
-  type Profile = {
-    country?: string;
-    birthdate?: Date;
-  };
-
-  const [profile, setProfile] = useState<Profile>({});
-
-  const [savingProfile, setSavingProfile] = useState(false);
-  const saveProfile = () => {
+  const saveProfile = async () => {
     setSavingProfile(true);
 
     console.log(profile);
@@ -285,7 +287,7 @@ const Credentials = () => {
       country: profile.country,
     });
 
-    context.zkServices?.identityWallet
+    await context.zkServices?.identityWallet
       .issueCredential(issuerDID, request, {
         ipfsGatewayURL: 'https://ipfs.io',
       })
@@ -532,7 +534,8 @@ const Credentials = () => {
                       <button
                         className={`btn-outline-primary btn w-full ${savingProfile ? 'disabled' : ''} `}
                         disabled={savingProfile || !context.userIdentity}
-                        onClick={() => saveProfile()}>
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        onClick={saveProfile}>
                         {savingProfile ? 'Saving...' : 'Save Profile'}
                       </button>
                     </div>

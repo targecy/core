@@ -1,7 +1,8 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { trackPageView } from '../../utils/tracking';
-import { TargecyContext, TargecyServicesContext } from './Context';
+import { TargecyContext } from './Context';
 import { environment } from '../../utils/context';
+import { useTargecyContext } from '../../hooks/useTargecyContext';
 
 export type TargecyTrackerProps = {
   children: React.ReactNode;
@@ -22,12 +23,11 @@ const shouldIgnorePath = (path: string, pathsToIgnore: string[] = [], pathsToTra
 
 const Tracker = ({ children, env, pathsToIgnore, pathsToTrack }: TargecyTrackerProps) => {
   const path = typeof window === 'undefined' ? undefined : window.location.href;
+  const context = useTargecyContext();
 
-  
   useEffect(() => {
     if (!path || shouldIgnorePath(new URL(path).pathname, pathsToIgnore, pathsToTrack)) return;
-    
-    trackPageView({ path }, env);
+    trackPageView({ path }, env, context.zkServices);
   }, [path]);
 
   return children;

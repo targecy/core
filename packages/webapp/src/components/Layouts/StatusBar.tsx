@@ -1,19 +1,16 @@
 import { CloseOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useCookie } from 'react-use';
 
 import { useGetAdvertiserQuery, useGetBudgetQuery } from '~/generated/graphql.types';
 import { useWallet } from '~/hooks';
-import { SessionData } from '~/pages/api/auth/[...nextauth]';
 import { UserRole } from '~/utils/preferences';
 
 export const StatusBar = () => {
   const [showComponent, setShowComponent] = useState(true);
 
   const wallet = useWallet();
-  const sessionData = useSession().data?.user as SessionData | null;
 
   const { data: budget, isLoading: isBudgetLoading } = useGetBudgetQuery({
     id: wallet.address || '',

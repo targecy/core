@@ -7,6 +7,7 @@ import { SCHEMAS } from '@backend/constants/schemas/schemas.constant';
 import { sha256 } from '@iden3/js-crypto';
 import { createUserIdentity } from './zk';
 import { updatePotentialReachDatabase } from './reach';
+import { ZkServicesType } from '../components/misc/Context.types';
 
 enum TrackingEventType {
   PAGE_VIEW = 'page_view',
@@ -36,26 +37,26 @@ const isCustomEventParams = (params: Record<string, any>): params is CustomEvent
 
 type TrackingEvent = TrackingEventBaseParams & (PageViewEventParams | CustomEventParams);
 
-export const trackCustomEvent = (params: CustomEventParams, env: environment = 'production') =>
-  trackEvent(env, { type: TrackingEventType.CUSTOM_EVENT, ...params });
+export const trackCustomEvent = (params: CustomEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined) =>
+  trackEvent(env, { type: TrackingEventType.CUSTOM_EVENT, ...params }, zkServices);
 
-export const trackPageView = (page: PageViewEventParams, env: environment = 'production') =>
-  trackEvent(env, { type: TrackingEventType.PAGE_VIEW, path: page.path });
+export const trackPageView = (page: PageViewEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined) =>
+  trackEvent(env, { type: TrackingEventType.PAGE_VIEW, path: page.path }, zkServices);
 
-const trackEvent = async (env: environment, params: TrackingEvent) => {
+const trackEvent = async (env: environment, params: TrackingEvent, zkServices: ZkServicesType | undefined) => {
   if (!window) {
     console.error('window is not defined');
     return false;
   }
-
-  const zkServices = await initServices();
+  // initService only if zKservices is undefined 
+  const zkServicesChecked = zkServices ?? await initServices();
 
   const savedCredentials = await getSavedCredentials();
   const credentialToSave = await eventToCredential(
     env,
-    zkServices.identityWallet,
-    zkServices.issuerIdentity.did,
-    zkServices.userIdentity.did,
+    zkServicesChecked.identityWallet,
+    zkServicesChecked.issuerIdentity.did,
+    zkServicesChecked.userIdentity.did,
     params
   );
 

@@ -10,7 +10,8 @@ const FETCHING_INTERVAL = 1000 * 60 * 60 * 24 * 7; // 1 week
 
 export const OnChainWrapper = ({ children }: { children: React.ReactNode }) => {
   const { address } = useWallet();
-  const { context, initialized } = useTargecyContext();
+  const context = useTargecyContext();
+  const { initialized } = context;
   const { setCredentials } = useCredentials(context);
 
   const [lastTimeFetched, updateCookie] = useCookie('publicCredentialsLastTimeFetched');

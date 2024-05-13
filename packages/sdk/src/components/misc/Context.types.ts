@@ -16,6 +16,7 @@ import { Config } from 'wagmi';
 export type TargecyContextType = {
   zkServices?: ZkServicesType;
   userIdentity?: UserIdentityType;
+  initialized?: boolean;
 };
 
 export interface TargecyContextProps {

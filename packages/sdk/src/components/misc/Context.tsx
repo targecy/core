@@ -6,28 +6,25 @@ import { createUserIdentity } from '../..';
 import { initServices } from '../../utils/context';
 import { store } from '../../utils/store';
 
-import { TargecyContextType, TargecyContextProps, TargecyBaseProps } from './Context.types';
+import { TargecyContextType, TargecyContextProps, TargecyBaseProps, ZkServicesType } from './Context.types';
 
 export const TargecyServicesContext = createContext<TargecyContextType>({
   zkServices: undefined,
   userIdentity: undefined,
+  initialized: false,
 });
 
 export const TargecyContext = ({ children }: TargecyContextProps & TargecyBaseProps) => {
-  const [initialized, setInitialized] = useState(false);
-
   const [context, setContext] = useState<TargecyContextType>({
     zkServices: undefined,
     userIdentity: undefined,
+    initialized: false,
   });
 
   useAsync(async () => {
-    if (!initialized) {
-      const zkServices = await initServices();
-      const userIdentity = await createUserIdentity(zkServices.identityWallet);
-
-      setContext({ zkServices, userIdentity });
-      setInitialized(true);
+    if (!context.initialized) {
+      const zkServices: ZkServicesType = await initServices();
+      setContext({ zkServices, userIdentity: zkServices.userIdentity, initialized: true });
     }
   }, []);
 
