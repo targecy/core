@@ -7,7 +7,7 @@ export const NetworkNamesList = [
   'goerli',
   'xdai',
   'polygon',
-  'mumbai',
+  'amoy',
   'rinkebyArbitrum',
   'arbitrum',
   'kovanOptimism',

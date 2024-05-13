@@ -29,9 +29,9 @@ export type StoragesSide = 'server' | 'client';
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = 'https://rpc-mumbai.polygon.technology';
-  ethConnectionConfig.chainId = 80001;
-  ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
+  ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_amoy';
+  ethConnectionConfig.chainId = 80002; // Amoy chain id
+  ethConnectionConfig.contractAddress = '0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124';
 
   const dataStorage = {
     credential: new CredentialStorage(new InMemoryDataSource<W3CCredential>()),

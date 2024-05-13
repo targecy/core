@@ -31,7 +31,7 @@ const chainRpcUrl = (env: environment) => {
     case 'production':
       return 'https://rpc.ankr.com/polygon';
     default:
-      return 'https://rpc-mumbai.polygon.technology';
+      return 'https://rpc.ankr.com/polygon_amoy';
   }
 };
 

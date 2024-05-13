@@ -36,7 +36,6 @@
     "node_modules",
     "**/.yalc/**/*",
     ".yalc/**/*",
-    "@0xpolygonid/js-sdk",
-    "@iden3/js-iden3-core"
+    "@0xpolygonid/js-sdk"
   ]
 }

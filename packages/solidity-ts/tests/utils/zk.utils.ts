@@ -46,9 +46,9 @@ const issuerSeed = 'issuseedseedseedseedseedseedseed';
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = Boolean(isolatedEnv) ? 'http://localhost:8545' : 'https://rpc-mumbai.polygon.technology';
-  ethConnectionConfig.chainId = 80001;
-  ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
+  ethConnectionConfig.url = Boolean(isolatedEnv) ? 'http://localhost:8545' : 'https://rpc.ankr.com/polygon_amoy';
+  ethConnectionConfig.chainId = 80002; // Amoy chain id
+  ethConnectionConfig.contractAddress = '0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124';
 
   const dataStorage = {
     credential: new CredentialStorage(new InMemoryDataSource<W3CCredential>()),
@@ -80,7 +80,7 @@ export async function createIssuerIdentity(wallet: IdentityWallet) {
   return await wallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
+    networkId: core.NetworkId.Amoy,
     seed: seedPhraseIssuer,
     revocationOpts: {
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
@@ -94,7 +94,7 @@ export async function createUserIdentity(identityWallet: IdentityWallet) {
   return await identityWallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
+    networkId: core.NetworkId.Amoy,
     seed: seedPhraseUser,
     revocationOpts: {
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,

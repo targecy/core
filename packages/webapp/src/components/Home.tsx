@@ -26,8 +26,8 @@ import { UserRole } from '~/utils/preferences';
 
 const scannerUrl: Record<typeof env.NEXT_PUBLIC_VERCEL_ENV, string> = {
   development: `http://localhost:8090`,
-  preview: `https://mumbai.polygonscan.com`,
-  production: `https://mumbai.polygonscan.com`,
+  preview: `https://amoy.polygonscan.com`,
+  production: `https://amoy.polygonscan.com`,
 };
 
 export const Home = () => {
