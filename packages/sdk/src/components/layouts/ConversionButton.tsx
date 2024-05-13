@@ -30,15 +30,15 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
 
   const switchNetwork = async () => {
     // Define network parameters based on props.env
-    // Example for Mumbai Testnet (you should add cases for other environments)
+    // Example for Amoy Testnet (you should add cases for other environments)
     const networkParams =
       props.env === 'preview'
         ? {
-            chainId: '0x13881', // Mumbai chain id
+            chainId: '0x13882', // Amoy chain id
           }
         : props.env === 'production'
           ? { chainId: '0x89' }
-          : { chainId: '0x539'};
+          : { chainId: '0x539' };
 
     if (networkParams && provider) {
       try {
@@ -58,16 +58,16 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
           blockExplorerUrls: ['http://localhost:8090'],
         };
 
-        const mumbaiData = {
-          chainId: '0x13881',
-          chainName: 'Mumbai Testnet',
-          rpcUrls: ['https://rpc-mumbai.matic.today'],
+        const amoyData = {
+          chainId: '0x13882', // Amoy chain id
+          chainName: 'Amoy Testnet',
+          rpcUrls: ['https://rpc.ankr.com/polygon_amoy'],
           nativeCurrency: {
             name: 'MATIC',
             symbol: 'MATIC', // 2-6 characters long
             decimals: 18,
           },
-          blockExplorerUrls: ['https://mumbai.polygonscan.com'],
+          blockExplorerUrls: ['https://amoy.polygonscan.com'],
         };
 
         const polygonData = {
@@ -85,7 +85,7 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
         await window.ethereum
           .request({
             method: 'wallet_addEthereumChain',
-            params: [localhostData, mumbaiData, polygonData],
+            params: [localhostData, amoyData, polygonData],
           })
           .catch((error: any) => {
             console.error('Error adding network:', error);
@@ -173,15 +173,15 @@ export const ConversionButton = ({ props, params }: { props: LayoutParams; param
               padding: '0.5rem 1rem',
               border: '1px solid #6c757d',
               backgroundColor: 'transparent',
-              color:  signed ? '#6c757d' : props.styling.titleColor,
+              color: signed ? '#6c757d' : props.styling.titleColor,
               borderRadius: '0.25rem',
               cursor: 'pointer',
               transition: 'all 0.2s',
               opacity: signed ? 0.5 : 1,
             }}
-            className='hover:opacity-70'
+            className="hover:opacity-70"
             onClick={signForRewards}>
-            {signed ? "Done" : "Sign for rewards"}
+            {signed ? 'Done' : 'Sign for rewards'}
           </button>
         ) : (
           <button

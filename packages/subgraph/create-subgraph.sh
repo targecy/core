@@ -20,7 +20,7 @@ echo "File:"
 cat "../solidity-ts/generated/config/${network}.json"
 
 # Extract the address from config relative to the script location
-# If network is localhost, use localhost.json, and fetch hostname  if mumbai, use mumbai.json, etc.
+# If network is localhost, use localhost.json, and fetch hostname  if amoy, use amoy.json, etc.
 
 if [ $network == "localhost" ]; then
   address=$(jq -r ".[\"$hostname\"]" "../solidity-ts/generated/config/${network}.json")
@@ -30,10 +30,15 @@ fi
 
 echo "address: $address"
 
-# Starting block is 43259277 in local (or mumbai) and 50000000 in matic
-startBlock=43259277
+# Starting block is 6836062 in local (or amoy) and 50000000 in matic
+startBlock=6836062
 if [ $network == "matic" ]; then
   startBlock=50000000
+fi
+
+# If network is amoy, use network = "polygon-amoy" form deployment
+if [ $network == "amoy" ]; then
+  network="polygon-amoy"
 fi
 
 # Create the subgraph.yaml file with the new address

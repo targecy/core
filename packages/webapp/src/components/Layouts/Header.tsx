@@ -232,6 +232,7 @@ const Header = () => {
             </div> */}
 
             {isAdvertiser && <Budget></Budget>}
+            <div className="flex items-center rounded-full bg-white-light/40   p-2 dark:bg-dark/40">Amoy Testnet</div>
             <div>
               {themeConfig.theme === 'light' ? (
                 <button

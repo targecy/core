@@ -1,7 +1,7 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 import localhostConfig from './generated/config/localhost.json' assert { type: 'json' };
-import mumbaiConfig from './generated/config/mumbai.json' assert { type: 'json' };
+import amoyConfig from './generated/config/amoy.json' assert { type: 'json' };
 // import maticConfig from './generated/config/matic.json' assert { type: 'json' };
 import { hostname } from './config/hostname.mjs';
 
@@ -26,7 +26,7 @@ const deployedAddressByEnv = (env) => {
       return localhostConfig[hostname];
     case 'preview':
     case 'production':
-      return mumbaiConfig.address;
+      return amoyConfig.address;
     default:
       throw new Error(`Unknown env ${env}`);
   }

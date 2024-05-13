@@ -22,5 +22,5 @@ export default defineConfig({
     }),
   ],
   cjsInterop: true,
-  external: ["@0xpolygonid/js-sdk",  "@iden3/js-iden3-core"]
+  external: ["@0xpolygonid/js-sdk"]
 });

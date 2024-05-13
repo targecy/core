@@ -8,6 +8,7 @@ git update-index --skip-worktree packages/webapp/src/generated/config/localhost.
 
 # @todo : run based on commit changes
 yarn build-backend
+yarn build-sdk
 yarn compile-contracts
 yarn build-dapp
 yarn build-relayer

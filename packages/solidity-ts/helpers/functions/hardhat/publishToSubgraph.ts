@@ -38,7 +38,7 @@ export const hardhatPublishToOtherPackage = (dir: string): void => {
 
   // Copy addresses
   if (dir.includes('generated') && dir != contractsDir) {
-    for (const network of ['localhost', 'mumbai', 'matic'] as const) {
+    for (const network of ['localhost', 'amoy', 'matic'] as const) {
       try {
         console.log(`Copying config/${network}.json to ${dir}...`);
         const configPath = `${contractsDir}/config/${network}.json`;

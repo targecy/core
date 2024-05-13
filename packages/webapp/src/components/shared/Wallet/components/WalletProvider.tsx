@@ -5,8 +5,8 @@ import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { SessionProvider } from 'next-auth/react';
 import { ReactNode } from 'react';
 import { defineChain } from 'viem';
-import { polygonMumbai, localhost } from 'viem/chains';
-import { configureChains, createConfig, WagmiConfig } from 'wagmi';
+import { polygonAmoy, localhost } from 'viem/chains';
+import { configureChains, createConfig, WagmiConfig, Chain } from 'wagmi';
 
 import { appName } from '../Wallet.constants';
 
@@ -14,11 +14,12 @@ import { OnChainWrapper } from './OnChainTracker';
 
 import { isVercelPreview, isVercelProduction } from '~/constants/app.constants';
 
-const chain = () => {
+const chain = (): Chain => {
   if (isVercelProduction || isVercelPreview)
     return defineChain({
-      ...polygonMumbai,
-      name: 'Mumbai',
+      ...polygonAmoy,
+      name: 'Amoy',
+      network: polygonAmoy.name,
       rpcUrls: {
         default: {
           http: ['https://polygon-mainnet.g.alchemy.com/v2/NdeRszEl7KquB4CoT8QF7zfjd-a-IDFX'],
@@ -28,7 +29,21 @@ const chain = () => {
         },
       },
     });
-  return localhost;
+  const customLocalhost = defineChain({
+    ...localhost,
+    name: 'Localhost',
+    network: localhost.name,
+    rpcUrls: {
+      default: {
+        http: ['http://localhost:8545'],
+      },
+      public: {
+        http: ['http://localhost:8545'],
+      },
+    },
+  });
+
+  return customLocalhost;
 };
 
 const { chains, publicClient } = configureChains(

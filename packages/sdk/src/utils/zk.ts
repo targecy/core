@@ -71,8 +71,8 @@ export async function generateZKProof(
     optional: false,
     query: {
       allowedIssuers: ['*'],
-      type: match.credential.type,
-      context: match.credential['@context'],
+      type: match.credential.type.length > 1 ? match.credential.type[1] : match.credential.type[0],
+      context: match.credential['@context'].filter((context: string) => context.includes('json-ld'))[0],
       credentialSubject: {
         [match.credentialSubjectField]: {
           [operatorKeyByNumber[match.operator]]: match.credentialSubjectValue,
@@ -104,9 +104,9 @@ export async function generateZKProof(
 
 export function initializeStorages() {
   const ethConnectionConfig = defaultEthConnectionConfig;
-  ethConnectionConfig.url = 'https://rpc-mumbai.polygon.technology';
-  ethConnectionConfig.chainId = 80001;
-  ethConnectionConfig.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4';
+  ethConnectionConfig.url = 'https://rpc.ankr.com/polygon_amoy';
+  ethConnectionConfig.chainId = 80002; // Amoy chain id
+  ethConnectionConfig.contractAddress = '0x1a4cC30f2aA0377b0c3bc9848766D90cb4404124';
 
   const dataStorage = {
     credential: new CredentialStorage(new InMemoryDataSource<W3CCredential>()),
@@ -157,7 +157,7 @@ export async function createUserIdentity(identityWallet: IdentityWallet): Promis
   const identity = await identityWallet.createIdentity({
     method: core.DidMethod.Iden3,
     blockchain: core.Blockchain.Polygon,
-    networkId: core.NetworkId.Mumbai,
+    networkId: core.NetworkId.Amoy,
     seed,
     revocationOpts: {
       type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,

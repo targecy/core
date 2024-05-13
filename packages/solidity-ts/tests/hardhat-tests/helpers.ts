@@ -95,8 +95,8 @@ export async function getTestProof(zkServices: ZKServices, audienceId: number): 
     optional: false,
     query: {
       allowedIssuers: ['*'],
-      type: credential.type,
-      context: credential['@context'],
+      type: credential.type.length > 1 ? credential.type[1] : credential.type[0],
+      context: credential['@context'].filter((c: string) => c.includes('json-ld'))[0],
       credentialSubject: {
         documentType: {
           $eq: 99,
