@@ -9,10 +9,9 @@ import { useRouter } from 'next/router';
 import { appWithI18Next } from 'ni18n';
 import { ni18nConfig } from 'ni18n.config.ts';
 import { ReactElement, ReactNode, useEffect } from 'react';
-import { Provider, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import DefaultLayout from '../components/Layouts/DefaultLayout';
-import store from '../store/index';
 
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -76,15 +75,13 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV} pathsToIgnore={['/storage']}>
-      <Provider store={store}>
-        <ProviderWrapper>
-          <TargecyHead />
+      <ProviderWrapper>
+        <TargecyHead />
 
-          {getLayout(<Component {...pageProps} />)}
+        {getLayout(<Component {...pageProps} />)}
 
-          <Analytics />
-        </ProviderWrapper>
-      </Provider>
+        <Analytics />
+      </ProviderWrapper>
     </TargecyTracker>
   );
 };
