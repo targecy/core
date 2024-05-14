@@ -227,11 +227,17 @@ async function fetchBinaryFile(side: StoragesSide, file: string) {
 
 export async function getCircuitStorage(side: StoragesSide) {
   const circuitStorage = new CircuitStorage(new InMemoryDataSource<CircuitData>());
+
+  const [wasm, provingKey, verificationKey] = await Promise.all([
+    await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit.wasm'),
+    await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit_final.zkey'),
+    await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/verification_key.json')
+  ])
   await circuitStorage.saveCircuitData(CircuitId.AtomicQuerySigV2OnChain, {
     circuitId: CircuitId.AtomicQuerySigV2OnChain,
-    wasm: await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit.wasm'),
-    provingKey: await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit_final.zkey'),
-    verificationKey: await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/verification_key.json'),
+    wasm: wasm,
+    provingKey: provingKey,
+    verificationKey: verificationKey,
   });
 
   return circuitStorage;
