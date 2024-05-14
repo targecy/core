@@ -1,5 +1,5 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
-import { useTargecyContext } from '@targecy/sdk';
+import { useTargecyContext } from '@targecy/sdk/hooks/useTargecyContext';
 import { trackCustomEvent } from '@targecy/sdk/utils/tracking';
 import { track } from '@vercel/analytics/react';
 import { Typography } from 'antd';
@@ -55,11 +55,7 @@ export default function Onboarding() {
   const goToApp = () => {
     if (cookieValue && JSON.parse(cookieValue ?? '[]').length) {
       console.log('href', href?.toString() ?? '/');
-      trackCustomEvent(
-        { id: 'targecy_user', params: { roles: selectedRoles.toString() } },
-        undefined,
-        context.zkServices
-      );
+      trackCustomEvent({ id: 'targecy_user', params: { roles: selectedRoles.toString() } });
       router.push(href?.toString() ?? '/').catch(console.error);
     } else {
       console.error('Roles not confirmed', cookieValue);

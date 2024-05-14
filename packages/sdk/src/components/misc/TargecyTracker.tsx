@@ -27,7 +27,7 @@ const Tracker = ({ children, env, pathsToIgnore, pathsToTrack }: TargecyTrackerP
 
   useEffect(() => {
     if (!path || shouldIgnorePath(new URL(path).pathname, pathsToIgnore, pathsToTrack)) return;
-    trackPageView({ path }, env, context.zkServices);
+    trackPageView({ path }, env);
   }, [path]);
 
   return children;

@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import { useAsync } from 'react-use';
 
 import { createUserIdentity } from '../..';
-import { initServices } from '../../utils/context';
+import { ZkServicesInstance } from '../../utils/context';
+('../../utils/context');
 import { store } from '../../utils/store';
 
 import { TargecyContextType, TargecyContextProps, TargecyBaseProps, ZkServicesType } from './Context.types';
@@ -23,7 +24,7 @@ export const TargecyContext = ({ children }: TargecyContextProps & TargecyBasePr
 
   useAsync(async () => {
     if (!context.initialized) {
-      const zkServices: ZkServicesType = await initServices();
+      const zkServices = await ZkServicesInstance.initServices();
       setContext({ zkServices, userIdentity: zkServices.userIdentity, initialized: true });
     }
   }, []);

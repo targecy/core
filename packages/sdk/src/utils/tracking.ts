@@ -1,5 +1,5 @@
 import { CredentialRequest, CredentialStatusType, IdentityWallet, W3CCredential, core } from '@0xpolygonid/js-sdk';
-import { environment, initServices } from './context';
+import { environment, ZkServicesInstance }  from './context';
 import { getSavedCredentials, saveCredentials } from './sharedStorage';
 import { backendTrpcClient } from './trpc';
 import { DID } from '@iden3/js-iden3-core';
@@ -7,7 +7,6 @@ import { SCHEMAS } from '@backend/constants/schemas/schemas.constant';
 import { sha256 } from '@iden3/js-crypto';
 import { createUserIdentity } from './zk';
 import { updatePotentialReachDatabase } from './reach';
-import { ZkServicesType } from '../components/misc/Context.types';
 
 enum TrackingEventType {
   PAGE_VIEW = 'page_view',
@@ -37,19 +36,19 @@ const isCustomEventParams = (params: Record<string, any>): params is CustomEvent
 
 type TrackingEvent = TrackingEventBaseParams & (PageViewEventParams | CustomEventParams);
 
-export const trackCustomEvent = (params: CustomEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined = undefined) =>
-  trackEvent(env, { type: TrackingEventType.CUSTOM_EVENT, ...params }, zkServices);
+export const trackCustomEvent = (params: CustomEventParams, env: environment = 'production') =>
+  trackEvent(env, { type: TrackingEventType.CUSTOM_EVENT, ...params });
 
-export const trackPageView = (page: PageViewEventParams, env: environment = 'production', zkServices: ZkServicesType | undefined = undefined) =>
-  trackEvent(env, { type: TrackingEventType.PAGE_VIEW, path: page.path }, zkServices);
+export const trackPageView = (page: PageViewEventParams, env: environment = 'production') =>
+  trackEvent(env, { type: TrackingEventType.PAGE_VIEW, path: page.path });
 
-const trackEvent = async (env: environment, params: TrackingEvent, zkServices: ZkServicesType | undefined) => {
+const trackEvent = async (env: environment, params: TrackingEvent) => {
   if (!window) {
     console.error('window is not defined');
     return false;
   }
-  // initService only if zKservices is undefined 
-  const zkServicesChecked = zkServices ?? await initServices();
+
+  const zkServicesChecked = await ZkServicesInstance.initServices();
 
   const savedCredentials = await getSavedCredentials();
   const credentialToSave = await eventToCredential(
