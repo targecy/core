@@ -1,12 +1,12 @@
 import { createIssuerIdentity } from './tracking';
 import { initializeStorages, getCircuitStorage, createUserIdentity, initProofService } from './zk';
-import { ZkServicesType } from '../components/misc/Context.types';
+import { ZkServicesType, ZkServicesTypeApp } from '../components/misc/Context.types';
 
 export type environment = 'development' | 'preview' | 'production';
 
 class ZkServices {
   private static instance: ZkServices;
-  private services: ZkServicesType | null;
+  private services: ZkServicesType | ZkServicesTypeApp | null;
   private initialized: boolean = false;
 
   private constructor() {
@@ -23,18 +23,29 @@ class ZkServices {
     }
     return ZkServices.instance;
   }
+  //Download files for circuitStorage and init proofService in background and updated the service object
+  async getCircuitStorageAndInitProofService(storages: any) {
+    const circuitStorage = await getCircuitStorage('client');
+    const proofService = initProofService(
+      storages.identityWallet,
+      storages.credWallet,
+      storages.dataStorage.states,
+      circuitStorage
+    );
+    const currentServices = this.services;
+    if (currentServices) {
+      const newServices: ZkServicesTypeApp = {
+        ...currentServices,  
+        proofService,
+        circuitStorage
+      }
+      this.services = newServices;
+    }    
+  }
 
-  async initServices(): Promise<ZkServicesType> {
+  async initServices(): Promise<ZkServicesType | ZkServicesTypeApp> {
     if (!this.initialized) {
       const storages = initializeStorages();
-      const circuitStorage = await getCircuitStorage('client');
-      const proofService = initProofService(
-        storages.identityWallet,
-        storages.credWallet,
-        storages.dataStorage.states,
-        circuitStorage
-      );
-
       const issuerUrl = window.location.hostname;
 
       const userIdentity = await createUserIdentity(storages.identityWallet);
@@ -44,17 +55,19 @@ class ZkServices {
         identityWallet: storages.identityWallet,
         credWallet: storages.credWallet,
         dataStorage: storages.dataStorage,
-        circuitStorage,
-        proofService,
         userIdentity,
         issuerIdentity,
       };
-
-      Object.freeze(this.services)
+      this.getCircuitStorageAndInitProofService(storages)
       this.initialized = true;
     }
 
     return this.services!;
+  }
+
+  // Get Updated Object with all Props
+  getZkServiceData() {
+    return this.services;
   }
 }
 

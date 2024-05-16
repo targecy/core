@@ -96,8 +96,8 @@ export async function generateZKProof(
   ];
   proof.proof.pi_c = proof.proof.pi_c.slice(0, 2);
 
-  // Check Proof
-  const _proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
+  // Check Proof not used
+  // const _proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
 
   return proof;
 }
@@ -343,7 +343,7 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
       const proof = await generateZKProof(
         proofCredentialMatch,
         proofRequest,
-        context.zkServices,
+        context.zkServices as ZkServicesType,
         context.userIdentity?.did
       );
       proofs.push({ proof, id: proofRequest.id });

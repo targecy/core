@@ -14,7 +14,7 @@ import { ReactNode } from 'react';
 import { Config } from 'wagmi';
 
 export type TargecyContextType = {
-  zkServices?: ZkServicesType;
+  zkServices?: ZkServicesType | ZkServicesTypeApp;
   userIdentity?: UserIdentityType;
   initialized?: boolean;
 };
@@ -38,6 +38,21 @@ export type ZkServicesType = {
   };
   circuitStorage: CircuitStorage;
   proofService: ProofService;
+  userIdentity: UserIdentityType;
+  issuerIdentity: UserIdentityType;
+};
+
+export type ZkServicesTypeApp = {
+  identityWallet: IdentityWallet;
+  credWallet: CredentialWallet;
+  dataStorage: {
+    credential: CredentialStorage;
+    identity: IdentityStorage;
+    mt: InMemoryMerkleTreeStorage;
+    states: EthStateStorage;
+  };
+  circuitStorage?: CircuitStorage;
+  proofService?: ProofService;
   userIdentity: UserIdentityType;
   issuerIdentity: UserIdentityType;
 };

@@ -23,7 +23,6 @@ const shouldIgnorePath = (path: string, pathsToIgnore: string[] = [], pathsToTra
 
 const Tracker = ({ children, env, pathsToIgnore, pathsToTrack }: TargecyTrackerProps) => {
   const path = typeof window === 'undefined' ? undefined : window.location.href;
-  const context = useTargecyContext();
 
   useEffect(() => {
     if (!path || shouldIgnorePath(new URL(path).pathname, pathsToIgnore, pathsToTrack)) return;
