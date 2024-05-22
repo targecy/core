@@ -19,6 +19,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import '../styles/tailwind.css';
 
 import TargecyHead from '~/components/main/Head';
+import { OnChainWrapper } from '~/components/shared/Wallet/components/OnChainTracker';
 import { env } from '~/env.mjs';
 import { withProviders } from '~/lib/withProviders';
 import { toggleDomain } from '~/store/themeConfigSlice';
@@ -75,13 +76,15 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV} pathsToIgnore={['/storage']}>
-      <ProviderWrapper>
-        <TargecyHead />
+      <OnChainWrapper>
+        <ProviderWrapper>
+          <TargecyHead />
 
-        {getLayout(<Component {...pageProps} />)}
+          {getLayout(<Component {...pageProps} />)}
 
-        <Analytics />
-      </ProviderWrapper>
+          <Analytics />
+        </ProviderWrapper>
+      </OnChainWrapper>
     </TargecyTracker>
   );
 };

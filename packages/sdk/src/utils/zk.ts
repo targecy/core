@@ -96,8 +96,8 @@ export async function generateZKProof(
   ];
   proof.proof.pi_c = proof.proof.pi_c.slice(0, 2);
 
-  // Check Proof
-  const _proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
+  // Check Proof not used
+  // const _proofVerificationResult = await services.proofService.verifyProof(proof, CircuitId.AtomicQuerySigV2OnChain);
 
   return proof;
 }
@@ -227,11 +227,17 @@ async function fetchBinaryFile(side: StoragesSide, file: string) {
 
 export async function getCircuitStorage(side: StoragesSide) {
   const circuitStorage = new CircuitStorage(new InMemoryDataSource<CircuitData>());
+
+  const [wasm, provingKey, verificationKey] = await Promise.all([
+    await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit.wasm'),
+    await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit_final.zkey'),
+    await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/verification_key.json')
+  ])
   await circuitStorage.saveCircuitData(CircuitId.AtomicQuerySigV2OnChain, {
     circuitId: CircuitId.AtomicQuerySigV2OnChain,
-    wasm: await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit.wasm'),
-    provingKey: await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/circuit_final.zkey'),
-    verificationKey: await fetchBinaryFile(side, 'circuits/credentialAtomicQuerySigV2OnChain/verification_key.json'),
+    wasm: wasm,
+    provingKey: provingKey,
+    verificationKey: verificationKey,
   });
 
   return circuitStorage;
@@ -337,7 +343,7 @@ export const generateProof = async (context: TargecyContextType, credentials: W3
       const proof = await generateZKProof(
         proofCredentialMatch,
         proofRequest,
-        context.zkServices,
+        context.zkServices as ZkServicesType,
         context.userIdentity?.did
       );
       proofs.push({ proof, id: proofRequest.id });

@@ -12,8 +12,6 @@ import { configureChains, createConfig, WagmiConfig, Chain } from 'wagmi';
 import { IRootState } from '../../../../store/index';
 import { appName } from '../Wallet.constants';
 
-import { OnChainWrapper } from './OnChainTracker';
-
 import { isVercelPreview, isVercelProduction } from '~/constants/app.constants';
 
 const chain = (): Chain => {
@@ -88,7 +86,7 @@ export const WalletProvider = ({ children, session }: WalletProviderProps) => {
       <SessionProvider session={session}>
         <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
           <RainbowKitProvider modalSize="compact" theme={rainbowTheme} chains={chains} appInfo={{ appName }}>
-            <OnChainWrapper>{children}</OnChainWrapper>
+            {children}
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>
       </SessionProvider>
