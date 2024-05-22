@@ -1,13 +1,13 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { SCHEMA_TYPES } from '@backend/constants/schemas/schemas.constant';
-import { useTargecyContext, useCredentialsStatistics, saveCredentials, deleteCredential } from '@targecy/sdk';
+import { useTargecyContext, saveCredentials, deleteCredential, useCredentialsStatistics } from '@targecy/sdk';
 import { useCredentialsByType } from '@targecy/sdk/src/hooks/useCredentialsByType';
 import { getCountryDataList } from 'countries-list';
 import { Form, Formik } from 'formik';
 import { cloneDeep } from 'lodash';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
@@ -35,42 +35,57 @@ const interests = [
   'Analytics',
 ] as const;
 
+type Profile = {
+  country?: string;
+  birthdate?: Date;
+};
+
 const Credentials = () => {
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(setPageTitle('Profile'));
-  });
-
-  const { context } = useTargecyContext();
+  const context = useTargecyContext();
   const credentialsByType = useCredentialsByType(context);
   const credentialsStatistics = useCredentialsStatistics(context);
-
+  const [savingInterests, setSavingInterests] = useState(false);
   const [credentialsByTypeUpdated, setCredentialsByTypeUpdated] = useState<Record<string, W3CCredential[]>>({});
+  const [interestsConfig, setInterestsConfig] = useState<Partial<Record<keyof typeof interests, boolean>>>({});
+  const [profile, setProfile] = useState<Profile>({});
+  const [savingProfile, setSavingProfile] = useState(false);
 
   useEffect(() => {
-    if (Object.keys(credentialsByTypeUpdated).length === 0) setCredentialsByTypeUpdated(credentialsByType);
+    dispatch(setPageTitle('Profile'));
+  }, []);
+
+  useMemo(() => {
+    if (Object.keys(credentialsByType).length > 0 && Object.keys(credentialsByTypeUpdated).length === 0) {
+      setCredentialsByTypeUpdated(() => {
+        return credentialsByType;
+      });
+    }
   }, [credentialsByType]);
 
-  const [interestsConfig, setInterestsConfig] = useState<Partial<Record<keyof typeof interests, boolean>>>({});
-
-  useEffect(() => {
-    if (credentialsByType) {
+  useMemo(() => {
+    if (credentialsByType.length) {
+      let profileValue = {};
+      let interestConfigValue = {};
       credentialsByType[SCHEMA_TYPES.InterestTargecySchema]?.forEach((credential) => {
         const interest = credential.credentialSubject.interest as keyof typeof interests;
-        setInterestsConfig({ ...interestsConfig, [interest]: true });
+        interestConfigValue = { ...interestsConfig, [interest]: true };
       });
+      console.log('LOGGER INTEREST CONFIG', interestConfigValue);
+      setInterestsConfig(interestConfigValue);
 
       credentialsByType[SCHEMA_TYPES.ProfileTargecySchema]?.forEach((credential) => {
-        setProfile({
+        profileValue = {
           ...(credential.credentialSubject.country ? { country: credential.credentialSubject.country.toString() } : {}),
           ...(credential.credentialSubject.birthdate
             ? { birthdate: new Date(credential.credentialSubject.birthdate.toString()) }
             : {}),
-        });
+        };
       });
+      setProfile(profileValue);
     }
-  }, [credentialsByType]);
-  const [savingInterests, setSavingInterests] = useState(false);
+  }, [credentialsByType.length]);
+
   const saveInterests = () => {
     setSavingInterests(true);
 
@@ -247,15 +262,7 @@ const Credentials = () => {
     label: country.name,
   }));
 
-  type Profile = {
-    country?: string;
-    birthdate?: Date;
-  };
-
-  const [profile, setProfile] = useState<Profile>({});
-
-  const [savingProfile, setSavingProfile] = useState(false);
-  const saveProfile = () => {
+  const saveProfile = async () => {
     setSavingProfile(true);
 
     console.log(profile);
@@ -285,7 +292,7 @@ const Credentials = () => {
       country: profile.country,
     });
 
-    context.zkServices?.identityWallet
+    await context.zkServices?.identityWallet
       .issueCredential(issuerDID, request, {
         ipfsGatewayURL: 'https://ipfs.io',
       })
@@ -532,7 +539,8 @@ const Credentials = () => {
                       <button
                         className={`btn-outline-primary btn w-full ${savingProfile ? 'disabled' : ''} `}
                         disabled={savingProfile || !context.userIdentity}
-                        onClick={() => saveProfile()}>
+                        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                        onClick={saveProfile}>
                         {savingProfile ? 'Saving...' : 'Save Profile'}
                       </button>
                     </div>

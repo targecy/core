@@ -9,10 +9,9 @@ import { useRouter } from 'next/router';
 import { appWithI18Next } from 'ni18n';
 import { ni18nConfig } from 'ni18n.config.ts';
 import { ReactElement, ReactNode, useEffect } from 'react';
-import { Provider, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import DefaultLayout from '../components/Layouts/DefaultLayout';
-import store from '../store/index';
 
 // Perfect Scrollbar
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -20,6 +19,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import '../styles/tailwind.css';
 
 import TargecyHead from '~/components/main/Head';
+import { OnChainWrapper } from '~/components/shared/Wallet/components/OnChainTracker';
 import { env } from '~/env.mjs';
 import { withProviders } from '~/lib/withProviders';
 import { toggleDomain } from '~/store/themeConfigSlice';
@@ -76,7 +76,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <TargecyTracker env={env.NEXT_PUBLIC_VERCEL_ENV} pathsToIgnore={['/storage']}>
-      <Provider store={store}>
+      <OnChainWrapper>
         <ProviderWrapper>
           <TargecyHead />
 
@@ -84,7 +84,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
           <Analytics />
         </ProviderWrapper>
-      </Provider>
+      </OnChainWrapper>
     </TargecyTracker>
   );
 };

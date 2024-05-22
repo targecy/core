@@ -22,7 +22,7 @@ import { trimAddress } from '~/utils';
 
 const MyProtocolsComponent = () => {
   const scrollRef = useRef(null);
-  const { context } = useTargecyContext();
+  const context = useTargecyContext();
   const { credentials } = useCredentials(context);
 
   const [myProtocols, setMyProtocols] = useState<ProtocolUsedTargecyCredentialSubject[]>([]);
@@ -212,7 +212,7 @@ const MyProtocolsComponent = () => {
           <div className="sticky top-0 w-full bg-inherit p-6 pb-3 ">
             <h5 className="text-lg font-semibold text-black dark:text-white">My Tokens</h5>
             <p className="text-gray-500">
-              See how the tokens you have interacted with are doing. Based on your 
+              See how the tokens you have interacted with are doing. Based on your
               <Link href="/credentials" target="_blank" className="p-1 font-bold hover:text-primary">
                 profile
               </Link>

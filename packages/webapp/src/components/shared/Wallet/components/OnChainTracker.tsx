@@ -10,7 +10,8 @@ const FETCHING_INTERVAL = 1000 * 60 * 60 * 24 * 7; // 1 week
 
 export const OnChainWrapper = ({ children }: { children: React.ReactNode }) => {
   const { address } = useWallet();
-  const { context, initialized } = useTargecyContext();
+  const context = useTargecyContext();
+  const { initialized, userIdentity } = context;
   const { setCredentials } = useCredentials(context);
 
   const [lastTimeFetched, updateCookie] = useCookie('publicCredentialsLastTimeFetched');
@@ -29,16 +30,16 @@ export const OnChainWrapper = ({ children }: { children: React.ReactNode }) => {
       .catch(console.error);
 
   useEffect(() => {
-    if (!!address && initialized && context.userIdentity?.did.id && localStorage) {
+    if (!!address && initialized && userIdentity?.did?.id && localStorage) {
       const shouldFetch = !lastTimeFetched || Date.now() - parseInt(lastTimeFetched) > FETCHING_INTERVAL;
       if (shouldFetch) {
         console.info('Getting public credentials');
-        getPublicCredentials(address as `0x${string}`, context.userIdentity?.did.id);
+        getPublicCredentials(address as `0x${string}`, userIdentity?.did?.id);
       } else {
         console.info('Public credentials already fetched in this interval.');
       }
     }
-  }, [address, initialized, context.userIdentity?.did.id, lastTimeFetched]);
+  }, [address, initialized, userIdentity?.did?.id, lastTimeFetched]);
 
   return <div>{children}</div>;
 };

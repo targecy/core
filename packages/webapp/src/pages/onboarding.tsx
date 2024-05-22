@@ -1,4 +1,5 @@
 import { useAccountModal } from '@rainbow-me/rainbowkit';
+import { useTargecyContext } from '@targecy/sdk/hooks/useTargecyContext';
 import { trackCustomEvent } from '@targecy/sdk/utils/tracking';
 import { track } from '@vercel/analytics/react';
 import { Typography } from 'antd';
@@ -10,14 +11,15 @@ import { useSelector } from 'react-redux';
 import { useCookie } from 'react-use';
 
 import { NoWalletConnected } from '~/components/shared/Wallet/components/NoWalletConnected';
-import { useWallet } from '~/hooks';
+// import { useWallet } from '~/hooks';
 import { IRootState } from '~/store';
 import { capitalizeFirstLetter, isTargecyDomain } from '~/utils';
 import { UserRole } from '~/utils/preferences';
 
 export default function Onboarding() {
+  const context = useTargecyContext();
   const { openAccountModal } = useAccountModal();
-  const { isConnected, address } = useWallet();
+  // const { isConnected, address } = useWallet();
   const router = useRouter();
   const href = router.query.p;
   const session = useSession();

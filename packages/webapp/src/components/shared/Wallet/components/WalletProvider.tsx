@@ -1,16 +1,16 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { darkTheme, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { darkTheme, lightTheme, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { RainbowKitSiweNextAuthProvider, GetSiweMessageOptions } from '@rainbow-me/rainbowkit-siwe-next-auth';
 import { jsonRpcProvider } from '@wagmi/core/providers/jsonRpc';
 import { SessionProvider } from 'next-auth/react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { defineChain } from 'viem';
 import { polygonAmoy, localhost } from 'viem/chains';
 import { configureChains, createConfig, WagmiConfig, Chain } from 'wagmi';
 
+import { IRootState } from '../../../../store/index';
 import { appName } from '../Wallet.constants';
-
-import { OnChainWrapper } from './OnChainTracker';
 
 import { isVercelPreview, isVercelProduction } from '~/constants/app.constants';
 
@@ -73,12 +73,20 @@ const getSiweMessageOptions: GetSiweMessageOptions = () => ({
 });
 
 export const WalletProvider = ({ children, session }: WalletProviderProps) => {
+  const themeConfig = useSelector((state: IRootState) => state.themeConfig);
+  const [rainbowTheme, setRainbowTheme] = useState(darkTheme());
+
+  useEffect(() => {
+    const themeRainbow = themeConfig.isDarkMode ? darkTheme() : lightTheme();
+    setRainbowTheme(themeRainbow);
+  }, [themeConfig.isDarkMode]);
+
   return (
     <WagmiConfig config={wagmiConfig}>
       <SessionProvider session={session}>
         <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
-          <RainbowKitProvider modalSize="compact" theme={darkTheme()} chains={chains} appInfo={{ appName }}>
-            <OnChainWrapper>{children}</OnChainWrapper>
+          <RainbowKitProvider modalSize="compact" theme={rainbowTheme} chains={chains} appInfo={{ appName }}>
+            {children}
           </RainbowKitProvider>
         </RainbowKitSiweNextAuthProvider>
       </SessionProvider>

@@ -1,5 +1,5 @@
 import { CredentialRequest, CredentialStatusType, IdentityWallet, W3CCredential, core } from '@0xpolygonid/js-sdk';
-import { environment, initServices } from './context';
+import { environment, ZkServicesInstance }  from './context';
 import { getSavedCredentials, saveCredentials } from './sharedStorage';
 import { backendTrpcClient } from './trpc';
 import { DID } from '@iden3/js-iden3-core';
@@ -48,14 +48,14 @@ const trackEvent = async (env: environment, params: TrackingEvent) => {
     return false;
   }
 
-  const zkServices = await initServices();
+  const zkServicesChecked = await ZkServicesInstance.initServices();
 
   const savedCredentials = await getSavedCredentials();
   const credentialToSave = await eventToCredential(
     env,
-    zkServices.identityWallet,
-    zkServices.issuerIdentity.did,
-    zkServices.userIdentity.did,
+    zkServicesChecked.identityWallet,
+    zkServicesChecked.issuerIdentity.did,
+    zkServicesChecked.userIdentity.did,
     params
   );
 
