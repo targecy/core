@@ -1,4 +1,5 @@
 import { useTargecyContext } from '@targecy/sdk';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { PropsWithChildren, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,10 +11,11 @@ import { LoaderPage } from '../shared/Wallet/components/LoadPage';
 import Footer from './Footer';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import { StatusBar } from './StatusBar';
 
 import { IRootState } from '~/store';
 import { toggleSidebar } from '~/store/themeConfigSlice';
+
+const StatusBar = dynamic(() => import('./StatusBar').then((component) => component.StatusBar));
 
 const DefaultLayout = ({ children }: PropsWithChildren) => {
   const router = useRouter();

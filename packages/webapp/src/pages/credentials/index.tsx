@@ -1,13 +1,13 @@
 import { W3CCredential } from '@0xpolygonid/js-sdk';
 import { DeleteOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { SCHEMA_TYPES } from '@backend/constants/schemas/schemas.constant';
-import { useTargecyContext, useCredentialsStatistics, saveCredentials, deleteCredential } from '@targecy/sdk';
+import { useTargecyContext, saveCredentials, deleteCredential, useCredentialsStatistics } from '@targecy/sdk';
 import { useCredentialsByType } from '@targecy/sdk/src/hooks/useCredentialsByType';
 import { getCountryDataList } from 'countries-list';
 import { Form, Formik } from 'formik';
 import { cloneDeep } from 'lodash';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
@@ -55,7 +55,7 @@ const Credentials = () => {
     dispatch(setPageTitle('Profile'));
   }, []);
 
-  useEffect(() => {
+  useMemo(() => {
     if (Object.keys(credentialsByType).length > 0 && Object.keys(credentialsByTypeUpdated).length === 0) {
       setCredentialsByTypeUpdated(() => {
         return credentialsByType;
@@ -63,23 +63,28 @@ const Credentials = () => {
     }
   }, [credentialsByType]);
 
-  useEffect(() => {
-    if (credentialsByType) {
+  useMemo(() => {
+    if (credentialsByType.length) {
+      let profileValue = {};
+      let interestConfigValue = {};
       credentialsByType[SCHEMA_TYPES.InterestTargecySchema]?.forEach((credential) => {
         const interest = credential.credentialSubject.interest as keyof typeof interests;
-        setInterestsConfig({ ...interestsConfig, [interest]: true });
+        interestConfigValue = { ...interestsConfig, [interest]: true };
       });
+      console.log('LOGGER INTEREST CONFIG', interestConfigValue);
+      setInterestsConfig(interestConfigValue);
 
       credentialsByType[SCHEMA_TYPES.ProfileTargecySchema]?.forEach((credential) => {
-        setProfile({
+        profileValue = {
           ...(credential.credentialSubject.country ? { country: credential.credentialSubject.country.toString() } : {}),
           ...(credential.credentialSubject.birthdate
             ? { birthdate: new Date(credential.credentialSubject.birthdate.toString()) }
             : {}),
-        });
+        };
       });
+      setProfile(profileValue);
     }
-  }, [credentialsByType]);
+  }, [credentialsByType.length]);
 
   const saveInterests = () => {
     setSavingInterests(true);
