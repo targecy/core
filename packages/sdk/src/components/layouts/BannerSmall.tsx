@@ -1,8 +1,7 @@
-import { Attribution } from '../../constants/ads';
 import { AttributionComponent } from './AttributionComponent';
 import { BaseLayout } from './BaseLayout';
-import { ConversionComponent } from './ConversionComponent';
 import { LayoutParams } from './Params';
+import { DivBase } from './baseStyles';
 
 export const BannerSmall = (props: LayoutParams) => {
   return (
@@ -13,22 +12,11 @@ export const BannerSmall = (props: LayoutParams) => {
       />
 
       {/* Title and description container */}
-      <div
+      <DivBase
         style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: '10px',
-          backgroundColor: 'rgba(0, 0, 0, 0.75)',
-          color: 'white',
-          borderRadius: props.styling?.borderRadius,
-          opacity: 0,
-          transition: 'opacity 0.5s',
-          overflow: 'scroll',
-          height: '100%',
-          maxHeight: '100%',
           fontSize: '0.75rem',
+          ...props.styling,
+          ...props.customStyling,
         }}
         onMouseOver={(e) => {
           e.currentTarget.style.opacity = '1';
@@ -42,7 +30,7 @@ export const BannerSmall = (props: LayoutParams) => {
         <br />
         <br />
         <AttributionComponent {...props} />
-      </div>
+      </DivBase>
     </BaseLayout>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { CSSProperties, useContext } from 'react';
 import { BannerLarge, BannerMedium, BannerSmall, Square, ListItem } from './layouts';
 import { TargecyServicesContext } from './misc';
 import { useAd } from '../hooks/useAd';
@@ -25,6 +25,7 @@ type SharedAdProps = {
 
 export type AdProps = {
   styling?: AdStyling;
+  customStyling?: CSSProperties;
 } & SharedAdProps;
 
 export const Ad = (props: AdProps) => {
@@ -60,6 +61,7 @@ export const Ad = (props: AdProps) => {
     paramsSchema: ad.metadata.paramsSchema,
     publisher: props.publisher,
     styling,
+    customStyling: props.customStyling,
     adId: ad.ad.id,
     env: props.env ?? 'production',
     isDemo: props.isDemo,
