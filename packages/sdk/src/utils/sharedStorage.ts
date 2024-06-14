@@ -56,8 +56,11 @@ function retrieveItem(key: string): Promise<string | null> {
 
     // Listen for messages from the iframe
     function messageListener(event: MessageEvent) {
-      if (event.data.target !== 'targecy') return; // @todo (Martin): check origin here and everywhere necessary
-
+      // resolve if event data is distinct
+      if (event.data.target !== 'targecy') {
+        resolve(null);
+      }; // @todo (Martin): check origin here and everywhere necessary
+      
       if (event.data.action === 'data') {
         resolve(event.data.value);
         window.removeEventListener('message', messageListener);
